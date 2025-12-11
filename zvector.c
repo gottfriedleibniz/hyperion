@@ -3442,656 +3442,811 @@ DEF_INST( vector_shift_right_double_by_bit )
 /*-------------------------------------------------------------------*/
 /* E788 VEVAL  - Vector Evaluate                             [VRI-k] */
 /*-------------------------------------------------------------------*/
+/* VEVAL implements the boolean operations defined in Principles of  */
+/* Operation SA22-7832-14, Figure 22-3 Parts 1 and 2. The majority   */
+/* of the enties in Figure 22-3 are marked as either "a duplicate    */
+/* function of an existing vector instruction" or "a duplicate of    */
+/* another entry in the table for a boolean operation with a         */
+/* different order of A, B, C". Fortunately, the Intel VPTERNLOGQ    */
+/* instructon is the equivalent of VEVAL, and the VPTERNLOGQ         */
+/* instructions table of boolean logic operations is complete.       */
+/* As the known entries in VEVAL's big endian table match the        */
+/* equivalent entries in VPTERNLOGQ's little endian table, it is     */
+/* assumed that the duplicate entries in VEVAL's table also match    */
+/* the equivalent entries in VPTERNLOGQ's table.                     */
+/* The comments following the case statements contain bit values in  */
+/* the format "bbbbb bbb". The first group of five match bits 0-4    */
+/* of the i5 value, and the second group of three match bits 5-7 of  */
+/* the i5 value. The bit values match the row and column headers in  */
+/* Figure 22-3.                                                      */
+/*-------------------------------------------------------------------*/
 DEF_INST( vector_evaluate )
 {
     int     v1, v2, v3, v4, i5;
-    U128    tempv1, tempv2, tempv3, tempv4;
+    U128    temp, tempA, tempB, tempC;
 
     VRI_K( inst, regs, v1, v2, v3, v4, i5 );
 
     ZVECTOR_CHECK( regs );
 
-    tempv1 = U128_zero();
-    tempv2.Q = regs->VR_Q(v2);
-    tempv3.Q = regs->VR_Q(v3);
-    tempv4.Q = regs->VR_Q(v4);
-
-    /*  Note:
-        The following case statement implements boolean functions defined in
-        PoP SA22-7832-14, Figure 22-3. Boolean operations, paged 22-14.
-        These boolean functions are optimized versions compared to the
-        default case with a loop for each bit of the source and result
-        vectors.
-    */
+    tempA.Q = regs->VR_Q(v2);
+    tempB.Q = regs->VR_Q(v3);
+    tempC.Q = regs->VR_Q(v4);
 
     switch (i5)
     {
-    /* Row 0 */
-    case 0:     /* 00000 000  |||  Result inferred from VEVAL definition */
-        tempv1 = U128_zero();
+    case 0:     /* 00000 000  FALSE  */
+        temp = U128_zero();
         break;
     case 1:     /* 00000 001  AND(A,B,C)  */
-        tempv1 = U128_and3( tempv2, tempv3, tempv4 );
-        // tempv1 = U128_and(tempv2, U128_and(tempv3, tempv4));
+        temp = U128_and3(tempA, tempB, tempC);
         break;
-    // case 2:     /* 00000 010  +++  */
-    //     break;
-    // case 3:     /* 00000 011  |||  */
-    //     break;
-    // case 4:     /* 00000 100  +++  */
-    //     break;
-    // case 5:     /* 00000 101  |||  */
-    //     break;
+    case 2:     /* 00000 010  NOR(C,NAND(B,A))  */
+        temp = U128_nor(tempC, U128_nand(tempB, tempA));
+        break;
+    case 3:     /* 00000 011  AND(B,A)  */
+        temp = U128_and(tempB, tempA);
+        break;
+    case 4:     /* 00000 100  NOR(B,NAND(A,C))  */
+        temp = U128_nor(tempB, U128_nand(tempA, tempC));
+        break;
+    case 5:     /* 00000 101  AND(C,A)  */
+        temp = U128_and(tempC, tempA);
+        break;
     case 6:     /* 00000 110  AND(A,XOR(B,C))  */
-        tempv1 = U128_and(tempv2, U128_xor(tempv3, tempv4));
+        temp = U128_and(tempA, U128_xor(tempB, tempC));
         break;
     case 7:     /* 00000 111  AND(A,OR(B,C))  */
-        tempv1 = U128_and(tempv2, U128_or(tempv3, tempv4));
+        temp = U128_and(tempA, U128_or(tempB, tempC));
         break;
-    /* Row 1 */
     case 8:     /* 00001 000  AND(A,NOR(B,C))  */
-        tempv1 = U128_and(tempv2, U128_nor(tempv3, tempv4));
+        temp = U128_and(tempA, U128_nor(tempB, tempC));
         break;
     case 9:     /* 00001 001  AND(A,NXOR(B,C))  */
-        tempv1 = U128_and(tempv2, U128_nxor(tempv3, tempv4));
+        temp = U128_and(tempA, U128_nxor(tempB, tempC));
         break;
-    // case 10:    /* 00001 010  |||  */
-    //     break;
-    // case 11:    /* 00001 011  +++  */
-    //     break;
-    // case 12:    /* 00001 100  |||  */
-    //     break;
-    // case 13:    /* 00001 101  +++  */
-    //     break;
+    case 10:    /* 00001 010  AND(A,NOT(C))  */
+        temp = U128_and(tempA, U128_not(tempC));
+        break;
+    case 11:    /* 00001 011  SEL(C,AND(B,A),A)  */
+        temp = U128_select(tempC, U128_and(tempB, tempA), tempA);
+        break;
+    case 12:    /* 00001 100  AND(A,NOT(B))  */
+        temp = U128_and(tempA, U128_not(tempB));
+        break;
+    case 13:    /* 00001 101  SEL(B,AND(A,C),A)  */
+        temp = U128_select(tempB, U128_and(tempA, tempC), tempA);
+        break;
     case 14:    /* 00001 110  AND(A,NAND(B,C))  */
-        tempv1 = U128_and(tempv2, U128_nand(tempv3, tempv4));
+        temp = U128_and(tempA, U128_nand(tempB, tempC));
         break;
-    // case 15:    /* 00001 111  |||  */
-    //     break;
-    /* Row 2 */
+    case 15:    /* 00001 111  A  */
+        temp = tempA;
+        break;
     case 16:    /* 00010 000  NOR(A,NAND(B,C))  */
-        tempv1 = U128_nor(tempv2, U128_nand(tempv3, tempv4));
+        temp = U128_nor(tempA, U128_nand(tempB, tempC));
         break;
-    // case 17:    /* 00010 001  |||  */
-    //     break;
-    // case 18:    /* 00010 010  +++  */
-    //     break;
-    // case 19:    /* 00010 011  +++  */
-    //     break;
-    // case 20:    /* 00010 100  +++  */
-    //     break;
-    // case 21:    /* 00010 101  +++  */
-    //     break;
+    case 17:    /* 00010 001  AND(C,B)  */
+        temp = U128_and(tempC, tempB);
+        break;
+    case 18:    /* 00010 010  AND(B,XOR(A,C))  */
+        temp = U128_and(tempB, U128_xor(tempA, tempC));
+        break;
+    case 19:    /* 00010 011  AND(B,OR(A,C))  */
+        temp = U128_and(tempB, U128_or(tempA, tempC));
+        break;
+    case 20:    /* 00010 100  AND(C,XOR(B,A))  */
+        temp = U128_and(tempC, U128_xor(tempB, tempA));
+        break;
+    case 21:    /* 00010 101  AND(C,OR(A,B))  */
+        temp = U128_and(tempC, U128_or(tempA, tempB));
+        break;
     case 22:    /* 00010 110  SEL(A,XOR(B,C),AND(B,C))  */
-        tempv1 = U128_select( tempv2, U128_xor( tempv3, tempv4), U128_and( tempv3, tempv4) );
+        temp = U128_select(tempA, U128_xor(tempB, tempC), U128_and(tempB, tempC));
         break;
     case 23:    /* 00010 111  MAJOR(A,B,C)  */
-        tempv1 = U128_major(tempv2, tempv3, tempv4);
+        temp = U128_major(tempA, tempB, tempC);
         break;
-    /* Row 3 */
     case 24:    /* 00011 000  SEL(A,NOR(B,C),AND(B,C))  */
-        tempv1 = U128_select( tempv2, U128_nor( tempv3, tempv4), U128_and( tempv3, tempv4) );
+        temp = U128_select(tempA, U128_nor(tempB, tempC), U128_and(tempB, tempC));
         break;
     case 25:    /* 00011 001  SEL(A,NXOR(B,C),AND(B,C))  */
-        tempv1 = U128_select( tempv2, U128_nxor( tempv3, tempv4), U128_and( tempv3, tempv4) );
+        temp = U128_select(tempA, U128_nxor(tempB, tempC), U128_and(tempB, tempC));
         break;
-    // case 26:    /* 00011 010  +++  */
-    //     break;
-    // case 27:    /* 00011 011  |||  */
-    //     break;
+    case 26:    /* 00011 010  SEL(A,NOT(C),AND(B,C))  */
+        temp = U128_select(tempA, U128_not(tempC), U128_and(tempB, tempC));
+        break;
+    case 27:    /* 00011 011  SEL(C,B,A)  */
+        temp = U128_select(tempC, tempB, tempA);
+        break;
     case 28:    /* 00011 100  SEL(A,NOT(B),AND(B,C)) */
-        tempv1 = U128_select( tempv2, U128_not( tempv3), U128_and( tempv3, tempv4) );
+        temp = U128_select(tempA, U128_not(tempB), U128_and(tempB, tempC));
         break;
-    // case 29:    /* 00011 101  |||  */
-    //     break;
+    case 29:    /* 00011 101  SEL(B,C,A)  */
+        temp = U128_select(tempB, tempC, tempA);
+        break;
     case 30:    /* 00011 110  XOR(A,AND(B,C))  */
-        tempv1 = U128_xor(tempv2, U128_and(tempv3, tempv4));
+        temp = U128_xor(tempA, U128_and(tempB, tempC));
         break;
     case 31:    /* 00011 111  OR(A,AND(B,C))  */
-        tempv1 = U128_or(tempv2, U128_and(tempv3, tempv4));
+        temp = U128_or(tempA, U128_and(tempB, tempC));
         break;
-    /* Row 4 */
-    // case 32:    /* 00100 000  +++  */
-    //     break;
-    // case 33:    /* 00100 001  +++  */
-    //     break;
-    // case 34:    /* 00100 010  |||  */
-    //     break;
-    // case 35:    /* 00100 011  +++  */
-    //     break;
-    // case 36:    /* 00100 100  +++  */
-    //     break;
-    // case 37:    /* 00100 101  +++  */
-    //     break;
-    // case 38:    /* 00100 110  +++  */
-    //     break;
-    // case 39:    /* 00100 111  |||  */
-    //     break;
-    /* Row 5 */
-    // case 40:    /* 00101 000  +++  */
-    //     break;
-    // case 41:    /* 00101 001  +++  */
-    //     break;
-    // case 42:    /* 00101 010  +++  */
-    //     break;
-    // case 43:    /* 00101 011  +++  */
-    //     break;
-    // case 44:    /* 00101 100  +++  */
-    //     break;
-    // case 45:    /* 00101 101  +++  */
-    //     break;
-    // case 46:    /* 00101 110  +++  */
-    //     break;
-    // case 47:    /* 00101 111  +++  */
-    //     break;
-    /* Row 6 */
-    // case 48:    /* 00110 000  |||  */
-    //     break;
-    // case 49:    /* 00110 001  +++  */
-    //     break;
-    // case 50:    /* 00110 010  +++  */
-    //     break;
-    // case 51:    /* 00110 011  |||  */
-    //     break;
-    // case 52:    /* 00110 100  +++  */
-    //     break;
-    // case 53:    /* 00110 101  |||  */
-    //     break;
-    // case 54:    /* 00110 110  +++  */
-    //     break;
-    // case 55:    /* 00110 111  +++  */
-    //     break;
-    /* Row 7 */
-    // case 56:    /* 00111 000  +++  */
-    //     break;
-    // case 57:    /* 00111 001  +++  */
-    //     break;
-    // case 58:    /* 00111 010  +++  */
-    //     break;
-    // case 59:    /* 00111 011  +++  */
-    //     break;
-    // case 60:    /* 00111 100  |||  */
-    //     break;
-    // case 61:    /* 00111 101  +++  */
-    //     break;
-    // case 62:    /* 00111 110  +++  */
-    //     break;
-    // case 63:    /* 00111 111  |||  */
-    //     break;
-    /* Row 8 */
-    // case 64:    /* 01000 000  +++  */
-    //     break;
-    // case 65:    /* 01000 001  +++  */
-    //     break;
-    // case 66:    /* 01000 010  +++  */
-    //     break;
-    // case 67:    /* 01000 011  +++  */
-    //     break;
-    // case 68:    /* 01000 100  |||  */
-    //     break;
-    // case 69:    /* 01000 101  +++  */
-    //     break;
-    // case 70:    /* 01000 110  +++  */
-    //     break;
-    // case 71:    /* 01000 111  |||  */
-    //     break;
-    /* Row 9  */
-    // case 72:    /* 01001 000  +++  */
-    //     break;
-    // case 73:    /* 01001 001  +++  */
-    //     break;
-    // case 74:    /* 01001 010  +++  */
-    //     break;
-    // case 75:    /* 01001 011  +++  */
-    //     break;
-    // case 76:    /* 01001 100  +++  */
-    //     break;
-    // case 77:    /* 01001 101  +++  */
-    //     break;
-    // case 78:    /* 01001 110  +++  */
-    //     break;
-    // case 79:    /* 01001 111  +++  */
-    //     break;
-    /* Row 10 */
-    // case 80:    /* 01010 000  |||  */
-    //     break;
+    case 32:    /* 00100 000  AND(B,NOR(A,C))  */
+        temp = U128_and(tempB, U128_nor(tempA, tempC));
+        break;
+    case 33:    /* 00100 001  AND(B,NXOR(A,C))  */
+        temp = U128_and(tempB, U128_nxor(tempA, tempC));
+        break;
+    case 34:    /* 00100 010  AND(B,NOT(C))  */
+        temp = U128_and(tempB, U128_not(tempC));
+        break;
+    case 35:    /* 00100 011  SEL(C,AND(B,A),B)  */
+        temp = U128_select(tempC, U128_and(tempB, tempA), tempB);
+        break;
+    case 36:    /* 00100 100  SEL(B,NOR(A,C),AND(A,C))  */
+        temp = U128_select(tempB, U128_nor(tempA, tempC), U128_and(tempA, tempC));
+        break;
+    case 37:    /* 00100 101  SEL(B,NXOR(A,C),AND(A,C))  */
+        temp = U128_select(tempB, U128_nxor(tempA, tempC), U128_and(tempA, tempC));
+        break;
+    case 38:    /* 00100 110  SEL(B,NOT(C),AND(A,C))  */
+        temp = U128_select(tempB, U128_not(tempC), U128_and(tempA, tempC));
+        break;
+    case 39:    /* 00100 111  SEL(C,A,B)  */
+        temp = U128_select(tempC, tempA, tempB);
+        break;
+    case 40:    /* 00101 000  NOR(C,NXOR(B,A))  */
+        temp = U128_nor(tempC, U128_nxor(tempB, tempA));
+        break;
+    case 41:    /* 00101 001  SEL(C,AND(B,A),XOR(B,A))  */
+        temp = U128_select(tempC, U128_and(tempB, tempA), U128_xor(tempB, tempA));
+        break;
+    case 42:    /* 00101 010  NOR(C,NOR(B,A))  */
+        temp = U128_nor(tempC, U128_nor(tempB, tempA));
+        break;
+    case 43:    /* 00101 011  SEL(C,AND(B,A),OR(B,A))  */
+        temp = U128_select(tempC, U128_and(tempB, tempA), U128_or(tempB, tempA));
+        break;
+    case 44:    /* 00101 100  SEL(B,NOR(A,C),A))  */
+        temp = U128_select(tempB, U128_nor(tempA, tempC), tempA);
+        break;
+    case 45:    /* 00101 101  SEL(B,NXOR(A,C),A)  */
+        temp = U128_select(tempB, U128_nxor(tempA, tempC), tempA);
+        break;
+    case 46:    /* 00101 110  SEL(B,NOT(C),A)  */
+        temp = U128_select(tempB, U128_not(tempC), tempA);
+        break;
+    case 47:    /* 00101 111  SEL(C,A,OR(B,A))  */
+        temp = U128_select(tempC, tempA, U128_or(tempB, tempA));
+        break;
+    case 48:    /* 00110 000  AND(B,NOT(A))  */
+        temp = U128_and(tempB, U128_not(tempA));
+        break;
+    case 49:    /* 00110 001  SEL(A,AND(B,C),B)  */
+        temp = U128_select(tempA, U128_and(tempB, tempC), tempB);
+        break;
+    case 50:    /* 00110 010  AND(B,NAND(A,C))  */
+        temp = U128_and(tempB, U128_nand(tempA, tempC));
+        break;
+    case 51:    /* 00110 011  B  */
+        temp = tempB;
+        break;
+    case 52:    /* 00110 100  SEL(B,NOT(A),AND(A,C))  */
+        temp = U128_select(tempB, U128_not(tempA), U128_and(tempA, tempC));
+        break;
+    case 53:    /* 00110 101  SEL(A,C,B)  */
+        temp = U128_select(tempA, tempC, tempB);
+        break;
+    case 54:    /* 00110 110  XOR(B,AND(A,C))  */
+        temp = U128_xor(tempB, U128_and(tempA, tempC));
+        break;
+    case 55:    /* 00110 111  OR(B,AND(A,C))  */
+        temp = U128_or(tempB, U128_and(tempA, tempC));
+        break;
+    case 56:    /* 00111 000  SEL(A,NOR(B,C),B))  */
+        temp = U128_select(tempA, U128_nor(tempB, tempC), tempB);
+        break;
+    case 57:    /* 00111 001  SEL(A,NXOR(B,C),B)  */
+        temp = U128_select(tempA, U128_nxor(tempB, tempC), tempB);
+        break;
+    case 58:    /* 00111 010  SEL(A,NOT(C),C)  */
+        temp = U128_select(tempA, U128_not(tempC), tempC);
+        break;
+    case 59:    /* 00111 011  SEL(C,B,OR(B,A))  */
+        temp = U128_select(tempC, tempB, U128_or(tempB, tempA));
+        break;
+    case 60:    /* 00111 100  XOR(B,A)  */
+        temp = U128_xor(tempB, tempA);
+        break;
+    case 61:    /* 00111 101  SEL(C,OR(B,A),XOR(B,A))  */
+        temp = U128_select(tempC, U128_or(tempB, tempA), U128_xor(tempB, tempA));
+        break;
+    case 62:    /* 00111 110  SEL(A,NAND(B,C),B)  */
+        temp = U128_select(tempA, U128_nand(tempB, tempC), tempB);
+        break;
+    case 63:    /* 00111 111  OR(B,A)  */
+        temp = U128_or(tempB, tempA);
+        break;
+    case 64:    /* 01000 000  AND(C,NOR(B,A))  */
+        temp = U128_and(tempC, U128_nor(tempB, tempA));
+        break;
+    case 65:    /* 01000 001  AND(C,NXOR(B,A))  */
+        temp = U128_and(tempC, U128_nxor(tempB, tempA));
+        break;
+    case 66:    /* 01000 010  SEL(C,NOR(B,A),AND(B,A))  */
+        temp = U128_select(tempC, U128_nor(tempB, tempA), U128_and(tempB, tempA));
+        break;
+    case 67:    /* 01000 011  SEL(C,NXOR(B,A),AND(B,A))  */
+        temp = U128_select(tempC, U128_nxor(tempB, tempA), U128_and(tempB, tempA));
+        break;
+    case 68:    /* 01000 100  AND(C,NOT(B))  */
+        temp = U128_and(tempC, U128_not(tempB));
+        break;
+    case 69:    /* 01000 101  SEL(B,AND(A,C),C)  */
+        temp = U128_select(tempB, U128_and(tempA, tempC), tempC);
+        break;
+    case 70:    /* 01000 110  SEL(C,NOT(B),AND(B,A))  */
+        temp = U128_select(tempC, U128_not(tempB), U128_and(tempB, tempA));
+    case 71:    /* 01000 111  SEL(B,A,C)  */
+        temp = U128_select(tempB, tempA, tempC);
+        break;
+    case 72:    /* 01001 000  NOR(B,NXOR(A,C))  */
+        temp = U128_nor(tempB, U128_nxor(tempA, tempC));
+        break;
+    case 73:    /* 01001 001  SEL(B,AND(A,C),XOR(A,C))  */
+        temp = U128_select(tempB, U128_and(tempA, tempC), U128_xor(tempA, tempC));
+        break;
+    case 74:    /* 01001 010  SEL(C,NOR(B,A),A))  */
+        temp = U128_select(tempC, U128_nor(tempB, tempA), tempA);
+        break;
+    case 75:    /* 01001 011  SEL(B,A,XOR(A,C))  */
+        temp = U128_select(tempB, tempA, U128_xor(tempA, tempC));
+        break;
+    case 76:    /* 01001 100  NOR(B,NOR(A,C))  */
+        temp = U128_nor(tempB, U128_nor(tempA, tempC));
+        break;
+    case 77:    /* 01001 101  SEL(B,AND(A,C),OR(A,C))  */
+        temp = U128_select(tempB, U128_and(tempA, tempC), U128_or(tempA, tempC));
+        break;
+    case 78:    /* 01001 110  SEL(C,NOT(B),A))  */
+        temp = U128_select(tempC, U128_not(tempB), tempA);
+        break;
+    case 79:    /* 01001 111  SEL(B,A,OR(A,C))  */
+        temp = U128_select(tempB, tempA, U128_or(tempA, tempC));
+        break;
+    case 80:    /* 01010 000  AND(C,NOT(A))  */
+        temp = U128_and(tempC, U128_not(tempA));
+        break;
     case 81:    /* 01010 001  SEL(A,AND(B,C),C)  */
-        tempv1 = U128_select( tempv2, U128_and( tempv3, tempv4), tempv4 );
+        temp = U128_select(tempA, U128_and(tempB, tempC), tempC);
         break;
-    // case 82:    /* 01010 010  +++  */
-    //     break;
-    // case 83:    /* 01010 011  |||  */
-    //     break;
-    // case 84:    /* 01010 100  +++  */
-    //     break;
-    // case 85:    /* 01010 101  |||  */
-    //     break;
-    // case 86:    /* 01010 110  +++  */
-    //     break;
-    // case 87:    /* 01010 111  +++  */
-    //     break;
-    /* Row 11 */
+    case 82:    /* 01010 010  SEL(C,NOT(A),AND(B,A))  */
+        temp = U128_select(tempC, U128_not(tempA), U128_and(tempB, tempA));
+        break;
+    case 83:    /* 01010 011  SEL(A,B,C)  */
+        temp = U128_select(tempA, tempB, tempC);
+        break;
+    case 84:    /* 01010 100  AND(C,NAND(B,A))  */
+        temp = U128_and(tempC, U128_nand(tempB, tempA));
+        break;
+    case 85:    /* 01010 101  C  */
+        temp = tempC;
+        break;
+    case 86:    /* 01010 110  XOR(C,AND(B,A))  */
+        temp = U128_xor(tempC, U128_and(tempB, tempA));
+        break;
+    case 87:    /* 01010 111  OR(C,AND(B,A))  */
+        temp = U128_or(tempC, U128_and(tempB, tempA));
+        break;
     case 88:    /* 01011 000  SEL(A,NOR(B,C),C)  */
-        tempv1 = U128_select( tempv2, U128_nor( tempv3, tempv4), tempv4 );
+        temp = U128_select(tempA, U128_nor(tempB, tempC), tempC);
         break;
     case 89:    /* 01011 001  SEL(A,NXOR(B,C),C)  */
-        tempv1 = U128_select( tempv2, U128_nxor( tempv3, tempv4), tempv4 );
+        temp = U128_select(tempA, U128_nxor(tempB, tempC), tempC);
         break;
-    // case 90:    /* 01011 010  |||  */
-    //     break;
-    // case 91:    /* 01011 011   +++  */
-    //     break;
+    case 90:    /* 01011 010  XOR(C,A)  */
+        temp = U128_xor(tempC, tempA);
+        break;
+    case 91:    /* 01011 011  SEL(B,OR(A,C),XOR(A,C))  */
+        temp = U128_select(tempB, U128_or(tempA, tempC), U128_xor(tempA, tempC));
+        break;
     case 92:    /* 01011 100  SEL(A,NOT(B),C)  */
-        tempv1 = U128_select( tempv2, U128_not( tempv3 ), tempv4 );
+        temp = U128_select(tempA, U128_not(tempB), tempC);
         break;
-    // case 93:    /* 01011 101  +++  */
-    //     break;
+    case 93:    /* 01011 101  SEL(B,C,OR(A,C))  */
+        temp = U128_select(tempB, tempC, U128_or(tempA, tempC));
+        break;
     case 94:    /* 01011 110  SEL(A,NAND(B,C),C)  */
-        tempv1 = U128_select( tempv2, U128_nand( tempv3, tempv4), tempv4 );
+        temp = U128_select(tempA, U128_nand(tempB, tempC), tempC);
         break;
-    // case 95:    /* 01011 111  |||  */
-    //     break;
-    /* Row 12 */
+    case 95:    /* 01011 111  OR(C,A)  */
+        temp = U128_or(tempC, tempA);
+        break;
     case 96:    /* 01100 000  NOR(A,NXOR(B,C))  */
-        tempv1 = U128_nor(tempv2, U128_nxor(tempv3, tempv4));
+        temp = U128_nor(tempA, U128_nxor(tempB, tempC));
         break;
     case 97:    /* 01100 001  SEL(A,AND(B,C),XOR(B,C))  */
-        tempv1 = U128_select( tempv2, U128_and( tempv3, tempv4 ), U128_xor( tempv3, tempv4 ) );
+        temp = U128_select(tempA, U128_and(tempB, tempC), U128_xor(tempB, tempC));
         break;
-    // case 98:    /* 01100 010   +++  */
-    //     break;
+    case 98:    /* 01100 010  SEL(C,NOR(B,A),B))  */
+        temp = U128_select(tempC, U128_nor(tempB, tempA), tempB);
+        break;
     case 99:    /* 01100 011  SEL(A,B,XOR(B,C))  */
-        tempv1 = U128_select( tempv2,  tempv3, U128_xor( tempv3, tempv4 ) );
+        temp = U128_select(tempA, tempB, U128_xor(tempB, tempC));
         break;
-    // case 100:   /* 01100 100  +++  */
-    //     break;
-    // case 101:   /* 01100 101  +++  */
-    //     break;
-    // case 102:   /* 01100 110  |||  */
-    //     break;
+    case 100:   /* 01100 100  SEL(B,NOR(A,C),C))  */
+        temp = U128_select(tempB, U128_nor(tempA, tempC), tempC);
+        break;
+    case 101:   /* 01100 101  SEL(A,C,XOR(B,C))  */
+        temp = U128_select(tempA, tempC, U128_xor(tempB, tempC));
+        break;
+    case 102:   /* 01100 110  XOR(C,B)  */
+        temp = U128_xor(tempC, tempB);
+        break;
     case 103:   /* 01100 111  SEL(A,OR(B,C),XOR(B,C))  */
-        tempv1 = U128_select( tempv2, U128_or( tempv3, tempv4 ), U128_xor( tempv3, tempv4 ) );
+        temp = U128_select(tempA, U128_or(tempB, tempC), U128_xor(tempB, tempC));
         break;
-    /* Row 13 */
     case 104:   /* 01101 000  SEL(A,NOR(B,C),XOR(B,C))  */
-        tempv1 = U128_select( tempv2, U128_nor( tempv3, tempv4 ), U128_xor( tempv3, tempv4 ) );
+        temp = U128_select(tempA, U128_nor(tempB, tempC), U128_xor(tempB, tempC));
         break;
     case 105:   /* 01101 001  XOR(A,B,C)  */
-        tempv1 = U128_xor3( tempv2, tempv3, tempv4 );
+        temp = U128_xor3(tempA, tempB, tempC);
         break;
-    // case 106:   /* 01101 010  +++  */
-    //     break;
-    // case 107:   /* 01101 011  +++  */
-    //     break;
-    // case 108:   /* 01101 100  +++  */
-    //     break;
-    // case 109:   /* 01101 101  +++  */
-    //     break;
-    // case 110:   /* 01101 110  +++  */
-    //     break;
+    case 106:   /* 01101 010  XOR(C,OR(B,A))  */
+        temp = U128_xor(tempC, U128_or(tempB, tempA));
+        break;
+    case 107:   /* 01101 011  SEL(C,NXOR(B,A),OR(B,A))  */
+        temp = U128_select(tempC, U128_nxor(tempB, tempA), U128_or(tempB, tempA));
+        break;
+    case 108:   /* 01101 100  XOR(B,OR(A,C))  */
+        temp = U128_xor(tempB, U128_or(tempA, tempC));
+        break;
+    case 109:   /* 01101 101  SEL(B,NXOR(A,C),OR(A,C))  */
+        temp = U128_select(tempB, U128_nxor(tempA, tempC), U128_or(tempA, tempC));
+        break;
+    case 110:   /* 01101 110  SEL(B,NOT(C),OR(A,C))  */
+        temp = U128_select(tempB, U128_not(tempC), U128_or(tempA, tempC));
+        break;
     case 111:   /* 01101 111  OR(A,XOR(B,C))  */
-        tempv1 = U128_or(tempv2, U128_xor(tempv3, tempv4));
+        temp = U128_or(tempA, U128_xor(tempB, tempC));
         break;
-    /* Row 14 */
     case 112:   /* 01110 000  NOR(A,NOR(B,C))  */
-        tempv1 = U128_nor(tempv2, U128_nor(tempv3, tempv4));
+        temp = U128_nor(tempA, U128_nor(tempB, tempC));
         break;
     case 113:   /* 01110 001  SEL(A,AND(B,C),OR(B,C))  */
-        tempv1 = U128_select( tempv2, U128_and( tempv3, tempv4 ), U128_or( tempv3, tempv4 ) );
+        temp = U128_select(tempA, U128_and(tempB, tempC), U128_or(tempB, tempC));
         break;
-    // case 114:   /* 01110 010  +++  */
-    //     break;
+    case 114:   /* 01110 010  SEL(C,NOT(A),B))  */
+        temp = U128_select(tempC, U128_not(tempA), tempB);
+        break;
     case 115:   /* 01110 011  SEL(A,B,OR(B,C))  */
-        tempv1 = U128_select( tempv2, tempv3, U128_or( tempv3, tempv4 ) );
+        temp = U128_select(tempA, tempB, U128_or(tempB, tempC));
         break;
-    // case 116:   /* 01110 100  +++  */
-    //     break;
-    // case 117:   /* 01110 101  +++  */
-    //     break;
-    // case 118:   /* 01110 110  +++  */
-    //     break;
-    // case 119:   /* 01110 111  |||  */
-    //     break;
-    /* Row 15 */
+    case 116:   /* 01110 100  SEL(B,NOT(A),C)  */
+        temp = U128_select(tempB, U128_not(tempA), tempC);
+        break;
+    case 117:   /* 01110 101  SEL(A,C,OR(B,C))  */
+        temp = U128_select(tempA, tempC, U128_or(tempB, tempC));
+        break;
+    case 118:   /* 01110 110  SEL(B,NAND(A,C),C)  */
+        temp = U128_select(tempB, U128_nand(tempA, tempC), tempC);
+        break;
+    case 119:   /* 01110 111  OR(C,B)  */
+        temp = U128_or(tempC, tempB);
+        break;
     case 120:   /* 01111 000  XOR(A,OR(B,C))  */
-        tempv1 = U128_xor(tempv2, U128_or(tempv3, tempv4));
+        temp = U128_xor(tempA, U128_or(tempB, tempC));
         break;
     case 121:   /* 01111 001  SEL(A,NXOR(B,C),OR(B,C))  */
-        tempv1 = U128_select( tempv2, U128_nxor( tempv3, tempv4 ), U128_or( tempv3, tempv4 ) );
+        temp = U128_select(tempA, U128_nxor(tempB, tempC), U128_or(tempB, tempC));
         break;
-    // case 122:   /* 01111 010  +++  */
-    //     break;
-    // case 123:   /* 01111 011  +++  */
-    //     break;
+    case 122:   /* 01111 010  SEL(A,NOT(C),OR(B,C))  */
+        temp = U128_select(tempA, U128_not(tempC), U128_or(tempB, tempC));
+        break;
+    case 123:   /* 01111 011  OR(B,XOR(A,C))  */
+        temp = U128_or(tempB, U128_xor(tempA, tempC));
+        break;
     case 124:   /* 01111 100  SEL(A,NOT(B),OR(B,C))  */
-        tempv1 = U128_select( tempv2, U128_not( tempv3 ), U128_or( tempv3, tempv4 ) );
+        temp = U128_select(tempA, U128_not(tempB), U128_or(tempB, tempC));
         break;
-    // case 125:   /* 01111 101  +++  */
-    //     break;
+    case 125:   /* 01111 101  OR(C,XOR(B,A))  */
+        temp = U128_or(tempC, U128_xor(tempB, tempA));
+        break;
     case 126:   /* 01111 110  SEL(A,NAND(B,C),OR(B,C))  */
-        tempv1 = U128_select( tempv2, U128_nand( tempv3, tempv4 ), U128_or( tempv3, tempv4 ) );
+        temp = U128_select(tempA, U128_nand(tempB, tempC), U128_or(tempB, tempC));
         break;
     case 127:   /* 01111 111  OR(A,B,C)  */
-        tempv1 = U128_or3( tempv2, tempv3, tempv4 );
-        // tempv1 = U128_or(tempv2, U128_or(tempv3, tempv4));
+        temp = U128_or3(tempA, tempB, tempC);
         break;
-    /* Row 16 */
     case 128:   /* 10000 000  NOR(A,B,C)  */
-        tempv1 = U128_nor3( tempv2, tempv3, tempv4 );
-        // tempv1 = U128_nor(tempv2, U128_nor(tempv3, tempv4));
+        temp = U128_nor3(tempA, tempB, tempC);
         break;
     case 129:   /* 10000 001  SEL(A,AND(B,C),NOR(B,C))  */
-        tempv1 = U128_select( tempv2, U128_and( tempv3, tempv4 ), U128_nor( tempv3, tempv4 ) );
+        temp = U128_select(tempA, U128_and(tempB, tempC), U128_nor(tempB, tempC));
         break;
-    // case 130:   /* 10000 010  +++  */
-    //     break;
+    case 130:   /* 10000 000  NOR(C,XOR(B,A))  */
+        temp = U128_nor(tempC, U128_xor(tempB, tempA));
+        break;
     case 131:   /* 10000 011  SEL(A,B,NOR(B,C))  */
-        tempv1 = U128_select( tempv2, tempv3, U128_nor( tempv3, tempv4 ) );
+        temp = U128_select(tempA, tempB, U128_nor(tempB, tempC));
         break;
-    // case 132:   /* 10000 100  +++  */
-    //     break;
-    // case 133:   /* 10000 101  +++  */
-    //     break;
+    case 132:   /* 10000 100  NOR(B,XOR(A,C))  */
+        temp = U128_nor(tempB, U128_xor(tempA, tempC));
+        break;
+    case 133:   /* 10000 101  SEL(A,C,NOR(B,C))  */
+        temp = U128_select(tempA, tempC, U128_nor(tempB, tempC));
+        break;
     case 134:   /* 10000 110  SEL(A,XOR(B,C),NOR(B,C))  */
-        tempv1 = U128_select( tempv2, U128_xor( tempv3, tempv4 ), U128_nor( tempv3, tempv4 ) );
+        temp = U128_select(tempA, U128_xor(tempB, tempC), U128_nor(tempB, tempC));
         break;
     case 135:   /* 10000 111  NXOR(A,OR(B,C))  */
-        tempv1 = U128_nxor(tempv2, U128_or(tempv3, tempv4));
+        temp = U128_nxor(tempA, U128_or(tempB, tempC));
         break;
-    /* Row 17 */
-    // case 136:   /* 10001 000  |||  */
-    //     break;
-    // case 137:   /* 10001 001  +++  */
-    //     break;
-    // case 138:   /* 10001 010  +++  */
-    //     break;
-    // case 139:   /* 10001 011  +++  */
-    //     break;
+    case 136:   /* 10001 000  NOR(C,B)  */
+        temp = U128_nor(tempC, tempB);
+        break;
+    case 137:   /* 10001 001  SEL(B,AND(A,C),NOT(C))  */
+        temp = U128_select(tempB, U128_and(tempA, tempC), U128_not(tempC));
+        break;
+    case 138:   /* 10001 010  SEL(A,NOT(C),NOR(B,C))  */
+        temp = U128_select(tempA, U128_not(tempC), U128_nor(tempB, tempC));
+        break;
+    case 139:   /* 10001 011  SEL(B,A,NOT(C))  */
+        temp = U128_select(tempB, tempA, U128_not(tempC));
+        break;
     case 140:   /* 10001 100  SEL(A,NOT(B),NOR(B,C))  */
-        tempv1 = U128_select( tempv2, U128_not( tempv3 ), U128_nor( tempv3, tempv4 ) );
+        temp = U128_select(tempA, U128_not(tempB), U128_nor(tempB, tempC));
         break;
-    // case 141:   /* 10001 101  +++  */
-    //     break;
+    case 141:   /* 10001 101  SEL(C,A,NOT(B))  */
+        temp = U128_select(tempC, tempA, U128_not(tempB));
+        break;
     case 142:   /* 10001 110  SEL(A,NAND(B,C),NOR(B,C))  */
-        tempv1 = U128_select( tempv2, U128_nand( tempv3, tempv4 ), U128_nor( tempv3, tempv4 ) );
+        temp = U128_select(tempA, U128_nand(tempB, tempC), U128_nor(tempB, tempC));
         break;
     case 143:   /* 10001 111  OR(A,NOR(B,C))  */
-        tempv1 = U128_or(tempv2, U128_nor(tempv3, tempv4));
+        temp = U128_or(tempA, U128_nor(tempB, tempC));
         break;
-    /* Row 18 */
     case 144:   /* 10010 000  NOR(A,XOR(B,C))  */
-        tempv1 = U128_nor(tempv2, U128_xor(tempv3, tempv4));
+        temp = U128_nor(tempA, U128_xor(tempB, tempC));
         break;
-    // case 145:   /* 10010 001  +++  */
-    //     break;
-    // case 146:   /* 10010 010  +++  */
-    //     break;
-    // case 147:   /* 10010 011  +++  */
-    //     break;
-    // case 148:   /* 10010 100  +++  */
-    //     break;
-    // case 149:   /* 10010 101  +++  */
-    //     break;
+    case 145:   /* 10010 001  SEL(B,C,NOR(A,C))  */
+        temp = U128_select(tempB, tempC, U128_nor(tempA, tempC));
+        break;
+    case 146:   /* 10010 010  SEL(B,XOR(A,C),NOR(A,C))  */
+        temp = U128_select(tempB, U128_xor(tempA, tempC), U128_nor(tempA, tempC));
+        break;
+    case 147:   /* 10010 011  NXOR(B,OR(A,C))  */
+        temp = U128_nxor(tempB, U128_or(tempA, tempC));
+        break;
+    case 148:   /* 10010 100  SEL(C,XOR(B,A),NOR(B,A))  */
+        temp = U128_select(tempC, U128_xor(tempB, tempA), U128_nor(tempB, tempA));
+        break;
+    case 149:   /* 10010 101  NXOR(C,OR(B,A))  */
+        temp = U128_nxor(tempC, U128_or(tempB, tempA));
+        break;
     case 150:   /* 10010 110  NXOR(A,B,C)  */
-        tempv1 = U128_nxor3( tempv2, tempv3, tempv4 );
-        // tempv1 = U128_nxor(tempv2, U128_nxor(tempv3, tempv4));
+        temp = U128_nxor3(tempA, tempB, tempC);
         break;
     case 151:   /* 10010 111  SEL(A,OR(B,C),NXOR(B,C))  */
-        tempv1 = U128_select( tempv2, U128_or( tempv3, tempv4 ), U128_nxor( tempv3, tempv4 ) );
+        temp = U128_select(tempA, U128_or(tempB, tempC), U128_nxor(tempB, tempC));
         break;
-    /* Row 19 */
     case 152:   /* 10011 000  SEL(A,NOR(B,C),NXOR(B,C))  */
-        tempv1 = U128_select( tempv2, U128_nor( tempv3, tempv4 ), U128_nxor( tempv3, tempv4 ) );
+        temp = U128_select(tempA, U128_nor(tempB, tempC), U128_nxor(tempB, tempC));
         break;
-    // case 153:   /* 10011 001  |||  */
-    //     break;
-    // case 154:   /* 10011 010  +++  */
-    //     break;
-    // case 155:   /* 10011 011  +++  */
-    //     break;
+    case 153:   /* 10011 001  NXOR(C,B)  */
+        temp = U128_nxor(tempC, tempB);
+        break;
+    case 154:   /* 10011 010  SEL(A,NOT(C),NXOR(B,C))  */
+        temp = U128_select(tempA, U128_not(tempC), U128_nxor(tempB, tempC));
+        break;
+    case 155:   /* 10011 011  SEL(B,OR(A,C),NOT(C))  */
+        temp = U128_select(tempB, U128_or(tempA, tempC), U128_not(tempC));
+        break;
     case 156:   /* 10011 100  SEL(A,NOT(B),NXOR(B,C))  */
-        tempv1 = U128_select( tempv2, U128_not( tempv3 ), U128_nxor( tempv3, tempv4 ) );
+        temp = U128_select(tempA, U128_not(tempB), U128_nxor(tempB, tempC));
         break;
-    // case 157:   /* 10011 101  +++  */
-    //     break;
+    case 157:   /* 10011 101  SEL(C,OR(B,A),NOT(B))  */
+        temp = U128_select(tempC, U128_or(tempB, tempA), U128_not(tempB));
+        break;
     case 158:   /* 10011 110  SEL(A,NAND(B,C),NXOR(B,C))  */
-        tempv1 = U128_select( tempv2, U128_nand( tempv3, tempv4 ), U128_nxor( tempv3, tempv4 ) );
+        temp = U128_select(tempA, U128_nand(tempB, tempC), U128_nxor(tempB, tempC));
         break;
     case 159:   /* 10011 111  OR(A,NXOR(B,C))  */
-        tempv1 = U128_or(tempv2, U128_nxor(tempv3, tempv4));
+        temp = U128_or(tempA, U128_nxor(tempB, tempC));
         break;
-    /* Row 20 */
-    // case 160:   /* 10100 000 * |||  */
-    //     break;
+    case 160:   /* 10100 000  NOR(C,A)  */
+        temp = U128_nor(tempC, tempA);
+        break;
     case 161:   /* 10100 001  SEL(A,AND(B,C),NOT(C))  */
-        tempv1 = U128_select( tempv2, U128_and( tempv3, tempv4 ), U128_not( tempv4 ) );
+        temp = U128_select(tempA, U128_and(tempB, tempC), U128_not(tempC));
         break;
-    // case 162:   /* 10100 010  +++  */
-    //     break;
+    case 162:   /* 10100 010  SEL(B,NOT(C),NOR(A,C))  */
+        temp = U128_select(tempB, U128_not(tempC), U128_nor(tempA, tempC));
+        break;
     case 163:   /* 10100 011  SEL(A,B,NOT(C))  */
-        tempv1 = U128_select( tempv2, tempv3, U128_not( tempv4 ) );
+        temp = U128_select(tempA, tempB, U128_not(tempC));
         break;
-    // case 164:   /* 10100 100  +++  */
-    //     break;
-    // case 165:   /* 10100 101  |||  */
-    //     break;
+    case 164:   /* 10100 100  SEL(B,NOR(A,C),NXOR(A,C))  */
+        temp = U128_select(tempB, U128_nor(tempA, tempC), U128_nxor(tempA, tempC));
+        break;
+    case 165:   /* 10100 101  NXOR(C,A)  */
+        temp = U128_nxor(tempC, tempA);
+        break;
     case 166:   /* 10100 110  SEL(A,XOR(B,C),NOT(C)  */
-        tempv1 = U128_select( tempv2, U128_xor( tempv3, tempv4 ), U128_not( tempv4 ) );
+        temp = U128_select(tempA, U128_xor(tempB, tempC), U128_not(tempC));
         break;
     case 167:   /* 10100 111  SEL(A,OR(B,C),NOT(C))  */
-        tempv1 = U128_select( tempv2, U128_or( tempv3, tempv4 ), U128_not( tempv4 ) );
+        temp = U128_select(tempA, U128_or(tempB, tempC), U128_not(tempC));
         break;
-    /* Row 21 */
-    // case 168:   /* 10101 000  +++  */
-    //     break;
-    // case 169:   /* 10101 001  +++  */
-    //     break;
-    // case 170:   /* 10101 010  |||  */
-    //     break;
-    // case 171:   /* 10101 011  +++  */
-    //     break;
+    case 168:   /* 10101 000  NOR(C,AND(B,A))  */
+        temp = U128_nor(tempC, U128_and(tempB, tempA));
+        break;
+    case 169:   /* 10101 001  NXOR(C,AND(B,A))  */
+        temp = U128_nxor(tempC, U128_and(tempB, tempA));
+        break;
+    case 170:   /* 10101 010  NOT(C)  */
+        temp = U128_not(tempC);
+        break;
+    case 171:   /* 10101 011  NAND(C,NAND(B,A))  */
+        temp = U128_nand(tempC, U128_nand(tempB, tempA));
+        break;
     case 172:   /* 10101 100  SEL(A,NOT(B),NOT(C))  */
-        tempv1 = U128_select( tempv2, U128_not( tempv3 ), U128_not( tempv4 ) );
+        temp = U128_select(tempA, U128_not(tempB), U128_not(tempC));
         break;
-    // case 173:   /* 10101 101  +++  */
-    //     break;
+    case 173:   /* 10101 101  SEL(C,A,NAND(B,A))  */
+        temp = U128_select(tempC, tempA, U128_nand(tempB, tempA));
+        break;
     case 174:   /* 10101 110  SEL(A,NAND(B,C),NOT(C))  */
-        tempv1 = U128_select( tempv2, U128_nand( tempv3, tempv4 ), U128_not( tempv4 ) );
+        temp = U128_select(tempA, U128_nand(tempB, tempC), U128_not(tempC));
         break;
-    // case 175:   /* 10101 111  |||  */
-    //     break;
-    /* Row 22 */
-    // case 176:   /* 10110 000  +++  */
-    //     break;
-    // case 177:   /* 10110 001  +++  */
-    //     break;
-    // case 178:   /* 10110 010  +++  */
-    //     break;
-    // case 179:   /* 10110 011  +++  */
-    //     break;
-    // case 180:   /* 10110 100  +++  */
-    //     break;
-    // case 181:   /* 10110 101  +++  */
-    //     break;
-    // case 182:   /* 10110 110  +++  */
-    //     break;
-    // case 183:   /* 10110 111  +++  */
-    //     break;
-    /* Row 23 */
-    // case 184:   /* 10111 000  +++  */
-    //     break;
-    // case 185:   /* 10111 001  +++  */
-    //     break;
-    // case 186:   /* 10111 010  +++  */
-    //     break;
-    // case 187:   /* 10111 011  |||  */
-    //     break;
-    // case 188:   /* 10111 100  +++  */
-    //     break;
-    // case 189:   /* 10111 101  +++  */
-    //     break;
-    // case 190:   /* 10111 110  +++  */
-    //     break;
-    // case 191:   /* 10111 111  +++  */
-    //     break;
-    /* Row 24 */
-    // case 192:   /* 11000 000  |||  */
-    //     break;
-    // case 193:   /* 11000 001  +++  */
-    //     break;
-    // case 194:   /* 11000 010  +++  */
-    //     break;
-    // case 195:   /* 11000 011  |||  */
-    //     break;
-    // case 196:   /* 11000 100  +++  */
-    //     break;
-    // case 197:   /* 11000 101  +++  */
-    //     break;
-    // case 198:   /* 11000 110  +++  */
-    //     break;
-    // case 199:   /* 11000 111  +++  */
-    //     break;
-    /* Row 25 */
-    // case 200:   /* 11001 000  +++  */
-    //     break;
-    // case 201:   /* 11001 001  +++  */
-    //     break;
-    // case 202:   /* 11001 010  +++  */
-    //     break;
-    // case 203:   /* 11001 011  +++  */
-    //     break;
-    // case 204:   /* 11001 100  |||  */
-    //     break;
-    // case 205:   /* 11001 101  +++  */
-    //     break;
-    // case 206:   /* 11001 110  +++  */
-    //     break;
-    // case 207:   /* 11001 111  ||| */
-    //     break;
-    /* Row 26 */
-    // case 208:   /* 11010 000  +++  */
-    //     break;
-    // case 209:   /* 11010 001  +++  */
-    //     break;
-    // case 210:   /* 11010 010  +++  */
-    //     break;
-    // case 211:   /* 11010 011  +++  */
-    //     break;
-    // case 212:   /* 11010 100  +++  */
-    //     break;
-    // case 213:   /* 11010 101  +++  */
-    //     break;
-    // case 214:   /* 11010 110  +++  */
-    //     break;
-    // case 215:   /* 11010 111  +++  */
-    //     break;
-    /* Row 27 */
-    // case 216:   /* 11011 000  +++  */
-    //     break;
-    // case 217:   /* 11011 001  +++  */
-    //     break;
-    // case 218:   /* 11011 010  +++  */
-    //     break;
-    // case 219:   /* 11011 011  +++  */
-    //     break;
-    // case 220:   /* 11011 100  +++  */
-    //     break;
-    // case 221:   /* 11011 101  |||  */
-    //     break;
-    // case 222:   /* 11011 110  +++  */
-    //     break;
-    // case 223:   /* 11011 111  +++  */
-    //     break;
-    /* Row 28 */
+    case 175:   /* 10101 111  OR(A,NOT(C))  */
+        temp = U128_or(tempA, U128_not(tempC));
+        break;
+    case 176:   /* 10110 000  SEL(B,NOT(A),NOR(A,C))  */
+        temp = U128_select(tempB, U128_not(tempA), U128_nor(tempA, tempC));
+        break;
+    case 177:   /* 10110 001  SEL(C,B,NOT(A)  */
+        temp = U128_select(tempC, tempB, U128_not(tempA));
+        break;
+    case 178:   /* 10110 010  SEL(B,NAND(A,C),NOR(A,C))  */
+        temp = U128_select(tempB, U128_nand(tempA, tempC), U128_nor(tempA, tempC));
+        break;
+    case 179:   /* 10110 011  OR(B,NOR(A,C))  */
+        temp = U128_or(tempB, U128_nor(tempA, tempC));
+        break;
+    case 180:   /* 10110 100  SEL(B,NOT(A),NXOR(A,C))  */
+        temp = U128_select(tempB, U128_not(tempA), U128_nxor(tempA, tempC));
+        break;
+    case 181:   /* 10110 101  SEL(C,OR(B,A),NOT(A))  */
+        temp = U128_select(tempC, U128_or(tempB, tempA), U128_not(tempA));
+        break;
+    case 182:   /* 10110 110  SEL(B,NAND(A,C),NXOR(A,C))  */
+        temp = U128_select(tempB, U128_nand(tempA, tempC), U128_nxor(tempA, tempC));
+        break;
+    case 183:   /* 10110 111  OR(B,NXOR(A,C))  */
+        temp = U128_or(tempB, U128_nxor(tempA, tempC));
+        break;
+    case 184:   /* 10111 000  SEL(B,NOT(A),NOT(C))  */
+        temp = U128_select(tempB, U128_not(tempA), U128_not(tempC));
+        break;
+    case 185:   /* 10111 001  SEL(C,B,NAND(B,A))  */
+        temp = U128_select(tempC, tempB, U128_nand(tempB, tempA));
+        break;
+    case 186:   /* 10111 010  SEL(B,NAND(A,C),NOT(C))  */
+        temp = U128_select(tempB, U128_nand(tempA, tempC), U128_not(tempC));
+        break;
+    case 187:   /* 10111 011  OR(B,NOT(C))  */
+        temp = U128_or(tempB, U128_not(tempC));
+        break;
+    case 188:   /* 10111 100  SEL(C,XOR(B,A),NAND(B,A))  */
+        temp = U128_select(tempC,  U128_xor(tempB, tempA), U128_nand(tempB, tempA));
+        break;
+    case 189:   /* 10111 101  SEL(C,OR(B,A),NAND(B,A))  */
+        temp = U128_select(tempC,  U128_or(tempB, tempA), U128_nand(tempB, tempA));
+        break;
+    case 190:   /* 10111 110  NAND(C,NXOR(B,A))  */
+        temp = U128_nand(tempC, U128_nxor(tempB, tempA));
+        break;
+    case 191:   /* 10111 111  NAND(C,NOR(B,A))  */
+        temp = U128_nand(tempC, U128_nor(tempB, tempA));
+        break;
+    case 192:   /* 11000 000  NOR(B,A)  */
+        temp = U128_nor(tempB, tempA);
+        break;
+    case 193:   /* 11000 001  SEL(A,AND(B,C),NOT(B))  */
+        temp = U128_select(tempA, U128_and(tempB, tempC), U128_not(tempB));
+        break;
+    case 194:   /* 11000 010  SEL(C,NOR(B,A),NXOR(B,A))  */
+        temp = U128_select(tempC, U128_nor(tempB, tempA), U128_nxor(tempB, tempA));
+        break;
+    case 195:   /* 11000 011  NXOR(B,A)  */
+        temp = U128_nxor(tempB, tempA);
+        break;
+    case 196:   /* 11000 100  SEL(C,NOT(B),NOR(B,A))  */
+        temp = U128_select(tempC, U128_not(tempB), U128_nor(tempB, tempA));
+        break;
+    case 197:   /* 11000 101  SEL(A,C,NOT(B))  */
+        temp = U128_select(tempA, tempC, U128_not(tempB));
+        break;
+    case 198:   /* 11000 110  SEL(A,XOR(B,C),NOT(B)  */
+        temp = U128_select(tempA, U128_xor(tempB, tempC), U128_not(tempB));
+        break;
+    case 199:   /* 11000 111  SEL(A,OR(B,C),NOT(B))  */
+        temp = U128_select(tempA, U128_or(tempB, tempC), U128_not(tempB));
+        break;
+    case 200:   /* 11001 000  NOR(B,AND(A,C))  */
+        temp = U128_nor(tempB, U128_and(tempA, tempC));
+        break;
+    case 201:   /* 11001 001  NXOR(B,AND(A,C))  */
+        temp = U128_nxor(tempB, U128_and(tempA, tempC));
+        break;
+    case 202:   /* 11001 010  SEL(A,NOT(C),NOT(B))  */
+        temp = U128_select(tempA, U128_not(tempC), U128_not(tempB));
+        break;
+    case 203:   /* 11001 011  SEL(B,A,NAND(A,C))  */
+        temp = U128_select(tempB, tempA, U128_nand(tempA, tempC));
+        break;
+    case 204:   /* 11001 100  NOT(B)  */
+        temp = U128_not(tempB);
+        break;
+    case 205:   /* 11001 101  NAND(B,NAND(A,C))  */
+        temp = U128_nand(tempB, U128_nand(tempA, tempC));
+        break;
+    case 206:   /* 11001 110  SEL(A,NAND(B,C),NOT(B))  */
+        temp = U128_select(tempA, U128_nand(tempB, tempC), U128_not(tempB));
+        break;
+    case 207:   /* 11001 111  OR(A,NOT(B)) */
+        temp = U128_or(tempA, U128_not(tempB));
+        break;
+    case 208:   /* 11010 000  SEL(C,NOT(A),NOR(B,A))  */
+        temp = U128_select(tempC, U128_not(tempA), U128_nor(tempB, tempA));
+        break;
+    case 209:   /* 11010 001  SEL(B,C,NOT(A))  */
+        temp = U128_select(tempB, tempC, U128_not(tempA));
+        break;
+    case 210:   /* 11010 010  SEL(B,XOR(A,C),NOT(A)  */
+        temp = U128_select(tempB, U128_xor(tempA, tempC), U128_not(tempA));
+        break;
+    case 211:   /* 11010 011  SEL(B,OR(A,C),NOT(A))  */
+        temp = U128_select(tempB, U128_or(tempA, tempC), U128_not(tempA));
+        break;
+    case 212:   /* 11010 100  SEL(C,NAND(B,A),NOR(B,A))  */
+        temp = U128_select(tempC, U128_nand(tempB, tempA), U128_nor(tempB, tempA));
+        break;
+    case 213:   /* 11010 101  OR(C,NOR(B,A))  */
+        temp = U128_or(tempC, U128_nor(tempB, tempA));
+        break;
+    case 214:   /* 11010 110  SEL(C,NAND(B,A),NXOR(B,A))  */
+        temp = U128_select(tempC, U128_nand(tempB, tempA), U128_nxor(tempB, tempA));
+        break;
+    case 215:   /* 11010 111  OR(C,NXOR(B,A))  */
+        temp = U128_or(tempC, U128_nxor(tempB, tempA));
+        break;
+    case 216:   /* 11011 000  SEL(C,NOT(A),NOT(B))  */
+        temp = U128_select(tempC, U128_not(tempA), U128_not(tempB));
+        break;
+    case 217:   /* 11011 001  SEL(B,C,NAND(A,C))  */
+        temp = U128_select(tempB, tempC, U128_nand(tempA, tempC));
+        break;
+    case 218:   /* 11011 010  SEL(B,XOR(A,C),NAND(A,C))  */
+        temp = U128_select(tempB,  U128_xor(tempA, tempC), U128_nand(tempA, tempC));
+        break;
+    case 219:   /* 11011 011  SEL(B,OR(A,C),NAND(A,C))  */
+        temp = U128_select(tempB,  U128_or(tempA, tempC), U128_nand(tempA, tempC));
+        break;
+    case 220:   /* 11011 100  SEL(C,NAND(B,A),NOT(B))  */
+        temp = U128_select(tempC, U128_nand(tempB, tempA), U128_not(tempB));
+        break;
+    case 221:   /* 11011 101  OR(C,NOT(B))  */
+        temp = U128_or(tempC, U128_not(tempB));
+        break;
+    case 222:   /* 11011 110  NAND(B,NXOR(A,C))  */
+        temp = U128_nand(tempB, U128_nxor(tempA, tempC));
+        break;
+    case 223:   /* 11011 111  NAND(B,NOR(A,C))  */
+        temp = U128_nand(tempB, U128_nor(tempA, tempC));
+        break;
     case 224:   /* 11100 000  NOR(A,AND(B,C))  */
-        tempv1 = U128_nor(tempv2, U128_and(tempv3, tempv4));
+        temp = U128_nor(tempA, U128_and(tempB, tempC));
         break;
     case 225:   /* 11100 001  NXOR(A,AND(B,C))  */
-        tempv1 = U128_nxor(tempv2, U128_and(tempv3, tempv4));
+        temp = U128_nxor(tempA, U128_and(tempB, tempC));
         break;
-    // case 226:   /* 11100 010  +++  */
-    //     break;
+    case 226:   /* 11100 010  SEL(B,NOT(C),NOT(A))  */
+        temp = U128_select(tempB, U128_not(tempC), U128_not(tempA));
+        break;
     case 227:   /* 11100 011  SEL(A,B,NAND(B,C))  */
-        tempv1 = U128_select( tempv2, tempv3, U128_nand( tempv3, tempv4 ) );
+        temp = U128_select(tempA, tempB, U128_nand(tempB, tempC));
         break;
-    // case 228:   /* 11100 100  +++  */
-    //     break;
-    // case 229:   /* 11100 101  +++  */
-    //     break;
+    case 228:   /* 11100 100  SEL(C,NOT(B),NOT(A))  */
+        temp = U128_select(tempC, U128_not(tempB), U128_not(tempA));
+        break;
+    case 229:   /* 11100 101  SEL(A,C,NAND(B,C))  */
+        temp = U128_select(tempA, tempC, U128_nand(tempB, tempC));
+        break;
     case 230:   /* 11100 110  SEL(A,XOR(B,C),NAND(B,C))  */
-        tempv1 = U128_select( tempv2,  U128_xor( tempv3, tempv4 ), U128_nand( tempv3, tempv4 ) );
+        temp = U128_select(tempA,  U128_xor(tempB, tempC), U128_nand(tempB, tempC));
         break;
     case 231:   /* 11100 111  SEL(A,OR(B,C),NAND(B,C))  */
-        tempv1 = U128_select( tempv2,  U128_or( tempv3, tempv4 ), U128_nand( tempv3, tempv4 ) );
+        temp = U128_select(tempA,  U128_or(tempB, tempC), U128_nand(tempB, tempC));
         break;
-    /* Row 29 */
     case 232:   /* 11101 000  MINOR(A,B,C)  */
-        tempv1 = U128_minor( tempv2, tempv3, tempv4 );
+        temp = U128_minor(tempA, tempB, tempC);
         break;
     case 233:   /* 11101 001  SEL(A,NXOR(B,C),NAND(B,C))  */
-        tempv1 = U128_select( tempv2,  U128_nxor( tempv3, tempv4 ), U128_nand( tempv3, tempv4 ) );
+        temp = U128_select(tempA,  U128_nxor(tempB, tempC), U128_nand(tempB, tempC));
         break;
-    // case 234:   /* 11101 010  +++  */
-    //     break;
-    // case 235:   /* 11101 011  +++  */
-    //     break;
-    // case 236:   /* 11101 100  +++  */
-    //     break;
-    // case 237:   /* 11101 101  +++  */
-    //     break;
-    // case 238:   /* 11101 110  |||  */
-    //     break;
+    case 234:   /* 11101 010  NAND(C,OR(B,A))  */
+        temp = U128_nand(tempC, U128_or(tempB, tempA));
+        break;
+    case 235:   /* 11011 011  NAND(C,XOR(B,A))  */
+        temp = U128_nand(tempC, U128_xor(tempB, tempA));
+        break;
+    case 236:   /* 11101 100  NAND(B,OR(A,C))  */
+        temp = U128_nand(tempB, U128_or(tempA, tempC));
+        break;
+    case 237:   /* 11101 101  NAND(B,XOR(A,C))  */
+        temp = U128_nand(tempB, U128_xor(tempA, tempC));
+        break;
+    case 238:   /* 11101 110  NAND(C,B)  */
+        temp = U128_nand(tempC, tempB);
+        break;
     case 239:   /* 11101 111  OR(A,NAND(B,C))  */
-        tempv1 = U128_or(tempv2, U128_nand(tempv3, tempv4));
+        temp = U128_or(tempA, U128_nand(tempB, tempC));
         break;
-    /* Row 30 */
-    // case 240:   /* 11110 000  |||  */
-    //     break;
+    case 240:   /* 11110 000  NOT(A)  */
+        temp = U128_not(tempA);
+        break;
     case 241:   /* 11110 001  NAND(A,NAND(B,C))  */
-        tempv1 = U128_nand(tempv2, U128_nand(tempv3, tempv4));
+        temp = U128_nand(tempA, U128_nand(tempB, tempC));
         break;
-    // case 242:   /* 11110 010  +++  */
-    //     break;
-    // case 243:   /* 11110 011  |||  */
-    //     break;
-    // case 244:   /* 11110 100  +++  */
-    //     break;
-    // case 245:   /* 11110 101  |||  */
-    //     break;
+    case 242:   /* 11110 010  SEL(B,NAND(A,C),NOT(A))  */
+        temp = U128_select(tempB, U128_nand(tempA, tempC), U128_not(tempA));
+        break;
+    case 243:   /* 11110 011  OR(B,NOT(A))  */
+        temp = U128_or(tempB, U128_not(tempA));
+        break;
+    case 244:   /* 11110 100  SEL(C,NAND(B,A),NOT(A))  */
+        temp = U128_select(tempC, U128_nand(tempB, tempA), U128_not(tempA));
+        break;
+    case 245:   /* 11110 101  OR(C,NOT(A))  */
+        temp = U128_or(tempC, U128_not(tempA));
+        break;
     case 246:   /* 11110 110  NAND(A,NXOR(B,C))  */
-        tempv1 = U128_nand(tempv2, U128_nxor(tempv3, tempv4));
+        temp = U128_nand(tempA, U128_nxor(tempB, tempC));
         break;
     case 247:   /* 11110 111  NAND(A,NOR(B,C))  */
-        tempv1 = U128_nand(tempv2, U128_nor(tempv3, tempv4));
+        temp = U128_nand(tempA, U128_nor(tempB, tempC));
         break;
-    /* Row 31 */
     case 248:   /* 11111 000  NAND(A,OR(B,C))  */
-        tempv1 = U128_nand(tempv2, U128_or(tempv3, tempv4));
+        temp = U128_nand(tempA, U128_or(tempB, tempC));
         break;
     case 249:   /* 11111 001  NAND(A,XOR(B,C))  */
-        tempv1 = U128_nand(tempv2, U128_xor(tempv3, tempv4));
+        temp = U128_nand(tempA, U128_xor(tempB, tempC));
         break;
-    // case 250:   /* 11111 010  |||  */
-    //     break;
-    // case 251:   /* 11111 011  +++  */
-    //     break;
-    // case 252:   /* 11111 100  |||  */
-    //     break;
-    // case 253:   /* 11111 101  +++  */
-    //     break;
+    case 250:   /* 11111 010  NAND(C,A)  */
+        temp = U128_nand(tempC, tempA);
+        break;
+    case 251:   /* 11111 011  OR(B,NAND(A,C))  */
+        temp = U128_or(tempB, U128_nand(tempA, tempC));
+        break;
+    case 252:   /* 11111 100  NAND(B,A)  */
+        temp = U128_nand(tempB, tempA);
+        break;
+    case 253:   /* 11111 101  OR(C,NAND(B,A))  */
+        temp = U128_or(tempC, U128_nand(tempB, tempA));
+        break;
     case 254:   /* 11111 110  NAND(A,B,C)  */
-        tempv1 = U128_nand3( tempv2, tempv3, tempv4 );
-        // tempv1 = U128_nand(tempv2, U128_nand(tempv3, tempv4));
+        temp = U128_nand3(tempA, tempB, tempC);
         break;
-    case 255:   /* 11111 111  |||  Result inferred from VEVAL definition */
-        tempv1 = U128_minus_one();
+    case 255:   /* 11111 111  TRUE  */
+        temp = U128_one();
         break;
-    default:
-       tempv1 = U128_evaluate( tempv2, tempv3, tempv4, i5);
-       break;
+    default:    /* Should not occur! */
+        UNREACHABLE_CODE(temp = U128_zero());
     }
 
-    regs->VR_Q(v1) = tempv1.Q;
+    regs->VR_Q(v1) = temp.Q;
 
     ZVECTOR_END( regs );
 }

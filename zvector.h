@@ -1677,57 +1677,57 @@ static inline U128 U128_minor( U128 a, U128 b, U128 c )
     return  U128_not( U128_major( a, b, c ) );
 }
 
-/*-------------------------------------------------------------------*/
-/* U128 evaluate(A,B,C,tt):                                          */
-/*   For each bit in the source operands (A, B, C), the value from   */
-/*   the first, second and third operands are concatenated to form   */
-/*   a 3-bit index. The index is used to select the corresponding    */
-/*   bit from the tt operand. The value of the selected bit is       */
-/*   placed in the corresponding bit position of the result.         */
-/*                                                                   */
-/*   The tt parameter provides the result column of a truth table:   */
-/*       A-bit    B-bit   C-bit     tt                               */
-/*       -----    -----   -----   ------                             */
-/*         0       0       0       bit 0                             */
-/*         0       0       1       bit 1                             */
-/*         0       1       0       bit 2                             */
-/*                ...                                                */
-/*         1       1       0       bit 6                             */
-/*         1       1       1       bit 7                             */
-/*-------------------------------------------------------------------*/
-static inline U128 U128_evaluate( U128 a, U128 b, U128 c, U8 tt )
-{
-    static const U8 tt_bit_mask[8] =
-            { 0x80, 0x40, 0x20, 0x10,
-              0x08, 0x04, 0x02, 0x01 };
-
-    U128    result;
-    U8      tt_bit;
-    int     i, index;
-
-    result = U128_zero();
-
-    for (i=0; i<128; i++)
-    {
-        result = U128_shrl(result,1);
-        index = 0;
-        if ((a.UU_B(15) & 0x01))
-            index += 4;
-        if ((b.UU_B(15) & 0x01))
-            index += 2;
-        if ((c.UU_B(15) & 0x01))
-            index += 1;
-
-        tt_bit = (tt & tt_bit_mask[index]) ? 0x80 : 0x00;
-        result.UU_B(0) |=  tt_bit;
-
-        a = U128_shrl(a,1);
-        b = U128_shrl(b,1);
-        c = U128_shrl(c,1);
-    }
-
-    return result;
-}
+//  /*-------------------------------------------------------------------*/
+//  /* U128 evaluate(A,B,C,tt):                                          */
+//  /*   For each bit in the source operands (A, B, C), the value from   */
+//  /*   the first, second and third operands are concatenated to form   */
+//  /*   a 3-bit index. The index is used to select the corresponding    */
+//  /*   bit from the tt operand. The value of the selected bit is       */
+//  /*   placed in the corresponding bit position of the result.         */
+//  /*                                                                   */
+//  /*   The tt parameter provides the result column of a truth table:   */
+//  /*       A-bit    B-bit   C-bit     tt                               */
+//  /*       -----    -----   -----   ------                             */
+//  /*         0       0       0       bit 0                             */
+//  /*         0       0       1       bit 1                             */
+//  /*         0       1       0       bit 2                             */
+//  /*                ...                                                */
+//  /*         1       1       0       bit 6                             */
+//  /*         1       1       1       bit 7                             */
+//  /*-------------------------------------------------------------------*/
+//  static inline U128 U128_evaluate( U128 a, U128 b, U128 c, U8 tt )
+//  {
+//      static const U8 tt_bit_mask[8] =
+//              { 0x80, 0x40, 0x20, 0x10,
+//                0x08, 0x04, 0x02, 0x01 };
+//
+//      U128    result;
+//      U8      tt_bit;
+//      int     i, index;
+//
+//      result = U128_zero();
+//
+//      for (i=0; i<128; i++)
+//      {
+//          result = U128_shrl(result,1);
+//          index = 0;
+//          if ((a.UU_B(15) & 0x01))
+//              index += 4;
+//          if ((b.UU_B(15) & 0x01))
+//              index += 2;
+//          if ((c.UU_B(15) & 0x01))
+//              index += 1;
+//
+//          tt_bit = (tt & tt_bit_mask[index]) ? 0x80 : 0x00;
+//          result.UU_B(0) |=  tt_bit;
+//
+//          a = U128_shrl(a,1);
+//          b = U128_shrl(b,1);
+//          c = U128_shrl(c,1);
+//      }
+//
+//      return result;
+//  }
 
 /*===================================================================*/
 /* Utility Helpers                                                   */
