@@ -3687,6 +3687,7 @@ DEF_INST( vector_evaluate )
         break;
     case 70:    /* 01000 110  SEL(C,NOT(B),AND(B,A))  */
         temp = U128_select(tempC, U128_not(tempB), U128_and(tempB, tempA));
+        break;
     case 71:    /* 01000 111  SEL(B,A,C)  */
         temp = U128_select(tempB, tempA, tempC);
         break;
