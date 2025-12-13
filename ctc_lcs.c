@@ -6110,8 +6110,6 @@ static const BYTE Inbound_CD00[INBOUND_CD00_SIZE] =
     BYTE        frameout[64];
     char        llcmsg[256];
 
-    UNREFERENCED( iSize );
-
     pDEVBLK = pLCSDEV->pDEVBLK[ LCS_READ_SUBCHANN ];  /* SNA has only one device */
     pLCSBLK = pLCSDEV->pLCSBLK;
 
@@ -6130,6 +6128,7 @@ static const BYTE Inbound_CD00[INBOUND_CD00_SIZE] =
 
     // Discard the frame if the 802.2 LLC appears to be questionable.
     if ( !illcsize ) goto msg970_return;
+    if ( !iSize ) goto msg970_return;
 
     //
     switch (llc.hwType)
@@ -6793,9 +6792,29 @@ static const BYTE Inbound_CD00[INBOUND_CD00_SIZE] =
             else  // Command. Respond to the TEST from the remote system.
             {
 
-                memset( frameout, 0, sizeof(frameout) );       // Clear area for ethernet fram
-                pEthFrameOut = (PETHFRM)&frameout[0];
-                iEthLenOut = 60;                               // Minimum ethernet frame length
+                // The ANSI/IEEE Std 802.2 in a section titled "Uses of the TEST
+                // command PDU and response PDU" says "Successful completion of the
+                // test consists of sending a TEST command PDU with a particular
+                // information field ... to the designated destination LLC address
+                // and receiving, in return, the identical information field in a
+                // TEST response PDU.". The information field seems to be anything
+                // that follows the Unnumbered Frame LLC.
+
+                // Allocate a buffer the same size as the frame containing the
+                // accepted TEST command PDU, and copy the TEST command PDU. The
+                // copied command PDU will be modified to become the response PDU.
+                pEthFrameOut = malloc( iSize );    // Allocate the buffer
+                if (!pEthFrameOut)                 // if the allocate failed...
+                {
+                    // Report the bad news.
+                    MSGBUF( llcmsg, "malloc(%d)", (int)iSize );
+                    // HHC00900 "%1d:%04X %s: error in function %s: %s"
+                    WRMSG(HHC00900, "E", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname,
+                                         llcmsg, strerror(errno) );
+                    break;
+                }
+                memcpy( pEthFrameOut, pEthFrame, iSize );
+                iEthLenOut = iSize;
 
                 //
                 memset( &llcout, 0, sizeof(LLC) );
@@ -6810,7 +6829,6 @@ static const BYTE Inbound_CD00[INBOUND_CD00_SIZE] =
                 memcpy( &pEthFrameOut->bDestMAC, &pEthFrame->bSrcMAC, IFHWADDRLEN );  // Copy destination MAC address
                 memcpy( &pEthFrameOut->bSrcMAC, &pEthFrame->bDestMAC, IFHWADDRLEN );  // Copy source MAC address
                 iLPDULenOut = BuildLLC( &llcout, pEthFrameOut->bData);                // Build LLC PDU
-                STORE_HW( pEthFrameOut->hwEthernetType, (U16)iLPDULenOut );           // Set data length
 
                 // Trace Ethernet frame before sending to TAP device
                 if (pLCSBLK->fDebug)
@@ -6826,7 +6844,7 @@ static const BYTE Inbound_CD00[INBOUND_CD00_SIZE] =
                 {
                     if (pLCSPORT->pLCSBLK->fDebug)
                     {
-                        snprintf( llcmsg, sizeof(llcmsg), "LCS: LLC unnumbered frame sent: CR=%u, M=%s", llc.hwCR, "TEST" );
+                        snprintf( llcmsg, sizeof(llcmsg), "LCS: LLC unnumbered frame sent: CR=%u, M=%s", llcout.hwCR, "TEST" );
                         WRMSG(HHC03984, "D", llcmsg );
                     }
                 }
@@ -6836,6 +6854,9 @@ static const BYTE Inbound_CD00[INBOUND_CD00_SIZE] =
     //??            pLCSDEV->fTuntapError = TRUE;
                     PTT_TIMING( "*WRITE ERR", 0, iEthLenOut, 1 );
                 }
+
+                // Free the buffer containing the TEST response PDU.
+                free( pEthFrameOut );
 
             }
 
