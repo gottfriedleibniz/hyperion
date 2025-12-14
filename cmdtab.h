@@ -1732,13 +1732,28 @@
 #define tquest_cmd_desc         "Query instruction tracing"
 #define tquest_cmd_help         \
                                 \
-  "Format: \"t?\" displays whether instruction tracing is ON or OFF\n"          \
-  "and the address range if any.\n"
+  "Format: \"t?\" displays whether instruction and/or CCW tracing\n"            \
+  "is ON or OFF and the address range and/or device number, if any.\n"
 
 #define tckd_cmd_desc           "Turn Search Key tracing ON/OFF for device"
 #define tcpu_cmd_desc           "Turn instruction tracing ON/OFF for CPU(s)"
 #define odev_cmd_desc           "Turn ORB tracing ON/OFF for device"
+
+
+
 #define tdev_cmd_desc           "Turn ORB and CCW tracing ON/OFF for device"
+#define tdev_cmd_help           \
+                                \
+  "Format:   \"t+devnum   [(hh[,hh]...)]\"\n"                                   \
+  "\n"                                                                          \
+  "where 'devnum' is the device address of the device whose CCWs are to be\n"   \
+  "traced, and 'hh' are the optional list of specific CCW opcodes that are\n"   \
+  "to be traced. If just the device number is specified, then all CCW opcodes\n"\
+  "will be traced. Otherwise if any optional 'hh' values are specified, then\n" \
+  "ONLY those specific CCW opcodes will be traced for that device. Note that\n" \
+  "if any 'hh' value(s) is/are specified, it/they must be enclosed within\n"    \
+  "parentheses and separated from the others, if any, with a single comma.\n"
+
 #define tplus_cmd_desc          "Turn instruction tracing ON for all CPUs"
 #define tplus_cmd_help          \
                                 \
@@ -2151,7 +2166,7 @@ COMMAND( "dumpdev",                 lddev_cmd,              SYSCMD,             
 
 COMMAND( "f{+/-}adr",               NULL,                   SYSCMDNOPER,        f_cmd_desc,             f_cmd_help          )
 COMMAND( "o{+/-}dev",               NULL,                   SYSCMDNOPER,        odev_cmd_desc,          NULL                )
-COMMAND( "t{+/-}dev",               NULL,                   SYSCMDNOPER,        tdev_cmd_desc,          NULL                )
+COMMAND( "t{+/-}dev",               NULL,                   SYSCMDNOPER,        tdev_cmd_desc,          tdev_cmd_help       )
 COMMAND( "t{+/-}CKD [devnum]",      NULL,                   SYSCMDNOPER,        tckd_cmd_desc,          NULL                )
 COMMAND( "t{+/-}CPU [cpunum]",      NULL,                   SYSCMDNOPER,        tcpu_cmd_desc,          NULL                )
 
