@@ -597,11 +597,44 @@ DLL_EXPORT char *resolve_symbol_string(const char *text)
 /* (called by defsym panel command) */
 DLL_EXPORT void list_all_symbols()
 {
-    SYMBOL_TOKEN* tok; int i;
+    SYMBOL_TOKEN* tok; int i, k;
+    char* p;
+
     for (i=0; i < symbol_count; i++)
-        if ((tok = symbols[i]) != NULL)
-            // "Symbol %-12s %s"
-            WRMSG( HHC02199, "I", tok->var, tok->val ? tok->val : "" );
+    {
+        if (!(tok = symbols[i]))
+            continue;
+
+        p = tok->val ? tok->val : "";
+
+        if ((k = strlen( p )) <= 80)
+        {
+            // "Symbol %-12s %-80s"
+            WRMSG( HHC02199, "I", tok->var, p );
+        }
+        else // (show first 80, then another 80, etc, until all is displayed)
+        {
+            bool  did2199;
+            char  buf80[ 80+1 ];
+
+            for (did2199 = false; k > 0; p += 80, k -= 80)
+            {
+                STRLCPY( buf80, p );   // (grab next chunk)
+
+                if (!did2199)
+                {
+                    // "Symbol %-12s %-80s"
+                    WRMSG( HHC02199, "I", tok->var, buf80 );
+                    did2199 = true;
+                }
+                else
+                {
+                    // "                    %-80s"
+                    WRMSG( HHC02196, "I", buf80 );
+                }
+            }
+        }
+    }
 }
 
 /* Hercules microsecond sleep */

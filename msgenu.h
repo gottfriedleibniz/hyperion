@@ -1383,11 +1383,11 @@ LOGM_DLL_IMPORT int  panel_command_capture( char* cmd, char** resp, bool quiet )
 #define HHC02104 "Logger: log switched to %s"
 #define HHC02105 "Logger: log to %s"
 #define HHC02106 "Logger: log switched off"
-//efine HHC02107 - HHC02196 (available)
+//efine HHC02107 - HHC02195 (available)
+#define HHC02196 "                    %-80s"  // (HHC02199 part 2 for VERY long symbols)
 #define HHC02197 "Symbol name %s is reserved"
-// Note HHC02198  is actually in config.c
-#define HHC02198 "Device %04X type %04X subchannel %d:%04X attached"
-#define HHC02199 "Symbol %-12s %s"
+#define HHC02198 "Device %04X type %04X subchannel %d:%04X attached" // (is actually in config.c)
+#define HHC02199 "Symbol %-12s %-80s"
 
 // reserve 022xx - 023xx for command processing
 #define HHC02200 "%1d:%04X device not found"
