@@ -3696,11 +3696,11 @@ DEF_INST( vector_pack_zoned_register )
         regs->psw.cc = cc;
     }
 
-    /* note: operation is completed before any fixed-point overflow exception */
+    /* note: operation is completed before any decimal overflow exception */
     /* masked overflow? */
-    if ( !iom && overflowed  && FOMASK(&regs->psw))
+    if ( !iom && overflowed  && DOMASK(&regs->psw))
     {
-        regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+        regs->program_interrupt (regs, PGM_DECIMAL_OVERFLOW_EXCEPTION);
     }
 
     ZVECTOR_END( regs );
