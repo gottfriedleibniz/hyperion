@@ -3649,8 +3649,8 @@ DEF_INST( vector_evaluate )
     case 57:    /* 00111 001  SEL(A,NXOR(B,C),B)  */
         temp = U128_select(tempA, U128_nxor(tempB, tempC), tempB);
         break;
-    case 58:    /* 00111 010  SEL(A,NOT(C),C)  */
-        temp = U128_select(tempA, U128_not(tempC), tempC);
+    case 58:    /* 00111 010  SEL(A,NOT(C),B)  */
+        temp = U128_select(tempA, U128_not(tempC), tempB);
         break;
     case 59:    /* 00111 011  SEL(C,B,OR(B,A))  */
         temp = U128_select(tempC, tempB, U128_or(tempB, tempA));
