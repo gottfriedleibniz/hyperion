@@ -423,8 +423,12 @@ BYTE    chanstat;                       /* IPL device channel status */
 int rc;
 
     /* Get started */
+    sysblk.ipldev = devnum;
     if ((rc = ARCH_DEP( common_load_begin )( cpu, clear )))
+    {
+        sysblk.ipldev = 0;
         return rc;
+    }
 
     /* Ensure CPU is online */
     if (!IS_CPU_ONLINE(cpu))
@@ -433,6 +437,7 @@ int rc;
         MSGBUF(buf, "CP%2.2X Offline", devnum);
         // "Processor %s%02X: ipl failed: %s"
         WRMSG (HHC00810, "E", PTYPSTR(sysblk.pcpu), sysblk.pcpu, buf);
+        sysblk.ipldev = 0;
         return -1;
     }
 
@@ -451,16 +456,17 @@ int rc;
         /* HercGUI hook so it can update its LEDs */
         HDC1( debug_cpu_state, regs );
 
+        sysblk.ipldev = 0;
         return -1;
     }
 
-    if(sysblk.haveiplparm)
+    if (sysblk.haveiplparm)
     {
-        for(i=0;i<16;i++)
+        for(i=0; i < 16; i++)
         {
-            regs->GR_L(i)=fetch_fw(&sysblk.iplparmstring[i*4]);
+            regs->GR_L(i) = fetch_fw( &sysblk.iplparmstring[i*4] );
         }
-        sysblk.haveiplparm=0;
+        sysblk.haveiplparm = 0;
     }
 
     /* Set Main Storage Reference and Update bits */
@@ -488,7 +494,7 @@ int rc;
     RELEASE_INTLOCK(NULL);
 
     /* Execute the IPL channel program */
-    ARCH_DEP(execute_ccw_chain) (dev);
+    ARCH_DEP( execute_ccw_chain )( dev );
 
     OBTAIN_INTLOCK(NULL);
 
@@ -526,12 +532,14 @@ int rc;
             MSGBUF(buffer, "architecture mode %s, csw status %2.2X%2.2X, sense %s",
                 get_arch_name( NULL ),
                 unitstat, chanstat, buf);
-            WRMSG (HHC00828, "E", PTYPSTR(sysblk.pcpu), sysblk.pcpu, buffer);
+            // "Processor %s%02X: ipl failed: %s"
+            WRMSG( HHC00828, "E", PTYPSTR( sysblk.pcpu ), sysblk.pcpu, buffer );
         }
 
         /* HercGUI hook so it can update its LEDs */
         HDC1( debug_cpu_state, regs );
 
+        sysblk.ipldev = 0;
         return -1;
     }
 
@@ -568,14 +576,14 @@ int rc;
 /*-------------------------------------------------------------------*/
 /* Common LOAD (IPL) finish: load IPL PSW and start CPU              */
 /*-------------------------------------------------------------------*/
-int ARCH_DEP(common_load_finish) (REGS *regs)
+int ARCH_DEP( common_load_finish )( REGS* regs )
 {
 int rc;
     /* Zeroize the interrupt code in the PSW */
     regs->psw.intcode = 0;
 
     /* Load IPL PSW from PSA+X'0' */
-    if ((rc = ARCH_DEP(load_psw) (regs, regs->psa->iplpsw)) )
+    if ((rc = ARCH_DEP( load_psw )( regs, regs->psa->iplpsw )))
     {
         char buf[80];
         MSGBUF(buf, "architecture mode %s, invalid ipl psw %2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X",
@@ -584,11 +592,13 @@ int rc;
                 regs->psa->iplpsw[2], regs->psa->iplpsw[3],
                 regs->psa->iplpsw[4], regs->psa->iplpsw[5],
                 regs->psa->iplpsw[6], regs->psa->iplpsw[7]);
-        WRMSG (HHC00839, "E", PTYPSTR(sysblk.pcpu), sysblk.pcpu, buf);
+        // "Processor %s%02X: ipl failed: %s"
+        WRMSG( HHC00839, "E", PTYPSTR( sysblk.pcpu ), sysblk.pcpu, buf );
 
         /* HercGUI hook so it can update its LEDs */
         HDC1( debug_cpu_state, regs );
 
+        sysblk.ipldev = 0;
         return rc;
     }
 
