@@ -3778,7 +3778,10 @@ do {                                                                   \
                        we're even called.)
                     */
                     if (to_memory)
+                    {
                         DISPLAY_CCW( did_ccw_trace, dev, ccw, addr, count, flags );
+                        *did_ccw_trace = false;
+                    }
                     DISPLAY_IDAW( dev, PF_MIDAW, midawflg, midawdat, midawlen );
                 }
 #if DEBUG_DUMP
@@ -3989,7 +3992,10 @@ do {                                                                   \
                    we're even called.)
                 */
                 if (to_memory)
+                {
                     DISPLAY_CCW( did_ccw_trace, dev, ccw, addr, count, flags );
+                    *did_ccw_trace = false;
+                }
                 DISPLAY_IDAW( dev, idawfmt, 0, idadata, idalen );
             }
 
@@ -5690,6 +5696,17 @@ prefetch:
                 /* If error during copy, skip remaining CD CCWs */
                 if (chanstat && (flags & CCW_FLAGS_CD))
                     skip_ccws = 1;
+
+                /* NOW that the data that was read from the device has
+                   been copied from the channel I/O buffer back into
+                   main storage, we can NOW trace the READ CCW so that
+                   we can actually see the data that was read.
+                */
+                if (dev->ccwtrace)
+                {
+                    did_ccw_trace = false;
+                    DISPLAY_CCW( &did_ccw_trace, dev, ccw, addr, count, flags );
+                }
             }
         }
 
