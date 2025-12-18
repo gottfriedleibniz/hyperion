@@ -809,4 +809,12 @@ typedef int CMPFUNC(const void*, const void*);
 
 #endif // _MSVC_
 
+/*-------------------------------------------------------------------*/
+/*                 CCW tracing helper macro                          */
+/*-------------------------------------------------------------------*/
+#define DISPLAY_CCW( _did, _dev, _ccw, _addr, _count, _flags )         \
+                                                                       \
+    display_ccw( (_did), (_dev), (_ccw), (_addr), (_count), (_flags),  \
+                 __FILE__, __LINE__, __FUNCTION__ )
+
 #endif // _HMACROS_H

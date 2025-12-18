@@ -429,8 +429,9 @@ HUT_DLL_IMPORT bool check_if_debugger_is_present();
 #define TF_FMT0   '0'       // Format 0 = original release
 #define TF_FMT1   '1'       // Format 1 = 64 bytes of E7 CCW data
 #define TF_FMT2   '2'       // Format 2 = TFHDR thread id/name
+#define TF_FMT3   '3'       // Format 3 = 80 bytes of CCW data
 
-#define TF_FMT  TF_FMT2     // Current TraceFile file-format
+#define TF_FMT  TF_FMT3     // Current TraceFile file-format
 
 #undef ATTRIBUTE_PACKED
 #if defined(_MSVC_)
@@ -1201,7 +1202,7 @@ struct TF01315
     U32     addr;           // CCW data address
     U16     count;          // CCW byte count
     BYTE    amt;            // Data amount
-    BYTE    pad [ 1 ];      // (padding/alignment/unused)
+    BYTE    sysg;           // SYSG I/O via 
     BYTE    ccw[8];         // CCW
 
     // Format-0...
@@ -1210,7 +1211,11 @@ struct TF01315
 
     // Format-1...
 
-    BYTE    data[64];       // CCW data (amt <= 64)
+//  BYTE    data[64];       // CCW data (amt <= 64)
+
+    // Format-3...
+
+    BYTE    data[80];       // CCW data (amt <= 80)
 }
 ATTRIBUTE_PACKED; typedef struct TF01315 TF01315;
 CASSERT( sizeof( TF01315 ) % 8 == 0, hscutl_h );

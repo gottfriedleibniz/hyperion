@@ -3798,13 +3798,17 @@ DLL_EXPORT bool tf_1315( const DEVBLK* dev, const BYTE* ccw,
               const U32 addr, const U16 count, BYTE* data, BYTE amt )
 {
     TF01315 rec;
+    ASSERT( amt   > 0 ); // (sanity check)
+    ASSERT( count > 0 ); // (sanity check)
     rec.rhdr.devnum = dev->devnum;
+    rec.sysg = (dev == sysblk.sysgdev);
     rec.rhdr.lcss   = SSID_TO_LCSS( dev->ssid );
-    rec.amt   = amt;
+    rec.amt   = MIN( amt, sizeof( rec.data )); // (no buffer o'flows!)
     rec.addr  = addr;
     rec.count = count;
     memcpy( rec.ccw,  ccw,  sizeof( rec.ccw ));
-    memcpy( rec.data, data, amt );
+    memcpy( rec.data, data, rec.amt );
+
     return tf_write( NULL, &rec, sizeof( TF01315 ), 1315 );
 }
 

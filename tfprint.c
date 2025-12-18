@@ -13,6 +13,7 @@
 
 #include "hstdinc.h"
 #include "hercules.h"
+#include "hexdumpe.h"
 
 #define UTILITY_NAME    "tfprint"
 #define UTILITY_DESC    "Print Trace File Utility"
@@ -2059,106 +2060,62 @@ static inline void print_814_sigp( TF00814* rec )
 /******************************************************************************/
 
 /*-------------------------------------------------------------------*/
-/*  e7_fmtdata -- format 64 bytes of hex and character buffer data   */
+/*                          Format Data                              */
 /*-------------------------------------------------------------------*/
-static const char* e7_fmtdata( BYTE code, BYTE* data, BYTE amt )
+static INLINE char* format_data( char* buff, const u_int bufflen,
+                                 const BYTE* data, const u_int datalen )
 {
-    static char both_buf[(64/16)*96] = {0};
-           char byte_buf[(64/16)*64] = {0};
-           char char_buf[(64/16)*32] = {0};
+    static const size_t  bpg = 4;       // (bytes per group)
+                 size_t  gpl = 4;       // (groups per line)
+    static const char*   pfx = "";      // (line prefix string)
+                 char*   dump = NULL;   // ("hexdump" results)
 
-    UNREFERENCED( code );
+    ASSERT( buff && bufflen );  // (sanity check)
+    ASSERT( data && datalen );  // (sanity check)
 
-    if (amt > 64) CRASH();  // (sanity check)
+    // Determine number of groups-per-line: if we're formatting a
+    // storage or buffer dump, then we will be formatting a regular
+    // multi-line dump, with each line consisting of only 16 bytes
+    // of the dump per line (which is 4 groups of 4-bytes-per-group).
+    //
+    // If we're formatting only the the first 'x' bytes of a CCW's
+    // I/O buffer for a CCW trace message however, then we want all
+    // of it formatted into one long line, so the number of 4-byte-
+    // groups-per-line will vary depending on how much data we will
+    // be tracing.
 
-    if (!amt)   // (might be e.g. TIC, which doesn't xfer any data)
+    gpl = ROUND_UP( datalen, bpg ) / bpg;
+
+    hexdumpe16( pfx, &dump, data, 0, datalen, 0, 4, gpl );
+
+    if (dump)
     {
-        both_buf[0] = 0;
-        return both_buf;
+        size_t  dumplen  = strlen( dump );
+        dump[ dumplen-1 ] = 0; // (remove newline)
+        // (Note: "dmp+6" to skip past cosmetic address of dumped data)
+        strlcpy( buff, dump+6, bufflen );
+        free( dump );
     }
+    else
+        *buff = 0;
 
-    MSGBUF( byte_buf,
-        " => "
-        "%2.2X%2.2X%2.2X%2.2X %2.2X%2.2X%2.2X%2.2X %2.2X%2.2X%2.2X%2.2X %2.2X%2.2X%2.2X%2.2X "
-        "%2.2X%2.2X%2.2X%2.2X %2.2X%2.2X%2.2X%2.2X %2.2X%2.2X%2.2X%2.2X %2.2X%2.2X%2.2X%2.2X "
-        "%2.2X%2.2X%2.2X%2.2X %2.2X%2.2X%2.2X%2.2X %2.2X%2.2X%2.2X%2.2X %2.2X%2.2X%2.2X%2.2X "
-        "%2.2X%2.2X%2.2X%2.2X %2.2X%2.2X%2.2X%2.2X %2.2X%2.2X%2.2X%2.2X %2.2X%2.2X%2.2X%2.2X"
-
-        , data[ 0], data[ 1], data[ 2], data[ 3], data[ 4], data[ 5], data[ 6], data[ 7]
-        , data[ 8], data[ 9], data[10], data[11], data[12], data[13], data[14], data[15]
-
-        , data[16], data[17], data[18], data[19], data[20], data[21], data[22], data[23]
-        , data[24], data[25], data[26], data[27], data[28], data[29], data[30], data[31]
-
-        , data[32], data[33], data[34], data[35], data[36], data[37], data[38], data[39]
-        , data[40], data[41], data[42], data[43], data[44], data[45], data[46], data[47]
-
-        , data[48], data[49], data[50], data[51], data[52], data[53], data[54], data[55]
-        , data[56], data[57], data[58], data[59], data[60], data[61], data[62], data[63]
-    );
-
-    // Truncate according to passed len (the below accounts for the
-    // 4 char " => " prefix, plus the 2 printed hex characters for
-    // each byte, plus the blank/space after every 4 printed bytes.
-
-    byte_buf[ 4 + (amt << 1) + (amt >> 2) ] = 0;
-
-    // Now format the character representation of those bytes
-
-    prt_guest_to_host( data, char_buf, amt );
-
-    MSGBUF( both_buf, "%-*.*s%s", 4+((64/4)*9),
-                                  4+((64/4)*9),
-                                  byte_buf, char_buf );
-
-    return both_buf;
+    return buff;
 }
 
+
 /*-------------------------------------------------------------------*/
-/*   fmtdata -- format 16 bytes of hex and character buffer data     */
+/*                Format CCW I/O Buffer Data                         */
 /*-------------------------------------------------------------------*/
-static const char* fmtdata( BYTE code, BYTE* data, BYTE amt )
+static INLINE char* format_iobuf_data( const BYTE* data, char* dest,
+                                       int dest_size, BYTE data_amt )
 {
-    if (sys_ffmt >= TF_FMT1 && code == 0xE7)
-        return e7_fmtdata( code, data, amt );
-    else
-    {
-        static char both_buf[(16/16)*96] = {0};
-               char byte_buf[(16/16)*64] = {0};
-               char char_buf[(16/16)*32] = {0};
+    char* formatted_iobuf_data;
 
-        if (amt > 16) CRASH();  // (sanity check)
-
-        if (!amt)   // (might be e.g. TIC, which doesn't xfer any data)
-        {
-            both_buf[0] = 0;
-            return both_buf;
-        }
-
-        MSGBUF( byte_buf,
-            " => "
-            "%2.2X%2.2X%2.2X%2.2X %2.2X%2.2X%2.2X%2.2X %2.2X%2.2X%2.2X%2.2X %2.2X%2.2X%2.2X%2.2X"
-
-            , data[0], data[1], data[ 2], data[ 3], data[ 4], data[ 5], data[ 6], data[ 7]
-            , data[8], data[9], data[10], data[11], data[12], data[13], data[14], data[15]
-        );
-
-        // Truncate according to passed len (the below accounts for the
-        // 4 char " => " prefix, plus the 2 printed hex characters for
-        // each byte, plus the blank/space after every 4 printed bytes.
-
-        byte_buf[ 4 + (amt << 1) + (amt >> 2) ] = 0;
-
-        // Now format the character representation of those bytes
-
-        prt_guest_to_host( data, char_buf, amt );
-
-        MSGBUF( both_buf, "%-*.*s%s", 4+((16/4)*9),
-                                      4+((16/4)*9),
-                                      byte_buf, char_buf );
-
-        return both_buf;
-    }
+    ASSERT( dest_size >= 5 );   // (sanity check)
+    ASSERT( data_amt  >= 1 );   // (sanity check)
+    memcpy( dest, " => ", 4 );
+    formatted_iobuf_data  = format_data( dest + 4, dest_size-4, data, data_amt );
+    return dest;
 }
 
 /*-------------------------------------------------------------------*/
@@ -2256,6 +2213,7 @@ PRINT_DEV_FUNC( 1300 ), rec->cc ); }
 /*-------------------------------------------------------------------*/
 static inline void print_TF01301( TF01301* rec )
 {
+    char iodata_print_buffer[ 512 ];
     char timstr[ 64] = {0};    // "YYYY-MM-DD HH:MM:SS.uuuuuu"
     FormatTIMEVAL( &rec->rhdr.tod, timstr, sizeof( timstr ));
 
@@ -2264,21 +2222,24 @@ static inline void print_TF01301( TF01301* rec )
     case PF_IDAW1:
         // "%1d:%04X CHAN: idaw %8.8"PRIX32", len %3.3"PRIX16"%s"
         TF_DEV_FLOGMSG( 1302 ),
-            rec->rhdr.lcss, rec->rhdr.devnum, (U32)rec->addr, rec->count, fmtdata( rec->code, rec->data, rec->amt ));
+            rec->rhdr.lcss, rec->rhdr.devnum, (U32)rec->addr, rec->count,
+            format_iobuf_data( rec->data, iodata_print_buffer, sizeof( iodata_print_buffer ), rec->amt ));
         break;
 
     case PF_IDAW2:
 
         // "%1d:%04X CHAN: idaw %16.16"PRIX64", len %4.4"PRIX16"%s"
         TF_DEV_FLOGMSG( 1303 ),
-            rec->rhdr.lcss, rec->rhdr.devnum, (U64)rec->addr, rec->count, fmtdata( rec->code, rec->data, rec->amt ));
+            rec->rhdr.lcss, rec->rhdr.devnum, (U64)rec->addr, rec->count,
+            format_iobuf_data( rec->data, iodata_print_buffer, sizeof( iodata_print_buffer ), rec->amt ));
         break;
 
     case PF_MIDAW:
 
         // "%1d:%04X CHAN: midaw %2.2X %4.4"PRIX16" %16.16"PRIX64"%s"
         TF_DEV_FLOGMSG( 1301 ),
-            rec->rhdr.lcss, rec->rhdr.devnum, rec->mflag, rec->count, (U64)rec->addr, fmtdata( rec->code, rec->data, rec->amt ));
+            rec->rhdr.lcss, rec->rhdr.devnum, rec->mflag, rec->count, (U64)rec->addr,
+            format_iobuf_data( rec->data, iodata_print_buffer, sizeof( iodata_print_buffer ), rec->amt ));
         break;
 
     default: CRASH(); UNREACHABLE_CODE( return );
@@ -2348,6 +2309,7 @@ static inline void print_TF01313( TF01313* rec )
 /*-------------------------------------------------------------------*/
 static inline void print_TF01315( TF01315* rec )
 {
+    char iodata_print_buffer[ 512 ];
     char timstr [ 64 ] = {0};      // "YYYY-MM-DD HH:MM:SS.uuuuuu"
 
     FormatTIMEVAL( &rec->rhdr.tod, timstr, sizeof( timstr ));
@@ -2357,7 +2319,10 @@ static inline void print_TF01315( TF01315* rec )
         rec->rhdr.lcss, rec->rhdr.devnum,
         rec->ccw[0], rec->ccw[1], rec->ccw[2], rec->ccw[3],
         rec->ccw[4], rec->ccw[5], rec->ccw[6], rec->ccw[7],
-        fmtdata( rec->ccw[0], rec->data, rec->amt ));
+        format_iobuf_data( rec->data, iodata_print_buffer, sizeof( iodata_print_buffer ), rec->amt ));
+
+    if (rec->sysg)
+        ++totios;  // (count total device I/Os printed)
 }
 
 // "%1d:%04X CHAN: csw %2.2X, stat %2.2X%2.2X, count %2.2X%2.2X, ccw %2.2X%2.2X%2.2X"
