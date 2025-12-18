@@ -15,6 +15,42 @@
 
 --------------------------------------------------------------------------------
 
+        ***  STOP WASTING VALUABLE HOST CPU INSTRUCTION CACHE!  ***
+        ***  STOP WASTING VALUABLE HOST CPU INSTRUCTION CACHE!  ***
+        ***  STOP WASTING VALUABLE HOST CPU INSTRUCTION CACHE!  ***
+
+  REDESIGN INSTRUCTION DECODING AND DISPATCH to eliminate the need for
+  each intruction function to decode it's own instruction!
+
+  Instead, decode each instruction by INTRUCTION FORMAT (and place the
+  results into e.g. REGS) so that when the instruction is dispatched,
+  it can just immediately execute, without decoding it own insruction!
+
+  The idea here is, there are HUNDREDS of instructions in the architecture
+  which all use the same instruction format:
+
+                    220  RRE
+                    114  RXY-a
+                     59  RRF-e
+                     57  RR
+                     ...etc...
+
+  Which means there are HUNDREDS of places throughout Hercules where the
+  exact same redundant code exists, BUT ALL AT A DIFFERENT PHYSICAL HOST
+  INSTRUCTION ADDRESS! (i.e. all at a differnt address within the Hercules
+  executable itself!)
+
+  Meaning Hercules is WASTING HUNDREDS OF TIMES more of the host CPU's
+  VALUABLE INSTRUCTION CACHE than necessary! HOST CPU Instruction Cache
+  that could better be used to cache yet OTHER parts of the Hercules ex-
+  ecutable, thus helping to speed up not only Hercules itself, but the
+  ENTIRE HOST SYSTEM ITSELF TOO!
+
+        ***  STOP WASTING VALUABLE HOST CPU INSTRUCTION CACHE!  ***
+        ***  STOP WASTING VALUABLE HOST CPU INSTRUCTION CACHE!  ***
+
+--------------------------------------------------------------------------------
+
   *BUG*:  FIX PORTABILITY ISSUES that have crept in over time.
 
   Remove all "#if defined(__APPLE__) || defined(__FreeBSD__)" statements.
