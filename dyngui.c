@@ -539,6 +539,13 @@ void*  gui_panel_command (char* pszCommand)
         return NULL;
     }
 
+    if (strncasecmp(pszCommand,"NO_OOPS_ICON=",13) == 0)
+    {
+        bool no_oops_icon = atoi(pszCommand+13);
+        sysblk.no_oops_icon = no_oops_icon;
+        return NULL;
+    }
+
     // Silently ignore any unrecognized special GUI commands...
 
     return NULL;        // (silently ignore it)
