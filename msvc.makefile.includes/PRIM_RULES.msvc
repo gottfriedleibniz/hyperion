@@ -15,6 +15,8 @@
 all: allzlib alllibbz2 allpcre allrexx allHercules
     if exist $(EXEDIR)\*.manifest del /f /q $(EXEDIR)\*.manifest
     echo.
+    if exist LICENSES\herclic.html XCOPY "LICENSES" "$(EXEDIR)" /V /C /F /H /R /K /Y
+    echo.
     echo -- Hercules build complete --
 
 allHercules: $(OBJDIR) $(EXEDIR) $(PDBDIR) $(MAPDIR) $(ASMDIR) \
