@@ -34,5 +34,10 @@ From the configuration file or hardware control panel, simply issue the commands
 ```
 
 This will enable all currently defined backported instructions to then be available in System/370 mode.
-For the current list of affected instructions refer to the `BEG_DIS_FAC_INS_FUNC( herc37X )` section
-of the [facility.c](../facility.c) source file.
+For the current list of affected instructions refer to the
+[`BEG_DIS_FAC_INS_FUNC( herc37X )`](https://github.com/SDL-Hercules-390/hyperion/blob/ee86c4de066fcdb2ec898a157ff4c687c5f01ce2/facility.c#L4298-L4483)
+section of the [`facility.c`](../facility.c) source file.
+
+&nbsp;
+&nbsp;
+&nbsp;
