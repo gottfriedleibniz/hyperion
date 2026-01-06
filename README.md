@@ -60,9 +60,9 @@ to our **bug report tracking system** by adding/creating a new
 ### Features and Operation
 
 [Customizable Hercules 3270 Logo](readme/README.HERCLOGO.md)  
-[Running Hercules in "No UI" mode](readme/README.DAEMON.md)  
 [Guest Access To Host IP Stack - The TCPIP (X'75') Instruction](readme/README.TCPIP.md)  
 [HAO (Hercules Automatic Operator)](readme/README.HAO.md)  
+[`HERCULES_370_EXTENSION` Facility: S/370 Backport of select ESA/390 and z/Architecture instructions](readme/README.S37X.md)  
 [Hercules CCKD64 Support](readme/README.CCKD64.md)  
 [Hercules Networking](readme/README.NETWORKING.md)  
 [Hercules SNA Support](readme/README.SNA.md)  
@@ -70,8 +70,7 @@ to our **bug report tracking system** by adding/creating a new
 [Hercules Tape Support Enhancements SPE/Fixes](readme/README.TAPE.md)  
 [Host Resource Access Facility](readme/README.HRAF.md)  
 [MAKETAPE Create .AWS Tape File from Data Utility](readme/README.MAKETAPE.md)  
-[Runtest Low-level Test Cases](tests/README.md)  
-[S/370 Backport of select ESA/390 and z/Architecture instructions](readme/README.S37X.md)  
+[Running Hercules in "No UI" mode](readme/README.DAEMON.md)  
 [TCPNJE Support](readme/README.TCPNJE.md)  
 [VMFPLC2 (VM) Formatted Tape Utility](readme/README.VMFPLC2.md)  
 
@@ -83,6 +82,6 @@ to our **bug report tracking system** by adding/creating a new
 [Hercules Dynamic Loader](readme/README.HDL.md)  
 [Hercules Dynamic Modules (on Windows)](readme/README.DYNMOD.md)  
 [HQA Build Scenarios](readme/README.HQA.md)  
-[Low-level Test Cases](tests/README.md)  
 [PTT Tracing](readme/README.PTT.md)  
+[Runtest Low-level Test Cases](tests/README.md)  
 [Trace-to-File Support](readme/README.TRACEFILE.md)  
