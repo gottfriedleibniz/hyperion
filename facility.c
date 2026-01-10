@@ -4347,7 +4347,7 @@ BEG_DIS_FAC_INS_FUNC( herc37X )
     DIS_FAC_INS(  B2A5,   "TRE     translate_extended" );
     DIS_FAC_INS(  B2A6,   "CU21    convert_utf16_to_utf8" );
     DIS_FAC_INS(  B2A7,   "CU12    convert_utf8_to_utf16" );
-
+    DIS_FAC_INS(  B2B0,   "STFLE   store_facility_list_extended" );
     DIS_FAC_INS(  B300,   "LPEBR   load_positive_bfp_short_reg" );
     DIS_FAC_INS(  B301,   "LNEBR   load_negative_bfp_short_reg" );
     DIS_FAC_INS(  B302,   "LTEBR   load_and_test_bfp_short_reg" );

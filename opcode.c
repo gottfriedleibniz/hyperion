@@ -1989,7 +1989,7 @@ static INSTR_FUNC ARCH_DEP( gen_opcode_b2xx )[256][NUM_INSTR_TAB_PTRS] =
  /*B2AD*/ AD_GENx___x___x___ ,
  /*B2AE*/ AD_GENx___x___x___ ,
  /*B2AF*/ AD_GENx___x___x___ ,
- /*B2B0*/ AD_GENx___x390x900 ( "STFLE"     , S    , ASMFMT_S       , store_facility_list_extended            ), /*!SARCH */
+ /*B2B0*/ AD_GENx37Xx390x900 ( "STFLE"     , S    , ASMFMT_S       , store_facility_list_extended            ), /*!SARCH */
  /*B2B1*/ AD_GENx___x390x900 ( "STFL"      , S    , ASMFMT_S       , store_facility_list                     ),
  /*B2B2*/ AD_GENx___x___x900 ( "LPSWE"     , S    , ASMFMT_S       , load_program_status_word_extended       ),
  /*B2B3*/ AD_GENx___x___x___ , /* STEAI - Store ETR Attachment Information */
