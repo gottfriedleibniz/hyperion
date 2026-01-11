@@ -4241,7 +4241,7 @@ DEF_INST( vector_evaluate )
         temp = U128_nand3(tempA, tempB, tempC);
         break;
     case 255:   /* 11111 111  TRUE  */
-        temp = U128_one();
+        temp = U128_minus_one();
         break;
     default:    /* Should not occur! */
         UNREACHABLE_CODE(temp = U128_zero());
