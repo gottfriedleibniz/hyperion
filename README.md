@@ -6,8 +6,9 @@
 ## Contents
 
 1. [About](#About)
-2. [Find out more](#Find-out-more)
-3. [Additional README files](#Additional-README-files)
+2. [The name 'SDL Hercules 4.x Hyperion'](#The-name-'SDL-Hercules-4.x-Hyperion')
+3. [Find out more](#Find-out-more)
+4. [Additional README files](#Additional-README-files)
 
 ## About
 
@@ -22,6 +23,20 @@ Hercules was created by Roger Bowler.
 Jay Maynard "the Tron Guy" was the maintainer from 2000 to 2012.
 
 Jan Jaeger designed and implemented many of the advanced features of Hercules, including dynamic reconfiguration, integrated console, interpretive execution and z/Architecture support.
+
+### The name 'SDL Hercules 4.x Hyperion'
+
+_**<big><big>Please Note**</big></big>_ &nbsp;that this version of Hercules is only called
+the "SDL" version in order to distinguish it from other versions of Hercules
+that may be out there, and _**not**_ for any other reason. 
+
+This version of Hercules was neither created by, nor is owned by, nor is maintained by,
+nor is supported by, nor is Copyrighted by, [Software Development Laboratories](http://www.softdevlabs.com). 
+
+Hercules is _not_ the work of any one person or company or organization. It was created by
+_many_ very smart and talented individuals over the course of many years.
+For a list of just _some_ of these very talented people, please refer to
+[question 6.01 of our FAQ](https://sdl-hercules-390.github.io/html/hercfaq.html#6.01). 
 
 ## Find out more
 
