@@ -445,6 +445,8 @@ void*  gui_panel_command (char* pszCommand)
 {
     void* (*next_panel_command_handler)(char* pszCommand);
 
+    LOG_H_fr_G( pszCommand );   // (Herc <-- GUI stream debugging)
+
     // Special GUI commands start with ']'. At the moment, all these special
     // gui commands tell us is what status information it's interested in...
 

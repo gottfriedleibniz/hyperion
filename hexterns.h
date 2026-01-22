@@ -42,6 +42,10 @@ int setresgid(gid_t rgid, gid_t egid, gid_t sgid);
 HSYS_DLL_IMPORT SYSBLK   sysblk;     /* System control block         */
 HSYS_DLL_IMPORT int      extgui;     /* true = extgui active         */
 
+#ifdef HG_GH_DEBUG
+HSYS_DLL_IMPORT FILE*    H_to_G;    /* herc --> GUI stream debugging */ 
+HSYS_DLL_IMPORT FILE*    H_fr_G;    /* herc <-- GUI stream debugging */
+#endif
 
 /* Functions in module bldcfg.c */
 int build_config (const char *fname);

@@ -2779,6 +2779,8 @@ DLL_EXPORT void send2gui( const char* pszFormat, ... )
 
         // Send the message to HercGUI...
 
+        LOG_H_to_G( msg );  // (Herc <--> stream debugging)
+
         obtain_lock( &sysblk.gui_msglock );
         {
             fprintf( stderr, "%s", msg );
