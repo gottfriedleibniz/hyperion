@@ -320,8 +320,6 @@ void  ProcessInputData ()
 ///////////////////////////////////////////////////////////////////////////////
 // (These are actually boolean flags..)
 
-double gui_version           = 0.0;     // (version of HercGUI we're talking to)
-
 BYTE   gui_forced_refresh    = 1;       // (force initial update refresh)
 
 BYTE   gui_wants_gregs       = 0;
@@ -420,7 +418,7 @@ static void tell_gui_our_version()
     // sending it ANOTHER "MAINSIZE=" message with our TRUE/ACTUAL
     // (accurate) mainsize value...
 
-    if (gui_version >= 1.12)
+    if (GNUM() < VNUM( 1.12.0 ))  // (older GUI?)
     {
         // Older versions of HercGUI only support
         // maximum 32-bit (4GB) mainsize values...
@@ -462,7 +460,8 @@ void*  gui_panel_command (char* pszCommand)
 
     if (strncasecmp( pszCommand, "VERS=", 5 ) == 0)
     {
-        gui_version = atof(pszCommand+5);
+        sysblk.gui_verstr = strdup( pszCommand  + 5 );
+        sysblk.gui_vernum = verstr2num( sysblk.gui_verstr );
         tell_gui_our_version();
         return NULL;
     }
@@ -2037,7 +2036,7 @@ void *(*next_debug_call)(REGS *);
 void* gui_debug_cd_cmd( char* pszCWD )
 {
     ASSERT( pszCWD );
-    if (gui_version >= 1.12)
+    if (GNUM() >= VNUM( 1.12.0 ))
         EXTGUIMSG( "]CWD=%s\n", pszCWD );
     return NULL;
 }

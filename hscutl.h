@@ -424,6 +424,18 @@ HUT_DLL_IMPORT bool check_if_debugger_is_present();
 
 HUT_DLL_IMPORT void  send2gui( const char* pszFormat, ... );
 
+/*-------------------------------------------------------------------*/
+/*      convert a version string to a number or vice-versa           */
+/*-------------------------------------------------------------------*/
+
+HUT_DLL_IMPORT U32   verstr2num ( const char* verstr );
+HUT_DLL_IMPORT char* vernum2str ( U32 vernum, char* verstr );
+
+#define              VERNUM2STR_BUFFSIZE          16
+#define _VNUM( s )   verstr2num( s )
+#define  VNUM( s )  _VNUM( #s )
+#define  GNUM()      sysblk.gui_vernum
+
 /*********************************************************************/
 /*********************************************************************/
 /**                                                                 **/

@@ -1056,6 +1056,8 @@ int     rc;
     if (argc >= 1 && strncmp( argv[argc-1], "EXTERNALGUI", 11 ) == 0)
     {
         extgui = TRUE;
+        sysblk.gui_verstr = "";
+        sysblk.gui_vernum = 0;
         initialize_lock( &sysblk.gui_msglock );
         argc--;
     }

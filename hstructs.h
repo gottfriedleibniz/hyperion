@@ -668,6 +668,8 @@ struct SYSBLK {
   const char  **bld_opts;               /* Build options             */
   const char  **extpkg_vers;            /* External Package versions */
 
+        char*   gui_verstr;             /* EXTERNALGUI version str   */
+        U32     gui_vernum;             /* EXTERNALGUI version num   */
         LOCK    gui_msglock;            /* EXTERNALGUI message lock  */
 
         bool    ulimit_unlimited;       /* ulimit -c unlimited       */

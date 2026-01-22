@@ -1477,7 +1477,11 @@ int initialize_utility( int argc, char* argv[],
     sysblk.sysgroup = DEFAULT_SYSGROUP;
 
     if (extgui)
+    {
+        sysblk.gui_verstr = "";
+        sysblk.gui_vernum = 0;
         initialize_lock( &sysblk.gui_msglock );
+    }
 
     initialize_detach_attr( DETACHED );
     initialize_join_attr( JOINABLE );
@@ -2784,6 +2788,42 @@ DLL_EXPORT void send2gui( const char* pszFormat, ... )
 
         free( msg );
     }
+}
+
+/*-------------------------------------------------------------------*/
+/*      convert a version string to a number or vice-versa           */
+/*-------------------------------------------------------------------*/
+
+DLL_EXPORT U32 verstr2num( const char* verstr )
+{
+    U32 numvers, major = 0, minor = 0, bugfix = 0;
+    sscanf( verstr, "%u.%u.%u", &major, &minor, &bugfix );
+    
+    MINMAX( major,  0, 999 );
+    MINMAX( minor,  0, 999 );
+    MINMAX( bugfix, 0, 999 );
+
+    numvers = (major * 1000000) + (minor * 1000) + (bugfix * 1);
+    return numvers;
+}
+
+/*-------------------------------------------------------------------*/
+
+DLL_EXPORT char* vernum2str( U32 vernum, char* verstr )
+{
+    U32  major, minor, bugfix;
+
+    major  = (vernum / 1000000); vernum -= (major * 1000000);
+    minor  = (vernum / 1000);    vernum -= (minor * 1000);
+    bugfix = (vernum / 1);
+
+    snprintf( verstr, VERNUM2STR_BUFFSIZE, "%u.%u.%u"
+        , major
+        , minor
+        , bugfix
+    );
+
+    return verstr;
 }
 
 /*********************************************************************/
