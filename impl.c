@@ -975,7 +975,7 @@ DLL_EXPORT int impl( int argc, char* argv[] )
 {
 TID     rctid;                          /* RC file thread identifier */
 TID     logcbtid;                       /* RC file thread identifier */
-int     rc, maxprio, minprio;
+int     rc;
 
     SET_THREAD_NAME( IMPL_THREAD_NAME );
 
@@ -985,15 +985,19 @@ int     rc, maxprio, minprio;
     /* Save minprio/maxprio, which were set in bootstrap.c when it
        called SET_THREAD_NAME at or near the beginning of main().
     */
-    minprio = sysblk.minprio;
-    maxprio = sysblk.maxprio;
+    {
+        int minprio, maxprio;
 
-    /* Clear the system configuration block (SYSBLK) to zero */
-    memset( &sysblk, 0, sizeof( SYSBLK ) );
+        minprio = sysblk.minprio;
+        maxprio = sysblk.maxprio;
 
-    /* Restore saved minprio/maxprio into SYSBLK */
-    sysblk.minprio = minprio;
-    sysblk.maxprio = maxprio;
+        /* Clear the system configuration block (SYSBLK) to zero */
+        memset( &sysblk, 0, sizeof( SYSBLK ) );
+
+        /* Restore saved minprio/maxprio into SYSBLK */
+        sysblk.minprio = minprio;
+        sysblk.maxprio = maxprio;
+    }
 
     // Check if, and remember, if debugger is present...
     // (must be done AFTER sysblk has been set to zero)

@@ -39,8 +39,9 @@ int setresgid(gid_t rgid, gid_t egid, gid_t sgid);
 #endif
 
 /* Global data areas in module hsys.c */
-HSYS_DLL_IMPORT SYSBLK   sysblk;        /* System control block      */
-HSYS_DLL_IMPORT int      extgui;        /* true = extgui active      */
+HSYS_DLL_IMPORT SYSBLK   sysblk;     /* System control block         */
+HSYS_DLL_IMPORT int      extgui;     /* true = extgui active         */
+
 
 /* Functions in module bldcfg.c */
 int build_config (const char *fname);

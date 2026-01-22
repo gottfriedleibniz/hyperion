@@ -15,39 +15,54 @@
 
 --------------------------------------------------------------------------------
 
-        ***  STOP WASTING VALUABLE HOST CPU INSTRUCTION CACHE!  ***
-        ***  STOP WASTING VALUABLE HOST CPU INSTRUCTION CACHE!  ***
-        ***  STOP WASTING VALUABLE HOST CPU INSTRUCTION CACHE!  ***
+        ***  STOP WASTING VALUABLE HOST INSTRUCTION CACHE!  ***
+        ***  STOP WASTING VALUABLE HOST INSTRUCTION CACHE!  ***
+        ***  STOP WASTING VALUABLE HOST INSTRUCTION CACHE!  ***
 
-  REDESIGN INSTRUCTION DECODING AND DISPATCH to eliminate the need for
-  each intruction function to decode it's own instruction!
+  Redesign instruction decoding and dispatch to eliminate the need for
+  each intruction function to decode it's own damn instruction!
 
-  Instead, decode each instruction by INTRUCTION FORMAT (and place the
-  results into e.g. REGS) so that when the instruction is dispatched,
-  it can just immediately execute, without decoding it own insruction!
+  Instead, decode each instruction by INTRUCTION FORMAT, and place the
+  results into a UNION somewhere (such as somewhere in REGS) so that
+  when the instruction is DISPATCHED, it can just immediately execute,
+  without having to decoding it own instruction!
 
-  The idea here is, there are HUNDREDS of instructions in the architecture
-  which all use the same instruction format:
+           ------------------------------------------------
+             DECODING AN INSTRUCTION IS THE RESPONSIBILITY
+             OF THE INSTRUCTION DECODER, NOT THE INSTRUCTION
+             DISPATCHER OR THE INSTRUCTION ITSELF!
+           ------------------------------------------------
 
-                    220  RRE
-                    114  RXY-a
-                     59  RRF-e
-                     57  RR
-                     ...etc...
+  The idea here is, there are literally HUNDREDS of instructions in
+  the architecture which all use the same instruction format as other
+  instructions:
 
-  Which means there are HUNDREDS of places throughout Hercules where the
-  exact same redundant code exists, BUT ALL AT A DIFFERENT PHYSICAL HOST
-  INSTRUCTION ADDRESS! (i.e. all at a differnt address within the Hercules
-  executable itself!)
+  There are  220  instructions using the  "RRE"    instruction format
+  There are  114  instructions using the  "RXY-a"  instruction format
+  There are  59   instructions using the  "RRF-e"  instruction format
+  There are  57   instructions using the  "RR"     instruction format
 
-  Meaning Hercules is WASTING HUNDREDS OF TIMES more of the host CPU's
-  VALUABLE INSTRUCTION CACHE than necessary! HOST CPU Instruction Cache
-  that could better be used to cache yet OTHER parts of the Hercules ex-
-  ecutable, thus helping to speed up not only Hercules itself, but the
-  ENTIRE HOST SYSTEM ITSELF TOO!
+  ...etc...
 
-        ***  STOP WASTING VALUABLE HOST CPU INSTRUCTION CACHE!  ***
-        ***  STOP WASTING VALUABLE HOST CPU INSTRUCTION CACHE!  ***
+  Which means there are literally *MANY HUNDREDS* of places throughout
+  Hercules where the exact same REDUNDANT code exists, BUT ALL AT A
+  DIFFERENT PHYSICAL HOST INSTRUCTION/STORAGE ADDRESS! (meaning each
+  one consumes its own separate set of host instruction cache lines!)
+
+  Hercules is wasting literally *HUNDREDS* OF TIMES more of the host
+  CPU's valuable INSTRUCTION CACHE than necessary! HOST CPU Instruction
+  Cache that could better be used to cache yet other parts of Hercules,
+  thus helping to speed up not only Hercules, but also the ENTIRE HOST
+  SYSTEM ITSELF TOO!
+
+           ------------------------------------------------
+             DECODING AN INSTRUCTION IS THE RESPONSIBILITY
+             OF THE INSTRUCTION DECODER, NOT THE INSTRUCTION
+             DISPATCHER OR THE INSTRUCTION ITSELF!
+           ------------------------------------------------
+
+        ***  STOP WASTING VALUABLE HOST INSTRUCTION CACHE!  ***
+        ***  STOP WASTING VALUABLE HOST INSTRUCTION CACHE!  ***
 
 --------------------------------------------------------------------------------
 
