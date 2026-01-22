@@ -668,6 +668,8 @@ struct SYSBLK {
   const char  **bld_opts;               /* Build options             */
   const char  **extpkg_vers;            /* External Package versions */
 
+        LOCK    gui_msglock;            /* EXTERNALGUI message lock  */
+
         bool    ulimit_unlimited;       /* ulimit -c unlimited       */
         bool    is_debugger_present;    /* gdb debugger present?     */
         pid_t   hercules_pid;           /* Process Id of Hercules    */

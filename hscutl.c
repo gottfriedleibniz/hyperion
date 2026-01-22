@@ -1476,6 +1476,9 @@ int initialize_utility( int argc, char* argv[],
     sysblk.msglvl = DEFAULT_MLVL;
     sysblk.sysgroup = DEFAULT_SYSGROUP;
 
+    if (extgui)
+        initialize_lock( &sysblk.gui_msglock );
+
     initialize_detach_attr( DETACHED );
     initialize_join_attr( JOINABLE );
     initialize_lock( &sysblk.dasdcache_lock );
@@ -2717,6 +2720,70 @@ static bool IsDebuggerPresent()
 DLL_EXPORT bool check_if_debugger_is_present()
 {
     return (sysblk.is_debugger_present = IsDebuggerPresent() ? true : false);
+}
+
+/*-------------------------------------------------------------------*/
+/*        Format and send a status message to HercGUI                */
+/*-------------------------------------------------------------------*/
+
+DLL_EXPORT void send2gui( const char* pszFormat, ... )
+{
+    if (extgui)
+    {
+        va_list  vl, original_vl;
+        int      size  = 1024;
+        int      rc    = -1;
+        char*    msg   = NULL;
+
+        // CRASH if invalid function arguments or Out of Memory
+
+        if (0
+            || !pszFormat
+            || !(msg = malloc( size ))
+        )
+            CRASH();
+
+        // Format the message...
+
+        va_start( vl, pszFormat );
+        va_copy( original_vl, vl );
+
+        while( rc < 0 )
+        {
+            va_start( vl, pszFormat );
+
+            rc = vsnprintf( msg, size, pszFormat, vl );
+
+            if (0
+                || (rc > 0 && rc < size)    // success
+                || (size >= 4096)           // too big
+            )
+                break;
+
+            if (!(msg = realloc( msg, size += 1024 )))
+                CRASH(); // (Out of Memory)
+            va_copy( vl, original_vl );
+        }
+
+        // CRASH if unable to successfully format a message
+
+        if (0
+            || rc <= 0
+            || rc >= size
+        )
+            CRASH(); // (WTF?!)
+
+        // Send the message to HercGUI...
+
+        obtain_lock( &sysblk.gui_msglock );
+        {
+            fprintf( stderr, "%s", msg );
+            fflush(  stderr );
+        }
+        release_lock( &sysblk.gui_msglock );
+
+        free( msg );
+    }
 }
 
 /*********************************************************************/
