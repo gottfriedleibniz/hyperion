@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
@@ -3812,91 +3812,91 @@
 					</File>
 					<File
 						RelativePath=".\tests\zvector-e7-09-multiply.core"
-					    >
+						>
 					</File>
 					<File
 						RelativePath=".\tests\zvector-e7-10-multiplyAdd.core"
-			    		>
+						>
 					</File>
 					<File
 						RelativePath=".\tests\zvector-e7-11-logical.core"
-				    	>
+						>
 					</File>
 					<File
 						RelativePath=".\tests\zvector-e7-12-elementShift.core"
-					    >
+						>
 					</File>
 					<File
 						RelativePath=".\tests\zvector-e7-13-UnpackMisc.core"
-    					>
+						>
 					</File>
 					<File
 						RelativePath=".\tests\zvector-e7-14-MergePack.core"
-	    				>
+						>
 					</File>
 					<File
 						RelativePath=".\tests\zvector-e7-15-ShiftByByte.core"
-		    			>
+						>
 					</File>
 					<File
 						RelativePath=".\tests\zvector-e7-16-PackCompare.core"
-			    		>
+						>
 					</File>
 					<File
 						RelativePath=".\tests\zvector-e7-17-AddSub.core"
-    					>
+						>
 					</File>
 					<File
 						RelativePath=".\tests\zvector-e7-18-VBPERM.core"
-	    				>
+						>
 					</File>
 					<File
 						RelativePath=".\tests\zvector-e7-19-VPERM.core"
-		    			>
+						>
 					</File>
 					<File
 						RelativePath=".\tests\zvector-e7-20-VSLDB.core"
-			    		>
+						>
 					</File>
 					<File
 						RelativePath=".\tests\zvector-e7-21-VREPI.core"
-	    				>
+						>
 					</File>
 					<File
 						RelativePath=".\tests\zvector-e7-22-VREP.core"
-		    			>
+						>
 					</File>
 					<File
 						RelativePath=".\tests\zvector-e7-23-VLREP.core"
-			    		>
+						>
 					</File>
 					<File
 						RelativePath=".\tests\zvector-e7-24-SumAcross.core"
-				    	>
+						>
 					</File>
 					<File
 						RelativePath=".\tests\zvector-e7-25-VSTRS.core"
-	    				>
+						>
 					</File>
 					<File
 						RelativePath=".\tests\zvector-e7-26-VGM.core"
-	    				>
+						>
 					</File>
 					<File
 						RelativePath=".\tests\zvector-e7-27-VERIM.core"
-	    				>
+						>
 					</File>
 					<File
 						RelativePath=".\tests\zvector-e7-28-ShiftVector.core"
-	    				>
+						>
 					</File>
 					<File
 						RelativePath=".\tests\zvector-e7-29-ShiftDoubleByBit.core"
-	    				>
+						>
 					</File>
 					<File
 						RelativePath=".\tests\zvector-e7-99-performance.core"
-	    				>
+						>
 					</File>
 				</Filter>
 				<Filter
@@ -5797,7 +5797,6 @@
 							RelativePath=".\tests\zvector-e7-08-VISTR.asm"
 							>
 						</File>
-
 						<File
 							RelativePath=".\tests\zvector-e7-09-multiply.asm"
 							>
