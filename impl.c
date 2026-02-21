@@ -1836,7 +1836,8 @@ int     rc;
                 USLEEP( 10 * 1000 );    /* Wait on CPU(s) or forever */
 
             if (sysblk.config_mask)     /* If NUMCPU > 0, then do    */
-                quit_cmd( 0, 0, 0);     /* normal/clean shutdown     */
+                                        /* direct call to ensure shutdown  */
+                do_shutdown();          /* before returning to bootstrap.c */
         }
     }
 
