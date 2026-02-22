@@ -2536,7 +2536,7 @@ LOGM_DLL_IMPORT int  panel_command_capture( char* cmd, char** resp, bool quiet )
 #define HHC03995 "%1d:%04X %s: %s:\n%s"
 #define HHC03996 "%1d:%04X %s: %s: %s"
 #define HHC03997 "%1d:%04X %s: %s: %susing %s %s"
-#define HHC03998 "%1d:%04X %s: %s inconsistent with %s"
+#define HHC03998 "%1d:%04X %s: %s \"%s\" inconsistent with %s \"%s\""
 //efine HHC03999 (available)
 
 // reserve 040xx for tcpnje related messages

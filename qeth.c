@@ -4436,78 +4436,105 @@ U32 mask4;
             }
         }
 
-#if defined( OPTION_W32_CTCI )
-        if (!grp->ttnetmask && !grp->ttpfxlen)
-        {
-            grp->ttnetmask = strdup("255.255.255.255");
-            grp->ttpfxlen = strdup("32");
-        }
-#endif
+        // Validate both netmask and prefix-length...
 
-        if (grp->ttnetmask)
+        if (1
+            && !grp->ttnetmask
+            && !grp->ttpfxlen
+        )
         {
-            char *new_ttpfxlen = NULL;
-            /* Build new prefix length based on netmask */
-            if (netmask2prefix( grp->ttnetmask, &new_ttpfxlen ) != 0)
+            // Neither was specified...
+
+            grp->ttnetmask = strdup("255.255.255.255");
+            grp->ttpfxlen  = strdup("32");
+        }
+        else if (1
+            && grp->ttnetmask
+            && grp->ttpfxlen
+        )
+        {
+            // BOTH were specified...
+
+            char *ttpfxlen  = NULL;
+            char *ttnetmask = NULL;
+
+            VERIFY( netmask2prefix( grp->ttnetmask, &ttpfxlen  ) == 0 );
+            VERIFY (prefix2netmask( grp->ttpfxlen,  &ttnetmask ) == 0 );
+
+            if (0
+                || str_caseless_ne( ttnetmask, grp->ttnetmask )
+                || str_caseless_ne( ttpfxlen,  grp->ttpfxlen )
+            )
             {
-                // HHC00916 "%1d:%04X %s: option %s value %s invalid"
-                WRMSG(HHC00916, "E", LCSS_DEVNUM, dev->typname,
-                                     "netmask", grp->ttnetmask );
+                // "%1d:%04X %s: %s \"%s\" inconsistent with %s \"%s\""
+                WRMSG( HHC03998, "E", LCSS_DEVNUM, dev->typname
+                    ,"prefix length", grp->ttpfxlen
+                    ,"netmask",       grp->ttnetmask
+                );
+
                 retcode = -1;
+
                 free( grp->ttnetmask );
                 free( grp->ttipaddr  );
                 free( grp->ttpfxlen  );
+
                 grp->ttnetmask = NULL;
                 grp->ttipaddr  = NULL;
                 grp->ttpfxlen  = NULL;
             }
-            else if (grp->ttpfxlen)
+        }
+        else if (grp->ttnetmask)
+        {
+            /* Build prefix length based on netmask... */
+
+            char *ttpfxlen = NULL;
+
+            if (netmask2prefix( grp->ttnetmask, &ttpfxlen ) == 0)
             {
-                /* Check netmask value (via newly built prefix)
-                   for consistency with existing prefix length */
-                if (grp->ttpfxlen &&
-                    strcmp( new_ttpfxlen, grp->ttpfxlen ) != 0)
-                {
-                    // HHC03998 "%1d:%04X %s: %s inconsistent with %s"
-                    WRMSG(HHC03998, "W", LCSS_DEVNUM, dev->typname,
-                        "prefix length", "netmask" );
-                }
-                /* Use consistent prefix length */
                 free( grp->ttpfxlen );
-                grp->ttpfxlen = new_ttpfxlen;
+                grp->ttpfxlen = ttpfxlen; // (already strdup'ed)
+            }
+            else
+            {
+                // "%1d:%04X %s: option %s value %s invalid"
+                WRMSG( HHC00916, "E", LCSS_DEVNUM, dev->typname,
+                                     "netmask", grp->ttnetmask );
+                retcode = -1;
+
+                free( grp->ttnetmask );
+                free( grp->ttipaddr  );
+                free( grp->ttpfxlen  );
+
+                grp->ttnetmask = NULL;
+                grp->ttipaddr  = NULL;
+                grp->ttpfxlen  = NULL;
             }
         }
-        if (grp->ttpfxlen)
+        else
         {
-            char *new_ttnetmask = NULL;
-            /* Build new netmask based on prefix length */
-            if (prefix2netmask( grp->ttpfxlen, &new_ttnetmask ) != 0)
+            /* Build netmask based on prefix length... */
+
+            char *ttnetmask = NULL;
+
+            if (prefix2netmask( grp->ttpfxlen, &ttnetmask ) == 0)
+            {
+                free( grp->ttnetmask );
+                grp->ttnetmask = ttnetmask; // (already strdup'ed)
+            }
+            else
             {
                 // HHC00916 "%1d:%04X %s: option %s value %s invalid"
                 WRMSG(HHC00916, "E", LCSS_DEVNUM, dev->typname,
                                      "ipaddr", grp->ttipaddr );
                 retcode = -1;
+
                 free( grp->ttpfxlen  );
                 free( grp->ttipaddr  );
                 free( grp->ttnetmask );
+
                 grp->ttpfxlen  = NULL;
                 grp->ttipaddr  = NULL;
                 grp->ttnetmask = NULL;
-            }
-            else if (grp->ttnetmask)
-            {
-                /* Check prefix length (via newly built netmask)
-                   for consistency with existing netmask value */
-                if (grp->ttnetmask &&
-                    strcmp( new_ttnetmask, grp->ttnetmask ) != 0)
-                {
-                    // HHC03998 "%1d:%04X %s: %s inconsistent with %s"
-                    WRMSG(HHC03998, "W", LCSS_DEVNUM, dev->typname,
-                        "netmask", "prefix length" );
-                }
-                /* Use consistent netmask */
-                free( grp->ttnetmask );
-                grp->ttnetmask = new_ttnetmask;
             }
         }
 
