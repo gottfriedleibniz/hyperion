@@ -467,7 +467,9 @@
 
 #define STFL_200_IBM_INTERNAL        200    /* IBM internal use          */
 
-#define STFL_IBM_LAST_BIT            200    /* Last defined IBM facility */
+#define STFL_201_CONCURRENT_FUNC     201    /* Concurrent Functions Facility */
+
+#define STFL_IBM_LAST_BIT            201    /* Last defined IBM facility */
 
 #define STFL_IBM_BY_SIZE        (ROUND_UP( STFL_IBM_LAST_BIT, 8 ) / 8)
 #define STFL_IBM_DW_SIZE        (ROUND_UP( STFL_IBM_BY_SIZE, sizeof( DW )) / sizeof( DW ))

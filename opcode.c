@@ -923,6 +923,12 @@ DISABLE_GCC_UNUSED_FUNCTION_WARNING;
      UNDEF_INST( vector_test_zoned )
 #endif
 
+#if !defined( FEATURE_201_CONCURRENT_FUNCTIONS_FACILITY )
+     UNDEF_INST( compare_and_load )
+     UNDEF_INST( compare_and_load_long )
+     UNDEF_INST( compare_and_load_long_fullword )
+     UNDEF_INST( perform_functions_with_concurrent_results )
+#endif
 /*-------------------------------------------------------------------*/
 /*      FEATUREs that DON'T have any facility bits defined           */
 /*-------------------------------------------------------------------*/
@@ -4818,8 +4824,8 @@ static INSTR_FUNC gen_opcode_c8_x[16][NUM_INSTR_TAB_PTRS] =
  /*C8x3*/ GENx___x___x___ ,
  /*C8x4*/ GENx___x390x900 ( "LPD"       , SSF  , ASMFMT_SSF_RSS  , load_pair_disjoint                                  ),
  /*C8x5*/ GENx___x___x900 ( "LPDG"      , SSF  , ASMFMT_SSF_RSS  , load_pair_disjoint_long                             ),
- /*C8x6*/ GENx___x___x___ ,
- /*C8x7*/ GENx___x___x___ ,
+ /*C8x6*/ GENx___x___x900 ( "CAL"       , SSF  , ASMFMT_SSF_RSS  , compare_and_load                                    ),
+ /*C8x7*/ GENx___x___x900 ( "CALG"      , SSF  , ASMFMT_SSF_RSS  , compare_and_load_long                               ),
  /*C8x8*/ GENx___x___x___ ,
  /*C8x9*/ GENx___x___x___ ,
  /*C8xA*/ GENx___x___x___ ,
@@ -4827,7 +4833,7 @@ static INSTR_FUNC gen_opcode_c8_x[16][NUM_INSTR_TAB_PTRS] =
  /*C8xC*/ GENx___x___x___ ,
  /*C8xD*/ GENx___x___x___ ,
  /*C8xE*/ GENx___x___x___ ,
- /*C8xF*/ GENx___x___x___
+ /*C8xF*/ GENx___x___x900 ( "CALGF"     , SSF  , ASMFMT_SSF_RSS  , compare_and_load_long_fullword                      )
 };
 
 static INSTR_FUNC gen_opcode_cc_x[16][NUM_INSTR_TAB_PTRS] =
@@ -5682,7 +5688,7 @@ static INSTR_FUNC gen_opcode_ebxx[256][NUM_INSTR_TAB_PTRS] =
  /*EB13*/ GENx___x___x___ ,
  /*EB14*/ GENx___x___x900 ( "CSY"       , RSY_a, ASMFMT_RSY      , compare_and_swap_y                                  ),
  /*EB15*/ GENx___x___x___ ,
- /*EB16*/ GENx___x___x___ ,
+ /*EB16*/ GENx___x___x900 ( "PFCR"      , RSY_a, ASMFMT_RSY      , perform_functions_with_concurrent_results           ),
  /*EB17*/ GENx___x___x___ ,
  /*EB18*/ GENx___x___x___ ,
  /*EB19*/ GENx___x___x___ ,

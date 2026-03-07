@@ -4712,6 +4712,255 @@ DEF_INST( load_logical_indexed_address_shift_4 )
 
 #endif /* defined( FEATURE_084_MISC_INSTR_EXT_FACILITY_4 ) */
 
+#if defined( FEATURE_201_CONCURRENT_FUNCTIONS_FACILITY )
+
+/*-------------------------------------------------------------------*/
+/* C8x6 CAL   - Compare And Load                              [SSF ] */
+/*-------------------------------------------------------------------*/
+DEF_INST( compare_and_load )
+{
+    int     r3;                          /* Register number           */
+    int     b1, b2;                      /* Base register numbers     */
+    VADR    effective_addr1;             /* Op 1 Effective address    */
+    VADR    effective_addr2;             /* Op 2 Effective address    */
+    U32     op1;                         /* First operand value       */
+    U32     op2;                         /* Second operand value      */
+
+    SSF(inst, regs, b1, effective_addr1, b2, effective_addr2, r3);
+    TXFC_INSTR_CHECK( regs );
+
+    /* operand 1 address validation */
+    PER_ZEROADDR_XCHECK( regs, b1 );
+    FW_CHECK(effective_addr1, regs);
+
+    /* Perform serialization before and after operation */
+    PERFORM_SERIALIZATION( regs );
+    {
+        OBTAIN_MAINLOCK_UNCONDITIONAL( regs );
+        {
+            /* Load first operand from operand address  */
+            op1 = ARCH_DEP(vfetch4) ( effective_addr1, b1, regs );
+
+            if(regs->GR_L(r3) == op1)
+            {
+                /* operand 2 address validation */
+                PER_ZEROADDR_XCHECK( regs, b2 );
+                FW_CHECK(effective_addr2, regs);
+
+                op2 = ARCH_DEP(vfetch4) ( effective_addr2, b2, regs );
+                regs->GR_L(r3) = op2;
+                regs->psw.cc = 0;
+            }
+            else
+            {
+                regs->GR_L(r3) = op1;
+                regs->psw.cc = 1;
+            }
+        }
+        RELEASE_MAINLOCK_UNCONDITIONAL( regs );
+    }
+    PERFORM_SERIALIZATION( regs );
+
+    /* if not equal, let other CPUs run */
+    if(regs->psw.cc && sysblk.cpus > 1)
+        {
+            sched_yield();
+        }
+}
+
+/*-------------------------------------------------------------------*/
+/* C8x7 CALG  - Compare And Load Long                         [SSF ] */
+/*-------------------------------------------------------------------*/
+DEF_INST( compare_and_load_long )
+{
+    int     r3;                          /* Register number           */
+    int     b1, b2;                      /* Base register numbers     */
+    VADR    effective_addr1;             /* Op 1 Effective address    */
+    VADR    effective_addr2;             /* Op 2 Effective address    */
+    U64     op1;                         /* First operand value       */
+    U64     op2;                         /* Second operand value      */
+
+    SSF(inst, regs, b1, effective_addr1, b2, effective_addr2, r3);
+    TXFC_INSTR_CHECK( regs );
+
+    /* operand 1 address validation */
+    PER_ZEROADDR_XCHECK( regs, b1 );
+    DW_CHECK(effective_addr1, regs);
+
+    /* Perform serialization before and after operation */
+    PERFORM_SERIALIZATION( regs );
+    {
+        OBTAIN_MAINLOCK_UNCONDITIONAL( regs );
+        {
+            /* Load first operand from operand address  */
+            op1 = ARCH_DEP(vfetch8) ( effective_addr1, b1, regs );
+
+            if(regs->GR(r3) == op1)
+            {
+                /* operand 2 address validation */
+                PER_ZEROADDR_XCHECK( regs, b2 );
+                DW_CHECK(effective_addr2, regs);
+
+                op2 = ARCH_DEP(vfetch8) ( effective_addr2, b2, regs );
+                regs->GR(r3) = op2;
+                regs->psw.cc = 0;
+            }
+            else
+            {
+                regs->GR(r3) = op1;
+                regs->psw.cc = 1;
+            }
+        }
+        RELEASE_MAINLOCK_UNCONDITIONAL( regs );
+    }
+    PERFORM_SERIALIZATION( regs );
+
+    /* if not equal, let other CPUs run */
+    if(regs->psw.cc && sysblk.cpus > 1)
+        {
+            sched_yield();
+        }
+}
+
+/*-------------------------------------------------------------------*/
+/* C8xF CALGF - Compare And Load Long Fullword                [SSF ] */
+/*-------------------------------------------------------------------*/
+DEF_INST( compare_and_load_long_fullword )
+{
+    int     r3;                          /* Register number           */
+    int     b1, b2;                      /* Base register numbers     */
+    VADR    effective_addr1;             /* Op 1 Effective address    */
+    VADR    effective_addr2;             /* Op 2 Effective address    */
+    U32     op1;                         /* First operand value       */
+    U64     op2;                         /* Second operand value      */
+
+    SSF(inst, regs, b1, effective_addr1, b2, effective_addr2, r3);
+    TXFC_INSTR_CHECK( regs );
+
+    /* operand 1 address validation */
+    PER_ZEROADDR_XCHECK( regs, b1 );
+    FW_CHECK(effective_addr1, regs);
+
+    /* Perform serialization before and after operation */
+    PERFORM_SERIALIZATION( regs );
+    {
+        OBTAIN_MAINLOCK_UNCONDITIONAL( regs );
+        {
+            /* Load first operand from operand address  */
+            op1 = ARCH_DEP(vfetch4) ( effective_addr1, b1, regs );
+
+            if(regs->GR_L(r3) == op1)
+            {
+                /* operand 2 address validation */
+                PER_ZEROADDR_XCHECK( regs, b2 );
+                DW_CHECK(effective_addr2, regs);
+
+                op2 = ARCH_DEP(vfetch8) ( effective_addr2, b2, regs );
+                regs->GR(r3) = op2;
+                regs->psw.cc = 0;
+            }
+            else
+            {
+                regs->GR_H(r3) = 0;
+                regs->GR_L(r3) = op1;
+                regs->psw.cc = 1;
+            }
+        }
+        RELEASE_MAINLOCK_UNCONDITIONAL( regs );
+    }
+    PERFORM_SERIALIZATION( regs );
+
+    /* if not equal, let other CPUs run */
+    if(regs->psw.cc && sysblk.cpus > 1)
+        {
+            sched_yield();
+        }
+}
+
+/*-------------------------------------------------------------------*/
+/* EB16 PFCR  - Perform Functions with Concurrent Results    [RSY-a] */
+/*-------------------------------------------------------------------*/
+/* Programmer's Note: This instruction is NOT defined in POP         */
+/*                    SA22-7832-14!!                                 */
+/*                                                                   */
+/* This restricted implementation of PFCR was determined from        */
+/* Linux commit:                                                     */
+/*                                                                   */
+/* https://github.com/torvalds/linux/commit/66ff6bf59b01903becbdf4077c4204889747922e */
+/*                                                                   */
+/* and is being included to avoid a Linux kernel panic on an IPL     */
+/* for some distributions which have KVM built into the kernel.      */
+/* A Kernel panic was observered with Ubuntu 25.04 and 25.10.        */
+/*                                                                   */
+/* The instruction uses R0 to define the function as follows         */
+/*    pfcr-qaf,   0, "PFCR Query-Available-Functions"                */
+/*    pfcr-csdst  1, "PFCR Compare-and-Swap-and-Double-Store (32)"   */
+/*    pfcr-csdstg 2, "PFCR Compare-and-Swap-and-Double-Store (64)"   */
+/*    pfcr-cstst  3, "PFCR Compare-and-Swap-and-Triple-Store (32)"   */
+/*    pfcr-cststg 4, "PFCR Compare-and-Swap-and-Triple-Store (64)"   */
+/*                                                                   */
+/* The PFCR Query is defined in Linux kvm-s390.c as                  */
+/*                                                                   */
+/*       static __always_inline void pfcr_query(u8 (*query)[16])     */
+/*       {                                                           */
+/*       	asm volatile(                                            */
+/*       		"	lghi	0,0\n"                                   */
+/*       		"	.insn   rsy,0xeb0000000016,0,0,%[query]\n"       */
+/*       		: [query] "=QS" (*query)                             */
+/*       		:                                                    */
+/*       		: "cc", "0");                                        */
+/*       }                                                           */
+/*                                                                   */
+/* ONLY function code 0 (query) is implemented and indicates that    */
+/* no functions are available (other than query). For any other      */
+/* function code, the result is a specification exception.           */
+/*-------------------------------------------------------------------*/
+DEF_INST( perform_functions_with_concurrent_results )
+{
+    int     r1, r3;                      /* Registers                 */
+    int     b2;                          /* Base register             */
+    VADR    effective_addr2;             /* Op 2 Effective address    */
+    int     fc;                          /* Function code             */
+
+    RSY(inst, regs, r1, r3, b2, effective_addr2);
+
+    TXFC_INSTR_CHECK( regs );
+    PER_ZEROADDR_XCHECK( regs, b2 );
+
+    /* r1 and r3 are not used for FC: 0 */
+    UNREFERENCED( r1 );
+    UNREFERENCED( r3 );
+
+    /* Load function code from GR0.                 */
+    /* Assuming just the rightmost 7 bits as query  */
+    /* result (16 bytes) is 128 bits in size.       */
+    fc = regs->GR_G(0) & 0x7F;
+
+    switch (fc)
+    {
+    case 0: // pfcr-qaf,   0, "PFCR Query-Available-Functions"
+        {
+            // 'query' function is always available
+            U8 result[16] = { 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                              0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+
+            //LOGMSG( "PFCR Query-Available-Function: No concurrent functions are available\n" );
+
+            // Store query result in operand 2 address
+            ARCH_DEP( vstorec )( &result, 16-1 , effective_addr2, b2, regs );
+            regs->psw.cc = 0;
+        }
+        break;
+
+    default: // not defined
+        ARCH_DEP(program_interrupt)(regs, PGM_SPECIFICATION_EXCEPTION);
+        break;
+    }
+
+} /* end DEF_INST(perform_functions_with_concurrent_results) */
+
+
+#endif /* defined( FEATURE_201_CONCURRENT_FUNCTIONS_FACILITY ) */
 
 #if !defined( _GEN_ARCH )
 

@@ -3838,6 +3838,13 @@ DEF_INST( load_program_status_word_extended_y );
  DEF_INST( vector_test_zoned );
 #endif
 
+#if defined( FEATURE_201_CONCURRENT_FUNCTIONS_FACILITY )
+ DEF_INST( compare_and_load );
+ DEF_INST( compare_and_load_long );
+ DEF_INST( compare_and_load_long_fullword );
+ DEF_INST( perform_functions_with_concurrent_results );
+#endif
+
 /*-------------------------------------------------------------------*/
 /*      FEATUREs that DON'T have any facility bits defined           */
 /*-------------------------------------------------------------------*/

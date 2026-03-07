@@ -736,6 +736,10 @@ FT( Z900, Z900, NONE, 199_VECT_PACKDEC_ENH_3 )
 
 FT( NONE, NONE, NONE, 200_IBM_INTERNAL )
 
+#if defined(  FEATURE_201_CONCURRENT_FUNCTIONS_FACILITY )
+FT( Z900, Z900, NONE, 201_CONCURRENT_FUNC )
+#endif
+
 /*-------------------------------------------------------------------*/
 /*                      Hercules Facility bits                       */
 /*-------------------------------------------------------------------*/
@@ -1003,6 +1007,7 @@ static  void  instr194  ( int arch, bool enable );
 static  void  instr196  ( int arch, bool enable );
 static  void  instr198  ( int arch, bool enable );
 static  void  instr199  ( int arch, bool enable );
+static  void  instr201  ( int arch, bool enable );
 
 static  void  hercmvcin ( int arch, bool enable );
 static  void  hercsvs   ( int arch, bool enable );
@@ -1244,6 +1249,7 @@ FT2( mod197,    NULL,      197_PROC_ACT_EXT_1,         "Processor-Activity-Instr
 FT2( mod198,    instr198,  198_VECTOR_ENH_3,           "Vector-Enhancements Facility 3" )
 FT2( mod199,    instr199,  199_VECT_PACKDEC_ENH_3,     "Vector-Packed-Decimal-Enhancement Facility 3" )
 FT2( NULL,      NULL,      200_IBM_INTERNAL,           "Assigned to IBM internal use" )
+FT2( NULL,      instr201,  201_CONCURRENT_FUNC,        "Concurrent Functions Facility" )
 
 /*-------------------------------------------------------------------*/
 /*                   Hercules facilities                             */
@@ -4269,6 +4275,16 @@ BEG_DIS_FAC_INS_FUNC( instr199 )
 }
 END_DIS_FAC_INS_FUNC()
 
+/*-------------------------------------------------------------------*/
+
+BEG_DIS_FAC_INS_FUNC( instr201 )
+{
+    DIS_FAC_INS( C806, "CAL     C8x6  COMPARE AND LOAD" );
+    DIS_FAC_INS( C807, "CALG    C8x7  COMPARE AND LOAD LONG" );
+    DIS_FAC_INS( C80F, "CALGF   C8xF  COMPARE AND LOAD LONG FULLWORD" );
+    DIS_FAC_INS( EB16, "PFCR    EB16  PERFORM FUNCTIONS WITH CONCURRENT RESULTS" );
+}
+END_DIS_FAC_INS_FUNC()
 /*-------------------------------------------------------------------*/
 
 BEG_DIS_FAC_INS_FUNC( hercmvcin )

@@ -147,6 +147,7 @@
 //efine FEATURE_197_PROC_ACT_EXT_1_FACILITY
 #define FEATURE_198_VECTOR_ENH_FACILITY_3
 #define FEATURE_199_VECT_PACKDEC_ENH_FACILITY_3
+#define FEATURE_201_CONCURRENT_FUNCTIONS_FACILITY
 
 /*-------------------------------------------------------------------*/
 /*      FEATUREs that DON'T have any facility bits defined           */

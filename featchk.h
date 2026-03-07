@@ -488,6 +488,9 @@
  #define    _FEATURE_199_VECT_PACKDEC_ENH_FACILITY_3
 #endif
 
+#if defined( FEATURE_201_CONCURRENT_FUNCTIONS_FACILITY )
+ #define    _FEATURE_201_CONCURRENT_FUNCTIONS_FACILITY
+#endif
 /*-------------------------------------------------------------------*/
 /*                  Non-facility-bit FEATUREs                        */
 /*-------------------------------------------------------------------*/

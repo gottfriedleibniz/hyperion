@@ -292,6 +292,7 @@
 #undef  FEATURE_197_PROC_ACT_EXT_1_FACILITY
 #undef  FEATURE_198_VECTOR_ENH_FACILITY_3
 #undef  FEATURE_199_VECT_PACKDEC_ENH_FACILITY_3
+#undef  FEATURE_201_CONCURRENT_FUNCTIONS_FACILITY
 
 /*-------------------------------------------------------------------*/
 /*      FEATUREs that DON'T have any facility bits defined           */
