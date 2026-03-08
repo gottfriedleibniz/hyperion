@@ -15,6 +15,11 @@
 #include "devtype.h"
 #include "opcode.h"
 
+PUSH_GCC_WARNINGS()
+DISABLE_GCC_WARNING( "-Wunused-variable" )
+DISABLE_GCC_WARNING( "-Wunused-parameter" )
+DISABLE_GCC_UNUSED_SET_WARNING;
+
 ///////////////////////////////////////////////////////////////////////////////
 // Some handy macros...       (feel free to add these to hercules.h)
 
@@ -2269,3 +2274,5 @@ HDL_FINAL_SECTION
 END_FINAL_SECTION
 
 ///////////////////////////////////////////////////////////////////////////////
+
+POP_GCC_WARNINGS()

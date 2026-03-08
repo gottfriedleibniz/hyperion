@@ -2135,12 +2135,10 @@ static INLINE char* format_data( char* buff, const u_int bufflen,
 static INLINE char* format_iobuf_data( const BYTE* data, char* dest,
                                        int dest_size, BYTE data_amt )
 {
-    char* formatted_iobuf_data;
-
     ASSERT( dest_size >= 5 );   // (sanity check)
     ASSERT( data_amt  >= 1 );   // (sanity check)
     memcpy( dest, " => ", 4 );
-    formatted_iobuf_data  = format_data( dest + 4, dest_size-4, data, data_amt );
+    format_data( dest + 4, dest_size-4, data, data_amt );
     return dest;
 }
 
