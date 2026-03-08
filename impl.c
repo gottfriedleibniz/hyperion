@@ -964,8 +964,12 @@ static void check_host_instruction_availability()
 
     /* Then report all of the ones that aren't available */
     // "WARNING: Host does not support the '%s' instruction"
+
+/* INTEL X64 processor? */
+#if defined( __x86_64__ ) || defined( _M_X64 )
     if (!sysblk.have_PCLMULQDQ) WRMSG( HHC00026, "W", "PCLMULQDQ" );
 //  if (!sysblk.have_XXXXXXXXX) WRMSG( HHC00026, "W", "XXXXXXXXX" );
+#endif
 }
 
 /*-------------------------------------------------------------------*/
