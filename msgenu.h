@@ -2438,7 +2438,7 @@ LOGM_DLL_IMPORT int  panel_command_capture( char* cmd, char** resp, bool quiet )
 #define HHC03208 "Format-%c trace file created by: %s"
 #define HHC03209 "Trace %s: %s"
 #define HHC03210 "Incompatible MAX_CPU_ENGS"
-#define HHC03211 "Trace count: instruction=%s records, device=%s records"
+#define HHC03211 "Trace count: instruction records=%s, device records=%s"
 #define HHC03212 "File does not start with TFSYS record; aborting"
 #define HHC03213 "Unsupported Trace File format: %%TF%c"
 #define HHC03214 "Unsupported Trace File record: msgnum %"PRIu16

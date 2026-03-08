@@ -143,7 +143,6 @@ static void show_usage()
 static void show_file_progress()
 {
     off_t   currpos;
-    double  percent;
 
     if ((currpos = ftell( inf )) < 0)
     {
@@ -152,29 +151,56 @@ static void show_file_progress()
         exit( -1 );
     }
 
-    percent = ((double) currpos) / filesize;
-    percent *= 100.0;
+    /* Notify the GUI (but not too frequently!) of
+       our current position within the input file... */
 
     if (extgui)
-        fprintf( stderr, "PCT=%.0f\n", percent );
-    else if (err_istty)
     {
-        char scale[50+1];
-        int i;
+        static struct timeval  tmOld  = {0};
+        static struct timeval  tmNow  = {0};
+        struct        timeval  tmDif;
 
-        /* Draw a nice scale too */
-        memset( scale, '.', 50 );
-        for (i=1; i <= 50; ++i)         // (50 = 2 percent per position)
+        if (!tmOld.tv_sec && !tmOld.tv_usec)
+            gettimeofday( &tmOld, NULL );
+        gettimeofday( &tmNow, NULL );
+        timeval_subtract( &tmOld, &tmNow, &tmDif );
+
+        // (every 2 seconds seems reasonable...)
+
+        if (tmDif.tv_sec > 2)
         {
-            if (percent >= (i << 1))    // (percent greater than here?)
-                scale[i-1] = '*';
-            else
-                break;
-        }
-        scale[50] = 0;
+            tmOld.tv_sec  = tmNow.tv_sec;
+            tmOld.tv_usec = tmNow.tv_usec;
 
-        fprintf( stderr, "%.0f%% of file processed...   [%s]\r",
-            percent, scale );
+            EXTGUIMSG( "POS=%"PRIu64"\n", currpos );
+        }
+    }
+    else // (command line terminal)
+    {
+        double  percent;
+
+        percent = ((double) currpos) / filesize;
+        percent *= 100.0;
+
+        if (err_istty)
+        {
+            char scale[50+1];
+            int i;
+
+            /* Draw a nice scale too */
+            memset( scale, '.', 50 );
+            for (i=1; i <= 50; ++i)         // (50 = 2 percent per position)
+            {
+                if (percent >= (i << 1))    // (percent greater than here?)
+                    scale[i-1] = '*';
+                else
+                    break;
+            }
+            scale[50] = 0;
+
+            fprintf( stderr, "%.0f%% of file processed...   [%s]\r",
+                percent, scale );
+        }
     }
 }
 
@@ -1134,7 +1160,7 @@ static void print_TFSYS( TFSYS* sys, bool was_bigend )
     FormatTIMEVAL( &sys->end_tod, buffer, sizeof( buffer ));
     WRMSG( HHC03209, "I", "ended", buffer );
 
-    // "Trace count: instruction=%s records, device=%s records"
+    // "Trace count: instruction records=%s, device records=%s"
     fmt_S64( inscnt, (S64) sys->tot_ins );
     fmt_S64( devcnt, (S64) sys->tot_dev );
     WRMSG( HHC03211, "I", inscnt, devcnt );
@@ -4248,6 +4274,10 @@ static void parse_tracefile( const char* filename )
             }
         }
     }
+
+    /* Notify GUI of of the input file's size in bytes... */
+    if (!arg_errs)
+        EXTGUIMSG( "SIZE=%"PRIu64"\n", off_size );
 }
 
 POP_GCC_WARNINGS()

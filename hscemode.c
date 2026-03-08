@@ -1216,6 +1216,29 @@ int tf_cmd( int argc, char* argv[], char* cmdline )
         // "%-14s: %s"
         WRMSG( HHC02203, "I", argv[0], buf );
 
+    // Inform HercGUI about the new(?) values...
+
+    if (extgui)
+    {
+        if (GNUM() >= VNUM( 1.22.0 ))
+        {
+            MSGBUF( buf,"TF_ON=%c", sysblk.traceFILE  ? '1' : '0' );
+            EXTGUIMSG( "%s\n", buf );
+
+
+            MSGBUF( buf,"TF_STOP=%c", sysblk.tfnostop ? '0' : '1' );
+            EXTGUIMSG( "%s\n", buf );
+
+
+            MSGBUF( buf,"TF_MAX=%"PRId64, sysblk.maxtracesize );
+            EXTGUIMSG( "%s\n", buf );
+
+
+            MSGBUF( buf,"TF_FILE=%s", sysblk.tracefilename ? sysblk.tracefilename : ""  );
+            EXTGUIMSG( "%s\n", buf );
+        }
+    }
+
     /* Auto-stop tracing unless asked not to */
     if (!enable && !nostop)
     {

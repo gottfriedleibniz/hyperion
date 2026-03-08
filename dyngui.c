@@ -585,6 +585,32 @@ void*  gui_panel_command (char* pszCommand)
         return NULL;
     }
 
+    // Is HercGUI requesting updated Trace to File information?
+
+    if (strncasecmp( pszCommand,"TF=", 3 ) == 0)
+    {
+        char buffer[ 2 * MAX_PATH ];
+
+
+        MSGBUF( buffer, "TF_ON=%c", sysblk.traceFILE ? '1'  : '0' );
+        EXTGUIMSG( "%s\n", buffer );
+
+
+        MSGBUF( buffer, "TF_MAX=%"PRId64, sysblk.maxtracesize );
+        EXTGUIMSG( "%s\n", buffer );
+
+
+        MSGBUF( buffer, "TF_FILE=%s", sysblk.tracefilename ? sysblk.tracefilename   : ""  );
+        EXTGUIMSG( "%s\n", buffer );
+
+
+        MSGBUF( buffer, "TF_STOP=%c", sysblk.tfnostop ? '0' : '1' );
+        EXTGUIMSG( "%s\n", buffer );
+
+
+        return NULL;
+    }
+
     // Silently ignore any unrecognized special GUI commands...
 
     return NULL;        // (silently ignore it)
