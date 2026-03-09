@@ -163,6 +163,11 @@ EXTRA_DIST =                    \
      CDSG.PDF                   \
      CDSG.tst                   \
      cdsg.txt                   \
+     cff-01-CompareAndLoad.asm  \
+     cff-01-CompareAndLoad.core \
+     cff-01-CompareAndLoad.list \
+     cff-01-CompareAndLoad.pdf  \
+     cff-01-CompareAndLoad.tst  \
      cgdr.txt                   \
      cgdtr.txt                  \
      cger.txt                   \

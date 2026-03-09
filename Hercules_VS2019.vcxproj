@@ -904,6 +904,11 @@
     <None Include="tests\CDSG.list" />
     <None Include="tests\CDSG.PDF" />
     <None Include="tests\CDSG.tst" />
+    <None Include="tests\cff-01-CompareAndLoad.asm" />
+    <None Include="tests\cff-01-CompareAndLoad.core" />
+    <None Include="tests\cff-01-CompareAndLoad.list" />
+    <None Include="tests\cff-01-CompareAndLoad.pdf" />
+    <None Include="tests\cff-01-CompareAndLoad.tst" />
     <None Include="tests\CLCL-et-al.asm" />
     <None Include="tests\CLCL-et-al.core" />
     <None Include="tests\CLCL-et-al.list" />

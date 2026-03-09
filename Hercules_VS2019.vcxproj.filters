@@ -3803,6 +3803,21 @@
     <None Include="tests\CDSG.tst">
       <Filter>Other Files\tests\scripts\tst</Filter>
     </None>
+    <None Include="tests\cff-01-CompareAndLoad.core">
+      <Filter>Other Files\tests\core</Filter>
+    </None>
+    <None Include="tests\cff-01-CompareAndLoad.asm">
+      <Filter>Other Files\tests\scripts\asm</Filter>
+    </None>
+    <None Include="tests\cff-01-CompareAndLoad.list">
+      <Filter>Other Files\tests\scripts\asm\list</Filter>
+    </None>
+    <None Include="tests\cff-01-CompareAndLoad.pdf">
+      <Filter>Other Files\tests\scripts\asm\list</Filter>
+    </None>
+    <None Include="tests\cff-01-CompareAndLoad.tst">
+      <Filter>Other Files\tests\scripts\tst</Filter>
+    </None>
     <None Include="tests\CLCL-et-al.core">
       <Filter>Other Files\tests\core</Filter>
     </None>

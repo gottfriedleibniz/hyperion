@@ -3503,6 +3503,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\tests\cff-01-CompareAndLoad.core"
+						>
+					</File>
+					<File
 						RelativePath=".\tests\CLCL-et-al.core"
 						>
 					</File>
@@ -4790,6 +4794,10 @@
 							>
 						</File>
 						<File
+							RelativePath=".\tests\cff-01-CompareAndLoad.tst"
+							>
+						</File>
+						<File
 							RelativePath=".\tests\cipher.tst"
 							>
 						</File>
@@ -5490,6 +5498,10 @@
 							>
 						</File>
 						<File
+							RelativePath=".\tests\cff-01-CompareAndLoad.asm"
+							>
+						</File>
+						<File
 							RelativePath=".\tests\CLCL-et-al.asm"
 							>
 						</File>
@@ -6114,6 +6126,14 @@
 							</File>
 							<File
 								RelativePath=".\tests\CDSG.PDF"
+								>
+							</File>
+							<File
+								RelativePath=".\tests\cff-01-CompareAndLoad.list"
+								>
+							</File>
+							<File
+								RelativePath=".\tests\cff-01-CompareAndLoad.pdf"
 								>
 							</File>
 							<File
