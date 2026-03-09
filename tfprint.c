@@ -29,6 +29,7 @@ DISABLE_GCC_WARNING( "-Waddress-of-packed-member" )
 /*                                                                   */
 /*         [-i|--info]                                               */
 /*         [-c|--cpu hh[[-hh][,hh]]                                  */
+/*         [-x|--xcpus]                                              */
 /*         [-r|--traceopt TRADITIONAL|REGSFIRST|NOREGS]              */
 /*         [-n|--count nnnnnn[[-nnnnnn]|[.nnn]]                      */
 /*         [-e|--msg nnnnn[,nnnnn]                                   */
@@ -42,6 +43,7 @@ DISABLE_GCC_WARNING( "-Waddress-of-packed-member" )
 /*                                                                   */
 /*    -i   Print only TFSYS header information then exit             */
 /*    -c   Print only specified CPU(s)                               */
+/*    -x   Print no CPUs (i.e. ignore instruction trace events)      */
 /*    -r   Print registers trace option                              */
 /*    -n   Print only records nnnnnn to nnnnnn (by count)            */
 /*    -e   Print only messages with specified message number         */
@@ -100,6 +102,7 @@ static bool  noregs    = false;         /* --traceopt NOREGS         */
 static bool  doendswap = false;         /* endian swaps needed       */
 static bool  out_istty = false;         /* stdout is a TTY device    */
 static bool  err_istty = false;         /* stderr is a TTY device    */
+static bool  nocpus    = false;         /* print no instructions     */
 static double filesize = 0;             /* File size as double       */
 static CPU_BITMAP cpu_map = 0;          /* --cpu option              */
 static U64   recnum    = 0;             /* Current record number     */
@@ -2666,6 +2669,10 @@ static void process_TF02324( TF02324* rec )
     char tim [ 64 ] = {0};  // "YYYY-MM-DD HH:MM:SS.uuuuuu"
     BYTE cpuad;
 
+    // Don't bother if they're not interested
+    if (nocpus)
+        return;
+
     /* (just a more covenient shorter variable name) */
     cpuad = (BYTE) rec->rhdr.cpuad;
 
@@ -3317,12 +3324,13 @@ static void print_args( int argc, char* argv[] )
 /*                                                                   */
 /*-------------------------------------------------------------------*/
 
-static char shortopts[] = ":ic:r:n:e:s:d:t:o:m:u:p:";
+static char shortopts[] = ":ic:xr:n:e:s:d:t:o:m:u:p:";
 
 static struct option longopts[] =
 {
     { "info",     no_argument,       NULL, 'i' },
     { "cpu",      required_argument, NULL, 'c' },
+    { "xcpus",    no_argument,       NULL, 'x' },
     { "traceopt", required_argument, NULL, 'r' },
     { "count",    required_argument, NULL, 'n' },
     { "msg",      required_argument, NULL, 'e' },
@@ -3378,6 +3386,7 @@ static struct option longopts[] =
 static void  parse_option_msglvl   ( const char* optname );
 static void  parse_option_info     ( const char* optname );
 static void  parse_option_cpu      ( const char* optname );
+static void  parse_option_xcpus    ( const char* optname );
 static void  parse_option_traceopt ( const char* optname );
 static void  parse_option_count    ( const char* optname );
 static void  parse_option_msg      ( const char* optname );
@@ -3445,7 +3454,8 @@ static void process_args( int argc, char* argv[] )
                 arg_errs++;
                 break;
 
-            case 'i': PARSE_OPTION_NOARG_CASE( info );
+            case 'i': PARSE_OPTION_NOARG_CASE( info  );
+            case 'x': PARSE_OPTION_NOARG_CASE( xcpus );
 
             case 'c': PARSE_OPTION_CASE( cpu      );
             case 'r': PARSE_OPTION_CASE( traceopt );
@@ -3721,6 +3731,14 @@ static void parse_option_error( const char* optname )
     // "Option \"%s\" value \"%s\" is invalid"
     FWRMSG( stderr, HHC03205, "E", optname, optarg );
     arg_errs++;
+}
+
+/*-------------------------------------------------------------------*/
+/*  Parse option nocpus                                               */
+/*-------------------------------------------------------------------*/
+static void parse_option_xcpus( const char* optname )
+{
+    nocpus = true;
 }
 
 /*-------------------------------------------------------------------*/

@@ -2401,6 +2401,7 @@ LOGM_DLL_IMPORT int  panel_command_capture( char* cmd, char** resp, bool quiet )
        "HHC03200I\n"                                                             \
        "HHC03200I        [-i|--info]\n"                                          \
        "HHC03200I        [-c|--cpu hh[[-hh][,hh]]\n"                             \
+       "HHC03200I        [-x|--xcpus]\n"                                         \
        "HHC03200I        [-r|--traceopt TRADITIONAL|REGSFIRST|NOREGS]\n"         \
        "HHC03200I        [-n|--count nnnnnn[[-nnnnnn]|[.nnn]]\n"                 \
        "HHC03200I        [-e|--msg nnnnn[,nnnnn]\n"                              \
@@ -2414,6 +2415,7 @@ LOGM_DLL_IMPORT int  panel_command_capture( char* cmd, char** resp, bool quiet )
        "HHC03200I\n"                                                             \
        "HHC03200I   -i   Print only TFSYS header information then exit\n"        \
        "HHC03200I   -c   Print only specified CPU(s)\n"                          \
+       "HHC03200I   -x   Print no CPUs (i.e. ignore instruction trace events)\n" \
        "HHC03200I   -r   Print registers trace option\n"                         \
        "HHC03200I   -n   Print only records nnnnnn to nnnnnn (by count)\n"       \
        "HHC03200I   -e   Print only messages with specified message number\n"    \
