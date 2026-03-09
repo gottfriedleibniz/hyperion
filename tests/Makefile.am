@@ -445,6 +445,21 @@ EXTRA_DIST =                    \
      mhi.core                   \
      mhi.list                   \
      mhi.tst                    \
+     mie4-01-BDXPG-BDEPG.asm    \
+     mie4-01-BDXPG-BDEPG.core   \
+     mie4-01-BDXPG-BDEPG.list   \
+     mie4-01-BDXPG-BDEPG.pdf    \
+     mie4-01-BDXPG-BDEPG.tst    \
+     mie4-02-CLZG-CTZG.asm      \
+     mie4-02-CLZG-CTZG.core     \
+     mie4-02-CLZG-CTZG.list     \
+     mie4-02-CLZG-CTZG.pdf      \
+     mie4-02-CLZG-CTZG.tst      \
+     mie4-03-IndexedAddress.asm \
+     mie4-03-IndexedAddress.core \
+     mie4-03-IndexedAddress.list \
+     mie4-03-IndexedAddress.pdf \
+     mie4-03-IndexedAddress.tst \
      mkcore.rexx                \
      mvcle.assemble             \
      mvcle.listing              \

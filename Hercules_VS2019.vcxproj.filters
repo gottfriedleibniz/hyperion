@@ -2333,6 +2333,15 @@
     <None Include="tests\mhi.tst">
       <Filter>Other Files\tests\scripts\tst</Filter>
     </None>
+    <None Include="tests\mie4-01-BDXPG-BDEPG.tst">
+      <Filter>Other Files\tests\scripts\tst</Filter>
+    </None>
+    <None Include="tests\mie4-02-CLZG-CTZG.tst">
+      <Filter>Other Files\tests\scripts\tst</Filter>
+    </None>
+    <None Include="tests\mie4-03-IndexedAddress.tst">
+      <Filter>Other Files\tests\scripts\tst</Filter>
+    </None>
     <None Include="tests\mvcle.tst">
       <Filter>Other Files\tests\scripts\tst</Filter>
     </None>
@@ -3557,6 +3566,15 @@
     <None Include="tests\mhi.core">
       <Filter>Other Files\tests\core</Filter>
     </None>
+    <None Include="tests\mie4-01-BDXPG-BDEPG.core">
+      <Filter>Other Files\tests\core</Filter>
+    </None>
+    <None Include="tests\mie4-02-CLZG-CTZG.core">
+      <Filter>Other Files\tests\core</Filter>
+    </None>
+    <None Include="tests\mie4-03-IndexedAddress.core">
+      <Filter>Other Files\tests\core</Filter>
+    </None>
     <None Include="tests\privop.core">
       <Filter>Other Files\tests\core</Filter>
     </None>
@@ -3632,6 +3650,15 @@
     <None Include="tests\mhi.asm">
       <Filter>Other Files\tests\scripts\asm</Filter>
     </None>
+    <None Include="tests\mie4-01-BDXPG-BDEPG.asm">
+      <Filter>Other Files\tests\scripts\asm</Filter>
+    </None>
+    <None Include="tests\mie4-02-CLZG-CTZG.asm">
+      <Filter>Other Files\tests\scripts\asm</Filter>
+    </None>
+    <None Include="tests\mie4-03-IndexedAddress.asm">
+      <Filter>Other Files\tests\scripts\asm</Filter>
+    </None>
     <None Include="tests\privop.asm">
       <Filter>Other Files\tests\scripts\asm</Filter>
     </None>
@@ -3663,6 +3690,24 @@
       <Filter>Other Files\tests\scripts\asm</Filter>
     </None>
     <None Include="tests\mhi.list">
+      <Filter>Other Files\tests\scripts\asm\list</Filter>
+    </None>
+    <None Include="tests\mie4-01-BDXPG-BDEPG.list">
+      <Filter>Other Files\tests\scripts\asm\list</Filter>
+    </None>
+    <None Include="tests\mie4-01-BDXPG-BDEPG.pdf">
+      <Filter>Other Files\tests\scripts\asm\list</Filter>
+    </None>
+    <None Include="tests\mie4-02-CLZG-CTZG.list">
+      <Filter>Other Files\tests\scripts\asm\list</Filter>
+    </None>
+    <None Include="tests\mie4-02-CLZG-CTZG.pdf">
+      <Filter>Other Files\tests\scripts\asm\list</Filter>
+    </None>
+    <None Include="tests\mie4-03-IndexedAddress.list">
+      <Filter>Other Files\tests\scripts\asm\list</Filter>
+    </None>
+    <None Include="tests\mie4-03-IndexedAddress.pdf">
       <Filter>Other Files\tests\scripts\asm\list</Filter>
     </None>
     <None Include="tests\privop.list">
