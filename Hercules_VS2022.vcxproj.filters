@@ -1895,6 +1895,15 @@
     <None Include="tests\zvector-e6-21-VCRNF.core">
       <Filter>Other Files\tests\core</Filter>
     </None>
+    <None Include="tests\zvector-e6-22-VTZ.core">
+      <Filter>Other Files\tests\core</Filter>
+    </None>
+    <None Include="tests\zvector-e6-23-VCVBQ.core">
+      <Filter>Other Files\tests\core</Filter>
+    </None>
+    <None Include="tests\zvector-e6-24-VCVDQ.core">
+      <Filter>Other Files\tests\core</Filter>
+    </None>
     <None Include="tests\zvector-e7-01-MinMaxAvg.core">
       <Filter>Other Files\tests\core</Filter>
     </None>
@@ -2501,6 +2510,15 @@
     <None Include="tests\zvector-e6-21-VCRNF.tst">
       <Filter>Other Files\tests\scripts\tst</Filter>
     </None>
+    <None Include="tests\zvector-e6-22-VTZ.tst">
+      <Filter>Other Files\tests\scripts\tst</Filter>
+    </None>
+    <None Include="tests\zvector-e6-23-VCVBQ.tst">
+      <Filter>Other Files\tests\scripts\tst</Filter>
+    </None>
+    <None Include="tests\zvector-e6-24-VCVDQ.tst">
+      <Filter>Other Files\tests\scripts\tst</Filter>
+    </None>
     <None Include="tests\zvector-e7-01-MinMaxAvg.tst">
       <Filter>Other Files\tests\scripts\tst</Filter>
     </None>
@@ -2838,6 +2856,15 @@
       <Filter>Other Files\tests\scripts\asm</Filter>
     </None>
     <None Include="tests\zvector-e6-21-VCRNF.asm">
+      <Filter>Other Files\tests\scripts\asm</Filter>
+    </None>
+    <None Include="tests\zvector-e6-22-VTZ.asm">
+      <Filter>Other Files\tests\scripts\asm</Filter>
+    </None>
+    <None Include="tests\zvector-e6-23-VCVBQ.asm">
+      <Filter>Other Files\tests\scripts\asm</Filter>
+    </None>
+    <None Include="tests\zvector-e6-24-VCVDQ.asm">
       <Filter>Other Files\tests\scripts\asm</Filter>
     </None>
     <None Include="tests\zvector-e7-01-MinMaxAvg.asm">
@@ -3339,6 +3366,24 @@
       <Filter>Other Files\tests\scripts\asm\list</Filter>
     </None>
     <None Include="tests\zvector-e6-21-VCRNF.pdf">
+      <Filter>Other Files\tests\scripts\asm\list</Filter>
+    </None>
+    <None Include="tests\zvector-e6-22-VTZ.list">
+      <Filter>Other Files\tests\scripts\asm\list</Filter>
+    </None>
+    <None Include="tests\zvector-e6-22-VTZ.pdf">
+      <Filter>Other Files\tests\scripts\asm\list</Filter>
+    </None>
+    <None Include="tests\zvector-e6-23-VCVBQ.list">
+      <Filter>Other Files\tests\scripts\asm\list</Filter>
+    </None>
+    <None Include="tests\zvector-e6-23-VCVBQ.pdf">
+      <Filter>Other Files\tests\scripts\asm\list</Filter>
+    </None>
+    <None Include="tests\zvector-e6-24-VCVDQ.list">
+      <Filter>Other Files\tests\scripts\asm\list</Filter>
+    </None>
+    <None Include="tests\zvector-e6-24-VCVDQ.pdf">
       <Filter>Other Files\tests\scripts\asm\list</Filter>
     </None>
     <None Include="tests\zvector-e7-01-MinMaxAvg.list">

@@ -752,6 +752,21 @@ EXTRA_DIST =                    \
      zvector-e6-21-VCRNF.list               \
      zvector-e6-21-VCRNF.pdf                \
      zvector-e6-21-VCRNF.tst                \
+     zvector-e6-22-VTZ.asm                  \
+     zvector-e6-22-VTZ.core                 \
+     zvector-e6-22-VTZ.list                 \
+     zvector-e6-22-VTZ.pdf                  \
+     zvector-e6-22-VTZ.tst                  \
+     zvector-e6-23-VCVBQ.asm                \
+     zvector-e6-23-VCVBQ.core               \
+     zvector-e6-23-VCVBQ.list               \
+     zvector-e6-23-VCVBQ.pdf                \
+     zvector-e6-23-VCVBQ.tst                \
+     zvector-e6-24-VCVDQ.asm                \
+     zvector-e6-24-VCVDQ.core               \
+     zvector-e6-24-VCVDQ.list               \
+     zvector-e6-24-VCVDQ.pdf                \
+     zvector-e6-24-VCVDQ.tst                \
      zvector-e7-01-MinMaxAvg.asm            \
      zvector-e7-01-MinMaxAvg.core           \
      zvector-e7-01-MinMaxAvg.list           \

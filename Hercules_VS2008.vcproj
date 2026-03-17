@@ -3795,6 +3795,18 @@
 						>
 					</File>
 					<File
+						RelativePath=".\tests\zvector-e6-22-VTZ.core"
+						>
+					</File>
+					<File
+						RelativePath=".\tests\zvector-e6-23-VCVBQ.core"
+						>
+					</File>
+					<File
+						RelativePath=".\tests\zvector-e6-24-VCVDQ.core"
+						>
+					</File>
+					<File
 						RelativePath=".\tests\zvector-e7-01-MinMaxAvg.core"
 						>
 					</File>
@@ -5226,6 +5238,18 @@
 							>
 						</File>
 						<File
+							RelativePath=".\tests\zvector-e6-22-VTZ.tst"
+							>
+						</File>
+						<File
+							RelativePath=".\tests\zvector-e6-23-VCVBQ.tst"
+							>
+						</File>
+						<File
+							RelativePath=".\tests\zvector-e6-24-VCVDQ.tst"
+							>
+						</File>
+						<File
 							RelativePath=".\tests\zvector-e7-01-MinMaxAvg.tst"
 							>
 						</File>
@@ -5811,6 +5835,18 @@
 						</File>
 						<File
 							RelativePath=".\tests\zvector-e6-21-VCRNF.asm"
+							>
+						</File>
+						<File
+							RelativePath=".\tests\zvector-e6-22-VTZ.asm"
+							>
+						</File>
+						<File
+							RelativePath=".\tests\zvector-e6-23-VCVBQ.asm"
+							>
+						</File>
+						<File
+							RelativePath=".\tests\zvector-e6-24-VCVDQ.asm"
 							>
 						</File>
 						<File
@@ -6714,6 +6750,30 @@
 							</File>
 							<File
 								RelativePath=".\tests\zvector-e6-21-VCRNF.pdf"
+								>
+							</File>
+							<File
+								RelativePath=".\tests\zvector-e6-22-VTZ.list"
+								>
+							</File>
+							<File
+								RelativePath=".\tests\zvector-e6-22-VTZ.pdf"
+								>
+							</File>
+							<File
+								RelativePath=".\tests\zvector-e6-23-VCVBQ.list"
+								>
+							</File>
+							<File
+								RelativePath=".\tests\zvector-e6-23-VCVBQ.pdf"
+								>
+							</File>
+							<File
+								RelativePath=".\tests\zvector-e6-24-VCVDQ.list"
+								>
+							</File>
+							<File
+								RelativePath=".\tests\zvector-e6-24-VCVDQ.pdf"
 								>
 							</File>
 							<File
