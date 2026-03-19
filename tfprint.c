@@ -3738,6 +3738,7 @@ static void parse_option_error( const char* optname )
 /*-------------------------------------------------------------------*/
 static void parse_option_xcpus( const char* optname )
 {
+    UNREFERENCED( optname );
     nocpus = true;
 }
 
