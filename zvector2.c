@@ -2588,6 +2588,7 @@ DEF_INST( vector_convert_to_binary_32 )
     result = vr_to_U128( regs, v2, ( (lb) ? true : p2 ) );
 
     /* did overflow happen? */
+    overflow = false;
     if (lb)
         overflow = ( result.Q.D.L.D > (U64) UINT_MAX ) ? true : false;
     else
@@ -2595,11 +2596,19 @@ DEF_INST( vector_convert_to_binary_32 )
         if ( (p2) ? true : VR_HAS_PLUS_SIGN( v2 ) )
             overflow = ( result.Q.D.L.D > (U64) INT_MAX ) ? true : false;
         else
-            overflow = ( result.Q.D.L.D < (U64) INT_MIN ) ? true : false;
+        {
+            // special case: negative zero is not an overflow
+            if ( vr_is_zero( regs, v2 ) )
+                overflow = false;
+            else
+                overflow = ( (S64) result.Q.D.L.D < (S64) INT_MIN ) ? true : false;
+        }
+
     }
 
-    /* CC and 32 bit results */
     //logmsg("... result=%16.16lX.%16.16lX \n", result.Q.D.H.D, result.Q.D.L.D);
+
+    /* CC and 32 bit results */
     if (orc && overflow)
         regs->GR_L(r1) = 0;
     else
@@ -2609,7 +2618,7 @@ DEF_INST( vector_convert_to_binary_32 )
 
     /* note: operation is completed before any fixed-point overflow exception */
     /* masked overflow? */
-    if ( !iom && overflow  && FOMASK(&regs->psw))
+    if ( !iom && overflow && FOMASK(&regs->psw))
     {
         regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
     }
@@ -2760,6 +2769,7 @@ DEF_INST( vector_convert_to_binary_64 )
     result = vr_to_U128( regs, v2, ( (lb) ? true : p2 ) );
 
     /* did overflow happen? */
+    overflow = false;
     if (lb)
         overflow = ( result.Q.D.H.D != 0 );
     else
@@ -2767,11 +2777,18 @@ DEF_INST( vector_convert_to_binary_64 )
         if ( (p2) ? true : VR_HAS_PLUS_SIGN( v2 ) )
             overflow = ( result.Q.D.H.D != 0 )        || ( (result.Q.D.L.D & 0x8000000000000000ULL) != 0 );
         else
-            overflow = ( result.Q.D.H.D != (U64) -1 ) || ( (result.Q.D.L.D & 0x8000000000000000ULL) == 0 );
+        {
+            // special case: negative zero is not an overflow
+            if ( vr_is_zero( regs, v2 ) )
+                overflow = false;
+            else
+                overflow = ( result.Q.D.H.D != (U64) -1 ) || ( (result.Q.D.L.D & 0x8000000000000000ULL) == 0 );
+        }
     }
 
-    /* CC and 64 bit results */
     //logmsg("... result=%16.16lX.%16.16lX \n", result.Q.D.H.D, result.Q.D.L.D);
+
+    /* CC and 64 bit results */
     if (orc && overflow)
         regs->GR_G(r1) = 0;
     else
@@ -2781,7 +2798,7 @@ DEF_INST( vector_convert_to_binary_64 )
 
     /* note: operation is completed before any fixed-point overflow exception */
     /* masked overflow? */
-    if ( !iom && overflow  && FOMASK(&regs->psw))
+    if ( !iom && overflow && FOMASK(&regs->psw))
     {
         regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
     }
