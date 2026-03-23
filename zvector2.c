@@ -3028,7 +3028,7 @@ DEF_INST( vector_shift_and_round_decimal )
     drd   = (i4 & 0x80) ? true : false;
     /* note: shamt is signed 7 bit field... */
     shamt = (i4 & 0x7F);
-    shamt = (shamt  > 0x4F ) ? (shamt | 0x80) : shamt;
+    shamt = (shamt  > 0x3F ) ? (shamt | 0x80) : shamt;
 
     /* m5 parts */
     p2 = (m5 & 0x08) ? true : false;
@@ -3084,7 +3084,7 @@ DEF_INST( vector_shift_and_round_decimal )
         decNumberShift(&dnv1, &dnv2, &dnshift, &set);
     }
 
-    // logmsg("... shamt=%d, rdc= %d, drd=%d, p1=%d, p2=%d \n",shamt, rdc, drd, p1, p2);
+    // logmsg("... i4=%d, shamt=%d, rdc= %d, drd=%d, p1=%d, p2=%d \n",i4, shamt, rdc, drd, p1, p2);
     // dn_logmsg("dnv2: ", &dnv2);
     // dn_logmsg("dnshift: ", &dnshift);
     // dn_logmsg("dnv1: ", &dnv1);
