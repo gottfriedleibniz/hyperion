@@ -39,6 +39,23 @@
 #endif
 
 /*-------------------------------------------------------------------*/
+/*              Define THREAD_LOCAL attributes by compiler           */
+/*-------------------------------------------------------------------*/
+
+#if !defined(THREAD_LOCAL)
+  #if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L \
+                                && !defined __STDC_NO_THREADS__
+    #define THREAD_LOCAL _Thread_local
+  #elif defined(_MSC_VER)
+    #define THREAD_LOCAL __declspec(thread)
+  #elif defined(__GNUC__) || defined(__clang__) || defined(__INTEL_COMPILER)
+    #define THREAD_LOCAL __thread
+  #else
+    #define THREAD_LOCAL /* thread_local */
+  #endif
+#endif
+
+/*-------------------------------------------------------------------*/
 /*         Round a value 'x' up to the next 'b' boundary             */
 /*-------------------------------------------------------------------*/
 #define ROUND_UP(x,b)       ((x)?((((x)+((b)-1))/(b))*(b)):(b))
@@ -152,7 +169,7 @@ typedef char _CASSERT_PASTE( assertion_failed_ ## file, line )[ 2 * !!(cond) - 1
 #undef likely
 #undef unlikely
 
-#ifdef _MSVC_
+#if defined(_MSVC_) && !defined( __clang__ )
 
   #define likely(_c)      ( (_c) ? ( __assume((_c)), 1 ) :                    0   )
   #define unlikely(_c)    ( (_c) ?                   1   : ( __assume(!(_c)), 0 ) )
@@ -784,7 +801,7 @@ typedef int CMPFUNC(const void*, const void*);
 /*               Define compiler error bypasses                      */
 /*********************************************************************/
 
-#ifdef _MSVC_
+#if defined( _MSVC_ ) && !defined( __clang__ )
 
     /*
      *  MS VC Bug ID 363375 Bypass

@@ -153,13 +153,6 @@ int ARCH_DEP( system_reset )( const int target_mode, const bool clear,
 
     /* Signal all CPUs in configuration to stop and reset */
     {
-        /* Switch lock context to hold both sigplock and intlock */
-        RELEASE_INTLOCK( NULL );
-        {
-            obtain_lock( &sysblk.sigplock );
-        }
-        OBTAIN_INTLOCK( NULL );
-
         /* Ensure no external updates pending */
         OFF_IC_SERVSIG;
         OFF_IC_INTKEY;
@@ -193,13 +186,6 @@ int ARCH_DEP( system_reset )( const int target_mode, const bool clear,
                 WAKEUP_CPU( regs );
             }
         }
-
-        /* Return to hold of just intlock */
-        RELEASE_INTLOCK( NULL );
-        {
-            release_lock( &sysblk.sigplock );
-        }
-        OBTAIN_INTLOCK( NULL );
     }
 
     /* Wait for CPUs to complete their resets */
@@ -394,18 +380,32 @@ int ARCH_DEP( common_load_begin )( int cpu, int clear )
     target_mode = sysblk.arch_mode > ARCH_390_IDX ?
                                      ARCH_390_IDX : sysblk.arch_mode;
 
-    if ((rc = ARCH_DEP( system_reset )( target_mode, clear, ipl, cpu )) != 0)
-        return rc;
+    /* Switch lock context to hold both sigplock and intlock */
+    RELEASE_INTLOCK( NULL );
+    {
+        obtain_lock( &sysblk.sigplock );
+    }
+    OBTAIN_INTLOCK( NULL );
 
-    /* Save our captured-z/Arch-PSW if this is a Load-normal IPL
-       since the initial_cpu_reset call cleared it to zero. */
-    if (capture)
-        sysblk.regs[ cpu ]->captured_zpsw = captured_zpsw;
+    if ((rc = ARCH_DEP( system_reset )( target_mode, clear, ipl, cpu )) == 0)
+    {
+        /* Save our captured-z/Arch-PSW if this is a Load-normal IPL
+           since the initial_cpu_reset call cleared it to zero. */
+        if (capture)
+            sysblk.regs[ cpu ]->captured_zpsw = captured_zpsw;
 
-    /* The actual IPL (load) now begins... */
-    sysblk.regs[ cpu ]->loadstate = TRUE;
+        /* The actual IPL (load) now begins... */
+        sysblk.regs[ cpu ]->loadstate = TRUE;
+    }
 
-    return 0;
+    /* Return to hold of just intlock */
+    RELEASE_INTLOCK( NULL );
+    {
+        release_lock( &sysblk.sigplock );
+    }
+    OBTAIN_INTLOCK( NULL );
+
+    return rc;
 } /* end function common_load_begin */
 
 /*-------------------------------------------------------------------*/
@@ -811,7 +811,7 @@ int ARCH_DEP( initial_cpu_reset )( REGS* regs )
 //-------------------------------------------------------------------
 //                      _FEATURE_XXX code
 //-------------------------------------------------------------------
-// Place any _FEATURE_XXX depdendent functions (WITH the underscore)
+// Place any _FEATURE_XXX dependent functions (WITH the underscore)
 // here. You may need to define such functions whenever one or more
 // build architectures has a given FEATURE_XXX (WITHOUT underscore)
 // defined for it. The underscore means AT LEAST ONE of the build
@@ -831,7 +831,7 @@ int ARCH_DEP( initial_cpu_reset )( REGS* regs )
 /* nor can you call "ARCH_DEP(func)(args)" anywhere in your code!    */
 /*                                                                   */
 /* Basically you MUST NOT use any architecture dependent macro that  */
-/* is #defined in the "feature.h" header.  If you you need to use    */
+/* is #defined in the "feature.h" header.  If you need to use        */
 /* any of them, then your function MUST be an "ARCH_DEP" function    */
 /* that is placed within the ARCH_DEP section at the beginning of    */
 /* this module where it can be compiled multiple times, once for     */

@@ -284,6 +284,7 @@ static int reset_cmd( int ac, char* av[], char* cmdline, bool clear )
     UNREFERENCED( av );
     UNREFERENCED( cmdline );
 
+    obtain_lock( &sysblk.sigplock );
     OBTAIN_INTLOCK( NULL );
     {
         /* Note: there's no need to check if the CPUs are stopped.
@@ -295,6 +296,7 @@ static int reset_cmd( int ac, char* av[], char* cmdline, bool clear )
         rc = system_reset( sysblk.arch_mode, clear, ipl, sysblk.pcpu );
     }
     RELEASE_INTLOCK( NULL );
+    release_lock( &sysblk.sigplock );
 
     return rc;
 }
