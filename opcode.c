@@ -3530,10 +3530,11 @@ IPRINT_FUNC(ASMFMT_VRR_F);
     IPRINT_PRINT("%d,%d,%d", v1, r2, r3)
 
 IPRINT_FUNC(ASMFMT_VRR_G);
-    int v1;
+    int v1, i3;
     UNREFERENCED(regs);
     v1 = ((inst[1] >> 0) & 0x0F) | ((inst[4] & 0x04) << 2);
-    IPRINT_PRINT("%d", v1)
+    i3 = ((inst[2] & 0x0F) << 12) | ((inst[3] & 0xFF) << 4) | ((inst[4] & 0xF0) >> 4);
+    IPRINT_PRINT("%d,%d", v1, i3)
 
 IPRINT_FUNC(ASMFMT_VRR_H);
     int v1, v2, m3;
