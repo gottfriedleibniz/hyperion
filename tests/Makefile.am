@@ -912,6 +912,26 @@ EXTRA_DIST =                    \
      zvector-e7-29-ShiftDoubleByBit.list    \
      zvector-e7-29-ShiftDoubleByBit.pdf     \
      zvector-e7-29-ShiftDoubleByBit.tst     \
+     zvector-e7-30-DivideRem.asm            \
+     zvector-e7-30-DivideRem.core           \
+     zvector-e7-30-DivideRem.list           \
+     zvector-e7-30-DivideRem.pdf            \
+     zvector-e7-30-DivideRem.tst            \
+     zvector-e7-31-VBLEND.asm               \
+     zvector-e7-31-VBLEND.core              \
+     zvector-e7-31-VBLEND.list              \
+     zvector-e7-31-VBLEND.pdf               \
+     zvector-e7-31-VBLEND.tst               \
+     zvector-e7-32-VGEM.asm                 \
+     zvector-e7-32-VGEM.core                \
+     zvector-e7-32-VGEM.list                \
+     zvector-e7-32-VGEM.pdf                 \
+     zvector-e7-32-VGEM.tst                 \
+     zvector-e7-33-VEVAL.asm                \
+     zvector-e7-33-VEVAL.core               \
+     zvector-e7-33-VEVAL.list               \
+     zvector-e7-33-VEVAL.pdf                \
+     zvector-e7-33-VEVAL.tst                \
      zvector-e7-99-performance.asm          \
      zvector-e7-99-performance.core         \
      zvector-e7-99-performance.list         \

@@ -3923,6 +3923,22 @@
 						>
 					</File>
 					<File
+						RelativePath=".\tests\zvector-e7-30-DivideRem.core"
+						>
+					</File>
+					<File
+						RelativePath=".\tests\zvector-e7-31-VBLEND.core"
+						>
+					</File>
+					<File
+						RelativePath=".\tests\zvector-e7-32-VGEM.core"
+						>
+					</File>
+					<File
+						RelativePath=".\tests\zvector-e7-33-VEVAL.core"
+						>
+					</File>
+					<File
 						RelativePath=".\tests\zvector-e7-99-performance.core"
 						>
 					</File>
@@ -5366,6 +5382,22 @@
 							>
 						</File>
 						<File
+							RelativePath=".\tests\zvector-e7-30-DivideRem.tst"
+							>
+						</File>
+						<File
+							RelativePath=".\tests\zvector-e7-31-VBLEND.tst"
+							>
+						</File>
+						<File
+							RelativePath=".\tests\zvector-e7-32-VGEM.tst"
+							>
+						</File>
+						<File
+							RelativePath=".\tests\zvector-e7-33-VEVAL.tst"
+							>
+						</File>
+						<File
 							RelativePath=".\tests\zvector-e7-99-performance.tst"
 							>
 						</File>
@@ -5963,6 +5995,22 @@
 						</File>
 						<File
 							RelativePath=".\tests\zvector-e7-29-ShiftDoubleByBit.asm"
+							>
+						</File>
+						<File
+							RelativePath=".\tests\zvector-e7-30-DivideRem.asm"
+							>
+						</File>
+						<File
+							RelativePath=".\tests\zvector-e7-31-VBLEND.asm"
+							>
+						</File>
+						<File
+							RelativePath=".\tests\zvector-e7-32-VGEM.asm"
+							>
+						</File>
+						<File
+							RelativePath=".\tests\zvector-e7-33-VEVAL.asm"
 							>
 						</File>
 						<File
@@ -7006,6 +7054,38 @@
 							</File>
 							<File
 								RelativePath=".\tests\zvector-e7-29-ShiftDoubleByBit.pdf"
+								>
+							</File>
+							<File
+								RelativePath=".\tests\zvector-e7-30-DivideRem.list"
+								>
+							</File>
+							<File
+								RelativePath=".\tests\zvector-e7-30-DivideRem.pdf"
+								>
+							</File>
+							<File
+								RelativePath=".\tests\zvector-e7-31-VBLEND.list"
+								>
+							</File>
+							<File
+								RelativePath=".\tests\zvector-e7-31-VBLEND.pdf"
+								>
+							</File>
+							<File
+								RelativePath=".\tests\zvector-e7-32-VGEM.list"
+								>
+							</File>
+							<File
+								RelativePath=".\tests\zvector-e7-32-VGEM.pdf"
+								>
+							</File>
+							<File
+								RelativePath=".\tests\zvector-e7-33-VEVAL.list"
+								>
+							</File>
+							<File
+								RelativePath=".\tests\zvector-e7-33-VEVAL.pdf"
 								>
 							</File>
 							<File
