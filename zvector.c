@@ -7581,7 +7581,7 @@ DEF_INST( vector_average )
                 }
                 else
                 {
-                    /* positive signs: handle as U6128 values */
+                    /* positive signs: handle as U128 values */
                     temp128 = S128_add( tempv2, tempv3 );
                     temp128 = S128_add( temp128, U128_one() );
                     temp128 = U128_shrl( temp128, 1 );
@@ -7593,7 +7593,7 @@ DEF_INST( vector_average )
                 /* different signs */
                 temp128 = S128_add( tempv2, tempv3 );
                 temp128 = S128_add( temp128, U128_one() );
-                temp128 = U128_shrl( temp128, 1 );
+                temp128 = U128_shra( temp128, 1 );
                 regs->VR_Q(v1) = temp128.Q;
             }
         }
