@@ -646,10 +646,10 @@ static inline void U128_mul( U128 a, U128 b, U128* hi128, U128* lo128)
 
     carry = 0;
     acc128mid = U128_add( acc128mid, temp2);
-    if ( U128_cmp(acc128mid, temp1) == -1 ) carry++;
+    if ( U128_cmp(acc128mid, temp2) == -1 ) carry++;
 
     acc128mid = U128_add( acc128mid, temp3);
-    if ( U128_cmp(acc128mid, temp2) == -1 ) carry++;
+    if ( U128_cmp(acc128mid, temp3) == -1 ) carry++;
 
     temp.Q.D.L.D = 0;
     temp.Q.D.H.D = temp4.Q.D.L.D;
