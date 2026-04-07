@@ -6048,6 +6048,7 @@ DEF_INST( vector_divide_logical )
 {
     int     v1, v2, v3, m4, m5, m6;
     int     i;
+    union   { U64 d[2]; U32 f[4]; } temp;
     U128    dividend, divisor, quotient;
 
     VRR_C( inst, regs, v1, v2, v3, m4, m5, m6 );
@@ -6068,13 +6069,17 @@ DEF_INST( vector_divide_logical )
             {
                 if (M5_IDC)
                 {
-                    regs->VR_F( v1, i ) = 0;
+                    temp.f[i] = 0;
                     continue;
                 }
                 else
                     vector_processing_trap( regs, i, VXC_INTEGER_DIVIDE );
             }
-            regs->VR_F( v1, i ) = regs->VR_F( v2, i ) / regs->VR_F( v3, i );
+            temp.f[i] = regs->VR_F( v2, i ) / regs->VR_F( v3, i );
+        }
+        for (i=0; i < 4; i++)
+        {
+            regs->VR_F( v1, i ) = temp.f[i];
         }
         break;
     case 3:  /* Doubleword */
@@ -6084,13 +6089,17 @@ DEF_INST( vector_divide_logical )
             {
                 if (M5_IDC)
                 {
-                    regs->VR_D( v1, i ) = 0;
+                    temp.d[i] = 0;
                     continue;
                 }
                 else
                     vector_processing_trap( regs, i, VXC_INTEGER_DIVIDE );
             }
-            regs->VR_D( v1, i ) = regs->VR_D( v2, i ) / regs->VR_D( v3, i );
+            temp.d[i] = regs->VR_D( v2, i ) / regs->VR_D( v3, i );
+        }
+        for (i=0; i < 2; i++)
+        {
+            regs->VR_D( v1, i ) = temp.d[i];
         }
         break;
     case 4:  /* Quadword */
@@ -6129,6 +6138,7 @@ DEF_INST( vector_remainder_logical )
 {
     int     v1, v2, v3, m4, m5, m6;
     int     i;
+    union   { U64 d[2]; U32 f[4]; } temp;
     U128    dividend, divisor, remainder;
 
     VRR_C( inst, regs, v1, v2, v3, m4, m5, m6 );
@@ -6149,13 +6159,17 @@ DEF_INST( vector_remainder_logical )
             {
                 if (M5_IDC)
                 {
-                    regs->VR_F( v1, i ) = 0;
+                    temp.f[i] = 0;
                     continue;
                 }
                 else
                     vector_processing_trap( regs, i, VXC_INTEGER_DIVIDE );
             }
-            regs->VR_F( v1, i ) = regs->VR_F( v2, i ) % regs->VR_F( v3, i );
+            temp.f[i] = regs->VR_F( v2, i ) % regs->VR_F( v3, i );
+        }
+        for (i=0; i < 4; i++)
+        {
+            regs->VR_F( v1, i ) = temp.f[i];
         }
         break;
     case 3:  /* Doubleword */
@@ -6165,13 +6179,17 @@ DEF_INST( vector_remainder_logical )
             {
                 if (M5_IDC)
                 {
-                    regs->VR_D( v1, i ) = 0;
+                    temp.d[i] = 0;
                     continue;
                 }
                 else
                     vector_processing_trap( regs, i, VXC_INTEGER_DIVIDE );
             }
-            regs->VR_D( v1, i ) = regs->VR_D( v2, i ) % regs->VR_D( v3, i );
+            temp.d[i] = regs->VR_D( v2, i ) % regs->VR_D( v3, i );
+        }
+        for (i=0; i < 2; i++)
+        {
+            regs->VR_D( v1, i ) = temp.d[i];
         }
         break;
     case 4:  /* Quadword */
@@ -6210,6 +6228,7 @@ DEF_INST( vector_divide )
 {
     int     v1, v2, v3, m4, m5, m6;
     int     i;
+    union   { U64 d[2]; U32 f[4]; } temp;
     U128    dividend, divisor, quotient;
     U128    negone, negmax;
 
@@ -6228,34 +6247,42 @@ DEF_INST( vector_divide )
         for (i=0; i < 4; i++)
         {
             if (regs->VR_F( v3, i ) == 0 ||
-               ((regs->VR_F( v3, i ) == 0xFFFFFFFF) && (regs->VR_F( v2, i ) == 0x80000000)) )
+               (regs->VR_F( v3, i ) == 0xFFFFFFFF && regs->VR_F( v2, i ) == 0x80000000))
             {
                 if (M5_IDC)
                 {
-                    regs->VR_F( v1, i ) = 0;
+                    temp.f[i] = 0;
                     continue;
                 }
                 else
                     vector_processing_trap( regs, i, VXC_INTEGER_DIVIDE );
             }
-            regs->VR_F( v1, i ) = (S32)regs->VR_F( v2, i ) / (S32)regs->VR_F( v3, i );
+            temp.f[i] = (S32)regs->VR_F( v2, i ) / (S32)regs->VR_F( v3, i );
+        }
+        for (i=0; i < 4; i++)
+        {
+            regs->VR_F( v1, i ) = temp.f[i];
         }
         break;
     case 3:  /* Doubleword */
         for (i=0; i < 2; i++)
         {
             if (regs->VR_D( v3, i ) == 0 ||
-               ((regs->VR_D( v3, i ) == 0xFFFFFFFFFFFFFFFFull) && (regs->VR_D( v2, i ) == 0x8000000000000000ull)) )
+               (regs->VR_D( v3, i ) == 0xFFFFFFFFFFFFFFFFull && regs->VR_D( v2, i ) == 0x8000000000000000ull))
             {
                 if (M5_IDC)
                 {
-                    regs->VR_D( v1, i ) = 0;
+                    temp.d[i] = 0;
                     continue;
                 }
                 else
                     vector_processing_trap( regs, i, VXC_INTEGER_DIVIDE );
             }
-            regs->VR_D( v1, i ) = (S64)regs->VR_D( v2, i ) / (S64)regs->VR_D( v3, i );
+            temp.d[i] = (S64)regs->VR_D( v2, i ) / (S64)regs->VR_D( v3, i );
+        }
+        for (i=0; i < 2; i++)
+        {
+            regs->VR_D( v1, i ) = temp.d[i];
         }
         break;
     case 4:  /* Quadword */
@@ -6266,7 +6293,7 @@ DEF_INST( vector_divide )
         dividend.Q = regs->VR_Q( v2 );
         divisor.Q = regs->VR_Q( v3 );
         if (U128_isZero( divisor ) ||
-           ((U128_cmp( divisor, negone) == 0) && (U128_cmp( dividend, negmax) == 0)) )
+           (U128_cmp( divisor, negone ) == 0 && U128_cmp( dividend, negmax ) == 0))
         {
             if (M5_IDC)
             {
@@ -6295,45 +6322,11 @@ DEF_INST( vector_divide )
 /*-------------------------------------------------------------------*/
 /* E7B3 VR     - Vector Remainder                            [VRR-c] */
 /*-------------------------------------------------------------------*/
-/*
-   FixMe!
-   The VECTOR DIVIDE (VD) and VECTOR REMAINDER (VR) instructions
-   were introduced with vector-enhancements facility 3, and were
-   first described in the fifteenth edition of z/Architecture
-   Principles of Operation (SA22-7832-14). Both instructions do a
-   divide, VD returns the quotient(s), VR returns the remainder(s).
-   The descriptions of the two instructions were very similar,
-   except for the following paragraph which only appears in the
-   description of the VD instruction:
-     For VECTOR DIVIDE, if the divisor is negative one and the
-     dividend is the negative maximum value of the specified size;
-     if the IDC bit is zero, the instruction execution is suppressed
-     and an integer divide vector-processing exception is
-     recognized; if the IDC bit is one, recognition of an integer
-     divide vector-processing exception is suppressed and the result
-     is zero.
-   The conditions mentioned in the above paragraph were coded for
-   the VD instruction, but not for the VR instruction. However,
-   subsequent testing of the VR instruction with the mentioned
-   conditions resulted in:
-     +++ OOPS! +++ Hercules has crashed! (Floating point exception)
-     Creating crash dump... This will take a while...
-   and the dump indicated:
-     Program terminated with signal SIGFPE, Arithmetic exception.
-   So, what does a real zSeries machine do when the VR instruction
-   encounters the mentioned conditions? Does it
-*    a) follow the VD instruction description, because a version
-*       of the quoted paragraph is simply missing from the VR
-*       instruction description?, or
-     b) raise a vector-processing exception?
-   This implementation has opted for a. As a result Hercules'
-   emulation of the VR instruction may produce the wrong results
-   until the actions of a real zSeries machine can be determined.
-                                                                     */
 DEF_INST( vector_remainder )
 {
     int     v1, v2, v3, m4, m5, m6;
     int     i;
+    union   { U64 d[2]; U32 f[4]; } temp;
     U128    dividend, divisor, remainder;
     U128    negone, negmax;
 
@@ -6351,35 +6344,51 @@ DEF_INST( vector_remainder )
     case 2:  /* Word */
         for (i=0; i < 4; i++)
         {
-            if (regs->VR_F( v3, i ) == 0 ||
-               ((regs->VR_F( v3, i ) == 0xFFFFFFFF) && (regs->VR_F( v2, i ) == 0x80000000)) )
+            if (regs->VR_F( v3, i ) == 0)
             {
                 if (M5_IDC)
                 {
-                    regs->VR_F( v1, i ) = 0;
+                    temp.f[i] = 0;
                     continue;
                 }
                 else
                     vector_processing_trap( regs, i, VXC_INTEGER_DIVIDE );
             }
-            regs->VR_F( v1, i ) = (S32)regs->VR_F( v2, i ) % (S32)regs->VR_F( v3, i );
+            if (regs->VR_F( v3, i ) == 0xFFFFFFFF && regs->VR_F( v2, i ) == 0x80000000)
+            {
+                temp.f[i] = 0;
+                continue;
+            }
+            temp.f[i] = (S32)regs->VR_F( v2, i ) % (S32)regs->VR_F( v3, i );
+        }
+        for (i=0; i < 4; i++)
+        {
+            regs->VR_F( v1, i ) = temp.f[i];
         }
         break;
     case 3:  /* Doubleword */
         for (i=0; i < 2; i++)
         {
-            if (regs->VR_D( v3, i ) == 0 ||
-               ((regs->VR_D( v3, i ) == 0xFFFFFFFFFFFFFFFFull) && (regs->VR_D( v2, i ) == 0x8000000000000000ull)) )
+            if (regs->VR_D( v3, i ) == 0)
             {
                 if (M5_IDC)
                 {
-                    regs->VR_D( v1, i ) = 0;
+                    temp.d[i] = 0;
                     continue;
                 }
                 else
                     vector_processing_trap( regs, i, VXC_INTEGER_DIVIDE );
             }
-            regs->VR_D( v1, i ) = (S64)regs->VR_D( v2, i ) % (S64)regs->VR_D( v3, i );
+            if (regs->VR_D( v3, i ) == 0xFFFFFFFFFFFFFFFFull && regs->VR_D( v2, i ) == 0x8000000000000000ull)
+            {
+                temp.d[i] = 0;
+                continue;
+            }
+            temp.d[i] = (S64)regs->VR_D( v2, i ) % (S64)regs->VR_D( v3, i );
+        }
+        for (i=0; i < 2; i++)
+        {
+            regs->VR_D( v1, i ) = temp.d[i];
         }
         break;
     case 4:  /* Quadword */
@@ -6389,8 +6398,7 @@ DEF_INST( vector_remainder )
         negmax.Q.D.L.D = 0x0000000000000000ull;
         dividend.Q = regs->VR_Q( v2 );
         divisor.Q = regs->VR_Q( v3 );
-        if (U128_isZero( divisor ) ||
-           ((U128_cmp( divisor, negone) == 0) && (U128_cmp( dividend, negmax) == 0)) )
+        if (U128_isZero( divisor ))
         {
             if (M5_IDC)
             {
@@ -6400,6 +6408,12 @@ DEF_INST( vector_remainder )
             }
             else
                 vector_processing_trap( regs, 0, VXC_INTEGER_DIVIDE );
+        }
+        if (U128_cmp( divisor, negone ) == 0 && U128_cmp( dividend, negmax ) == 0)
+        {
+             regs->VR_D( v1, 0 ) = 0;
+             regs->VR_D( v1, 1 ) = 0;
+             break;
         }
         remainder = S128_rem( dividend, divisor );
         regs->VR_Q( v1 ) = remainder.Q;
