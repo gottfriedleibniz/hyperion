@@ -1051,7 +1051,7 @@ ZVE6TST  CSECT ,
 
 * digits valid,  sign invalid
          VRI_L VTZ,X'3F1F',1
-         DC    XL16'90F0F0F0F0F0F0F0 F0F0F0F0F0F0F0F0'   V1 source
+         DC    XL16'F090F0F0F0F0F0F0 F0F0F0F0F0F0F0F0'   V1 source
          DC    XL16'F0F0F0F0F0F0F0F0 F0F0F0F0F0F0F0F0'   V2 source
 
 * a digit invalid, sign valid
@@ -1061,7 +1061,7 @@ ZVE6TST  CSECT ,
 
 * a digit invalid,  sign invalid
          VRI_L VTZ,X'3F1F',3
-         DC    XL16'00F0F0F0F0F0F0F0 F0F0F0F0F0F0F0FF'   V1 source
+         DC    XL16'009FF0F0F0F0F0F0 F0F0F0F0F0F0F0FF'   V1 source
          DC    XL16'F0F0F0F0F0F0F0F0 F0F0F0F0F0F0F0F0'   V2 source
 
 *---------------------------------------------------------------------

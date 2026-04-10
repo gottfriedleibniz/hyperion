@@ -5081,7 +5081,7 @@ DEF_INST( vector_test_zoned )
     else if ( ssc == 0 && ls == 1 )
     {   /* ELS-type-zoned format */
         zsf = SD_BYTE;
-        sign = SV_B( temp, 31 - dc );    //imbedded sign
+        sign = SV_B( temp, 32 - dc );    //imbedded sign
 
         /* validate digits & check isZero */
         /* sign byte */
