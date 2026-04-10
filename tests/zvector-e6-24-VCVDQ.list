@@ -1,4 +1,4 @@
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page     1
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page     1
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -58,7 +58,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
                                                     54 *   *Done
                                                     55 *
                                                     56 ***********************************************************************
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page     2
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page     2
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -116,7 +116,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
                                                    109          B     EOJ
                                                    110 XC&SYSNDX EQU *
                                                    111          MEND
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page     3
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page     3
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -176,7 +176,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
                                                    165          DC    X'4A'
                                                    166                                                                SPACE 1
                                                    167          MEND
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page     4
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page     4
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -203,7 +203,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 
 
 000001E0                      000001E0  00000200   186          ORG   ZVE6TST+X'200'        Start of actual test program...
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page     5
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page     5
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -248,7 +248,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 0000021A  9604 8475                     00000675   226          OI    CTLR0+1,X'04'           Turn on AFP bit
 0000021E  9602 8475                     00000675   227          OI    CTLR0+1,X'02'           Turn on Vector bit
 00000222  B700 8474                     00000674   228          LCTL  R0,R0,CTLR0             Reload updated CR0
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page     6
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page     6
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -284,7 +284,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 000002D8  4520 8390                     00000590   259+         BAL   R2,MSG
 000002DC  47F0 8458                     00000658   260+         B     EOJ
                               000002E0  00000001   261+XC0001   EQU   *
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page     7
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page     7
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -322,7 +322,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
                               00000314  00000001   294 DONEXT   EQU   *
 00000314  41C0 C004                     00000004   295          LA    R12,4(0,R12)           next test address
 00000318  47F0 80E4                     000002E4   296          B     NEXTE6
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page     8
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page     8
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -382,14 +382,14 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 000003AC  45F0 8356                     00000556   351          BAL   R15,RPTERROR
                                                    352
 000003B0  58F0 81B8                     000003B8   353          L     R15,CCR15
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page     9
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page     9
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
 000003B4  07FF                                     354          BR    R15
                                                    355 *
 000003B8  00000000 00000000                        356 CCR15    DS    FD
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    10
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    10
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -449,7 +449,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00000420  4E20 8F36                     00001136   411          CVD   R2,DECNUM
 00000424  D211 8F20 8F0A      00001120  0000110A   412          MVC   PRT3,EDIT
 0000042A  DE11 8F20 8F36      00001120  00001136   413          ED    PRT3,DECNUM
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    11
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    11
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -488,7 +488,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 000004B8  00000000 00000000                        446 XCV2     DS    XL16
 000004C8  00000000 00000000                        447 XCR15    DS    FD
                                                    448
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    12
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    12
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -545,7 +545,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 0000054E  4780 8458                     00000658   498          BZ    EOJ                  No, exit
 00000552  47F0 8470                     00000670   499          B     FAILTEST             Yes, exit with BAD PSW
                                                    500
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    13
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    13
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -573,7 +573,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00000578  00000000                                 522 RPTSVR5  DC    F'0'                 R5 save area
 
 00000580  00000000 00000000                        524 RPTDWSAV DC    2D'0'                R0-R2 save area for MSG call
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    14
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    14
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -621,7 +621,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 000005DE  D4E2C7D5 D6C8405C                        561 MSGCMD   DC    C'MSGNOH * '           *** HERCULES MESSAGE COMMAND ***
 000005E7  40404040 40404040                        562 MSGMSG   DC    CL95' '                The message text to be displayed
                                                    563
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    15
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    15
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -681,7 +681,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
                               00000400  00000001   602 K        EQU   1024             One KB
                               00001000  00000001   603 PAGE     EQU   (4*K)            Size of one page
                               00010000  00000001   604 K64      EQU   (64*K)           64 KB
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    16
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    16
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -690,7 +690,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
                                                    607
                               AABBCCDD  00000001   608 REG2PATT EQU   X'AABBCCDD'    Polluted Register pattern
                               000000DD  00000001   609 REG2LOW  EQU         X'DD'    (last byte above)
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    17
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    17
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -750,7 +750,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
                                                    661 *
                                                    662 *        XCHECK failed message
                                                    663 *
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    18
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    18
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -765,7 +765,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00001107  A7A7                                     672 XCPM4    DC    C'xx'
 00001109  4B                                       673          DC    C'.'
                               00000052  00000001   674 XCPLNG   EQU   *-XCPLINE
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    19
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    19
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -787,7 +787,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00001156  FFFFFFFF FFFFFFFF                        690 V1FUDGE  DC    XL16'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'    V1 FUDGE
 00001166  12345678 90123456                        691 V1INPUT  DC    XL16'1234567890123456789012345678901D'    V1 input
 00001176  00000000 00000000                        692          DS    XL16
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    20
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    20
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -847,7 +847,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
                                                    744          LCLA  &XCC(4)  &CC has mask values for FAILED condition codes
                                                    745 &XCC(1)  SETA  7                 CC != 0
                                                    746 &XCC(2)  SETA  11                CC != 1
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    21
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    21
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -904,7 +904,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
                                                    797          DROP  R5
                                                    798
                                                    799          MEND
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    22
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    22
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -929,7 +929,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
                                                    819          DC    A(0)
                                                    820 .*
                                                    821          MEND
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    23
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    23
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -989,7 +989,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 0000120F  22                                       875+         DC    X'22'                    v1, v2
 00001210  00                                       876+         DC    X'00'                   reserved
 00001211  19F0                                     877+         DC    HL2'6640'                m4, i3, rXB
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    24
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    24
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1049,7 +1049,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 000012D4  B98D 0020                                928+         EPSW  R2,R0             exptract psw
 000012D8  5020 5068                     00000068   929+         ST    R2,CCPSW              to save CC
 000012DC  E720 5028 000E                00001270   930+         VST   V2,V1O2           save instruction result
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    25
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    25
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1109,7 +1109,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 000013A4                                           981+         DROP  R5
 000013A4  00000000 00000000                        982          DC    XL16'0000000000000000 000000000000001D'      v1
 000013AC  00000000 0000001D
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    26
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    26
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1169,7 +1169,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
                                                   1032
                                                   1033          VRI_J VCVDQ,X'9F',X'1',0,N
 00001488                                          1034+         DS    0FD
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    27
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    27
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1229,7 +1229,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 0000154C  0006                                    1085+         DC    H'6'              test number
 0000154E  00                                      1086+         DC    X'00'
 0000154F  D5                                      1087+         DC    CL1'N'            S or Y = skip cross check
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    28
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    28
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1289,7 +1289,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00001612  00                                      1138+         DC    HL1'0'            cc
 00001613  07                                      1139+         DC    HL1'7'            cc failed mask
 00001614  000016B4                                1140+V2_7     DC    A(RE7+16)         address of v2: 16-byte packed decimal
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    29
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    29
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1349,7 +1349,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 000016D8  E5C3E5C4 D8404040                       1191+         DC    CL8'VCVDQ'        instruction name
 000016E0  00000010                                1192+         DC    A(16)             result length
 000016E4  00001764                                1193+         DC    A(RE8)            address of expected resul
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    30
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    30
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1409,7 +1409,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 000017B8  00000000 00000000
 000017C0  00000000 00000000                       1244+         DS    FD                   gap
 000017C8  40404040 40404040                       1245+         DC    CL8' '            was cross check skipped?
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    31
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    31
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1439,8 +1439,8 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00001822  07FB                                    1269+         BR    R11               return
 00001824                                          1270+RE9      DS    0F                expected 16 byte result
 00001824                                          1271+         DROP  R5
-00001824  00000000 00000000                       1272          DC    XL16'0000000000000000 000000000000000D'      v1
-0000182C  00000000 0000000D
+00001824  00000000 00000000                       1272          DC    XL16'0000000000000000 000000000000000C'      v1
+0000182C  00000000 0000000C
 00001834  FFFFFF81 C841DFDD                       1273          DC    XL16'FFFFFF81C841DFDD 3F6EB4D980000000'      v2
 0000183C  3F6EB4D9 80000000
                                                   1274
@@ -1469,7 +1469,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00001880  00000000 00000000                       1296+         DS    FD                   gap
 00001888  40404040 40404040                       1297+         DC    CL8' '            was cross check skipped?
 00001890  00000000 00000000                       1298+         DS    FD                   gap
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    32
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    32
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1529,7 +1529,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00001968  00000000 00000000                       1348+         DS    FD                   gap
 00001970  00000000 00000000                       1349+         DS    2F          extract PSW after test (has CC)
 00001978  00                                      1350+         DS    X           extracted cc
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    33
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    33
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1589,7 +1589,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00001A3C                                          1401+X12      DS    0F
 00001A3C  E720 8F56 0006                00001156  1402+         VL    V2,V1FUDGE
 00001A42  E320 500C 0014                000019D4  1403+         LGF   R2,V2_12           get v2 address
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    34
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    34
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1649,7 +1649,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00001B0E                                          1455+         DS    0H                      E64A VCVDQ
 00001B0E  E6                                      1456+         DC    X'E6'                    VECTOR CONVERT TO DECIMAL (128)
 00001B0F  22                                      1457+         DC    X'22'                    v1, v2
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    35
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    35
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1709,7 +1709,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00001BD3  4A                                      1508+         DC    X'4A'
 
 00001BD4  B98D 0020                               1510+         EPSW  R2,R0             exptract psw
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    36
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    36
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1769,7 +1769,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00001CA2  07FB                                    1561+         BR    R11               return
 00001CA4                                          1562+RE15     DS    0F                expected 16 byte result
 00001CA4                                          1563+         DROP  R5
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    37
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    37
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1829,7 +1829,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00001D74  FFFFFF81 C841DFDD                       1613          DC    XL16'FFFFFF81C841DFDD 3F6EB4D980000001'      v2
 00001D7C  3F6EB4D9 80000001
                                                   1614 *
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    38
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    38
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1889,7 +1889,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
                                                   1665          VRI_J VCVDQ,X'9F',X'3',3,N
 00001E48                                          1666+         DS    0FD
 00001E48                      00001E48            1667+         USING *,R5              base for test data and test routine
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    39
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    39
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1949,7 +1949,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00001F08                                          1718+         DS    0FD
 00001F08                      00001F08            1719+         USING *,R5              base for test data and test routine
 00001F08  00001F7C                                1720+T19      DC    A(X19)            address of test routine
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    40
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    40
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2009,7 +2009,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00001FCF  D5                                      1771+         DC    CL1'N'            S or Y = skip cross check
 00001FD0  9F                                      1772+         DC    X'9F'             i3
 00001FD1  09                                      1773+         DC    X'9'              m4
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    41
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    41
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2069,7 +2069,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00002094  00002134                                1824+V2_21    DC    A(RE21+16)        address of v2: 16-byte packed decimal
 00002098  E5C3E5C4 D8404040                       1825+         DC    CL8'VCVDQ'        instruction name
 000020A0  00000010                                1826+         DC    A(16)             result length
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    42
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    42
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2129,7 +2129,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00002170  00000000 00000000                       1877+V1O22    DS    XL16              V1 output
 00002178  00000000 00000000
 00002180  00000000 00000000                       1878+         DS    FD                   gap
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    43
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    43
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2189,7 +2189,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00002258  00000000 00000000                       1929+XCO23    DS    XL16              Cross check Output
 00002260  00000000 00000000
 00002268  00000000 00000000                       1930+         DS    FD                   gap
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    44
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    44
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2249,7 +2249,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00002339  00                                      1981+         DS    X           CC Check failed
                                                   1982+*
 0000233C                                          1983+X24      DS    0F
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    45
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    45
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2309,7 +2309,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00002408  E722 0000 0006                00000000  2034+         VL    V2,0(R2)
 
 0000240E                                          2037+         DS    0H                      E64A VCVDQ
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    46
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    46
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2369,7 +2369,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 000024CE  E6                                      2088+         DC    X'E6'                    VECTOR CONVERT TO DECIMAL (128)
 000024CF  22                                      2089+         DC    X'22'                    v1, v2
 000024D0  00                                      2090+         DC    X'00'                   reserved
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    47
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    47
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2429,7 +2429,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 
 00002594  B98D 0020                               2142+         EPSW  R2,R0             exptract psw
 00002598  5020 5068                     00000068  2143+         ST    R2,CCPSW              to save CC
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    48
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    48
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2489,7 +2489,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 
 00002654  B98D 0020                               2195+         EPSW  R2,R0             exptract psw
 00002658  5020 5068                     00000068  2196+         ST    R2,CCPSW              to save CC
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    49
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    49
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2549,7 +2549,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00002724                                          2247+RE29     DS    0F                expected 16 byte result
 00002724                                          2248+         DROP  R5
 00002724  00000000 00000000                       2249          DC    XL16'0000000000000000 000000000000001F'      v1
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    50
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    50
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2609,7 +2609,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 000027FC  FFFFFFFF FFFFFFFF
                                                   2299
                                                   2300          VRI_J VCVDQ,X'9F',X'B',0,N
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    51
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    51
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2669,7 +2669,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 000028C8  0000293C                                2351+T32      DC    A(X32)            address of test routine
 000028CC  0020                                    2352+         DC    H'32'             test number
 000028CE  00                                      2353+         DC    X'00'
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    52
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    52
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2729,7 +2729,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00002991  0B                                      2404+         DC    X'B'              m4
 00002992  00                                      2405+         DC    HL1'0'            cc
 00002993  07                                      2406+         DC    HL1'7'            cc failed mask
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    53
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    53
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2789,7 +2789,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00002A60  00000010                                2457+         DC    A(16)             result length
 00002A64  00002AE4                                2458+         DC    A(RE34)           address of expected resul
 00002A68  00000000 00000000                       2459+         DS    FD                gap
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    54
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    54
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2849,7 +2849,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00002B30  00000000 00000000                       2510+V1O35    DS    XL16              V1 output
 00002B38  00000000 00000000
 00002B40  00000000 00000000                       2511+         DS    FD                   gap
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    55
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    55
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2909,7 +2909,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00002C18  00000000 00000000                       2562+XCO36    DS    XL16              Cross check Output
 00002C20  00000000 00000000
 00002C28  00000000 00000000                       2563+         DS    FD                   gap
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    56
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    56
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2969,7 +2969,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00002CD0  00000000 00000000                       2615+         DS    FD                   gap
 00002CD8  00000000 00000000                       2616+XCO37    DS    XL16              Cross check Output
 00002CE0  00000000 00000000
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    57
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    57
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -3029,7 +3029,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00002DB8  00                                      2667+         DS    X           extracted cc
 00002DB9  00                                      2668+         DS    X           CC Check failed
                                                   2669+*
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    58
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    58
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -3088,7 +3088,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00002E7C  E720 8F56 0006                00001156  2719+         VL    V2,V1FUDGE
 00002E82  E320 500C 0014                00002E14  2720+         LGF   R2,V2_39           get v2 address
 00002E88  E722 0000 0006                00000000  2721+         VL    V2,0(R2)
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    59
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    59
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -3148,7 +3148,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00002F4E                                          2774+         DS    0H                      E64A VCVDQ
 00002F4E  E6                                      2775+         DC    X'E6'                    VECTOR CONVERT TO DECIMAL (128)
 00002F4F  22                                      2776+         DC    X'22'                    v1, v2
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    60
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    60
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -3208,7 +3208,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00003013  4A                                      2827+         DC    X'4A'
 
 00003014  B98D 0020                               2829+         EPSW  R2,R0             exptract psw
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    61
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    61
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -3268,7 +3268,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 000030E2  07FB                                    2880+         BR    R11               return
 000030E4                                          2881+RE42     DS    0F                expected 16 byte result
 000030E4                                          2882+         DROP  R5
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    62
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    62
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -3328,7 +3328,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 000031B4  FFFFFF81 C841DFDD                       2932          DC    XL16'FFFFFF81C841DFDD 3F6EB4D980000001'      v2
 000031BC  3F6EB4D9 80000001
                                                   2933
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    63
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    63
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -3388,7 +3388,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00003288                      00003288            2984+         USING *,R5              base for test data and test routine
 00003288  000032FC                                2985+T45      DC    A(X45)            address of test routine
 0000328C  002D                                    2986+         DC    H'45'             test number
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    64
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    64
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -3433,8 +3433,8 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00003322  07FB                                    3024+         BR    R11               return
 00003324                                          3025+RE45     DS    0F                expected 16 byte result
 00003324                                          3026+         DROP  R5
-00003324  00000000 00000000                       3027          DC    XL16'0000000000000000 000000000000000D'      v1
-0000332C  00000000 0000000D
+00003324  00000000 00000000                       3027          DC    XL16'0000000000000000 000000000000000C'      v1
+0000332C  00000000 0000000C
 00003334  FFFFFF81 C841DFDD                       3028          DC    XL16'FFFFFF81C841DFDD 3F6EB4D980000000'      v2
 0000333C  3F6EB4D9 80000000
                                                   3029
@@ -3448,7 +3448,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00003348  000033BC                                3037+T46      DC    A(X46)            address of test routine
 0000334C  002E                                    3038+         DC    H'46'             test number
 0000334E  00                                      3039+         DC    X'00'
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    65
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    65
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -3508,7 +3508,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00003411  03                                      3090+         DC    X'3'              m4
 00003412  00                                      3091+         DC    HL1'0'            cc
 00003413  07                                      3092+         DC    HL1'7'            cc failed mask
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    66
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    66
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -3568,7 +3568,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 000034E0  00000010                                3143+         DC    A(16)             result length
 000034E4  00003564                                3144+         DC    A(RE48)           address of expected resul
 000034E8  00000000 00000000                       3145+         DS    FD                gap
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    67
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    67
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -3628,7 +3628,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 000035B0  00000000 00000000                       3196+V1O49    DS    XL16              V1 output
 000035B8  00000000 00000000
 000035C0  00000000 00000000                       3197+         DS    FD                   gap
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    68
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    68
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -3688,7 +3688,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00003698  00000000 00000000                       3248+XCO50    DS    XL16              Cross check Output
 000036A0  00000000 00000000
 000036A8  00000000 00000000                       3249+         DS    FD                   gap
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    69
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    69
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -3748,7 +3748,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00003779  00                                      3300+         DS    X           CC Check failed
                                                   3301+*
 0000377C                                          3302+X51      DS    0F
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    70
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    70
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -3808,7 +3808,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00003848  E722 0000 0006                00000000  3353+         VL    V2,0(R2)
 
 0000384E                                          3356+         DS    0H                      E64A VCVDQ
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    71
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    71
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -3868,7 +3868,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00003910  00                                      3407+         DC    X'00'                   reserved
 00003911  38F0                                    3408+         DC    HL2'14576'               m4, i3, rXB
 00003913  4A                                      3409+         DC    X'4A'
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    72
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    72
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -3928,7 +3928,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 000039D8  5020 5068                     00000068  3460+         ST    R2,CCPSW              to save CC
 000039DC  E720 5028 000E                00003970  3461+         VST   V2,V1O54          save instruction result
 000039E2  07FB                                    3462+         BR    R11               return
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    73
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    73
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -3988,7 +3988,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00003A9C  E720 5028 000E                00003A30  3513+         VST   V2,V1O55          save instruction result
 00003AA2  07FB                                    3514+         BR    R11               return
 00003AA4                                          3515+RE55     DS    0F                expected 16 byte result
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    74
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    74
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -4048,7 +4048,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00003B6C  00000000 0000001C
 00003B74  00000000 00000000                       3566          DC    XL16'0000000000000000 0000000000000001'      v2
 00003B7C  00000000 00000001
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    75
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    75
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -4108,7 +4108,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
                                                   3617
                                                   3618          VRI_J VCVDQ,X'8F',X'9',3,N
 00003C48                                          3619+         DS    0FD
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    76
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    76
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -4168,7 +4168,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00003D0C  003B                                    3670+         DC    H'59'             test number
 00003D0E  00                                      3671+         DC    X'00'
 00003D0F  E2                                      3672+         DC    CL1'S'            S or Y = skip cross check
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    77
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    77
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -4228,7 +4228,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00003DD2  03                                      3723+         DC    HL1'3'            cc
 00003DD3  0E                                      3724+         DC    HL1'14'           cc failed mask
 00003DD4  00003E74                                3725+V2_60    DC    A(RE60+16)        address of v2: 16-byte packed decimal
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    78
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    78
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -4288,7 +4288,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00003EA4  00003F24                                3776+         DC    A(RE61)           address of expected resul
 00003EA8  00000000 00000000                       3777+         DS    FD                gap
 00003EB0  00000000 00000000                       3778+V1O61    DS    XL16              V1 output
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    79
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    79
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -4348,7 +4348,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00003F88  40404040 40404040                       3828+         DC    CL8' '            was cross check skipped?
 00003F90  00000000 00000000                       3829+         DS    FD                   gap
 00003F98  00000000 00000000                       3830+XCO62    DS    XL16              Cross check Output
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    80
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    80
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -4408,7 +4408,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00004070  00000000 00000000                       3880+         DS    2F          extract PSW after test (has CC)
 00004078  00                                      3881+         DS    X           extracted cc
 00004079  00                                      3882+         DS    X           CC Check failed
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    81
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    81
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -4468,7 +4468,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00004130  00000000 00000000                       3933+         DS    2F          extract PSW after test (has CC)
 00004138  00                                      3934+         DS    X           extracted cc
 00004139  00                                      3935+         DS    X           CC Check failed
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    82
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    82
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -4528,7 +4528,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 000041FC  E720 8F56 0006                00001156  3986+         VL    V2,V1FUDGE
 00004202  E320 500C 0014                00004194  3987+         LGF   R2,V2_65           get v2 address
 00004208  E722 0000 0006                00000000  3988+         VL    V2,0(R2)
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    83
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    83
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -4588,7 +4588,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 
 000042CE                                          4041+         DS    0H                      E64A VCVDQ
 000042CE  E6                                      4042+         DC    X'E6'                    VECTOR CONVERT TO DECIMAL (128)
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    84
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    84
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -4647,7 +4647,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00004390  00                                      4092+         DC    X'00'                   reserved
 00004391  B8F0                                    4093+         DC    HL2'47344'               m4, i3, rXB
 00004393  4A                                      4094+         DC    X'4A'
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    85
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    85
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -4707,7 +4707,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 0000445C  E720 5028 000E                000043F0  4146+         VST   V2,V1O68          save instruction result
 00004462  07FB                                    4147+         BR    R11               return
 00004464                                          4148+RE68     DS    0F                expected 16 byte result
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    86
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    86
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -4767,7 +4767,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 0000452C  99999999 9999999F
 00004534  0000007E 37BE2022                       4199          DC    XL16'0000007E37BE2022 C0914B267FFFFFFF'      v2
 0000453C  C0914B26 7FFFFFFF
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    87
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    87
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -4827,7 +4827,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 00004608                                          4250+         DS    0FD
 00004608                      00004608            4251+         USING *,R5              base for test data and test routine
 00004608  0000467C                                4252+T71      DC    A(X71)            address of test routine
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    88
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    88
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -4887,7 +4887,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 000046CF  D5                                      4303+         DC    CL1'N'            S or Y = skip cross check
 000046D0  8F                                      4304+         DC    X'8F'             i3
 000046D1  0B                                      4305+         DC    X'B'              m4
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    89
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    89
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -4947,7 +4947,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 0000478C  00001188                                4356+         DC    A(T1)             TEST &CUR
 00004790  00001248                                4357+         DC    A(T2)             TEST &CUR
 00004794  00001308                                4358+         DC    A(T3)             TEST &CUR
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    90
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    90
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -5007,7 +5007,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
 0000486C  00003B88                                4412+         DC    A(T57)            TEST &CUR
 00004870  00003C48                                4413+         DC    A(T58)            TEST &CUR
 00004874  00003D08                                4414+         DC    A(T59)            TEST &CUR
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    91
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    91
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -5030,7 +5030,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
                                                   4431
 000048B4  00000000                                4432          DC    F'0'     END OF TABLE
 000048B8  00000000                                4433          DC    F'0'
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    92
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    92
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -5090,7 +5090,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
                               00000019  00000001  4485 V25      EQU   25
                               0000001A  00000001  4486 V26      EQU   26
                               0000001B  00000001  4487 V27      EQU   27
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    93
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    93
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -5100,7 +5100,7 @@ ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                            
                               0000001F  00000001  4491 V31      EQU   31
                                                   4492
                                                   4493          END
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    94
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    94
 
      SYMBOL        TYPE   VALUE      LENGTH    DEFN  REFERENCES
 
@@ -5160,7 +5160,7 @@ PAGE                U    00001000           1   603
 PRT3                C    00001120          18   682   328   329   330   337   338   339   344   345   346   412   413   414   421
                                                       422   423   429   430   431   458   459   460   467   468   469   474   475
                                                       476
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    95
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    95
 
      SYMBOL        TYPE   VALUE      LENGTH    DEFN  REFERENCES
 
@@ -5220,7 +5220,7 @@ R2                  U    00000002           1  4441   259   326   327   334   33
 R3                  U    00000003           1  4442
 R4                  U    00000004           1  4443
 R5                  U    00000005           1  4444   270   271   274   509   517   843   885   891   933   939   981   987  1029
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    96
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    96
 
      SYMBOL        TYPE   VALUE      LENGTH    DEFN  REFERENCES
 
@@ -5280,7 +5280,7 @@ RE43                F    000031A4           4  2929  2897  2900
 RE44                F    00003264           4  2977  2945  2948
 RE45                F    00003324           4  3025  2993  2996
 RE46                F    000033E4           4  3077  3045  3048
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    97
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    97
 
      SYMBOL        TYPE   VALUE      LENGTH    DEFN  REFERENCES
 
@@ -5340,7 +5340,7 @@ T18                 A    00001E48           4  1668  4373
 T19                 A    00001F08           4  1720  4374
 T2                  A    00001248           4   892  4357
 T20                 A    00001FC8           4  1768  4375
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    98
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    98
 
      SYMBOL        TYPE   VALUE      LENGTH    DEFN  REFERENCES
 
@@ -5400,7 +5400,7 @@ T69                 A    00004488           4  4156  4424
 T7                  A    00001608           4  1132  4362
 T70                 A    00004548           4  4204  4425
 T71                 A    00004608           4  4252  4426
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page    99
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page    99
 
      SYMBOL        TYPE   VALUE      LENGTH    DEFN  REFERENCES
 
@@ -5460,7 +5460,7 @@ V1O33               X    000029B0          16  2412  2437
 V1O34               X    00002A70          16  2460  2485
 V1O35               X    00002B30          16  2510  2535
 V1O36               X    00002BF0          16  2558  2583
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page   100
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page   100
 
      SYMBOL        TYPE   VALUE      LENGTH    DEFN  REFERENCES
 
@@ -5520,7 +5520,7 @@ V2                  U    00000002           1  4462   868   870   882   916   91
                                                      2963  2975  3009  3011  3023  3061  3063  3075  3109  3111  3123  3157  3159
                                                      3171  3207  3209  3221  3255  3257  3269  3303  3305  3317  3351  3353  3365
                                                      3399  3401  3413  3447  3449  3461  3499  3501  3513  3547  3549  3561  3597
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page   101
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page   101
 
      SYMBOL        TYPE   VALUE      LENGTH    DEFN  REFERENCES
 
@@ -5580,7 +5580,7 @@ V2_43               A    00003114           4  2897  2914
 V2_44               A    000031D4           4  2945  2962
 V2_45               A    00003294           4  2993  3010
 V2_46               A    00003354           4  3045  3062
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page   102
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page   102
 
      SYMBOL        TYPE   VALUE      LENGTH    DEFN  REFERENCES
 
@@ -5640,7 +5640,7 @@ X19                 F    00001F7C           4  1743  1720
 X2                  F    000012BC           4   915   892
 X20                 F    0000203C           4  1791  1768
 X21                 F    000020FC           4  1839  1816
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page   103
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page   103
 
      SYMBOL        TYPE   VALUE      LENGTH    DEFN  REFERENCES
 
@@ -5700,7 +5700,7 @@ X7                  F    0000167C           4  1155  1132
 X70                 F    000045BC           4  4227  4204
 X71                 F    0000467C           4  4275  4252
 X72                 F    0000473C           4  4323  4300
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page   104
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page   104
 
      SYMBOL        TYPE   VALUE      LENGTH    DEFN  REFERENCES
 
@@ -5760,7 +5760,7 @@ XCO52               X    00003818          16  3344
 XCO53               X    000038D8          16  3392
 XCO54               X    00003998          16  3440
 XCO55               X    00003A58          16  3492
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page   105
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page   105
 
      SYMBOL        TYPE   VALUE      LENGTH    DEFN  REFERENCES
 
@@ -5810,7 +5810,7 @@ ZVE6TST             J    00000000       18620   173   176   178   182   186   61
 =H'0'               H    000006A4           2   593   531
 =XL1'3'             X    000006AB           1   598   380
 =XL4'3'             X    000006A0           4   592   308
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page   106
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page   106
 
  MACRO   DEFN  REFERENCES
 
@@ -5827,7 +5827,7 @@ VRI_J     737    841    889    937    985   1033   1081   1129   1179   1227   1
                 2494   2542   2596   2644   2692   2742   2790   2838   2886   2934   2982   3034   3082   3130   3180   3228   3276
                 3324   3372   3420   3472   3520   3570   3618   3666   3714   3762   3810   3858   3911   3959   4009   4057   4105
                 4153   4201   4249   4297
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page   107
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page   107
 
    DESC     SYMBOL   SIZE     POS        ADDR
 
@@ -5836,7 +5836,7 @@ Entry: 0
 Image      IMAGE    18620  0000-48BB  0000-48BB
   Region            18620  0000-48BB  0000-48BB
     CSECT  ZVE6TST  18620  0000-48BB  0000-48BB
-ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                16 Mar 2026 18:55:16  Page   108
+ASMA Ver. 0.7.0  zvector-e6-24-VCVDQ                                                                10 Apr 2026 14:51:53  Page   108
 
    STMT                     FILE NAME
 

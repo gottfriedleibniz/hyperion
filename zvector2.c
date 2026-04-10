@@ -2463,7 +2463,8 @@ DEF_INST( vector_convert_to_decimal_128 )
     if (p1)
         regs->VR_B( v1, VR_PACKED_SIGN) |= 0x0F;   /* forces b'1111' positive sign */
     else
-        regs->VR_B( v1, VR_PACKED_SIGN) |= (possign) ? PREFERRED_PLUS :  PREFERRED_MINUS ;
+        /* if zero result, force b'1100' positive sign */
+        regs->VR_B( v1, VR_PACKED_SIGN) |= vr_is_zero( regs, v1 ) ? PREFERRED_PLUS : ( (possign) ? PREFERRED_PLUS :  PREFERRED_MINUS) ;
 
     /* set condition code */
     if (cs)
