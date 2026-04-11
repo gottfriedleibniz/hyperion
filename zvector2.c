@@ -665,7 +665,7 @@ static inline bool  vr_packed_valid_sign_enhanced ( REGS* regs, int v1,
                 /* N>0 */
                 i = MAX_DECIMAL_DIGITS - dc;
                 j = i / 2;
-                if (!(dc & 1)) i++;
+
                 for ( ; i < MAX_DECIMAL_DIGITS && allzeros; i++)
                 {
                     if (i & 1)

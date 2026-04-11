@@ -1,4 +1,4 @@
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page     1
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page     1
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -55,7 +55,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
                                                      52 *   *Done
                                                      53 *
                                                      54 ***********************************************************************
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page     2
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page     2
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -113,7 +113,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
                                                     107          B     EOJ
                                                     108 XC&SYSNDX EQU *
                                                     109          MEND
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page     3
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page     3
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -141,7 +141,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 
 000001E0                      000001E0  00000200    128          ORG   ZVE6TST+X'200'        Start of actual test program...
                                                     129
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page     4
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page     4
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -201,7 +201,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
                                                     184+*                                      facility bits
 00000280  00000000 00000000                         185+         DS    FD                      gap
 00000288  00000000 00000000                         186+FB0001   DS    4FD
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page     5
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page     5
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -222,7 +222,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 000002D0  4520 82A0                     000004A0    201+         BAL   R2,MSG
 000002D4  47F0 8368                     00000568    202+         B     EOJ
                               000002D8  00000001    203+XC0001   EQU   *
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page     6
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page     6
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -258,7 +258,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00000390  4520 82A0                     000004A0    234+         BAL   R2,MSG
 00000394  47F0 8368                     00000568    235+         B     EOJ
                               00000398  00000001    236+XC0002   EQU   *
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page     7
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page     7
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -289,7 +289,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
                                                     262
 000003C6  4700 81CA                     000003CA    263 TESTCC   BC    0,CCMSG          (fail if unexpected condition code)
                                                     264
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page     8
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page     8
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -334,7 +334,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 0000043E  45F0 8264                     00000464    304          BAL   R15,RPTERROR
                                                     305
 00000442  47F0 8246                     00000446    306          B     FAILCONT
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page     9
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page     9
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -358,7 +358,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 0000045C  4780 8368                     00000568    324          BZ    EOJ                  No, exit
 00000460  47F0 8380                     00000580    325          B     FAILTEST             Yes, exit with BAD PSW
                                                     326
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    10
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    10
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -386,7 +386,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00000488  00000000                                  348 RPTSVR5  DC    F'0'                 R5 save area
 
 00000490  00000000 00000000                         350 RPTDWSAV DC    2D'0'                R0-R2 save area for MSG call
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    11
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    11
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -432,7 +432,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 000004EE  D4E2C7D5 D6C8405C                         387 MSGCMD   DC    C'MSGNOH * '           *** HERCULES MESSAGE COMMAND ***
 000004F7  40404040 40404040                         388 MSGMSG   DC    CL95' '                The message text to be displayed
                                                     389
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    12
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    12
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -484,7 +484,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
                                                     425
                               AABBCCDD  00000001    426 REG2PATT EQU   X'AABBCCDD'    Polluted Register pattern
                               000000DD  00000001    427 REG2LOW  EQU         X'DD'    (last byte above)
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    13
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    13
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -517,7 +517,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 0000105B  A7                                        454 CCPRTGOT DC    C'x'
 0000105C  4B                                        455          DC    C'.'
                               00000055  00000001    456 CCPRTLNG   EQU   *-CCPRTLINE
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    14
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    14
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -553,7 +553,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00001128  F7F8F9F0 F1F2F3F4                         486          DC    CL14'78901234567890'
 00001136  D9                                        487          DC    X'D9'
 00001137  00000000 00000000                         488          DS    XL16                                          gap
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    15
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    15
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -579,7 +579,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
                                                     508 * followed by
                                                     509 *        16-byte EXPECTED RESULT
                                                     510 *        8-byte  byte source
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    16
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    16
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -639,7 +639,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
                                                     565          DC    CL8'&INST'        instruction name
                                                     566
                                                     567          DC    A(16)             result length
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    17
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    17
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -673,7 +673,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
                                                     595          DROP  R5
                                                     596
                                                     597          MEND
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    18
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    18
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -699,7 +699,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
                                                     618          DC    A(0)
                                                     619 .*
                                                     620          MEND
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    19
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    19
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -759,7 +759,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 000011A4  00000010                                  673+         DC    A(16)             result length
 000011A8  000011C4                                  674+REA2     DC    A(RE2)            result address
                                                     675+*                                INSTRUCTION UNDER TEST ROUTINE
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    20
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    20
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -819,7 +819,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00001254                                            727+RE4      DC    0F
 00001254                                            728+         DROP  R5
 00001254  00000000 00000000                         729          DC    XL16'00000000000000000012345000000000'   V1 source
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    21
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    21
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -879,7 +879,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 000012F8  00001314                                  780+T7       DC    A(X7)             address of test routine
 000012FC  0007                                      781+         DC    H'7'              test number
 000012FE  00                                        782+         DC    XL1'00'
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    22
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    22
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -939,7 +939,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00001388                                            834+         DS    0FD
 00001388                      00001388              835+         USING *,R5              base for test data and test routine
 00001388  000013A4                                  836+T9       DC    A(X9)             address of test routine
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    23
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    23
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -999,7 +999,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
                                                     890
                                                     891          VRR_G VTPX,X'8000',0
 00001418                                            892+         DS    0FD
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    24
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    24
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -1059,7 +1059,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00001494  0FF00000 00000000                         947          DC    XL16'0FF0000000000000000000000000000D'   V1 source
 0000149C  00000000 0000000D
                                                     948
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    25
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    25
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -1119,7 +1119,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00001524                                           1003+RE14     DC    0F
 00001524                                           1004+         DROP  R5
 00001524  0FF00000 00000000                        1005          DC    XL16'0FF0000000000000000000000000000F'   V1 source
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    26
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    26
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -1179,7 +1179,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 000015AC  5020 8E9C                     0000109C   1059+         ST    R2,CCPSW              to save CC
 000015B0  07FB                                     1060+         BR    R11               return
 000015B4                                           1061+RE16     DC    0F
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    27
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    27
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -1239,7 +1239,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00001637  5F                                       1115+         DC    X'5F'
 
 00001638  B98D 0020                                1117+         EPSW  R2,R0             exptract psw
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    28
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    28
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -1299,7 +1299,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 000016C3  01                                       1171+         DC    X'01'                   v1
 000016C4  0800B0                                   1172+         DC    HL3'524464'             0, I3, RXB
 000016C7  5F                                       1173+         DC    X'5F'
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    29
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    29
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -1359,7 +1359,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00001752                                           1227+         DS    0H                      E65F VTP - Vector Test Decimal
 00001752  E6                                       1228+         DC    X'E6'
 00001753  01                                       1229+         DC    X'01'                   v1
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    30
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    30
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -1419,7 +1419,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 000017DC  E710 5034 0006                000017F4   1282+         VL    V1,RE24           get V1 source
 
 000017E2                                           1285+         DS    0H                      E65F VTP - Vector Test Decimal
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    31
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    31
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -1479,7 +1479,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00001868  00001884                                 1338+REA26    DC    A(RE26)           result address
                                                    1339+*                                INSTRUCTION UNDER TEST ROUTINE
 0000186C                                           1340+X26      DS    0F
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    32
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    32
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -1539,7 +1539,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 000018E9  E5E3D7E7 40404040                        1394+         DC    CL8'VTPX'         instruction name
 000018F4  00000010                                 1395+         DC    A(16)             result length
 000018F8  00001914                                 1396+REA28    DC    A(RE28)           result address
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    33
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    33
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -1599,7 +1599,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00001977  00                                       1450+         DC    HL1'0'            cc
 00001978  07                                       1451+         DC    HL1'7'            cc failed mask
 00001979  E5E3D7E7 40404040                        1452+         DC    CL8'VTPX'         instruction name
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    34
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    34
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -1659,7 +1659,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00001A04  0020                                     1506+         DC    H'32'             test number
 00001A06  00                                       1507+         DC    XL1'00'
 00001A07  01                                       1508+         DC    HL1'1'            cc
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    35
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    35
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -1719,7 +1719,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00001A90                      00001A90             1562+         USING *,R5              base for test data and test routine
 00001A90  00001AAC                                 1563+T34      DC    A(X34)            address of test routine
 00001A94  0022                                     1564+         DC    H'34'             test number
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    36
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    36
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -1779,7 +1779,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
                                                    1618
                                                    1619          VRR_G VTPX,X'C006',0
 00001B20                                           1620+         DS    0FD
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    37
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    37
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -1839,7 +1839,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00001B9C  0FF00000 00000000                        1675          DC    XL16'0FF0000000000000000000000000100C'   V1 source
 00001BA4  00000000 0000100C
                                                    1676
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    38
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    38
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -1899,7 +1899,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00001C2C                                           1731+RE39     DC    0F
 00001C2C                                           1732+         DROP  R5
 00001C2C  0FF00000 00000000                        1733          DC    XL16'0FF0000000000000000000000000100E'   V1 source
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    39
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    39
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -1959,7 +1959,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00001CB4  5020 8E9C                     0000109C   1787+         ST    R2,CCPSW              to save CC
 00001CB8  07FB                                     1788+         BR    R11               return
 00001CBC                                           1789+RE41     DC    0F
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    40
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    40
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -2019,7 +2019,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 
 00001D40  B98D 0020                                1844+         EPSW  R2,R0             exptract psw
 00001D44  5020 8E9C                     0000109C   1845+         ST    R2,CCPSW              to save CC
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    41
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    41
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -2079,7 +2079,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 
 00001DCA                                           1900+         DS    0H                      E65F VTP - Vector Test Decimal
 00001DCA  E6                                       1901+         DC    X'E6'
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    42
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    42
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -2138,7 +2138,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
                                                    1953+*                                INSTRUCTION UNDER TEST ROUTINE
 00001E54                                           1954+X47      DS    0F
 00001E54  E710 5034 0006                00001E6C   1955+         VL    V1,RE47           get V1 source
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    43
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    43
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -2198,7 +2198,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00001EE0  00001EFC                                 2010+REA49    DC    A(RE49)           result address
                                                    2011+*                                INSTRUCTION UNDER TEST ROUTINE
 00001EE4                                           2012+X49      DS    0F
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    44
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    44
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -2258,7 +2258,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00001F61  E5E3D7E7 40404040                        2066+         DC    CL8'VTPX'         instruction name
 00001F6C  00000010                                 2067+         DC    A(16)             result length
 00001F70  00001F8C                                 2068+REA51    DC    A(RE51)           result address
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    45
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    45
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -2318,7 +2318,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00001FEC  0035                                     2122+         DC    H'53'             test number
 00001FEE  00                                       2123+         DC    XL1'00'
 00001FEF  01                                       2124+         DC    HL1'1'            cc
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    46
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    46
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -2378,7 +2378,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00002078                      00002078             2178+         USING *,R5              base for test data and test routine
 00002078  00002094                                 2179+T55      DC    A(X55)            address of test routine
 0000207C  0037                                     2180+         DC    H'55'             test number
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    47
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    47
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -2438,7 +2438,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
                                                    2234
                                                    2235          VRR_G VTPX,X'8027',0
 00002108                                           2236+         DS    0FD
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    48
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    48
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -2498,7 +2498,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00002184  0FF00000 00000000                        2291          DC    XL16'0FF0000000000000000000000000100C'   V1 source
 0000218C  00000000 0000100C
                                                    2292
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    49
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    49
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -2558,7 +2558,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00002214                                           2347+RE60     DC    0F
 00002214                                           2348+         DROP  R5
 00002214  0FF00000 00000000                        2349          DC    XL16'0FF0000000000000000000000000100E'   V1 source
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    50
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    50
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -2618,7 +2618,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 0000229C  5020 8E9C                     0000109C   2403+         ST    R2,CCPSW              to save CC
 000022A0  07FB                                     2404+         BR    R11               return
 000022A4                                           2405+RE62     DC    0F
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    51
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    51
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -2678,7 +2678,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 
 00002328  B98D 0020                                2460+         EPSW  R2,R0             exptract psw
 0000232C  5020 8E9C                     0000109C   2461+         ST    R2,CCPSW              to save CC
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    52
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    52
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -2738,7 +2738,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 000023B2  E6                                       2515+         DC    X'E6'
 000023B3  01                                       2516+         DC    X'01'                   v1
 000023B4  080260                                   2517+         DC    HL3'524896'             0, I3, RXB
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    53
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    53
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -2798,7 +2798,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 
 00002442                                           2572+         DS    0H                      E65F VTP - Vector Test Decimal
 00002442  E6                                       2573+         DC    X'E6'
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    54
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    54
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -2858,7 +2858,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
                                                    2626+*                                INSTRUCTION UNDER TEST ROUTINE
 000024CC                                           2627+X70      DS    0F
 000024CC  E710 5034 0006                000024E4   2628+         VL    V1,RE70           get V1 source
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    55
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    55
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -2918,7 +2918,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00002554  00000010                                 2682+         DC    A(16)             result length
 00002558  00002574                                 2683+REA72    DC    A(RE72)           result address
                                                    2684+*                                INSTRUCTION UNDER TEST ROUTINE
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    56
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    56
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -2978,7 +2978,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 000025D8  07                                       2738+         DC    HL1'7'            cc failed mask
 000025D9  E5E3D7E7 40404040                        2739+         DC    CL8'VTPX'         instruction name
 000025E4  00000010                                 2740+         DC    A(16)             result length
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    57
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    57
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -3038,7 +3038,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00002666  00                                       2794+         DC    XL1'00'
 00002667  02                                       2795+         DC    HL1'2'            cc
 00002668  0D                                       2796+         DC    HL1'13'           cc failed mask
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    58
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    58
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -3092,18 +3092,18 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 000026DC  0FF00000 00000000                        2845          DC    XL16'0FF0000000000000000000000000F009'   V1 source
 000026E4  00000000 0000F009
                                                    2846
-                                                   2847          VRR_G VTPX,X'803E',0
+                                                   2847          VRR_G VTPX,X'803E',1
 000026F0                                           2848+         DS    0FD
 000026F0                      000026F0             2849+         USING *,R5              base for test data and test routine
 000026F0  0000270C                                 2850+T78      DC    A(X78)            address of test routine
 000026F4  004E                                     2851+         DC    H'78'             test number
 000026F6  00                                       2852+         DC    XL1'00'
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    59
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    59
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
-000026F7  00                                       2853+         DC    HL1'0'            cc
-000026F8  07                                       2854+         DC    HL1'7'            cc failed mask
+000026F7  01                                       2853+         DC    HL1'1'            cc
+000026F8  0B                                       2854+         DC    HL1'11'           cc failed mask
 000026F9  E5E3D7E7 40404040                        2855+         DC    CL8'VTPX'         instruction name
 00002704  00000010                                 2856+         DC    A(16)             result length
 00002708  00002724                                 2857+REA78    DC    A(RE78)           result address
@@ -3158,7 +3158,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
                                                    2906
                                                    2907          VRR_G VTPX,X'C02A',1
 00002780                                           2908+         DS    0FD
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    60
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    60
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -3218,7 +3218,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 000027FC  F0000000 00000000                        2963          DC    XL16'F000000000000000000000000000000C'   V1 source
 00002804  00000000 0000000C
                                                    2964
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    61
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    61
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -3278,7 +3278,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00002888  07FB                                     3019+         BR    R11               return
 0000288C                                           3020+RE83     DC    0F
 0000288C                                           3021+         DROP  R5
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    62
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    62
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -3338,7 +3338,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00002910  B98D 0020                                3075+         EPSW  R2,R0             exptract psw
 00002914  5020 8E9C                     0000109C   3076+         ST    R2,CCPSW              to save CC
 00002918  07FB                                     3077+         BR    R11               return
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    63
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    63
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -3398,7 +3398,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 0000299F  5F                                       3131+         DC    X'5F'
 
 000029A0  B98D 0020                                3133+         EPSW  R2,R0             exptract psw
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    64
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    64
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -3458,7 +3458,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00002A2B  01                                       3187+         DC    X'01'                   v1
 00002A2C  0C0240                                   3188+         DC    HL3'787008'             0, I3, RXB
 00002A2F  5F                                       3189+         DC    X'5F'
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    65
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    65
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -3518,7 +3518,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00002ABA                                           3243+         DS    0H                      E65F VTP - Vector Test Decimal
 00002ABA  E6                                       3244+         DC    X'E6'
 00002ABB  01                                       3245+         DC    X'01'                   v1
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    66
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    66
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -3578,7 +3578,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00002B3C  00000010                                 3298+         DC    A(16)             result length
 00002B40  00002B5C                                 3299+REA93    DC    A(RE93)           result address
                                                    3300+*                                INSTRUCTION UNDER TEST ROUTINE
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    67
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    67
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -3638,7 +3638,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00002BC0  07                                       3354+         DC    HL1'7'            cc failed mask
 00002BC1  E5E3D7E7 40404040                        3355+         DC    CL8'VTPX'         instruction name
 00002BCC  00000010                                 3356+         DC    A(16)             result length
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    68
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    68
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -3698,7 +3698,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00002C4E  00                                       3410+         DC    XL1'00'
 00002C4F  01                                       3411+         DC    HL1'1'            cc
 00002C50  0B                                       3412+         DC    HL1'11'           cc failed mask
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    69
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    69
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -3758,7 +3758,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00002CD8  00002CF4                                 3466+T99      DC    A(X99)            address of test routine
 00002CDC  0063                                     3467+         DC    H'99'             test number
 00002CDE  00                                       3468+         DC    XL1'00'
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    70
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    70
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -3818,7 +3818,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
                                                    3522 *                                      sign: C, D  valid, 0 digits
                                                    3523          VRR_G VTPX,X'8047',1
 00002D68                                           3524+         DS    0FD
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    71
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    71
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -3878,7 +3878,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00002DE4  0FF00000 00000000                        3579          DC    XL16'0FF0000000000000000000000000000D'   V1 source
 00002DEC  00000000 0000000D
                                                    3580
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    72
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    72
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -3938,7 +3938,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00002E70  07FB                                     3635+         BR    R11               return
 00002E74                                           3636+RE104    DC    0F
 00002E74                                           3637+         DROP  R5
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    73
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    73
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -3998,7 +3998,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00002EF8  B98D 0020                                3691+         EPSW  R2,R0             exptract psw
 00002EFC  5020 8E9C                     0000109C   3692+         ST    R2,CCPSW              to save CC
 00002F00  07FB                                     3693+         BR    R11               return
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    74
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    74
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -4058,7 +4058,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00002F87  5F                                       3747+         DC    X'5F'
 
 00002F88  B98D 0020                                3749+         EPSW  R2,R0             exptract psw
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    75
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    75
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -4118,7 +4118,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00003013  01                                       3803+         DC    X'01'                   v1
 00003014  0804F0                                   3804+         DC    HL3'525552'             0, I3, RXB
 00003017  5F                                       3805+         DC    X'5F'
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    76
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    76
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -4178,7 +4178,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 0000309C  E710 5034 0006                000030B4   3858+         VL    V1,RE112          get V1 source
 
 000030A2                                           3861+         DS    0H                      E65F VTP - Vector Test Decimal
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    77
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    77
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -4238,7 +4238,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00003128  00003144                                 3914+REA114   DC    A(RE114)          result address
                                                    3915+*                                INSTRUCTION UNDER TEST ROUTINE
 0000312C                                           3916+X114     DS    0F
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    78
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    78
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -4298,7 +4298,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 000031A9  E5E3D7E7 40404040                        3970+         DC    CL8'VTPX'         instruction name
 000031B4  00000010                                 3971+         DC    A(16)             result length
 000031B8  000031D4                                 3972+REA116   DC    A(RE116)          result address
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    79
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    79
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -4358,7 +4358,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00003237  01                                       4026+         DC    HL1'1'            cc
 00003238  0B                                       4027+         DC    HL1'11'           cc failed mask
 00003239  E5E3D7E7 40404040                        4028+         DC    CL8'VTPX'         instruction name
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    80
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    80
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -4418,7 +4418,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 000032C4  0078                                     4082+         DC    H'120'            test number
 000032C6  00                                       4083+         DC    XL1'00'
 000032C7  01                                       4084+         DC    HL1'1'            cc
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    81
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    81
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -4478,7 +4478,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00003350                      00003350             4138+         USING *,R5              base for test data and test routine
 00003350  0000336C                                 4139+T122     DC    A(X122)           address of test routine
 00003354  007A                                     4140+         DC    H'122'            test number
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    82
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    82
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -4538,7 +4538,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 000033D4  00000000 0000000B
                                                    4195
                                                    4196          VRR_G VTPX,X'C04A',0
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    83
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    83
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -4598,7 +4598,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 0000345C                                           4251+RE125    DC    0F
 0000345C                                           4252+         DROP  R5
 0000345C  0FF00000 00000000                        4253          DC    XL16'0FF0000000000000000000000000100A'   V1 source
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    84
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    84
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -4658,7 +4658,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 000034E4  5020 8E9C                     0000109C   4307+         ST    R2,CCPSW              to save CC
 000034E8  07FB                                     4308+         BR    R11               return
 000034EC                                           4309+RE127    DC    0F
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    85
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    85
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -4718,7 +4718,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 
 00003570  B98D 0020                                4364+         EPSW  R2,R0             exptract psw
 00003574  5020 8E9C                     0000109C   4365+         ST    R2,CCPSW              to save CC
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    86
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    86
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -4777,7 +4777,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 000035FB  01                                       4418+         DC    X'01'                   v1
 000035FC  0C0440                                   4419+         DC    HL3'787520'             0, I3, RXB
 000035FF  5F                                       4420+         DC    X'5F'
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    87
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    87
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -4837,7 +4837,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 0000368A  E6                                       4475+         DC    X'E6'
 0000368B  01                                       4476+         DC    X'01'                   v1
 0000368C  0C0440                                   4477+         DC    HL3'787520'             0, I3, RXB
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    88
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    88
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -4897,7 +4897,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00003710  0000372C                                 4530+REA135   DC    A(RE135)          result address
                                                    4531+*                                INSTRUCTION UNDER TEST ROUTINE
 00003714                                           4532+X135     DS    0F
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    89
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    89
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -4957,7 +4957,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00003791  E5E3D7E7 40404040                        4586+         DC    CL8'VTPX'         instruction name
 0000379C  00000010                                 4587+         DC    A(16)             result length
 000037A0  000037BC                                 4588+REA137   DC    A(RE137)          result address
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    90
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    90
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -5017,7 +5017,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 0000381F  01                                       4642+         DC    HL1'1'            cc
 00003820  0B                                       4643+         DC    HL1'11'           cc failed mask
 00003821  E5E3D7E7 40404040                        4644+         DC    CL8'VTPX'         instruction name
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    91
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    91
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -5077,7 +5077,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 000038AC  008D                                     4698+         DC    H'141'            test number
 000038AE  00                                       4699+         DC    XL1'00'
 000038AF  01                                       4700+         DC    HL1'1'            cc
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    92
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    92
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -5137,7 +5137,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
                                                    4754          VRR_G VTPX,X'8067',0
 00003938                                           4755+         DS    0FD
 00003938                      00003938             4756+         USING *,R5              base for test data and test routine
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    93
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    93
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -5197,7 +5197,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 000039BC  00000000 0000000D
                                                    4811
                                                    4812          VRR_G VTPX,X'807F',2
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    94
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    94
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -5257,7 +5257,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00003A44                                           4867+RE146    DC    0F
 00003A44                                           4868+         DROP  R5
 00003A44  0FF00000 00000000                        4869          DC    XL16'0FF0000000000000000000000000100A'   V1 source
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    95
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    95
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -5317,7 +5317,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00003ACC  5020 8E9C                     0000109C   4923+         ST    R2,CCPSW              to save CC
 00003AD0  07FB                                     4924+         BR    R11               return
 00003AD4                                           4925+RE148    DC    0F
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    96
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    96
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -5377,7 +5377,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 
 00003B58  B98D 0020                                4980+         EPSW  R2,R0             exptract psw
 00003B5C  5020 8E9C                     0000109C   4981+         ST    R2,CCPSW              to save CC
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    97
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    97
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -5436,7 +5436,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00003BE3  01                                       5034+         DC    X'01'                   v1
 00003BE4  0806F0                                   5035+         DC    HL3'526064'             0, I3, RXB
 00003BE7  5F                                       5036+         DC    X'5F'
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    98
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    98
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -5496,7 +5496,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00003C72  E6                                       5091+         DC    X'E6'
 00003C73  01                                       5092+         DC    X'01'                   v1
 00003C74  0806F0                                   5093+         DC    HL3'526064'             0, I3, RXB
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page    99
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page    99
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -5555,7 +5555,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
                                                    5145+*                                INSTRUCTION UNDER TEST ROUTINE
 00003CFC                                           5146+X156     DS    0F
 00003CFC  E710 5034 0006                00003D14   5147+         VL    V1,RE156          get V1 source
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   100
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   100
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -5615,7 +5615,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00003D88  00003DA4                                 5202+REA158   DC    A(RE158)          result address
                                                    5203+*                                INSTRUCTION UNDER TEST ROUTINE
 00003D8C                                           5204+X158     DS    0F
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   101
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   101
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -5675,7 +5675,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00003E08  0B                                       5258+         DC    HL1'11'           cc failed mask
 00003E09  E5E3D7E7 40404040                        5259+         DC    CL8'VTPX'         instruction name
 00003E14  00000010                                 5260+         DC    A(16)             result length
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   102
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   102
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -5735,7 +5735,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00003E96  00                                       5314+         DC    XL1'00'
 00003E97  00                                       5315+         DC    HL1'0'            cc
 00003E98  07                                       5316+         DC    HL1'7'            cc failed mask
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   103
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   103
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -5795,7 +5795,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00003F20  00003F3C                                 5370+T164     DC    A(X164)           address of test routine
 00003F24  00A4                                     5371+         DC    H'164'            test number
 00003F26  00                                       5372+         DC    XL1'00'
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   104
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   104
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -5855,7 +5855,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00003FB0                                           5426+         DS    0FD
 00003FB0                      00003FB0             5427+         USING *,R5              base for test data and test routine
 00003FB0  00003FCC                                 5428+T166     DC    A(X166)           address of test routine
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   105
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   105
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -5915,7 +5915,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
                                                    5482
                                                    5483          VRR_G VTPX,X'807F',1
 00004040                                           5484+         DS    0FD
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   106
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   106
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -5975,7 +5975,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 000040BC                                           5539+RE169    DC    0F
 000040BC                                           5540+         DROP  R5
 000040BC  0FF00000 00000000                        5541          DC    XL16'0FF0000000000000000000000000000B'   V1 source
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   107
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   107
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -6035,7 +6035,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00004144  5020 8E9C                     0000109C   5595+         ST    R2,CCPSW              to save CC
 00004148  07FB                                     5596+         BR    R11               return
 0000414C                                           5597+RE171    DC    0F
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   108
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   108
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -6095,7 +6095,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 000041CF  5F                                       5651+         DC    X'5F'
 
 000041D0  B98D 0020                                5653+         EPSW  R2,R0             exptract psw
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   109
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   109
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -6155,7 +6155,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 0000425B  01                                       5707+         DC    X'01'                   v1
 0000425C  0C06A0                                   5708+         DC    HL3'788128'             0, I3, RXB
 0000425F  5F                                       5709+         DC    X'5F'
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   110
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   110
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -6215,7 +6215,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 000042EA                                           5763+         DS    0H                      E65F VTP - Vector Test Decimal
 000042EA  E6                                       5764+         DC    X'E6'
 000042EB  01                                       5765+         DC    X'01'                   v1
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   111
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   111
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -6275,7 +6275,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00004374  E710 5034 0006                0000438C   5818+         VL    V1,RE179          get V1 source
 
 0000437A                                           5821+         DS    0H                      E65F VTP - Vector Test Decimal
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   112
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   112
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -6335,7 +6335,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
                                                    5874+*                                INSTRUCTION UNDER TEST ROUTINE
 00004404                                           5875+X181     DS    0F
 00004404  E710 5034 0006                0000441C   5876+         VL    V1,RE181          get V1 source
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   113
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   113
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -6395,7 +6395,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 0000447F  01                                       5930+         DC    HL1'1'            cc
 00004480  0B                                       5931+         DC    HL1'11'           cc failed mask
 00004481  E5E3D7E7 40404040                        5932+         DC    CL8'VTPX'         instruction name
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   114
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   114
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -6455,7 +6455,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 0000450C  00B9                                     5986+         DC    H'185'            test number
 0000450E  00                                       5987+         DC    XL1'00'
 0000450F  01                                       5988+         DC    HL1'1'            cc
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   115
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   115
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -6515,7 +6515,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00004598                      00004598             6042+         USING *,R5              base for test data and test routine
 00004598  000045B4                                 6043+T187     DC    A(X187)           address of test routine
 0000459C  00BB                                     6044+         DC    H'187'            test number
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   116
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   116
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -6575,7 +6575,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
                                                    6098          VRR_G VTPX,X'8080',1
 00004628                                           6099+         DS    0FD
 00004628                      00004628             6100+         USING *,R5              base for test data and test routine
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   117
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   117
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -6635,7 +6635,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 000046AC  00000000 00000009
                                                    6155
                                                    6156 * BTP=0, STC=4, DC>0 and odd
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   118
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   118
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -6695,7 +6695,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00004730  07FB                                     6211+         BR    R11               return
 00004734                                           6212+RE192    DC    0F
 00004734                                           6213+         DROP  R5
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   119
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   119
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -6755,7 +6755,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 
 000047B8  B98D 0020                                6268+         EPSW  R2,R0             exptract psw
 000047BC  5020 8E9C                     0000109C   6269+         ST    R2,CCPSW              to save CC
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   120
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   120
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -6814,7 +6814,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00004843  01                                       6322+         DC    X'01'                   v1
 00004844  080890                                   6323+         DC    HL3'526480'             0, I3, RXB
 00004847  5F                                       6324+         DC    X'5F'
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   121
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   121
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -6874,7 +6874,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 000048D2  E6                                       6379+         DC    X'E6'
 000048D3  01                                       6380+         DC    X'01'                   v1
 000048D4  0808D0                                   6381+         DC    HL3'526544'             0, I3, RXB
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   122
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   122
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -6934,7 +6934,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 
 00004962                                           6436+         DS    0H                      E65F VTP - Vector Test Decimal
 00004962  E6                                       6437+         DC    X'E6'
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   123
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   123
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -6993,7 +6993,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
                                                    6489+*                                INSTRUCTION UNDER TEST ROUTINE
 000049EC                                           6490+X202     DS    0F
 000049EC  E710 5034 0006                00004A04   6491+         VL    V1,RE202          get V1 source
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   124
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   124
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -7053,7 +7053,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00004A69  E5E3D7E7 40404040                        6546+         DC    CL8'VTPX'         instruction name
 00004A74  00000010                                 6547+         DC    A(16)             result length
 00004A78  00004A94                                 6548+REA204   DC    A(RE204)          result address
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   125
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   125
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -7113,7 +7113,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00004AF7  00                                       6602+         DC    HL1'0'            cc
 00004AF8  07                                       6603+         DC    HL1'7'            cc failed mask
 00004AF9  E5E3D7E7 40404040                        6604+         DC    CL8'VTPX'         instruction name
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   126
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   126
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -7173,7 +7173,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00004B80  00004B9C                                 6658+T208     DC    A(X208)           address of test routine
 00004B84  00D0                                     6659+         DC    H'208'            test number
 00004B86  00                                       6660+         DC    XL1'00'
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   127
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   127
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -7233,7 +7233,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00004C10                                           6714+         DS    0FD
 00004C10                      00004C10             6715+         USING *,R5              base for test data and test routine
 00004C10  00004C2C                                 6716+T210     DC    A(X210)           address of test routine
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   128
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   128
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -7293,7 +7293,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
                                                    6770
                                                    6771          VRR_G VTPX,X'808E',0
 00004CA0                                           6772+         DS    0FD
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   129
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   129
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -7353,7 +7353,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00004D1C  0FF00000 00000000                        6827          DC    XL16'0FF00000000000000000000000001000'   V1 source
 00004D24  00000000 00001000
                                                    6828
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   130
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   130
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -7413,7 +7413,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00004DAC                                           6883+RE215    DC    0F
 00004DAC                                           6884+         DROP  R5
 00004DAC  0FF00000 00000000                        6885          DC    XL16'0FF0000000000000000000000000F009'   V1 source
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   131
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   131
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -7473,7 +7473,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 
 00004E30  B98D 0020                                6940+         EPSW  R2,R0             exptract psw
 00004E34  5020 8E9C                     0000109C   6941+         ST    R2,CCPSW              to save CC
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   132
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   132
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -7532,7 +7532,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00004EBB  01                                       6994+         DC    X'01'                   v1
 00004EBC  0C08A0                                   6995+         DC    HL3'788640'             0, I3, RXB
 00004EBF  5F                                       6996+         DC    X'5F'
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   133
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   133
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -7592,7 +7592,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00004F4A                                           7051+         DS    0H                      E65F VTP - Vector Test Decimal
 00004F4A  E6                                       7052+         DC    X'E6'
 00004F4B  01                                       7053+         DC    X'01'                   v1
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   134
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   134
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -7652,7 +7652,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00004FD4  E710 5034 0006                00004FEC   7106+         VL    V1,RE223          get V1 source
 
 00004FDA                                           7109+         DS    0H                      E65F VTP - Vector Test Decimal
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   135
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   135
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -7712,7 +7712,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
                                                    7162+*                                INSTRUCTION UNDER TEST ROUTINE
 00005064                                           7163+X225     DS    0F
 00005064  E710 5034 0006                0000507C   7164+         VL    V1,RE225          get V1 source
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   136
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   136
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -7772,7 +7772,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 000050EC  00000010                                 7218+         DC    A(16)             result length
 000050F0  0000510C                                 7219+REA227   DC    A(RE227)          result address
                                                    7220+*                                INSTRUCTION UNDER TEST ROUTINE
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   137
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   137
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -7832,7 +7832,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00005170  0E                                       7274+         DC    HL1'14'           cc failed mask
 00005171  E5E3D7E7 40404040                        7275+         DC    CL8'VTPX'         instruction name
 0000517C  00000010                                 7276+         DC    A(16)             result length
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   138
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   138
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -7892,7 +7892,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 000051F8                                           7330+         DS    0FD
 000051F8                      000051F8             7331+         USING *,R5              base for test data and test routine
 000051F8  00005214                                 7332+T231     DC    A(X231)           address of test routine
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   139
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   139
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -7952,7 +7952,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
                                                    7386
                                                    7387          VRR_G VTPX,X'80A0',1
 00005288                                           7388+         DS    0FD
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   140
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   140
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -8012,7 +8012,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00005304  0FF00000 00000000                        7443          DC    XL16'0FF0000000000000000000000000000E'   V1 source
 0000530C  00000000 0000000E
                                                    7444
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   141
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   141
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -8072,7 +8072,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00005394                                           7499+RE236    DC    0F
 00005394                                           7500+         DROP  R5
 00005394  0FF00000 00000000                        7501          DC    XL16'0FF00000000000000000000000000000'   V1 source
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   142
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   142
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -8132,7 +8132,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 
 00005418  B98D 0020                                7556+         EPSW  R2,R0             exptract psw
 0000541C  5020 8E9C                     0000109C   7557+         ST    R2,CCPSW              to save CC
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   143
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   143
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -8191,7 +8191,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 000054A3  01                                       7610+         DC    X'01'                   v1
 000054A4  080AB0                                   7611+         DC    HL3'527024'             0, I3, RXB
 000054A7  5F                                       7612+         DC    X'5F'
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   144
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   144
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -8251,7 +8251,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00005532                                           7667+         DS    0H                      E65F VTP - Vector Test Decimal
 00005532  E6                                       7668+         DC    X'E6'
 00005533  01                                       7669+         DC    X'01'                   v1
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   145
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   145
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -8311,7 +8311,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 000055BC  E710 5034 0006                000055D4   7722+         VL    V1,RE244          get V1 source
 
 000055C2                                           7725+         DS    0H                      E65F VTP - Vector Test Decimal
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   146
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   146
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -8371,7 +8371,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
                                                    7778+*                                INSTRUCTION UNDER TEST ROUTINE
 0000564C                                           7779+X246     DS    0F
 0000564C  E710 5034 0006                00005664   7780+         VL    V1,RE246          get V1 source
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   147
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   147
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -8431,7 +8431,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 000056D4  00000010                                 7834+         DC    A(16)             result length
 000056D8  000056F4                                 7835+REA248   DC    A(RE248)          result address
                                                    7836+*                                INSTRUCTION UNDER TEST ROUTINE
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   148
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   148
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -8491,7 +8491,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00005756  00                                       7890+         DC    XL1'00'
 00005757  01                                       7891+         DC    HL1'1'            cc
 00005758  0B                                       7892+         DC    HL1'11'           cc failed mask
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   149
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   149
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -8551,7 +8551,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 000057E0  000057FC                                 7946+T252     DC    A(X252)           address of test routine
 000057E4  00FC                                     7947+         DC    H'252'            test number
 000057E6  00                                       7948+         DC    XL1'00'
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   150
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   150
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -8611,7 +8611,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
                                                    8002          VRR_G VTPX,X'80A4',1
 00005870                                           8003+         DS    0FD
 00005870                      00005870             8004+         USING *,R5              base for test data and test routine
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   151
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   151
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -8671,7 +8671,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 000058F4  00000000 0000100B
                                                    8059
                                                    8060          VRR_G VTPX,X'80A8',1
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   152
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   152
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -8731,7 +8731,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 0000597C                                           8115+         DROP  R5
 0000597C  0FF00000 00000000                        8116          DC    XL16'0FF0000000000000000000000000100D'   V1 source
 00005984  00000000 0000100D
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   153
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   153
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -8791,7 +8791,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00005A08  07FB                                     8171+         BR    R11               return
 00005A0C                                           8172+RE259    DC    0F
 00005A0C                                           8173+         DROP  R5
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   154
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   154
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -8851,7 +8851,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00005A90  B98D 0020                                8227+         EPSW  R2,R0             exptract psw
 00005A94  5020 8E9C                     0000109C   8228+         ST    R2,CCPSW              to save CC
 00005A98  07FB                                     8229+         BR    R11               return
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   155
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   155
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -8911,7 +8911,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00005B1B  01                                       8283+         DC    X'01'                   v1
 00005B1C  0C0A60                                   8284+         DC    HL3'789088'             0, I3, RXB
 00005B1F  5F                                       8285+         DC    X'5F'
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   156
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   156
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -8971,7 +8971,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00005BAA                                           8339+         DS    0H                      E65F VTP - Vector Test Decimal
 00005BAA  E6                                       8340+         DC    X'E6'
 00005BAB  01                                       8341+         DC    X'01'                   v1
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   157
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   157
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -9030,7 +9030,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
                                                    8393+*                                INSTRUCTION UNDER TEST ROUTINE
 00005C34                                           8394+X267     DS    0F
 00005C34  E710 5034 0006                00005C4C   8395+         VL    V1,RE267          get V1 source
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   158
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   158
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -9090,7 +9090,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00005CC0  00005CDC                                 8450+REA269   DC    A(RE269)          result address
                                                    8451+*                                INSTRUCTION UNDER TEST ROUTINE
 00005CC4                                           8452+X269     DS    0F
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   159
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   159
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -9150,7 +9150,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00005D41  E5E3D7E7 40404040                        8506+         DC    CL8'VTPX'         instruction name
 00005D4C  00000010                                 8507+         DC    A(16)             result length
 00005D50  00005D6C                                 8508+REA271   DC    A(RE271)          result address
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   160
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   160
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -9210,7 +9210,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00005DCF  02                                       8562+         DC    HL1'2'            cc
 00005DD0  0D                                       8563+         DC    HL1'13'           cc failed mask
 00005DD1  E5E3D7E7 40404040                        8564+         DC    CL8'VTPX'         instruction name
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   161
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   161
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -9270,7 +9270,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00005E5C  0113                                     8618+         DC    H'275'            test number
 00005E5E  00                                       8619+         DC    XL1'00'
 00005E5F  02                                       8620+         DC    HL1'2'            cc
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   162
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   162
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -9330,7 +9330,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
                                                    8674 *---------------------------------------------------------------------
                                                    8675 * BTP=0, STC=6, DC=0                   sign: C, D, F valid, no digits
                                                    8676          VRR_G VTPX,X'80C0',1
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   163
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   163
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -9390,7 +9390,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00005F64                                           8731+         DROP  R5
 00005F64  0FF00000 00000000                        8732          DC    XL16'0FF0000000000000000000000000000B'   V1 source
 00005F6C  00000000 0000000B
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   164
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   164
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -9450,7 +9450,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00005FF0  07FB                                     8787+         BR    R11               return
 00005FF4                                           8788+RE280    DC    0F
 00005FF4                                           8789+         DROP  R5
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   165
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   165
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -9510,7 +9510,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00006078  B98D 0020                                8843+         EPSW  R2,R0             exptract psw
 0000607C  5020 8E9C                     0000109C   8844+         ST    R2,CCPSW              to save CC
 00006080  07FB                                     8845+         BR    R11               return
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   166
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   166
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -9570,7 +9570,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00006107  5F                                       8899+         DC    X'5F'
 
 00006108  B98D 0020                                8901+         EPSW  R2,R0             exptract psw
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   167
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   167
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -9630,7 +9630,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00006192                                           8955+         DS    0H                      E65F VTP - Vector Test Decimal
 00006192  E6                                       8956+         DC    X'E6'
 00006193  01                                       8957+         DC    X'01'                   v1
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   168
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   168
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -9689,7 +9689,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
                                                    9009+*                                INSTRUCTION UNDER TEST ROUTINE
 0000621C                                           9010+X288     DS    0F
 0000621C  E710 5034 0006                00006234   9011+         VL    V1,RE288          get V1 source
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   169
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   169
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -9749,7 +9749,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 000062A8  000062C4                                 9066+REA290   DC    A(RE290)          result address
                                                    9067+*                                INSTRUCTION UNDER TEST ROUTINE
 000062AC                                           9068+X290     DS    0F
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   170
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   170
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -9809,7 +9809,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00006329  E5E3D7E7 40404040                        9122+         DC    CL8'VTPX'         instruction name
 00006334  00000010                                 9123+         DC    A(16)             result length
 00006338  00006354                                 9124+REA292   DC    A(RE292)          result address
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   171
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   171
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -9869,7 +9869,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 000063B7  01                                       9178+         DC    HL1'1'            cc
 000063B8  0B                                       9179+         DC    HL1'11'           cc failed mask
 000063B9  E5E3D7E7 40404040                        9180+         DC    CL8'VTPX'         instruction name
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   172
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   172
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -9929,7 +9929,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00006444  0128                                     9234+         DC    H'296'            test number
 00006446  00                                       9235+         DC    XL1'00'
 00006447  03                                       9236+         DC    HL1'3'            cc
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   173
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   173
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -9989,7 +9989,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
                                                    9290          VRR_G VTPX,X'80CA',0
 000064D0                                           9291+         DS    0FD
 000064D0                      000064D0             9292+         USING *,R5              base for test data and test routine
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   174
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   174
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -10049,7 +10049,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00006554  00000000 0000000D
                                                    9347
                                                    9348          VRR_G VTPX,X'80CA',0
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   175
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   175
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -10109,7 +10109,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 000065DC                                           9403+RE301    DC    0F
 000065DC                                           9404+         DROP  R5
 000065DC  0FF00000 00000000                        9405          DC    XL16'0FF0000000000000000000000000100A'   V1 source
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   176
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   176
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -10169,7 +10169,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00006664  5020 8E9C                     0000109C   9459+         ST    R2,CCPSW              to save CC
 00006668  07FB                                     9460+         BR    R11               return
 0000666C                                           9461+RE303    DC    0F
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   177
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   177
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -10229,7 +10229,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 
 000066F0  B98D 0020                                9516+         EPSW  R2,R0             exptract psw
 000066F4  5020 8E9C                     0000109C   9517+         ST    R2,CCPSW              to save CC
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   178
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   178
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -10288,7 +10288,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 0000677B  01                                       9570+         DC    X'01'                   v1
 0000677C  080CE0                                   9571+         DC    HL3'527584'             0, I3, RXB
 0000677F  5F                                       9572+         DC    X'5F'
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   179
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   179
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -10348,7 +10348,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 0000680A  E6                                       9627+         DC    X'E6'
 0000680B  01                                       9628+         DC    X'01'                   v1
 0000680C  080CE0                                   9629+         DC    HL3'527584'             0, I3, RXB
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   180
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   180
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -10407,7 +10407,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
                                                    9681+*                                INSTRUCTION UNDER TEST ROUTINE
 00006894                                           9682+X311     DS    0F
 00006894  E710 5034 0006                000068AC   9683+         VL    V1,RE311          get V1 source
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   181
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   181
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -10467,7 +10467,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00006920  0000693C                                 9738+REA313   DC    A(RE313)          result address
                                                    9739+*                                INSTRUCTION UNDER TEST ROUTINE
 00006924                                           9740+X313     DS    0F
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   182
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   182
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -10527,7 +10527,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 000069A0  0B                                       9794+         DC    HL1'11'           cc failed mask
 000069A1  E5E3D7E7 40404040                        9795+         DC    CL8'VTPX'         instruction name
 000069AC  00000010                                 9796+         DC    A(16)             result length
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   183
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   183
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -10587,7 +10587,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00006A2E  00                                       9850+         DC    XL1'00'
 00006A2F  00                                       9851+         DC    HL1'0'            cc
 00006A30  07                                       9852+         DC    HL1'7'            cc failed mask
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   184
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   184
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -10647,7 +10647,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00006AB8  00006AD4                                 9906+T319     DC    A(X319)           address of test routine
 00006ABC  013F                                     9907+         DC    H'319'            test number
 00006ABE  00                                       9908+         DC    XL1'00'
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   185
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   185
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -10707,7 +10707,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00006B48                                           9962+         DS    0FD
 00006B48                      00006B48             9963+         USING *,R5              base for test data and test routine
 00006B48  00006B64                                 9964+T321     DC    A(X321)           address of test routine
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   186
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   186
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -10767,7 +10767,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
                                                   10018
                                                   10019          VRR_G VTPX,X'C0C4',3
 00006BD8                                          10020+         DS    0FD
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   187
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   187
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -10827,7 +10827,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00006C48  B98D 0020                               10075+         EPSW  R2,R0             exptract psw
 00006C4C  5020 8E9C                     0000109C  10076+         ST    R2,CCPSW              to save CC
 00006C50  07FB                                    10077+         BR    R11               return
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   188
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   188
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -10887,7 +10887,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00006CD7  5F                                      10131+         DC    X'5F'
 
 00006CD8  B98D 0020                               10133+         EPSW  R2,R0             exptract psw
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   189
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   189
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -10947,7 +10947,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00006D63  01                                      10187+         DC    X'01'                   v1
 00006D64  080E00                                  10188+         DC    HL3'527872'             0, I3, RXB
 00006D67  5F                                      10189+         DC    X'5F'
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   190
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   190
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -11007,7 +11007,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00006DF2                                          10243+         DS    0H                      E65F VTP - Vector Test Decimal
 00006DF2  E6                                      10244+         DC    X'E6'
 00006DF3  01                                      10245+         DC    X'01'                   v1
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   191
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   191
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -11067,7 +11067,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
                                                   10298+*                                INSTRUCTION UNDER TEST ROUTINE
 00006E7C                                          10299+X332     DS    0F
 00006E7C  E710 5034 0006                00006E94  10300+         VL    V1,RE332          get V1 source
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   192
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   192
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -11127,7 +11127,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00006F04  00000010                                10354+         DC    A(16)             result length
 00006F08  00006F24                                10355+REA334   DC    A(RE334)          result address
                                                   10356+*                                INSTRUCTION UNDER TEST ROUTINE
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   193
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   193
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -11187,7 +11187,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00006F87  01                                      10410+         DC    HL1'1'            cc
 00006F88  0B                                      10411+         DC    HL1'11'           cc failed mask
 00006F89  E5E3D7E7 40404040                       10412+         DC    CL8'VTPX'         instruction name
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   194
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   194
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -11247,7 +11247,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00007014  0152                                    10466+         DC    H'338'            test number
 00007016  00                                      10467+         DC    XL1'00'
 00007017  00                                      10468+         DC    HL1'0'            cc
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   195
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   195
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -11307,7 +11307,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 000070A0                      000070A0            10522+         USING *,R5              base for test data and test routine
 000070A0  000070BC                                10523+T340     DC    A(X340)           address of test routine
 000070A4  0154                                    10524+         DC    H'340'            test number
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   196
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   196
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -11367,7 +11367,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
                                                   10578          VRR_G VTPX,X'80EF',1
 00007130                                          10579+         DS    0FD
 00007130                      00007130            10580+         USING *,R5              base for test data and test routine
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   197
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   197
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -11427,7 +11427,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 000071B4  00000000 0000F00F
                                                   10635
                                                   10636          VRR_G VTPX,X'80EF',3
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   198
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   198
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -11487,7 +11487,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 0000723C                                          10691+         DROP  R5
 0000723C  11000000 00000000                       10692          DC    XL16'1100000000000000000000000000000B'   V1 source
 00007244  00000000 0000000B
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   199
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   199
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -11547,7 +11547,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 000072C0  B98D 0020                               10747+         EPSW  R2,R0             exptract psw
 000072C4  5020 8E9C                     0000109C  10748+         ST    R2,CCPSW              to save CC
 000072C8  07FB                                    10749+         BR    R11               return
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   200
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   200
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -11607,7 +11607,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 0000734F  5F                                      10803+         DC    X'5F'
 
 00007350  B98D 0020                               10805+         EPSW  R2,R0             exptract psw
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   201
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   201
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -11667,7 +11667,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 000073DA  E6                                      10859+         DC    X'E6'
 000073DB  01                                      10860+         DC    X'01'                   v1
 000073DC  080E40                                  10861+         DC    HL3'527936'             0, I3, RXB
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   202
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   202
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -11727,7 +11727,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 
 0000746A                                          10916+         DS    0H                      E65F VTP - Vector Test Decimal
 0000746A  E6                                      10917+         DC    X'E6'
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   203
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   203
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -11786,7 +11786,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
                                                   10969+*                                INSTRUCTION UNDER TEST ROUTINE
 000074F4                                          10970+X355     DS    0F
 000074F4  E710 5034 0006                0000750C  10971+         VL    V1,RE355          get V1 source
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   204
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   204
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -11846,7 +11846,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00007580  0000759C                                11026+REA357   DC    A(RE357)          result address
                                                   11027+*                                INSTRUCTION UNDER TEST ROUTINE
 00007584                                          11028+X357     DS    0F
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   205
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   205
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -11906,7 +11906,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00007601  E5E3D7E7 40404040                       11082+         DC    CL8'VTPX'         instruction name
 0000760C  00000010                                11083+         DC    A(16)             result length
 00007610  0000762C                                11084+REA359   DC    A(RE359)          result address
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   206
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   206
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -11966,7 +11966,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 0000768C  0169                                    11138+         DC    H'361'            test number
 0000768E  00                                      11139+         DC    XL1'00'
 0000768F  01                                      11140+         DC    HL1'1'            cc
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   207
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   207
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -12026,7 +12026,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00007718                      00007718            11194+         USING *,R5              base for test data and test routine
 00007718  00007734                                11195+T363     DC    A(X363)           address of test routine
 0000771C  016B                                    11196+         DC    H'363'            test number
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   208
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   208
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -12086,7 +12086,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
                                                   11250 *                                     sign: C, D, F valid, non-0 digits
                                                   11251          VRR_G VTPX,X'C0E4',1
 000077A8                                          11252+         DS    0FD
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   209
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   209
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -12146,7 +12146,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00007824  0FF00000 00000000                       11307          DC    XL16'0FF0000000000000000000000000100B'   V1 source
 0000782C  00000000 0000100B
                                                   11308
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   210
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   210
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -12206,7 +12206,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 000078B4                                          11363+RE368    DC    0F
 000078B4                                          11364+         DROP  R5
 000078B4  0FF00000 00000000                       11365          DC    XL16'0FF0000000000000000000000000100D'   V1 source
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   211
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   211
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -12266,7 +12266,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 0000793C  5020 8E9C                     0000109C  11419+         ST    R2,CCPSW              to save CC
 00007940  07FB                                    11420+         BR    R11               return
 00007944                                          11421+RE370    DC    0F
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   212
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   212
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -12326,7 +12326,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 
 000079C8  B98D 0020                               11476+         EPSW  R2,R0             exptract psw
 000079CC  5020 8E9C                     0000109C  11477+         ST    R2,CCPSW              to save CC
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   213
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   213
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -12385,7 +12385,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00007A53  01                                      11530+         DC    X'01'                   v1
 00007A54  0C0E40                                  11531+         DC    HL3'790080'             0, I3, RXB
 00007A57  5F                                      11532+         DC    X'5F'
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   214
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   214
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -12445,7 +12445,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00007AD4  00001268                                11586+         DC    A(T5)             address of test
 00007AD8  000012B0                                11587+         DC    A(T6)             address of test
 00007ADC  000012F8                                11588+         DC    A(T7)             address of test
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   215
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   215
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -12505,7 +12505,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00007BB4  00002228                                11642+         DC    A(T61)            address of test
 00007BB8  00002270                                11643+         DC    A(T62)            address of test
 00007BBC  000022B8                                11644+         DC    A(T63)            address of test
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   216
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   216
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -12565,7 +12565,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00007C94  000031E8                                11698+         DC    A(T117)           address of test
 00007C98  00003230                                11699+         DC    A(T118)           address of test
 00007C9C  00003278                                11700+         DC    A(T119)           address of test
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   217
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   217
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -12625,7 +12625,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00007D74  000041A8                                11754+         DC    A(T173)           address of test
 00007D78  000041F0                                11755+         DC    A(T174)           address of test
 00007D7C  00004238                                11756+         DC    A(T175)           address of test
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   218
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   218
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -12685,7 +12685,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00007E54  00005168                                11810+         DC    A(T229)           address of test
 00007E58  000051B0                                11811+         DC    A(T230)           address of test
 00007E5C  000051F8                                11812+         DC    A(T231)           address of test
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   219
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   219
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -12745,7 +12745,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00007F34  00006128                                11866+         DC    A(T285)           address of test
 00007F38  00006170                                11867+         DC    A(T286)           address of test
 00007F3C  000061B8                                11868+         DC    A(T287)           address of test
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   220
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   220
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -12805,7 +12805,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
 00008014  000070E8                                11922+         DC    A(T341)           address of test
 00008018  00007130                                11923+         DC    A(T342)           address of test
 0000801C  00007178                                11924+         DC    A(T343)           address of test
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   221
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   221
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -12847,7 +12847,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
                                                   11960
 000080A8  00000000                                11961          DC    F'0'     END OF TABLE
 000080AC  00000000                                11962          DC    F'0'
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   222
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   222
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -12907,7 +12907,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
                               00000013  00000001  12008 V19      EQU   19
                               00000014  00000001  12009 V20      EQU   20
                               00000015  00000001  12010 V21      EQU   21
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   223
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   223
 
   LOC        OBJECT CODE       ADDR1     ADDR2     STMT
 
@@ -12923,7 +12923,7 @@ ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                      
                               0000001F  00000001  12020 V31      EQU   31
                                                   12021
                                                   12022          END
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   224
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   224
 
      SYMBOL        TYPE   VALUE      LENGTH     DEFN  REFERENCES
 
@@ -12983,7 +12983,7 @@ EOJ                 I    00000568           4    397    202    235    324
 EOJPSW              D    00000558           8    395    397
 FAILCONT            U    00000446           1    311    306
 FAILED              F    00001000           4    437    313    322
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   225
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   225
 
      SYMBOL        TYPE   VALUE      LENGTH     DEFN  REFERENCES
 
@@ -13043,7 +13043,7 @@ R0                  U    00000000           1  11968    116    167    170    190
                                                       10834  10864  10893  10922  10951  10980  11009  11038  11067  11096  11125
                                                       11156  11185  11214  11243  11273  11302  11331  11360  11389  11418  11447
                                                       11476  11505  11534  11563
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   226
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   226
 
      SYMBOL        TYPE   VALUE      LENGTH     DEFN  REFERENCES
 
@@ -13103,7 +13103,7 @@ R2                  U    00000002           1  11970    201    234    280    281
                                                        1729   1757   1758   1786   1787   1815   1816   1844   1845   1873   1874
                                                        1906   1907   1935   1936   1964   1965   1993   1994   2022   2023   2051
                                                        2052   2080   2081   2109   2110   2140   2141   2169   2170   2198   2199
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   227
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   227
 
      SYMBOL        TYPE   VALUE      LENGTH     DEFN  REFERENCES
 
@@ -13163,7 +13163,7 @@ R2                  U    00000002           1  11970    201    234    280    281
                                                       10748  10776  10777  10805  10806  10834  10835  10864  10865  10893  10894
                                                       10922  10923  10951  10952  10980  10981  11009  11010  11038  11039  11067
                                                       11068  11096  11097  11125  11126  11156  11157  11185  11186  11214  11215
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   228
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   228
 
      SYMBOL        TYPE   VALUE      LENGTH     DEFN  REFERENCES
 
@@ -13223,7 +13223,7 @@ R5                  U    00000005           1  11973    245    246    251    335
                                                        8260   8267   8291   8296   8320   8325   8349   8354   8378   8384   8408
                                                        8413   8437   8442   8466   8471   8495   8500   8524   8529   8553   8558
                                                        8582   8587   8611   8616   8640   8645   8669   8678   8702   8707   8731
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   229
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   229
 
      SYMBOL        TYPE   VALUE      LENGTH     DEFN  REFERENCES
 
@@ -13283,7 +13283,7 @@ RE126               F    000034A4           4   4280   4265   4268
 RE127               F    000034EC           4   4309   4294   4297
 RE128               F    00003534           4   4338   4323   4326
 RE129               F    0000357C           4   4367   4352   4355
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   230
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   230
 
      SYMBOL        TYPE   VALUE      LENGTH     DEFN  REFERENCES
 
@@ -13343,7 +13343,7 @@ RE177               F    000042FC           4   5772   5757   5760
 RE178               F    00004344           4   5801   5786   5789
 RE179               F    0000438C           4   5830   5815   5818
 RE18                F    00001644           4   1120   1105   1108
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   231
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   231
 
      SYMBOL        TYPE   VALUE      LENGTH     DEFN  REFERENCES
 
@@ -13403,7 +13403,7 @@ RE227               F    0000510C           4   7234   7219   7222
 RE228               F    00005154           4   7263   7248   7251
 RE229               F    0000519C           4   7292   7277   7280
 RE23                F    000017AC           4   1265   1250   1253
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   232
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   232
 
      SYMBOL        TYPE   VALUE      LENGTH     DEFN  REFERENCES
 
@@ -13463,7 +13463,7 @@ RE278               F    00005F64           4   8730   8715   8718
 RE279               F    00005FAC           4   8759   8744   8747
 RE28                F    00001914           4   1411   1396   1399
 RE280               F    00005FF4           4   8788   8773   8776
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   233
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   233
 
      SYMBOL        TYPE   VALUE      LENGTH     DEFN  REFERENCES
 
@@ -13523,7 +13523,7 @@ RE328               F    00006D74           4  10194  10179  10182
 RE329               F    00006DBC           4  10223  10208  10211
 RE33                F    00001A7C           4   1556   1541   1544
 RE330               F    00006E04           4  10252  10237  10240
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   234
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   234
 
      SYMBOL        TYPE   VALUE      LENGTH     DEFN  REFERENCES
 
@@ -13583,7 +13583,7 @@ RE40                F    00001C74           4   1760   1745   1748
 RE41                F    00001CBC           4   1789   1774   1777
 RE42                F    00001D04           4   1818   1803   1806
 RE43                F    00001D4C           4   1847   1832   1835
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   235
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   235
 
      SYMBOL        TYPE   VALUE      LENGTH     DEFN  REFERENCES
 
@@ -13643,7 +13643,7 @@ RE91                F    00002ACC           4   3252   3237   3240
 RE92                F    00002B14           4   3281   3266   3269
 RE93                F    00002B5C           4   3314   3299   3302
 RE94                F    00002BA4           4   3343   3328   3331
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   236
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   236
 
      SYMBOL        TYPE   VALUE      LENGTH     DEFN  REFERENCES
 
@@ -13703,7 +13703,7 @@ REA141              A    000038C0           4   4704
 REA142              A    00003908           4   4733
 REA143              A    00003950           4   4764
 REA144              A    00003998           4   4793
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   237
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   237
 
      SYMBOL        TYPE   VALUE      LENGTH     DEFN  REFERENCES
 
@@ -13763,7 +13763,7 @@ REA192              A    00004718           4   6197
 REA193              A    00004760           4   6226
 REA194              A    000047A8           4   6256
 REA195              A    000047F0           4   6285
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   238
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   238
 
      SYMBOL        TYPE   VALUE      LENGTH     DEFN  REFERENCES
 
@@ -13823,7 +13823,7 @@ REA242              A    00005528           4   7661
 REA243              A    00005570           4   7690
 REA244              A    000055B8           4   7719
 REA245              A    00005600           4   7748
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   239
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   239
 
      SYMBOL        TYPE   VALUE      LENGTH     DEFN  REFERENCES
 
@@ -13883,7 +13883,7 @@ REA293              A    00006380           4   9153
 REA294              A    000063C8           4   9182
 REA295              A    00006410           4   9211
 REA296              A    00006458           4   9240
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   240
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   240
 
      SYMBOL        TYPE   VALUE      LENGTH     DEFN  REFERENCES
 
@@ -13943,7 +13943,7 @@ REA343              A    00007190           4  10617
 REA344              A    000071D8           4  10646
 REA345              A    00007220           4  10675
 REA346              A    00007268           4  10706
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   241
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   241
 
      SYMBOL        TYPE   VALUE      LENGTH     DEFN  REFERENCES
 
@@ -14003,7 +14003,7 @@ REA56               A    000020D8           4   2216
 REA57               A    00002120           4   2245
 REA58               A    00002168           4   2274
 REA59               A    000021B0           4   2303
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   242
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   242
 
      SYMBOL        TYPE   VALUE      LENGTH     DEFN  REFERENCES
 
@@ -14063,7 +14063,7 @@ SKL0001             U    00000054           1    183    199
 SKL0002             U    00000062           1    216    232
 SKT0001             C    0000022A          26    180    183    200
 SKT0002             C    000002DC          26    213    216    233
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   243
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   243
 
      SYMBOL        TYPE   VALUE      LENGTH     DEFN  REFERENCES
 
@@ -14123,7 +14123,7 @@ T145                A    000039C8           4   4815  11726
 T146                A    00003A10           4   4845  11727
 T147                A    00003A58           4   4874  11728
 T148                A    00003AA0           4   4903  11729
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   244
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   244
 
      SYMBOL        TYPE   VALUE      LENGTH     DEFN  REFERENCES
 
@@ -14183,7 +14183,7 @@ T196                A    00004820           4   6307  11777
 T197                A    00004868           4   6336  11778
 T198                A    000048B0           4   6365  11779
 T199                A    000048F8           4   6394  11780
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   245
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   245
 
      SYMBOL        TYPE   VALUE      LENGTH     DEFN  REFERENCES
 
@@ -14243,7 +14243,7 @@ T246                A    00005630           4   7770  11827
 T247                A    00005678           4   7799  11828
 T248                A    000056C0           4   7828  11829
 T249                A    00005708           4   7857  11830
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   246
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   246
 
      SYMBOL        TYPE   VALUE      LENGTH     DEFN  REFERENCES
 
@@ -14303,7 +14303,7 @@ T297                A    00006488           4   9264  11878
 T298                A    000064D0           4   9293  11879
 T299                A    00006518           4   9322  11880
 T3                  A    000011D8           4    690  11584
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   247
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   247
 
      SYMBOL        TYPE   VALUE      LENGTH     DEFN  REFERENCES
 
@@ -14363,7 +14363,7 @@ T347                A    00007298           4  10728  11928
 T348                A    000072E0           4  10757  11929
 T349                A    00007328           4  10786  11930
 T35                 A    00001AD8           4   1593  11616
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   248
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   248
 
      SYMBOL        TYPE   VALUE      LENGTH     DEFN  REFERENCES
 
@@ -14423,7 +14423,7 @@ T6                  A    000012B0           4    757  11587
 T60                 A    000021E0           4   2325  11641
 T61                 A    00002228           4   2354  11642
 T62                 A    00002270           4   2383  11643
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   249
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   249
 
      SYMBOL        TYPE   VALUE      LENGTH     DEFN  REFERENCES
 
@@ -14483,7 +14483,7 @@ V1                  U    00000001           1  11990    655    656    677    678
                                                        2628   2657   2686   2715   2744   2773   2802   2831   2860   2891   2920
                                                        2949   2979   3008   3037   3066   3095   3124   3153   3182   3211   3240
                                                        3269   3302   3331   3360   3389   3418   3447   3476   3505   3536   3565
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   250
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   250
 
      SYMBOL        TYPE   VALUE      LENGTH     DEFN  REFERENCES
 
@@ -14543,7 +14543,7 @@ V31                 U    0000001F           1  12020
 V4                  U    00000004           1  11993
 V5                  U    00000005           1  11994
 V6                  U    00000006           1  11995
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   251
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   251
 
      SYMBOL        TYPE   VALUE      LENGTH     DEFN  REFERENCES
 
@@ -14603,7 +14603,7 @@ X141                F    000038C4           4   4706   4697
 X142                F    0000390C           4   4735   4726
 X143                F    00003954           4   4766   4757
 X144                F    0000399C           4   4795   4786
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   252
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   252
 
      SYMBOL        TYPE   VALUE      LENGTH     DEFN  REFERENCES
 
@@ -14663,7 +14663,7 @@ X192                F    0000471C           4   6199   6190
 X193                F    00004764           4   6228   6219
 X194                F    000047AC           4   6258   6249
 X195                F    000047F4           4   6287   6278
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   253
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   253
 
      SYMBOL        TYPE   VALUE      LENGTH     DEFN  REFERENCES
 
@@ -14723,7 +14723,7 @@ X242                F    0000552C           4   7663   7654
 X243                F    00005574           4   7692   7683
 X244                F    000055BC           4   7721   7712
 X245                F    00005604           4   7750   7741
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   254
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   254
 
      SYMBOL        TYPE   VALUE      LENGTH     DEFN  REFERENCES
 
@@ -14783,7 +14783,7 @@ X293                F    00006384           4   9155   9146
 X294                F    000063CC           4   9184   9175
 X295                F    00006414           4   9213   9204
 X296                F    0000645C           4   9242   9233
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   255
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   255
 
      SYMBOL        TYPE   VALUE      LENGTH     DEFN  REFERENCES
 
@@ -14843,7 +14843,7 @@ X343                F    00007194           4  10619  10610
 X344                F    000071DC           4  10648  10639
 X345                F    00007224           4  10677  10668
 X346                F    0000726C           4  10708  10699
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   256
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   256
 
      SYMBOL        TYPE   VALUE      LENGTH     DEFN  REFERENCES
 
@@ -14903,7 +14903,7 @@ X56                 F    000020DC           4   2218   2209
 X57                 F    00002124           4   2247   2238
 X58                 F    0000216C           4   2276   2267
 X59                 F    000021B4           4   2305   2296
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   257
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   257
 
      SYMBOL        TYPE   VALUE      LENGTH     DEFN  REFERENCES
 
@@ -14960,7 +14960,7 @@ ZVE6TST             J    00000000       32944    115    118    120    124    128
 =F'2'               F    0000058C           4    411    194
 =H'0'               H    0000059C           2    415    357
 =XL4'3'             X    00000598           4    414    275
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   258
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   258
 
  MACRO    DEFN  REFERENCES
 
@@ -15020,7 +15020,7 @@ VTPX       523     847     876     905     934     963     992    1021    1050  
                  10679   10710   10739   10768   10797   10826   10856   10885   10914   10943   10972   11001   11030   11059
                  11088   11117   11148   11177   11206   11235   11265   11294   11323   11352   11381   11410   11439   11468
                  11497   11526   11555
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   259
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   259
 
    DESC     SYMBOL   SIZE     POS        ADDR
 
@@ -15029,7 +15029,7 @@ Entry: 0
 Image      IMAGE    32944  0000-80AF  0000-80AF
   Region            32944  0000-80AF  0000-80AF
     CSECT  ZVE6TST  32944  0000-80AF  0000-80AF
-ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          07 Apr 2026 18:33:13  Page   260
+ASMA Ver. 0.7.0  zvector-e6-14-testdecimal                                                          11 Apr 2026 10:38:26  Page   260
 
    STMT                        FILE NAME
 
