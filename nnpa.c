@@ -207,6 +207,7 @@ typedef U16 N1FLOAT;
 #define N1FLOAT_PACK( sign, exp, frac ) ( ( (N1FLOAT) (sign) << 15 ) | ( (N1FLOAT) ( (exp) & 0x3F ) << 9 ) | (N1FLOAT) ( (frac) & 0x01FF) )
 
 #define N1FLOAT_DEFAULT_NAN             0x7FFF
+#define N1FLOAT_DEFAULT_INFINITY        0x7FFF
 #define N1FLOAT_IS_ZERO(f)              ( ( (f) & 0x7FFF ) == 0x0000 )
 #define N1FLOAT_IS_NAN_INFINITY(f)      ( ( (f) & 0x7FFF ) == 0x7FFF )
 
@@ -220,11 +221,12 @@ typedef U16 TINYB;
 #define TINYB_PACK( sign, exp, frac )   ( ( (TINYB) (sign) << 15 ) | ( (TINYB) ( (exp) &  0x1F ) << 10 ) | (TINYB) ( (frac) & 0x03FF ) )
 
 #define TINYB_DEFAULT_NAN               0x7E00
-#define TINYB_IS_ZERO(f)                ( ( (TINYB) ( (f) & 0x7FFF ) == (TINYB) 0x0000 ) )
-#define TINYB_IS_NAN( f )               ( ( ( (f) & 0x7C00 ) == 0x7C00 ) && ( (f) & 0x03FF) )
-#define TINYB_IS_NAN_INFINITY(f)        ( (   (f) & 0x7C00 ) == 0x7C00 )
-#define TINYB_IS_SUBNORMAL(f)           ( ( ( (f) & 0x7C00 ) == 0x0000 ) && ( (f) & 0x03FF ) != 0x0000 )
-#define TINYB_IS_NORMAL(f)              ( ( ( (f) & 0x7C00 ) != 0x0000 ) && ( (f) & 0x7C00 ) != 0x7C00 )
+#define TINYB_IS_ZERO( f )              ( ( (TINYB) ( (f) & 0x7FFF ) == (TINYB) 0x0000 ) )
+#define TINYB_IS_NAN( f )               ( ( ( (f) & 0x7C00 ) == 0x7C00 ) &&  ( (f) & 0x03FF) )
+#define TINYB_IS_INFINITY( f )          ( ( ( (f) & 0x7C00 ) == 0x7C00 ) && !( (f) & 0x03FF) )
+#define TINYB_IS_NAN_INFINITY( f )      ( (   (f) & 0x7C00 ) == 0x7C00 )
+#define TINYB_IS_SUBNORMAL( f )         ( ( ( (f) & 0x7C00 ) == 0x0000 ) && ( (f) & 0x03FF ) != 0x0000 )
+#define TINYB_IS_NORMAL( f )            ( ( ( (f) & 0x7C00 ) != 0x0000 ) && ( (f) & 0x7C00 ) != 0x7C00 )
 
 /* SHORTB (32 bits): 1 bit sign, 8 bit exponent; 23 bit fraction   */
 typedef U32 SHORTB;
@@ -236,10 +238,12 @@ typedef U32 SHORTB;
 #define SHORTB_PACK( sign, exp, frac )  ( ((SHORTB) (sign) << 31) | ( (SHORTB) ( (exp) & 0xFF ) << 23) | (SHORTB) ( (frac) & 0x007FFFFF ) )
 
 #define SHORTB_DEFAULT_NAN               0x7FC00000
-#define SHORTB_IS_ZERO(f)                ( ( (f) & 0x7FFFFFFF ) == 0x00000000 )
-#define SHORTB_IS_NAN_INFINITY(f)        ( ( (f) & 0x7F800000 ) == 0x7F800000 )
-#define SHORTB_IS_SUBNORMAL(f)           ( ( (f) & 0x7F800000 ) == 0x00000000 && ( (f) & 0x007FFFFF ) != 0x00000000 )
-#define SHORTB_IS_NORMAL(f)              ( ( (f) & 0x7F800000 ) != 0x00000000 && ( (f) & 0x7F800000 ) != 0x7F800000 )
+#define SHORTB_IS_ZERO(f)                ( (   (f) & 0x7FFFFFFF ) == 0x00000000 )
+#define SHORTB_IS_NAN(f)                 ( ( ( (f) & 0x7F800000 ) == 0x7F800000 ) &&  ( (f) & 0x007FFFFF ) )
+#define SHORTB_IS_INFINITY(f)            ( ( ( (f) & 0x7F800000 ) == 0x7F800000 ) && !( (f) & 0x007FFFFF ) )
+#define SHORTB_IS_NAN_INFINITY(f)        ( (   (f) & 0x7F800000 ) == 0x7F800000 )
+#define SHORTB_IS_SUBNORMAL(f)           ( (   (f) & 0x7F800000 ) == 0x00000000 && ( (f) & 0x007FFFFF ) != 0x00000000 )
+#define SHORTB_IS_NORMAL(f)              ( (   (f) & 0x7F800000 ) != 0x00000000 && ( (f) & 0x7F800000 ) != 0x7F800000 )
 
 /*--------------------------------------------------------------------------------*/
 /* Vector processing with VXC for IEEE exception and element index                */
@@ -257,25 +261,25 @@ static inline void vector_softfloat_conditional( REGS *regs, int vix )
 
     else if ( softfloat_exceptionFlags & softfloat_flag_invalid)
     {
-        vxc =  ( (vix & 0x0F) << 4) | VXC_IEEE_INVALID_OP;
+        vxc =  ( (vix & 0x0F) << VXC_VIX_SHIFT) | VXC_IEEE_INVALID_OP;
         ieee_check_mask = FPC_MASK_IMI;
     }
 
     else if ( softfloat_exceptionFlags & softfloat_flag_overflow)
     {
-        vxc =  ( (vix & 0x0F) << 4) | VXC_IEEE_OVERFLOW;
+        vxc =  ( (vix & 0x0F) << VXC_VIX_SHIFT) | VXC_IEEE_OVERFLOW;
         ieee_check_mask = FPC_MASK_IMO;
     }
 
     else if ( softfloat_exceptionFlags & softfloat_flag_underflow)
     {
-        vxc =  ( (vix & 0x0F) << 4) | VXC_IEEE_UNDERFLOW;
+        vxc =  ( (vix & 0x0F) << VXC_VIX_SHIFT) | VXC_IEEE_UNDERFLOW;
         ieee_check_mask = FPC_MASK_IMU;
     }
 
     else if ( softfloat_exceptionFlags & softfloat_flag_inexact)
     {
-        vxc =  ( (vix & 0x0F) << 4) | VXC_IEEE_INEXACT;
+        vxc =  ( (vix & 0x0F) << VXC_VIX_SHIFT) | VXC_IEEE_INEXACT;
         ieee_check_mask = FPC_MASK_IMX;
     }
 
@@ -419,11 +423,19 @@ static inline floatn1_t f16_to_fn1( float16_t tbf)
         return n1f;
     }
 
-    /* cases: nan or infinity -> NaN                              */
-    /* N1FLOAT NAN-INFINITY doesn't care about sign; but maintain */
-    if ( TINYB_IS_NAN_INFINITY( tbf.v ) )
+    /* case: infinity -> overflow                                */
+    if ( TINYB_IS_INFINITY( tbf.v ) )
+    {
+        n1f.v  = N1FLOAT_DEFAULT_INFINITY | (sign << 15);
+        softfloat_exceptionFlags = softfloat_flag_overflow;
+        return n1f;
+    }
+
+    /* cases: nan -> invalid operation                            */
+    if ( TINYB_IS_NAN( tbf.v ) )
     {
         n1f.v  = N1FLOAT_DEFAULT_NAN | (sign << 15);
+        softfloat_exceptionFlags = softfloat_flag_invalid;
         return n1f;
     }
 
@@ -555,14 +567,21 @@ static inline floatn1_t f32_to_fn1( const float32_t sbf)
         return n1f;
     }
 
-    /* cases: nan or infinity -> NaN                              */
-    /* N1FLOAT NAN-INFINITY doesn't care about sign; but maintain */
-    if ( SHORTB_IS_NAN_INFINITY( sbf.v ) )
+    /* cases: infinity -> Overflow                                */
+    if ( SHORTB_IS_INFINITY( sbf.v ) )
     {
-        n1f.v = N1FLOAT_DEFAULT_NAN | (sign << 15);
+        n1f.v = N1FLOAT_DEFAULT_INFINITY | (sign << 15);
+        softfloat_exceptionFlags = softfloat_flag_overflow;
         return n1f;
     }
 
+    /* cases: nan -> invalid operation                            */
+    if ( SHORTB_IS_NAN( sbf.v ) )
+    {
+        n1f.v = N1FLOAT_DEFAULT_NAN | (sign << 15);
+        softfloat_exceptionFlags = softfloat_flag_invalid;
+        return n1f;
+    }
     /* cases: normal */
     if ( SHORTB_IS_NORMAL( sbf.v ) )
     {
@@ -686,15 +705,19 @@ DEF_INST( vector_fp_convert_to_nnp )
     /* M3= 1-15 (reserved) => an IEEE-inexact exception is recognized. */
     if ( m3 > 0  )
     {
-          vector_ieee_inexact( regs, 0 );
-          return;
+        regs->VR_D( v1, 0) = 0;
+        regs->VR_D( v1, 1) = 0;
+        vector_ieee_inexact( regs, 0 );
+        return;
     }
 
     /* M4= 0, 2-15 (reserved) => an IEEE-inexact exception is recognized. */
     if ( m4 == 0 || m4 >= 2  )
     {
-          vector_ieee_inexact( regs, 0 );
-          return;
+        regs->VR_D( v1, 0) = 0;
+        regs->VR_D( v1, 1) = 0;
+        vector_ieee_inexact( regs, 0 );
+        return;
     }
 
     /* save v2 */
@@ -742,15 +765,19 @@ DEF_INST( vector_fp_convert_and_lengthen_from_nnp_high )
     /* M3= 0-1, 3-15 (reserved) => an IEEE-inexact exception is recognized. */
     if ( m3 != 2 )
     {
-          vector_ieee_inexact( regs, 0 );
-          return;
+        regs->VR_D( v1, 0) = 0;
+        regs->VR_D( v1, 1) = 0;
+        vector_ieee_inexact( regs, 0 );
+        return;
     }
 
     /* M4= 1-15 (reserved) => an IEEE-inexact exception is recognized. */
     if ( m4 >= 1  )
     {
-          vector_ieee_inexact( regs, 0 );
-          return;
+        regs->VR_D( v1, 0) = 0;
+        regs->VR_D( v1, 1) = 0;
+        vector_ieee_inexact( regs, 0 );
+        return;
     }
 
     /* save v2 */
@@ -798,15 +825,19 @@ DEF_INST( vector_fp_convert_from_nnp )
     /* M3= 0, 2-15 (reserved) => an IEEE-inexact exception is recognized. */
     if ( m3 != 1 )
     {
-          vector_ieee_inexact( regs, 0 );
-          return;
+        regs->VR_D( v1, 0) = 0;
+        regs->VR_D( v1, 1) = 0;
+        vector_ieee_inexact( regs, 0 );
+        return;
     }
 
     /* M4= 1-15 (reserved) => an IEEE-inexact exception is recognized. */
     if ( m4 >= 1  )
     {
-          vector_ieee_inexact( regs, 0 );
-          return;
+        regs->VR_D( v1, 0) = 0;
+        regs->VR_D( v1, 1) = 0;
+        vector_ieee_inexact( regs, 0 );
+        return;
     }
 
     /* save v2 */
@@ -855,15 +886,19 @@ DEF_INST( vector_fp_convert_and_lengthen_from_nnp_low )
     /* M3= 0-1, 3-15 (reserved) => an IEEE-inexact exception is recognized. */
     if ( m3 != 2 )
     {
-          vector_ieee_inexact( regs, 0 );
-          return;
+        regs->VR_D( v1, 0) = 0;
+        regs->VR_D( v1, 1) = 0;
+        vector_ieee_inexact( regs, 0 );
+        return;
     }
 
     /* M4= 1-15 (reserved) => an IEEE-inexact exception is recognized. */
     if ( m4 >= 1  )
     {
-          vector_ieee_inexact( regs, 0 );
-          return;
+        regs->VR_D( v1, 0) = 0;
+        regs->VR_D( v1, 1) = 0;
+        vector_ieee_inexact( regs, 0 );
+        return;
     }
 
     /* save v2 */
@@ -912,15 +947,19 @@ DEF_INST( vector_fp_convert_and_round_to_nnp )
     /* M4= 1-15 (reserved) => an IEEE-inexact exception is recognized. */
     if ( m4 > 0  )
     {
-          vector_ieee_inexact( regs, 0 );
-          return;
+        regs->VR_D( v1, 0) = 0;
+        regs->VR_D( v1, 1) = 0;
+        vector_ieee_inexact( regs, 0 );
+        return;
     }
 
     /* M5= 0-1, 3-15 (reserved) => an IEEE-inexact exception is recognized. */
     if ( m5 <= 1 || m5 >= 3  )
     {
-          vector_ieee_inexact( regs, 0 );
-          return;
+        regs->VR_D( v1, 0) = 0;
+        regs->VR_D( v1, 1) = 0;
+        vector_ieee_inexact( regs, 0 );
+        return;
     }
 
     /* save v2 */
