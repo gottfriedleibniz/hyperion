@@ -240,10 +240,10 @@ static FILE *confp   = NULL;            /* Console file pointer      */
 
 typedef struct _PANMSG      /* Panel message control block structure */
 {
-    struct _PANMSG*     next;           /* --> next entry in chain   */
-    struct _PANMSG*     prev;           /* --> prev entry in chain   */
-    int                 msgnum;         /* msgbuf 0-relative entry#  */
-    char                msg[MSG_SIZE];  /* text of panel message     */
+    struct _PANMSG*     next;               /* --> next entry in chain   */
+    struct _PANMSG*     prev;               /* --> prev entry in chain   */
+    int                 msgnum;             /* msgbuf 0-relative entry#  */
+    char                msg[MSG_SIZE + 1];  /* text of panel message     */
 }
 PANMSG;                     /* Panel message control block structure */
 
@@ -1741,8 +1741,6 @@ size_t  loopcount;                      /* Number of iterations done */
     // panel cleanup is now handled directly in the panel thread.
     //hdl_addshut( "panel_cleanup", panel_cleanup, NULL );
 
-    history_init();
-
 #if defined(HAVE_REGEX_H) || defined(HAVE_PCRE)
     init_HHC_regexp();
 #endif
@@ -1793,6 +1791,7 @@ size_t  loopcount;                      /* Number of iterations done */
         curmsg->prev = curmsg - 1;
         curmsg->msgnum = i;
         memset(curmsg->msg,SPACE,MSG_SIZE);
+        curmsg->msg[MSG_SIZE] = '\0';
     }
 
     /* Complete the circle */
@@ -1838,6 +1837,7 @@ size_t  loopcount;                      /* Number of iterations done */
         curr_int_start_time = time( NULL );
 
     prev_int_start_time = curr_int_start_time;
+    memset( prev_psw, 0, sizeof( prev_psw ) );
 
     /* Process messages and commands */
     for (loopcount = 0; ; loopcount++)
@@ -2919,6 +2919,7 @@ FinishShutdown:
 
                 /* Copy message into next available PANMSG slot */
                 memcpy( curmsg->msg, readbuf, MSG_SIZE );
+                curmsg->msg[MSG_SIZE] = '\0';
 
             } /* end if (!readoff || readoff >= MSG_SIZE) */
         } /* end Read message bytes until newline... */
