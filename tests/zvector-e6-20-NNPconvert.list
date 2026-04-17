@@ -1,4 +1,4 @@
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page     1
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page     1
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -58,7 +58,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
                                                     54 *    *
                                                     55 *    *   # ----------------------------------------------------------
                                                     56 *    *   #  This tests only the basic function of the instruction.
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page     2
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page     2
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -79,7 +79,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
                                                     71 *    *Done
                                                     72 *
                                                     73 ***********************************************************************
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page     3
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page     3
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -137,7 +137,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
                                                    126          B     EOJ
                                                    127 XC&SYSNDX EQU *
                                                    128          MEND
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page     4
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page     4
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -164,7 +164,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 
 
 000001E0                      000001E0  00000200   147          ORG   ZVE6TST+X'200'        Start of actual test program...
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page     5
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page     5
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -224,7 +224,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00000264  40868183 899389A3                        202+         DC    C' facility (bit 165) is not installed.'
                               0000005F  00000001   203+SKL0001  EQU   *-SKT0001
                                                    204+*                                      facility bits
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page     6
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page     6
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -247,7 +247,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 000002E0  4520 84B0                     000006B0   221+         BAL   R2,MSG
 000002E4  47F0 8580                     00000780   222+         B     EOJ
                               000002E8  00000001   223+XC0001   EQU   *
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page     7
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page     7
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -300,7 +300,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
                               00000334  00000001   271 DONEXT   EQU   *
 00000334  41C0 C004                     00000004   272          LA    R12,4(0,R12)           next test address
 00000338  47F0 80EC                     000002EC   273          B     NEXTE6
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page     8
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page     8
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -360,7 +360,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 000003CA  E6F0 0002 0675                           328          VCRNF V15,V16,V16,0,2
 000003D0  B29C 5078                     00000078   329          STFPC FPC_XC                 save FPC
 000003D4  E7F0 5060 000E                00000060   330          VST   V15,XCOUTPUT
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page     9
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page     9
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -420,7 +420,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
                                                    384
 00000476  D207 8F45 5010      00001145  00000010   385          MVC   XCPNAME,OPNAME         fill in message with instruction
                                                    386
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    10
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    10
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -453,7 +453,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 000004E8  00000000 00000000                        413 XCV1     DS    XL16
 000004F8  00000000 00000000                        414 XCV2     DS    XL16
 00000508  00000000 00000000                        415 XCR15    DS    FD
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    11
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    11
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -492,7 +492,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00000578  4110 8E08                     00001008   449          LA    R1,FPCPLINE            message address
 0000057C  45F0 847A                     0000067A   450          BAL   R15,RPTERROR
 00000580  07F7                                     451          BR    R7
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    12
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    12
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -532,7 +532,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 000005EE  45F0 847A                     0000067A   486          BAL   R15,RPTERROR
 000005F2  07F7                                     487          BR    R7
                                                    488
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    13
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    13
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -589,7 +589,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00000672  4780 8580                     00000780   538          BZ    EOJ                     No, exit
 00000676  47F0 8598                     00000798   539          B     FAILTEST                Yes, exit with BAD PSW
                                                    540
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    14
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    14
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -617,7 +617,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 0000069C  00000000                                 562 RPTSVR5  DC    F'0'                   R5 save area
 
 000006A0  00000000 00000000                        564 RPTDWSAV DC    2D'0'                  R0-R2 save area for MSG call
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    15
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    15
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -665,7 +665,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 000006FE  D4E2C7D5 D6C8405C                        601 MSGCMD   DC    C'MSGNOH * '           *** HERCULES MESSAGE COMMAND ***
 00000707  40404040 40404040                        602 MSGMSG   DC    CL100' '               The message text to be displayed
                                                    603
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    16
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    16
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -725,7 +725,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 000007FE  0064                                     642                =AL2(L'MSGMSG)
 00000800  E2                                       643                =CL1'S'
                                                    644
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    17
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    17
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -739,7 +739,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
                                                    652
                               AABBCCDD  00000001   653 REG2PATT EQU   X'AABBCCDD'    Polluted Register pattern
                               000000DD  00000001   654 REG2LOW  EQU         X'DD'    (last byte above)
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    18
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    18
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -793,7 +793,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 000010CA  A7A7A7                                   701 VXCPGOT  DC    C'xxx'
 000010CD  4B                                       702          DC    C'.'
                               00000063  00000001   703 VXCPLNG  EQU   *-VXCPLINE
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    19
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    19
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -832,7 +832,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00001161  A7A7                                     736 XCPM4    DC    C'xx'
 00001163  4B                                       737          DC    C'.'
                               0000004E  00000001   738 XCPLNG   EQU   *-XCPLINE
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    20
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    20
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -854,7 +854,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 000011B0  FFFFFFFF FFFFFFFF                        754 V1FUDGE  DC    XL16'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'    V1 FUDGE
 000011C0  12345678 90123456                        755 V1INPUT  DC    XL16'1234567890123456789012345678901D'    V1 input
 000011D0  00000000 00000000                        756          DS    XL16
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    21
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    21
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -914,7 +914,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
                                                    806 .*                               &m4    - m4 field
                                                    807 .*                               &flags - expected FPC flags (HEX)
                                                    808 .*                               &VXC   - expected VXC (HEX)
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    22
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    22
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -974,7 +974,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 
                                                    861 *
                                                    862 * macro to generate table of pointers to individual tests
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    23
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    23
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -997,7 +997,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
                                                    879          DC    A(0)
                                                    880 .*
                                                    881          MEND
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    24
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    24
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1057,7 +1057,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00001258  00000000                                 934+FPC_XC_1 DS    F                 FPC after cross check
 00001260  00000000 00000000                        935+         DS    FD                   gap
 00001268  00000000                                 936+         DS    F                 debug area
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    25
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    25
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1117,7 +1117,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00001358  E666 0001 0C55                           986+         VCNF  V22,V22,0,1       test instruction (dest is source)
 0000135E  B29C 5040                     000012F8   987+         STFPC FPC_R_2           save FPC
 00001362  E760 5028 080E                000012E0   988+         VST   V22,V1O2          save instruction result
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    26
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    26
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1177,7 +1177,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
                                                   1036
                                                   1037 * 1/64
                                                   1038          VRR_A VCNF,0,1,00,00,N
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    27
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    27
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1237,7 +1237,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00001548  00                                      1088+         DC    HL1'0'            m3
 00001549  01                                      1089+         DC    HL1'1'            m4
 0000154A  00                                      1090+FLG5     DC    X'00'             expected FPC flags
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    28
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    28
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1297,7 +1297,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00001640  00000000 00000000                       1140+V1O6     DS    XL16              V1 output
 00001648  00000000 00000000
 00001650  00000000 00000000                       1141+         DS    FD                   gap
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    29
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    29
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1357,7 +1357,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00001760  00000000 00000000                       1190+         DS    FD                   gap
 00001768  00000000                                1191+FPC_XC_7 DS    F                 FPC after cross check
 00001770  00000000 00000000                       1192+         DS    FD                   gap
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    30
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    30
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1417,7 +1417,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 0000185C  E320 500C 0014                000017D4  1242+         LGF   R2,V2_8           get v2
 00001862  E762 0000 0806                00000000  1243+         VL    V22,0(R2)
 00001868  E666 0001 0C55                          1244+         VCNF  V22,V22,0,1       test instruction (dest is source)
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    31
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    31
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1477,7 +1477,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 0000195C  00000000 0000D800
 00001964  04000000 00000000                       1294          DC    XL16'0400000000000000000000000000F000'
 0000196C  00000000 0000F000
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    32
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    32
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1537,7 +1537,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00001A54  000B                                    1344+         DC    H'11'             test number
 00001A56  00                                      1345+         DC    X'00'
 00001A57  E2                                      1346+         DC    CL1'S'            Y = skip cross check
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    33
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    33
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1597,7 +1597,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00001B40  00000010                                1396+         DC    A(16)             result length
 00001B44  00001BDC                                1397+         DC    A(RE12)           address of expected resul
 00001B48  00000000 00000000                       1398+         DS    FD                gap
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    34
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    34
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1657,7 +1657,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00001C58  00000000 00000000                       1447+         DS    FD                   gap
 00001C60  00000000 00000000                       1448+XCO13    DS    XL16              Cross check Output
 00001C68  00000000 00000000
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    35
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    35
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1717,7 +1717,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
                                                   1498+*
 00001D68                                          1499+X14      DS    0F
 00001D68  B29D 85A4                     000007A4  1500+         LFPC  FPCMOFF           initialize FPC
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    36
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    36
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1777,7 +1777,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00001E64                                          1550+RE15     DS    0F                expected 16 byte result
 00001E64                                          1551+         DROP  R5
 00001E64  2F650000 AF650000                       1552          DC    XL16'2F650000AF650000000000000000D800'
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    37
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    37
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1837,7 +1837,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00001F60                                          1600+         DS    0FD
 00001F60                      00001F60            1601+         USING *,R5              base for test data and test routine
 00001F60  00001FF0                                1602+T17      DC    A(X17)            address of test routine
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    38
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    38
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1897,7 +1897,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00002043  00                                      1652+VXC18    DC    X'00'             expected VXC
 00002044  000020FC                                1653+V2_18    DC    A(RE18+16)        address of v2: 16-byte packed decimal
 00002048  E5C3D5C6 40404040                       1654+         DC    CL8'VCNF'         instruction name
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    39
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    39
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1957,7 +1957,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00002150  00000000                                1703+FPC_R_19 DS    F                 FPC after instruction
 00002158  00000000 00000000                       1704+         DS    FD                   gap
 00002160  40404040 40404040                       1705+         DC    CL8' '            was cross check skipped?
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    40
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    40
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2017,7 +2017,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00002270  00000000                                1754+         DS    F                 debug area
 00002274  00000000                                1755+         DS    F
                                                   1756+*
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    41
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    41
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2077,7 +2077,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 0000236A  E760 5028 080E                000022E8  1806+         VST   V22,V1O21         save instruction result
 00002370  07FB                                    1807+         BR    R11               return
 00002374                                          1808+RE21     DS    0F                expected 16 byte result
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    42
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    42
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2137,7 +2137,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
                                                   1856
                                                   1857 * +Infinity,  -QNaN, -SNaN                          skip xc - infinity
                                                   1858          VRR_A VCNF,0,1,A0,00,S
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    43
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    43
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2197,7 +2197,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00002548                                          1908+         DS    0FD
 00002548                      00002548            1909+         USING *,R5              base for test data and test routine
 00002548  000025D8                                1910+T24      DC    A(X24)            address of test routine
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    44
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    44
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2257,7 +2257,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 0000262B  00                                      1960+VXC25    DC    X'00'             expected VXC
 0000262C  000026E4                                1961+V2_25    DC    A(RE25+16)        address of v2: 16-byte packed decimal
 00002630  E5C3D3C6 D5C84040                       1962+         DC    CL8'VCLFNH'       instruction name
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    45
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    45
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2317,7 +2317,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00002738  00000000                                2011+FPC_R_26 DS    F                 FPC after instruction
 00002740  00000000 00000000                       2012+         DS    FD                   gap
 00002748  40404040 40404040                       2013+         DC    CL8' '            was cross check skipped?
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    46
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    46
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2377,7 +2377,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00002858  00000000                                2062+         DS    F                 debug area
 0000285C  00000000                                2063+         DS    F
                                                   2064+*
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    47
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    47
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2437,7 +2437,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00002952  E760 5028 080E                000028D0  2114+         VST   V22,V1O28         save instruction result
 00002958  07FB                                    2115+         BR    R11               return
 0000295C                                          2116+RE28     DS    0F                expected 16 byte result
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    48
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    48
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2497,7 +2497,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
                                                   2164 * additional tests
                                                   2165 * max  tiny:  (1 - 2^-11) * 2^16 (65504)
                                                   2166          VRR_A VCLFNH,2,0,00,00,N
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    49
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    49
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2557,7 +2557,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00002B38  02                                      2216+         DC    HL1'2'            m3
 00002B39  00                                      2217+         DC    HL1'0'            m4
 00002B3A  00                                      2218+FLG31    DC    X'00'             expected FPC flags
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    50
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    50
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2617,7 +2617,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00002C30  00000000 00000000                       2268+V1O32    DS    XL16              V1 output
 00002C38  00000000 00000000
 00002C40  00000000 00000000                       2269+         DS    FD                   gap
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    51
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    51
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2677,7 +2677,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00002D50  00000000 00000000                       2318+         DS    FD                   gap
 00002D58  00000000                                2319+FPC_XC_33 DS   F                 FPC after cross check
 00002D60  00000000 00000000                       2320+         DS    FD                   gap
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    52
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    52
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2737,7 +2737,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00002E52  E762 0000 0806                00000000  2370+         VL    V22,0(R2)
 00002E58  E666 0000 5C56                          2371+         VCLFNH V22,V22,5,0      test instruction (dest is source)
 00002E5E  B29C 5040                     00002DF8  2372+         STFPC FPC_R_34          save FPC
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    53
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    53
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2797,7 +2797,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00002F54  00010000 00000000                       2421          DC    XL16'0001000000000000000000000000F000'
 00002F5C  00000000 0000F000
                                                   2422
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    54
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    54
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2857,7 +2857,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00003040  000030D0                                2472+T37      DC    A(X37)            address of test routine
 00003044  0025                                    2473+         DC    H'37'             test number
 00003046  00                                      2474+         DC    X'00'
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    55
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    55
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2917,7 +2917,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00003128  E5C3D3C6 D5C84040                       2524+         DC    CL8'VCLFNH'       instruction name
 00003130  00000010                                2525+         DC    A(16)             result length
 00003134  000031CC                                2526+         DC    A(RE38)           address of expected resul
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    56
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    56
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2977,7 +2977,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00003240  40404040 40404040                       2575+         DC    CL8' '            was cross check skipped?
 00003248  00000000 00000000                       2576+         DS    FD                   gap
 00003250  00000000 00000000                       2577+XCO39    DS    XL16              Cross check Output
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    57
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    57
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -3037,7 +3037,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
                                                   2626+*
 00003358                                          2627+X40      DS    0F
 00003358  B29D 85A4                     000007A4  2628+         LFPC  FPCMOFF           initialize FPC
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    58
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    58
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -3097,7 +3097,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00003434  E320 500C 0014                000033AC  2678+         LGF   R2,V2_41          get v2
 0000343A  E762 0000 0806                00000000  2679+         VL    V22,0(R2)
 00003440  E666 0000 1C5D                          2680+         VCFN  V22,V22,1,0       test instruction (dest is source)
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    59
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    59
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -3157,7 +3157,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00003534  00000000 0000F000
 0000353C  3E000000 BE000000                       2730          DC    XL16'3E000000BE000000000000000000D800'
 00003544  00000000 0000D800
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    60
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    60
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -3217,7 +3217,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 0000362C  002C                                    2780+         DC    H'44'             test number
 0000362E  00                                      2781+         DC    X'00'
 0000362F  D5                                      2782+         DC    CL1'N'            Y = skip cross check
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    61
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    61
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -3277,7 +3277,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00003718  00000010                                2832+         DC    A(16)             result length
 0000371C  000037B4                                2833+         DC    A(RE45)           address of expected resul
 00003720  00000000 00000000                       2834+         DS    FD                gap
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    62
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    62
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -3337,7 +3337,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00003830  00000000 00000000                       2883+         DS    FD                   gap
 00003838  00000000 00000000                       2884+XCO46    DS    XL16              Cross check Output
 00003840  00000000 00000000
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    63
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    63
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -3397,7 +3397,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00003940                                          2934+X47      DS    0F
 00003940  B29D 85A4                     000007A4  2935+         LFPC  FPCMOFF           initialize FPC
 00003944  E320 500C 0014                000038BC  2936+         LGF   R2,V2_47          get v2
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    64
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    64
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -3457,7 +3457,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00003A3C                                          2986+RE48     DS    0F                expected 16 byte result
 00003A3C                                          2987+         DROP  R5
 00003A3C  7C000000 00000000                       2988          DC    XL16'7C00000000000000000000000000F000'
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    65
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    65
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -3517,7 +3517,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00003B38                                          3036+         DS    0FD
 00003B38                      00003B38            3037+         USING *,R5              base for test data and test routine
 00003B38  00003BC8                                3038+T50      DC    A(X50)            address of test routine
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    66
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    66
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -3577,7 +3577,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00003C1B  00                                      3088+VXC51    DC    X'00'             expected VXC
 00003C1C  00003CD4                                3089+V2_51    DC    A(RE51+16)        address of v2: 16-byte packed decimal
 00003C20  E5C3C6D5 40404040                       3090+         DC    CL8'VCFN'         instruction name
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    67
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    67
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -3637,7 +3637,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00003D28  00000000                                3139+FPC_R_52 DS    F                 FPC after instruction
 00003D30  00000000 00000000                       3140+         DS    FD                   gap
 00003D38  40404040 40404040                       3141+         DC    CL8' '            was cross check skipped?
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    68
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    68
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -3660,7 +3660,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00003D98  07FB                                    3157+         BR    R11               return
 00003D9C                                          3158+RE52     DS    0F                expected 16 byte result
 00003D9C                                          3159+         DROP  R5
-00003D9C  7E000000 FE000000                       3160          DC    XL16'7E000000FE000000000000000000F000'
+00003D9C  7E000000 7E000000                       3160          DC    XL16'7E0000007E000000000000000000F000'
 00003DA4  00000000 0000F000
 00003DAC  7FFF0000 FFFF0000                       3161          DC    XL16'7FFF0000FFFF0000000000000000D800'
 00003DB4  00000000 0000D800
@@ -3697,7 +3697,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00003E48  00000000                                3190+         DS    F                 debug area
 00003E4C  00000000                                3191+         DS    F
                                                   3192+*
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    69
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    69
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -3757,7 +3757,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00003F42  E760 5028 080E                00003EC0  3242+         VST   V22,V1O54         save instruction result
 00003F48  07FB                                    3243+         BR    R11               return
 00003F4C                                          3244+RE54     DS    0F                expected 16 byte result
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    70
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    70
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -3817,7 +3817,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
                                                   3292
                                                   3293
                                                   3294 * +27.15625, -27.15625
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    71
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    71
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -3877,7 +3877,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00004127  E2                                      3344+         DC    CL1'S'            Y = skip cross check
 00004128  01                                      3345+         DC    HL1'1'            m3
 00004129  00                                      3346+         DC    HL1'0'            m4
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    72
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    72
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -3937,7 +3937,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00004218  00000000 00000000                       3396+         DS    FD                gap
 00004220  00000000 00000000                       3397+V1O58    DS    XL16              V1 output
 00004228  00000000 00000000
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    73
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    73
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -3997,7 +3997,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00004338  00000000 00000000
 00004340  00000000 00000000                       3447+         DS    FD                   gap
 00004348  00000000                                3448+FPC_XC_59 DS   F                 FPC after cross check
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    74
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    74
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -4057,7 +4057,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00004438  B29D 85A4                     000007A4  3498+         LFPC  FPCMOFF           initialize FPC
 0000443C  E320 500C 0014                000043B4  3499+         LGF   R2,V2_60          get v2
 00004442  E762 0000 0806                00000000  3500+         VL    V22,0(R2)
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    75
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    75
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -4117,7 +4117,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00004534  00000000 7C000000                       3550          DC    XL16'000000007C0000000000000000000000'
 0000453C  00000000 00000000
 00004544  0A000000 5E000000                       3551          DC    XL16'0A0000005E0000000000000000000000'
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    76
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    76
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -4177,7 +4177,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
                                                   3600 *
                                                   3601
                                                   3602 * +0, -0     simple instruction and 'test' test
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    77
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    77
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -4237,7 +4237,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 0000470F  D5                                      3652+         DC    CL1'N'            Y = skip cross check
 00004710  02                                      3653+         DC    HL1'2'            m3
 00004711  00                                      3654+         DC    HL1'0'            m4
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    78
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    78
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -4297,7 +4297,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00004800  00000000 00000000                       3704+         DS    FD                gap
 00004808  00000000 00000000                       3705+V1O65    DS    XL16              V1 output
 00004810  00000000 00000000
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    79
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    79
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -4357,7 +4357,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00004920  00000000 00000000
 00004928  00000000 00000000                       3755+         DS    FD                   gap
 00004930  00000000                                3756+FPC_XC_66 DS   F                 FPC after cross check
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    80
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    80
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -4417,7 +4417,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00004A24  E320 500C 0014                0000499C  3806+         LGF   R2,V2_67          get v2
 00004A2A  E762 0000 0806                00000000  3807+         VL    V22,0(R2)
 00004A30  E666 0000 2C5E                          3808+         VCLFNL V22,V22,2,0      test instruction (dest is source)
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    81
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    81
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -4477,7 +4477,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00004B24  00000000 00000000
 00004B2C  00000000 00000000                       3858          DC    XL16'000000000000000040DBC0DB00000000'
 00004B34  40DBC0DB 00000000
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    82
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    82
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -4537,7 +4537,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00004C18  00004CA8                                3908+T70      DC    A(X70)            address of test routine
 00004C1C  0046                                    3909+         DC    H'70'             test number
 00004C1E  00                                      3910+         DC    X'00'
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    83
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    83
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -4597,7 +4597,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00004D00  E5C3D3C6 D5D34040                       3960+         DC    CL8'VCLFNL'       instruction name
 00004D08  00000010                                3961+         DC    A(16)             result length
 00004D0C  00004DA4                                3962+         DC    A(RE71)           address of expected resul
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    84
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    84
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -4657,7 +4657,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00004E18  40404040 40404040                       4011+         DC    CL8' '            was cross check skipped?
 00004E20  00000000 00000000                       4012+         DS    FD                   gap
 00004E28  00000000 00000000                       4013+XCO72    DS    XL16              Cross check Output
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    85
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    85
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -4717,7 +4717,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
                                                   4062+*
 00004F30                                          4063+X73      DS    0F
 00004F30  B29D 85A4                     000007A4  4064+         LFPC  FPCMOFF           initialize FPC
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    86
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    86
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -4777,7 +4777,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 0000502C                                          4114+RE74     DS    0F                expected 16 byte result
 0000502C                                          4115+         DROP  R5
 0000502C  00000000 00000000                       4116          DC    XL16'00000000000000000000000000000000'
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    87
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    87
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -4837,7 +4837,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
                                                   4164 * +27.15625, -27.15625
                                                   4165          VRR_A VCLFNL,2,0,00,00,N
 00005128                                          4166+         DS    0FD
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    88
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    88
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -4897,7 +4897,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00005209  00                                      4216+         DC    HL1'0'            m4
 0000520A  00                                      4217+FLG77    DC    X'00'             expected FPC flags
 0000520B  00                                      4218+VXC77    DC    X'00'             expected VXC
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    89
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    89
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -4957,7 +4957,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00005308  00000000 00000000
 00005310  00000000 00000000                       4268+         DS    FD                   gap
 00005318  00000000                                4269+FPC_R_78 DS    F                 FPC after instruction
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    90
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    90
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -5017,7 +5017,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 00005428  00000000                                4318+FPC_XC_79 DS   F                 FPC after cross check
 00005430  00000000 00000000                       4319+         DS    FD                   gap
 00005438  00000000                                4320+         DS    F                 debug area
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    91
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    91
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -5077,7 +5077,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
 000054F4  000027D0                                4372+         DC    A(T27)            TEST &CUR
 000054F8  000028A8                                4373+         DC    A(T28)            TEST &CUR
 000054FC  00002980                                4374+         DC    A(T29)            TEST &CUR
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    92
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    92
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -5137,7 +5137,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
                                                   4428
 000055D0  00000000                                4429          DC    F'0'     END OF TABLE
 000055D4  00000000                                4430          DC    F'0'
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    93
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    93
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -5197,7 +5197,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
                               00000002  00000001  4480 V2       EQU   2
                               00000003  00000001  4481 V3       EQU   3
                               00000004  00000001  4482 V4       EQU   4
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    94
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    94
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -5230,7 +5230,7 @@ ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                       
                               0000001F  00000001  4509 V31      EQU   31
                                                   4510
                                                   4511          END
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    95
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    95
 
      SYMBOL        TYPE   VALUE      LENGTH    DEFN  REFERENCES
 
@@ -5290,7 +5290,7 @@ FLG39               X    000031FA           1  2564
 FLG4                X    00001472           1  1047
 FLG40               X    000032D2           1  2607
 FLG41               X    000033AA           1  2656
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    96
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    96
 
      SYMBOL        TYPE   VALUE      LENGTH    DEFN  REFERENCES
 
@@ -5350,7 +5350,7 @@ FPCMON              X    000007A8           4   624
 FPCMOV              X    000007B0           4   626
 FPCMSG              U    00000510           1   422   250
 FPCMUN              X    000007B4           4   627
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    97
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    97
 
      SYMBOL        TYPE   VALUE      LENGTH    DEFN  REFERENCES
 
@@ -5410,7 +5410,7 @@ FPC_R_50            F    00003B78           4  3053  3069
 FPC_R_51            F    00003C50           4  3096  3112
 FPC_R_52            F    00003D28           4  3139  3155
 FPC_R_53            F    00003E00           4  3182  3198
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    98
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    98
 
      SYMBOL        TYPE   VALUE      LENGTH    DEFN  REFERENCES
 
@@ -5470,7 +5470,7 @@ FPC_XC_29           F    000029F8           4  2146
 FPC_XC_3            F    00001408           4  1019
 FPC_XC_30           F    00002AD0           4  2190
 FPC_XC_31           F    00002BA8           4  2233
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page    99
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page    99
 
      SYMBOL        TYPE   VALUE      LENGTH    DEFN  REFERENCES
 
@@ -5530,7 +5530,7 @@ FPC_XC_8            F    00001840           4  1235
 FPC_XC_9            F    00001918           4  1278
 FPR0                U    00000000           1  4457
 FPR1                U    00000001           1  4458
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page   100
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page   100
 
      SYMBOL        TYPE   VALUE      LENGTH    DEFN  REFERENCES
 
@@ -5590,7 +5590,7 @@ R12                 U    0000000C           1  4448   229   232   272   529
 R13                 U    0000000D           1  4449
 R14                 U    0000000E           1  4450
 R15                 U    0000000F           1  4451   244   282   284   302   315   320   333   338   351   356   369   374   401
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page   101
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page   101
 
      SYMBOL        TYPE   VALUE      LENGTH    DEFN  REFERENCES
 
@@ -5650,7 +5650,7 @@ RE24                F    000025FC           4  1944  1918  1921
 RE25                F    000026D4           4  1987  1961  1964
 RE26                F    000027AC           4  2030  2004  2007
 RE27                F    00002884           4  2073  2047  2050
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page   102
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page   102
 
      SYMBOL        TYPE   VALUE      LENGTH    DEFN  REFERENCES
 
@@ -5710,7 +5710,7 @@ RE75                F    00005104           4  4158  4132  4135
 RE76                F    000051DC           4  4202  4176  4179
 RE77                F    000052B4           4  4245  4219  4222
 RE78                F    0000538C           4  4288  4262  4265
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page   103
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page   103
 
      SYMBOL        TYPE   VALUE      LENGTH    DEFN  REFERENCES
 
@@ -5770,7 +5770,7 @@ T43                 A    00003550           4  2736  4388
 T44                 A    00003628           4  2779  4389
 T45                 A    00003700           4  2822  4390
 T46                 A    000037D8           4  2865  4391
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page   104
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page   104
 
      SYMBOL        TYPE   VALUE      LENGTH    DEFN  REFERENCES
 
@@ -5830,7 +5830,7 @@ V18                 U    00000012           1  4496
 V19                 U    00000013           1  4497
 V1FUDGE             X    000011B0          16   754
 V1INPUT             X    000011C0          16   755
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page   105
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page   105
 
      SYMBOL        TYPE   VALUE      LENGTH    DEFN  REFERENCES
 
@@ -5890,7 +5890,7 @@ V1O57               X    00004148          16  3354  3373
 V1O58               X    00004220          16  3397  3416
 V1O59               X    000042F8          16  3440  3459
 V1O6                X    00001640          16  1140  1159
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page   106
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page   106
 
      SYMBOL        TYPE   VALUE      LENGTH    DEFN  REFERENCES
 
@@ -5950,7 +5950,7 @@ V29                 U    0000001D           1  4507
 V2ADDR              A    0000000C           4   771   317   335   353   371
 V2_1                A    000011EC           4   921   941
 V2_10               A    00001984           4  1308  1328
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page   107
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page   107
 
      SYMBOL        TYPE   VALUE      LENGTH    DEFN  REFERENCES
 
@@ -6010,7 +6010,7 @@ V2_59               A    000042DC           4  3435  3455
 V2_6                A    00001624           4  1135  1155
 V2_60               A    000043B4           4  3479  3499
 V2_61               A    0000448C           4  3522  3542
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page   108
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page   108
 
      SYMBOL        TYPE   VALUE      LENGTH    DEFN  REFERENCES
 
@@ -6070,7 +6070,7 @@ VXC29               X    0000298B           1  2132
 VXC3                X    0000139B           1  1005
 VXC30               X    00002A63           1  2176
 VXC31               X    00002B3B           1  2219
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page   109
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page   109
 
      SYMBOL        TYPE   VALUE      LENGTH    DEFN  REFERENCES
 
@@ -6130,7 +6130,7 @@ VXC8                X    000017D3           1  1221
 VXC9                X    000018AB           1  1264
 VXCMSG              U    00000582           1   458   255
 VXCPEXP             C    000010B5           3   698   475
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page   110
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page   110
 
      SYMBOL        TYPE   VALUE      LENGTH    DEFN  REFERENCES
 
@@ -6190,7 +6190,7 @@ X5                  F    000015D0           4  1110  1084
 X50                 F    00003BC8           4  3064  3038
 X51                 F    00003CA0           4  3107  3081
 X52                 F    00003D78           4  3150  3124
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page   111
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page   111
 
      SYMBOL        TYPE   VALUE      LENGTH    DEFN  REFERENCES
 
@@ -6250,7 +6250,7 @@ XCO26               X    00002758          16  2015
 XCO27               X    00002830          16  2058
 XCO28               X    00002908          16  2101
 XCO29               X    000029E0          16  2144
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page   112
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page   112
 
      SYMBOL        TYPE   VALUE      LENGTH    DEFN  REFERENCES
 
@@ -6310,7 +6310,7 @@ XCO77               X    00005260          16  4230
 XCO78               X    00005338          16  4273
 XCO79               X    00005410          16  4316
 XCO8                X    00001828          16  1233
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page   113
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page   113
 
      SYMBOL        TYPE   VALUE      LENGTH    DEFN  REFERENCES
 
@@ -6344,7 +6344,7 @@ ZVE6TST             J    00000000       21976   134   137   139   143   147   66
 =F'1'               F    000007F8           4   640   407   423   459   526
 =F'4'               F    000007F0           4   638   214
 =H'0'               H    000007FC           2   641   571
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page   114
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page   114
 
  MACRO   DEFN  REFERENCES
 
@@ -6355,7 +6355,7 @@ VRR_A     803    910    953    995   1038   1081   1124   1167   1211   1254   1
                 2381   2425   2469   2512   2555   2598   2647   2690   2733   2776   2819   2862   2905   2949   2992   3035   3078
                 3121   3164   3207   3251   3295   3338   3381   3424   3468   3511   3554   3603   3646   3689   3732   3775   3818
                 3862   3905   3948   3991   4034   4077   4121   4165   4208   4251   4294
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page   115
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page   115
 
    DESC     SYMBOL   SIZE     POS        ADDR
 
@@ -6364,7 +6364,7 @@ Entry: 0
 Image      IMAGE    21976  0000-55D7  0000-55D7
   Region            21976  0000-55D7  0000-55D7
     CSECT  ZVE6TST  21976  0000-55D7  0000-55D7
-ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           16 Apr 2026 22:49:39  Page   116
+ASMA Ver. 0.7.0  zvector-e6-20-NNPconvert                                                           17 Apr 2026 15:50:38  Page   116
 
    STMT                        FILE NAME
 

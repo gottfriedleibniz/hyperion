@@ -1142,7 +1142,7 @@ TTABLE   DS    0F
 
 * +infinity, -Infinity
          VRR_A VCFN,1,0,80,00,S                    skip xc - invalid
-         DC    XL16'7E000000FE000000000000000000F000'
+         DC    XL16'7E0000007E000000000000000000F000'
          DC    XL16'7FFF0000FFFF0000000000000000D800'
 
 * inexact - bad m3

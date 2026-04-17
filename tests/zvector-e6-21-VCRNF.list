@@ -1,4 +1,4 @@
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page     1
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page     1
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -58,7 +58,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
                                                     54 *   *
                                                     55 *   mainsize    2
                                                     56 *   numcpu      1
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page     2
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page     2
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -74,7 +74,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
                                                     66 *   *Done
                                                     67 *
                                                     68 ***********************************************************************
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page     3
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page     3
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -132,7 +132,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
                                                    121          B     EOJ
                                                    122 XC&SYSNDX EQU *
                                                    123          MEND
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page     4
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page     4
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -159,7 +159,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
 
 
 000001E0                      000001E0  00000200   142          ORG   ZVE6TST+X'200'        Start of actual test program...
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page     5
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page     5
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -219,7 +219,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
 00000264  40868183 899389A3                        197+         DC    C' facility (bit 165) is not installed.'
                               0000005F  00000001   198+SKL0001  EQU   *-SKT0001
                                                    199+*                                      facility bits
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page     6
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page     6
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -242,7 +242,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
 000002E0  4520 8438                     00000638   216+         BAL   R2,MSG
 000002E4  47F0 8508                     00000708   217+         B     EOJ
                               000002E8  00000001   218+XC0001   EQU   *
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page     7
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page     7
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -295,7 +295,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
                               00000346  00000001   266 DONEXT   EQU   *
 00000346  41C0 C004                     00000004   267          LA    R12,4(0,R12)           next test address
 0000034A  47F0 80EC                     000002EC   268          B     NEXTE6
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page     8
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page     8
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -355,7 +355,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
 000003DA  5000 8E00                     00001000   323          ST    R0,FAILED
                                                    324
 000003DE  4820 5004                     00000004   325          LH    R2,TNUM                get test number and convert
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page     9
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page     9
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -395,7 +395,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
 00000468  00000000 00000000                        359 XCV1     DS    XL16
 00000478  00000000 00000000                        360 XCV2     DS    XL16
 00000488  00000000 00000000                        361 XCR15    DS    FD
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    10
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    10
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -434,7 +434,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
 000004F8  4110 8E08                     00001008   395          LA    R1,FPCPLINE             message address
 000004FC  45F0 8402                     00000602   396          BAL   R15,RPTERROR
 00000500  07F7                                     397          BR    R7
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    11
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    11
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -474,7 +474,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
 0000056E  45F0 8402                     00000602   432          BAL   R15,RPTERROR
 00000572  07F7                                     433          BR    R7
                                                    434
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    12
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    12
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -534,7 +534,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
 000005FA  4780 8508                     00000708   487          BZ    EOJ                     No, exit
 000005FE  47F0 8520                     00000720   488          B     FAILTEST                Yes, exit with BAD PSW
                                                    489
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    13
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    13
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -562,7 +562,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
 00000624  00000000                                 511 RPTSVR5  DC    F'0'                   R5 save area
 
 00000628  00000000 00000000                        513 RPTDWSAV DC    2D'0'                  R0-R2 save area for MSG call
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    14
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    14
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -610,7 +610,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
 00000686  D4E2C7D5 D6C8405C                        550 MSGCMD   DC    C'MSGNOH * '           *** HERCULES MESSAGE COMMAND ***
 0000068F  40404040 40404040                        551 MSGMSG   DC    CL100' '                The message text to be displayed
                                                    552
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    15
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    15
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -670,7 +670,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
                                                    591
                                                    592 *        some constants
                                                    593
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    16
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    16
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -682,7 +682,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
                                                    599
                               AABBCCDD  00000001   600 REG2PATT EQU   X'AABBCCDD'    Polluted Register pattern
                               000000DD  00000001   601 REG2LOW  EQU         X'DD'    (last byte above)
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    17
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    17
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -736,7 +736,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
 000010CA  A7A7A7                                   648 VXCPGOT  DC    C'xxx'
 000010CD  4B                                       649          DC    C'.'
                               00000063  00000001   650 VXCPLNG  EQU   *-VXCPLINE
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    18
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    18
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -776,7 +776,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
 00001161  A7A7                                     684 XCPM5    DC    C'xx'
 00001163  4B                                       685          DC    C'.'
                               0000004E  00000001   686 XCPLNG   EQU   *-XCPLINE
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    19
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    19
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -798,7 +798,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
 000011B0  FFFFFFFF FFFFFFFF                        702 V1FUDGE  DC    XL16'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'    V1 FUDGE
 000011C0  12345678 90123456                        703 V1INPUT  DC    XL16'1234567890123456789012345678901D'    V1 input
 000011D0  00000000 00000000                        704          DS    XL16
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    20
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    20
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -858,7 +858,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
                                                    754 .*                               &INST  - VRR-c instruction under test
                                                    755 .*                               &m4    - m4 field
                                                    756 .*                               &m5    - m5 field
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    21
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    21
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -917,7 +917,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
                                                    809          DROP  R5
                                                    810
                                                    811          MEND
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    22
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    22
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -942,7 +942,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
                                                    831          DC    A(0)
                                                    832 .*
                                                    833          MEND
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    23
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    23
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1002,7 +1002,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
 0000126C  00000000                                 885+         DS    F                2nd cross check FPC
 00001270  00000000 00000000                        886+         DS    FD                   gap
 00001278  00000000                                 887+         DS    F                 debug area
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    24
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    24
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1062,7 +1062,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
                                                    935+*
 00001378                                           936+X2       DS    0F
 00001378  B29D 852C                     0000072C   937+         LFPC  FPCMOFF           initialize FPC
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    25
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    25
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1122,7 +1122,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
 0000147A  E767 2000 0C36                00000000   985+         VLM   V22,V23,0(R2)
 00001480  E666 7002 0E75                           986+         VCRNF V22,V22,V23,0,2       test instruction (dest is source)
 00001486  B29C 5040                     00001410   987+         STFPC FPC_R_3           save FPC
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    26
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    26
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1182,7 +1182,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
 00001588  07FB                                    1035+         BR    R11               return
 0000158C                                          1036+RE4      DS    0F                expected 16 byte result
 0000158C                                          1037+         DROP  R5
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    27
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    27
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1242,7 +1242,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
 0000168C  80000000 00000000
 00001694  00000000 00000000                       1085          DC    XL16'0000000000000000 0000000000000000'
 0000169C  00000000 00000000
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    28
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    28
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1302,7 +1302,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
 000017A4  00000000 00000000
                                                   1133
                                                   1134 * +20/7, - 20/7
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    29
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    29
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1362,7 +1362,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
 000018A8                                          1182+         DS    0FD
 000018A8                      000018A8            1183+         USING *,R5              base for test data and test routine
 000018A8  00001948                                1184+T8       DC    A(X8)             address of test routine
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    30
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    30
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1422,7 +1422,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
 000019A6  00                                      1232+         DC    X'00'
 000019A7  E2                                      1233+         DC    CL1'S'            Y = skip cross check
 000019A8  00                                      1234+         DC    HL1'0'            m4
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    31
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    31
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1482,7 +1482,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
 00001AA2  20                                      1282+FLG10    DC    X'20'             expected FPC flags
 00001AA3  00                                      1283+VXC10    DC    X'00'             expected VXC
 00001AA4  00001B6C                                1284+V2_10    DC    A(RE10+16)        address of v2: 16-byte packed decimal
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    32
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    32
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1518,8 +1518,8 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
 00001B58  07FB                                    1311+         BR    R11               return
 00001B5C                                          1312+RE10     DS    0F                expected 16 byte result
 00001B5C                                          1313+         DROP  R5
-00001B5C  7FFE0000 00000000                       1314          DC    XL16'7FFE000000000000 FFFE000000000000'
-00001B64  FFFE0000 00000000
+00001B5C  7FFF0000 00000000                       1314          DC    XL16'7FFF000000000000 FFFF000000000000'
+00001B64  FFFF0000 00000000
 00001B6C  7F7FFFFF 00000000                       1315          DC    XL16'7F7FFFFF00000000 0000000000000000'
 00001B74  00000000 00000000
 00001B7C  FF7FFFFF 00000000                       1316          DC    XL16'FF7FFFFF00000000 0000000000000000'
@@ -1542,7 +1542,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
 00001BA8  00000010                                1332+         DC    A(16)             result length
 00001BAC  00001C54                                1333+         DC    A(RE11)           address of expected resul
 00001BB0  00000000 00000000                       1334+         DS    FD                gap
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    33
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    33
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1602,7 +1602,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
 00001CB8  00000000 00000000
 00001CC0  00000000 00000000                       1382+         DS    FD                   gap
 00001CC8  00000000                                1383+FPC_R_12 DS    F                 FPC after instruction
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    34
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    34
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1662,7 +1662,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
 00001DD0  40404040 40404040                       1431+         DC    CL8' '            was cross check skipped?
 00001DD8  00000000 00000000                       1432+         DS    FD                   gap
 00001DE0  00000000 00000000                       1433+XCO13    DS    XL16              Cross check Output
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    35
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    35
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1722,7 +1722,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
 00001ED8  00000000 00000000                       1481+XCO14    DS    XL16              Cross check Output
 00001EE0  00000000 00000000
 00001EE8  00000000 00000000                       1482+         DS    XL16
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    36
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    36
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1782,7 +1782,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
 00001FF0  00000000 00000000                       1529+         DS    FD                   gap
 00001FF8  00000000                                1530+FPC_XC_15 DS   F                1st cross check FPC
 00001FFC  00000000                                1531+         DS    F                2nd cross check FPC
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    37
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    37
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1842,7 +1842,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
 00002100  00000000                                1579+         DS    F                 debug area
 00002104  00000000                                1580+         DS    F
                                                   1581+*
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    38
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    38
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1902,7 +1902,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
 00002200  B29D 852C                     0000072C  1629+         LFPC  FPCMOFF           initialize FPC
 00002204  E320 500C 0014                0000216C  1630+         LGF   R2,V2_17          get v2
 0000220A  E767 2000 0C36                00000000  1631+         VLM   V22,V23,0(R2)
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    39
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    39
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -1962,7 +1962,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
 0000230E  B29C 5040                     00002298  1679+         STFPC FPC_R_18          save FPC
 00002312  E760 5028 080E                00002280  1680+         VST   V22,V1O18         save instruction result
 00002318  07FB                                    1681+         BR    R11               return
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    40
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    40
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2022,7 +2022,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
 00002414                                          1729+         DROP  R5
 00002414  40800000 00000000                       1730          DC    XL16'4080000000000000 C080000000000000'
 0000241C  C0800000 00000000
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    41
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    41
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2082,7 +2082,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
 00002524  00000000 00000000
 0000252C  807FFFFF 00000000                       1778          DC    XL16'807FFFFF00000000 0000000000000000'
 00002534  00000000 00000000
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    42
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    42
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2142,7 +2142,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
                                                   1826 * +QNaN, -QNaN
                                                   1827          VRR_C VCRNF,0,2,80,00,S                 skip xc: lost digits
 00002638                                          1828+         DS    0FD
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    43
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    43
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2202,7 +2202,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
 00002730  000027D0                                1876+T23      DC    A(X23)            address of test routine
 00002734  0017                                    1877+         DC    H'23'             test number
 00002736  00                                      1878+         DC    X'00'
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    44
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    44
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2262,7 +2262,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
 0000282C  0018                                    1926+         DC    H'24'             test number
 0000282E  00                                      1927+         DC    X'00'
 0000282F  E2                                      1928+         DC    CL1'S'            Y = skip cross check
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    45
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    45
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2322,7 +2322,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
 00002929  02                                      1976+         DC    HL1'2'            m5
 0000292A  30                                      1977+FLG25    DC    X'30'             expected FPC flags
 0000292B  00                                      1978+VXC25    DC    X'00'             expected VXC
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    46
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    46
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2382,7 +2382,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
 00002A28  E5C3D9D5 C6404040                       2026+         DC    CL8'VCRNF'        instruction name
 00002A30  00000010                                2027+         DC    A(16)             result length
 00002A34  00002ADC                                2028+         DC    A(RE26)           address of expected resul
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    47
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    47
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2442,7 +2442,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
 00002B38  00000000 00000000                       2076+V1O27    DS    XL16              V1 output
 00002B40  00000000 00000000
 00002B48  00000000 00000000                       2077+         DS    FD                   gap
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    48
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    48
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2502,7 +2502,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
 00002C50  00000000 00000000                       2125+         DS    FD                   gap
 00002C58  40404040 40404040                       2126+         DC    CL8' '            was cross check skipped?
 00002C60  00000000 00000000                       2127+         DS    FD                   gap
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    49
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    49
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2562,7 +2562,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
 00002D44  00002160                                2176+         DC    A(T17)            TEST &CUR
 00002D48  00002258                                2177+         DC    A(T18)            TEST &CUR
 00002D4C  00002350                                2178+         DC    A(T19)            TEST &CUR
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    50
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    50
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2581,7 +2581,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
                                                   2191
 00002D7C  00000000                                2192          DC    F'0'     END OF TABLE
 00002D80  00000000                                2193          DC    F'0'
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    51
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    51
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2641,7 +2641,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
                               00000002  00000001  2243 V2       EQU   2
                               00000003  00000001  2244 V3       EQU   3
                               00000004  00000001  2245 V4       EQU   4
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    52
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    52
 
   LOC        OBJECT CODE       ADDR1     ADDR2    STMT
 
@@ -2674,7 +2674,7 @@ ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                            
                               0000001F  00000001  2272 V31      EQU   31
                                                   2273
                                                   2274          END
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    53
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    53
 
      SYMBOL        TYPE   VALUE      LENGTH    DEFN  REFERENCES
 
@@ -2734,7 +2734,7 @@ FPCMOFF             X    0000072C           4   572   294   301   891   937   98
 FPCMON              X    00000730           4   573
 FPCMOV              X    00000738           4   575
 FPCMSG              U    00000490           1   368   245
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    54
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    54
 
      SYMBOL        TYPE   VALUE      LENGTH    DEFN  REFERENCES
 
@@ -2794,7 +2794,7 @@ FPC_XC_22           F    000026C0           4  1852
 FPC_XC_23           F    000027B8           4  1898
 FPC_XC_24           F    000028B0           4  1947
 FPC_XC_25           F    000029A8           4  1993
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    55
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    55
 
      SYMBOL        TYPE   VALUE      LENGTH    DEFN  REFERENCES
 
@@ -2854,7 +2854,7 @@ R0                  U    00000000           1  2199   130   182   185   205   20
                                                       502   504   520   523   525   527   529   544
 R1                  U    00000001           1  2200   215   256   257   258   259   262   263   314   315   349   395   431   468
                                                       485   486   534   548
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    56
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    56
 
      SYMBOL        TYPE   VALUE      LENGTH    DEFN  REFERENCES
 
@@ -2914,7 +2914,7 @@ RE6                 F    0000177C           4  1128  1100  1103
 RE7                 F    00001874           4  1174  1146  1149
 RE8                 F    0000196C           4  1220  1192  1195
 RE9                 F    00001A64           4  1266  1238  1241
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    57
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    57
 
      SYMBOL        TYPE   VALUE      LENGTH    DEFN  REFERENCES
 
@@ -2974,7 +2974,7 @@ V16                 U    00000010           1  2257   296   297   303   304
 V17                 U    00000011           1  2258
 V18                 U    00000012           1  2259
 V19                 U    00000013           1  2260
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    58
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    58
 
      SYMBOL        TYPE   VALUE      LENGTH    DEFN  REFERENCES
 
@@ -3034,7 +3034,7 @@ V2ADDR              A    0000000C           4   719   314
 V2_1                A    000011EC           4   870   892
 V2_10               A    00001AA4           4  1284  1306
 V2_11               A    00001B9C           4  1330  1352
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    59
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    59
 
      SYMBOL        TYPE   VALUE      LENGTH    DEFN  REFERENCES
 
@@ -3094,7 +3094,7 @@ VXC25               X    0000292B           1  1978
 VXC26               X    00002A23           1  2024
 VXC27               X    00002B1B           1  2070
 VXC28               X    00002C13           1  2116
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    60
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    60
 
      SYMBOL        TYPE   VALUE      LENGTH    DEFN  REFERENCES
 
@@ -3154,7 +3154,7 @@ XCO13               X    00001DE0          16  1433
 XCO14               X    00001ED8          16  1481
 XCO15               X    00001FD0          16  1527
 XCO16               X    000020C8          16  1573
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    61
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    61
 
      SYMBOL        TYPE   VALUE      LENGTH    DEFN  REFERENCES
 
@@ -3202,7 +3202,7 @@ ZVE6TST             J    00000000       11652   129   132   134   138   142   61
 =F'4'               F    00000760           4   584   209
 =H'0'               H    00000770           2   588   520
 =XL4'00000008'      X    00000768           4   586   258
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    62
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    62
 
  MACRO   DEFN  REFERENCES
 
@@ -3210,7 +3210,7 @@ FCHECK     81    191
 PTTABLE   817   2158
 VRR_C     753    859    905    951    997   1043   1089   1135   1181   1227   1273   1319   1365   1411   1459   1505   1551   1597
                 1643   1689   1735   1781   1827   1873   1922   1968   2014   2060   2106
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    63
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    63
 
    DESC     SYMBOL   SIZE     POS        ADDR
 
@@ -3219,7 +3219,7 @@ Entry: 0
 Image      IMAGE    11652  0000-2D83  0000-2D83
   Region            11652  0000-2D83  0000-2D83
     CSECT  ZVE6TST  11652  0000-2D83  0000-2D83
-ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                16 Apr 2026 22:54:55  Page    64
+ASMA Ver. 0.7.0  zvector-e6-21-VCRNF                                                                17 Apr 2026 15:50:09  Page    64
 
    STMT                     FILE NAME
 

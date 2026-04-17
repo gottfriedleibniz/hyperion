@@ -376,8 +376,8 @@ static inline float16_t fn1_to_f16( const floatn1_t n1f)
     /* cases: nan or infinity */
     if ( N1FLOAT_IS_NAN_INFINITY( n1f.v ) )
     {
+        t16.v = TINYB_DEFAULT_NAN;                          /* always positive */
         softfloat_exceptionFlags = softfloat_flag_invalid;  /* is this nan or infinity? */
-        t16.v = TINYB_DEFAULT_NAN | (sign << 15);
         return t16;
     }
 
@@ -475,7 +475,8 @@ static inline floatn1_t f16_to_fn1( float16_t tbf)
         frac >>= 1;
     }
 
-    /* check for under/over flow */
+    /* check for under/over flow                                   */
+    /* Note: underflow / overflow should never happen for t16->n1f */
     if (exp < 0 )
     {
         n1f.v  = N1FLOAT_PACK( sign, 0, 0 );
@@ -484,7 +485,7 @@ static inline floatn1_t f16_to_fn1( float16_t tbf)
     }
     if (exp > 63 )
     {
-        n1f.v = N1FLOAT_PACK( sign, 0x3f, (0x01FF - 1) );
+        n1f.v = N1FLOAT_DEFAULT_INFINITY | (sign << 15);
         softfloat_exceptionFlags = softfloat_flag_overflow;
         return  n1f;
     }
@@ -622,7 +623,7 @@ static inline floatn1_t f32_to_fn1( const float32_t sbf)
         }
         if (exp > 63 )
         {
-            n1f.v = N1FLOAT_PACK( sign, 0x3f, (0x01FF - 1) );
+            n1f.v = N1FLOAT_DEFAULT_INFINITY | (sign << 15);
             softfloat_exceptionFlags = softfloat_flag_overflow;
             return  n1f;
         }
