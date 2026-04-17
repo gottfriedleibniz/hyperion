@@ -938,17 +938,17 @@ U32            residual;                /* Residual data count       */
 
             (dev->hnd->exec)
             (
-                dev,                    // DEVBLK                       
-                servc_sysg_cmdcode,     // ccw opcode                    
-                CCW_FLAGS_SLI,          // flags            
-                0,                      // chained               
-                sysg_len,               // count         
-                0,                      // prevcode         
-                0,                      // ccwseq               
-                sysg_data,              // iobuf               
-                &more,                  // MORE flag             
-                &unitstat,              // unit status               
-                &residual               // residual       
+                dev,                    // DEVBLK
+                servc_sysg_cmdcode,     // ccw opcode
+                CCW_FLAGS_SLI,          // flags
+                0,                      // chained
+                sysg_len,               // count
+                0,                      // prevcode
+                0,                      // ccwseq
+                sysg_data,              // iobuf
+                &more,                  // MORE flag
+                &unitstat,              // unit status
+                &residual               // residual
             );
 
             /* For reads, trace the CCW *after* issuing the I/O */

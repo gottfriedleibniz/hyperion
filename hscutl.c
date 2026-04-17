@@ -2800,7 +2800,7 @@ DLL_EXPORT U32 verstr2num( const char* verstr )
 {
     U32 numvers, major = 0, minor = 0, bugfix = 0;
     sscanf( verstr, "%u.%u.%u", &major, &minor, &bugfix );
-    
+
     MINMAX( major,  0, 999 );
     MINMAX( minor,  0, 999 );
     MINMAX( bugfix, 0, 999 );

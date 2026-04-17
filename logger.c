@@ -115,7 +115,7 @@ int bytes_returned;
 
         if (*msgidx >= logger_currmsg)
         {
-            if (logger_wrapped) 
+            if (logger_wrapped)
             {
                 bytes_returned = logger_bufsize - *msgidx;
                 *msgidx = 0;
@@ -124,7 +124,7 @@ int bytes_returned;
             {
                 bytes_returned = 0;
                 *msgidx = logger_currmsg;
-            }  
+            }
         }
         else
         {

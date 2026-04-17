@@ -3996,7 +3996,7 @@ static void*  qeth_halt_or_clear_thread( void* arg)
                 // "%1d:%04X %s: %s %s for %s device"
                 WRMSG( HHC00905, "I", LCSS_DEVNUM, dev->typname, hoc, "recognized", qtype );
                 {
-                    // (nothing to do!) 
+                    // (nothing to do!)
                 }
                 // "%1d:%04X %s: %s %s for %s device"
                 WRMSG( HHC00905, "I", LCSS_DEVNUM, dev->typname, hoc, "completed", qtype );

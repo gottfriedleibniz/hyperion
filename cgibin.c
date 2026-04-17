@@ -1224,12 +1224,12 @@ static void json_escape_char(int sock, char c)
                 hprintf(sock, "\\u%04X", c);
             break;
     }
-}  
+}
 
 static void json_escape_string(int sock, const char *str)
 {
     char c;
-    
+
     if (!str || !*str)
     {
         hprintf(sock, "\"\"");
@@ -1240,7 +1240,7 @@ static void json_escape_string(int sock, const char *str)
 
     while ((c = *str++))
        json_escape_char(sock, c);
-    
+
     hprintf(sock, "\"");
 }
 
@@ -1656,9 +1656,9 @@ void cgibin_api_v1_psw(WEBBLK *webblk)
 /*                                                                   */
 /* To read ALL of the log and poll for updates use the following     */
 /*  /cgi-bin/api/v1/syslog?msgcount=0                                */
-/*  FOREVER                                                          */ 
+/*  FOREVER                                                          */
 /*      /cgi-bin/api/v1/syslog?index=<value_returned_in_JSON_index>  */
-/*      PAUSE a_few_seconds
+/*      PAUSE a_few_seconds                                          */
 /*-------------------------------------------------------------------*/
 void cgibin_api_v1_syslog(WEBBLK *webblk)
 {
@@ -1688,7 +1688,7 @@ void cgibin_api_v1_syslog(WEBBLK *webblk)
 
     if((value = cgi_variable(webblk,"msgcount")))
         msgcount = atoi(value);
-    
+
     if((value = cgi_variable(webblk,"index")))
         index = atoi(value);
 
@@ -1713,14 +1713,14 @@ void cgibin_api_v1_syslog(WEBBLK *webblk)
         // We need to escape certain characters that are
         // not supported in JSON, namely '"', '\'", etc.
         // A new line (\n) here means start new JSON array item
-        
+
         while ( num_bytes-- )
-        {   
+        {
             int c;
-            
+
             if  ( newline )
             {
-                if ( ! first) 
+                if ( ! first)
                     hwrite( webblk->sock, ",", 1);
                 else
                     first = false;
@@ -1728,7 +1728,7 @@ void cgibin_api_v1_syslog(WEBBLK *webblk)
                 newline = false;
             }
             if ((c = *wrk_bufptr++) == '\n' )   // end of this line - new array element
-            {     
+            {
                 hwrite(webblk->sock,"\"", 1);
                 newline = true;
             }

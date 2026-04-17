@@ -358,7 +358,7 @@ static void tell_gui_our_version()
     //
     // Later releases of HercGUI know to interpret mainsize values of
     // less than 1000 as a Hercules version number.
-    // 
+    //
     // Earlier versions of HercGUI will simply try to interpret it as
     // the actual mainsize, but no real harm is done since we  send it
     // the CORRECT mainsize immediately afterwards.
@@ -400,7 +400,7 @@ static void tell_gui_our_version()
     // ensures this will never happen.
     //
     // It could STILL conceivably happen on non-Windws platforms however.
-    // 
+    //
     // So for the time being, we have no choice but use the full VERSION
     // string instead, and hope that all non-Windows GUIs will be able
     // to properly parse it.
@@ -879,8 +879,8 @@ void  UpdateCPUStatus ()
         // CPU status line...  (PSW, status indicators, and instruction count)
 
         const char* typstr = PTYPSTR( pTargetCPU_REGS->cpuad ); // (could return NULL)
-        char  SIE_stat   = '.'; 
-        char  Z900_stat  = '.'; 
+        char  SIE_stat   = '.';
+        char  Z900_stat  = '.';
 
 #if defined( _FEATURE_SIE )
         if (SIE_MODE( pTargetCPU_REGS ))

@@ -830,7 +830,7 @@ char  buf[512];
                           rc == 2 ? "Disabled Wait"    :
                           rc == 3 ? "Instruction Step" :
                           rc == 4 ? "Manual Mode"      : "unknown" );
-                                 
+
 
     release_lock(&sysblk.cpulock[sysblk.pcpu]);
 

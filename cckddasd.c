@@ -5204,10 +5204,10 @@ void add_dev_to_cckd_chain_locked( DEVBLK* new_dev )
 
     // New devices are always added to the end of the existing chain,
     // becoming the new end-of-chain device.
-    
+
     cckd = new_dev->cckd_ext;               // (point to our CCKD_EXT)
     cckd->devnext = NULL;                   // (indicate end-of-chain)
-    
+
     if (!cckdblk.dev1st)                    // (does chain exist yet?)
     {
         cckdblk.dev1st = new_dev;           // (we're the first link!)
@@ -5279,9 +5279,9 @@ void remove_dev_from_cckd_chain_locked( DEVBLK* old_dev )
 
     for (prev_dev = cckdblk.dev1st,         // (start at beginning)
          prev_ext = prev_dev->cckd_ext;     // (save its ext pointer)
-         
+
          prev_ext->devnext != old_dev;      // (until our prev found)
-    
+
          prev_dev = prev_ext->devnext,      // (next device in chain)
          prev_ext = prev_dev->cckd_ext )    // (save its ext pointer)
     {
@@ -5323,7 +5323,7 @@ void cckd_gcstart( bool by_cmdline )
     */
     cckd_lock_devchain(0);
     {
-        /* Search all CCKD devices... */ 
+        /* Search all CCKD devices... */
 
         for (dev = cckdblk.dev1st; dev; dev = cckd->devnext)
         {
@@ -5346,7 +5346,7 @@ void cckd_gcstart( bool by_cmdline )
             release_lock( &cckd->filelock );
         }
 
-        /* Search all CCKD64 devices... */ 
+        /* Search all CCKD64 devices... */
 
         for (dev = cckdblk.dev1st; dev; dev = cckd64->devnext)
         {

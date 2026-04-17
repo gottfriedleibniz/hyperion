@@ -1030,7 +1030,7 @@ static void _display_idaw( const DEVBLK* dev, const BYTE type, const BYTE flag,
 
     // Format/Display differing amounts depending on situation
 
-    count = dev->code == 0xE7 ? 64 : 16; 
+    count = dev->code == 0xE7 ? 64 : 16;
     count = MIN( count, CAPPED_BUFFLEN( addr, count, dev ));
 
     // Trace to File? (not to console?

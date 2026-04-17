@@ -1220,7 +1220,7 @@ struct TF01315
     U32     addr;           // CCW data address
     U16     count;          // CCW byte count
     BYTE    amt;            // Data amount
-    BYTE    sysg;           // SYSG I/O via 
+    BYTE    sysg;           // SYSG I/O via
     BYTE    ccw[8];         // CCW
 
     // Format-0...
