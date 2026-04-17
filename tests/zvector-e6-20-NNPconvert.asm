@@ -1,4 +1,4 @@
- TITLE 'zvector-e6-20-NNPconvert (Zvector E6 VRR-a)'
+ TITLE 'zvector-e6-20-NNPconvert'
 ***********************************************************************
 *
 *        EXPERIMENTAL pending further PoP definition
@@ -277,7 +277,7 @@ XCHECK   EQU   *
 * cross check: VCNF     - VECTOR FP CONVERT TO NNP
 *
 XCVCNF   DS    0F
-         LFPC  FPCINIT                initialize FPC
+         LFPC  FPCMOFF                initialize FPC
 
          VL    V16,V1OUTPUT
          VCFN  V15,V16,1,0
@@ -295,7 +295,7 @@ XCVCNF   DS    0F
 * cross check: VCLFNH   - VECTOR FP CONVERT AND LENGTHEN FROM NNP HIGH
 *
 XCVCLFNH DS    0F
-         LFPC  FPCINIT                initialize FPC
+         LFPC  FPCMOFF                initialize FPC
 
          VL    V16,V1OUTPUT
          VCRNF V15,V16,V16,0,2
@@ -313,7 +313,7 @@ XCVCLFNH DS    0F
 * cross check: VCFN     - VECTOR FP CONVERT FROM NNP
 *
 XCVCFN   DS    0F
-         LFPC  FPCINIT                initialize FPC
+         LFPC  FPCMOFF                initialize FPC
 
          VL    V16,V1OUTPUT
          VCNF  V15,V16,0,1
@@ -331,7 +331,7 @@ XCVCFN   DS    0F
 * cross check: VCLFNL   - VECTOR FP CONVERT AND LENGTHEN FROM NNP LOW
 *
 XCVCLFNL DS    0F
-         LFPC  FPCINIT                initialize FPC
+         LFPC  FPCMOFF                initialize FPC
 
          VL    V16,V1OUTPUT
          VCRNF V15,V16,V16,0,2
@@ -593,7 +593,12 @@ FAILTEST LPSWE FAILPSW              Abnormal termination
                                                                 SPACE 2
 CTLR0    DS    F                      CR0
          DS    F
-FPCINIT  DC    XL4'00000000'          FPC before test
+FPCMOFF  DC    XL4'00000000'          FPC masks off
+FPCMON   DC    XL4'F8000000'          FPC masks on
+FPCMIO   DC    XL4'80000000'          FPC mask invalid operation
+FPCMOV   DC    XL4'20000000'          FPC mask overflow
+FPCMUN   DC    XL4'10000000'          FPC mask underflow
+FPCMIE   DC    XL4'08000000'          FPC mask inexact
                                                                SPACE 2
 
          LTORG ,                Literals pool
@@ -797,8 +802,7 @@ FPC_XC_&TNUM DS F                FPC after cross check
 .*
 *
 X&TNUM   DS    0F
-         LFPC  FPCINIT           initialize FPC
-*         LFPC  =XL4'08000000'         set trap exception
+         LFPC  FPCMOFF           initialize FPC
 
          LGF   R2,V2_&TNUM       get v2
          VL    V22,0(R2)
@@ -853,6 +857,8 @@ TTABLE   DS    0F
 *              followed by
 *              v1 - 16 byte expected result
 *              v2 - 16 byte source
+*
+* note: VXC should always by 00 as the FPC mask is zero
 *----------------------------------------------------------------------
 * VCNF     - VECTOR FP CONVERT TO NNP
 *----------------------------------------------------------------------
@@ -912,17 +918,17 @@ TTABLE   DS    0F
          DC    XL16'0001000000000000000000000000F000'
 
 * NAN,
-         VRR_A VCNF,0,1,80,01,S           skip xcheck - includes NAN
+         VRR_A VCNF,0,1,80,00,S           skip xcheck - includes NAN
          DC    XL16'FFFF000000000000000000000000D800'
          DC    XL16'FFFF000000000000000000000000F000'
 
 * inexact - bad m3
-         VRR_A VCNF,5,1,08,05,S                    skip xc - inexact
+         VRR_A VCNF,5,1,08,00,S                    skip xc - inexact
          DC    XL16'00000000000000000000000000000000'
          DC    XL16'0001000000000000000000000000F000'
 
 * inexact - bad m4
-         VRR_A VCNF,0,5,08,05,S                    skip xc - inexact
+         VRR_A VCNF,0,5,08,00,S                    skip xc - inexact
          DC    XL16'00000000000000000000000000000000'
          DC    XL16'0001000000000000000000000000F000'
 
@@ -938,7 +944,7 @@ TTABLE   DS    0F
          DC    XL16'1EC900009EC90000000000000000F000'
 
 * +65504, -65504
-         VRR_A VCNF,0,1,00,00,N
+         VRR_A VCNF,0,1,00,00,S                   skip xc - lost digits
          DC    XL16'5E000000DE000000000000000000D800'
          DC    XL16'7BFF0000FBFF0000000000000000F000'
 
@@ -953,28 +959,28 @@ TTABLE   DS    0F
          DC    XL16'03FF000083FF0000000000000000F000'
 
 * +Infinity, -Infinity                              skip xc - infinity
-         VRR_A VCNF,0,1,20,23,S
+         VRR_A VCNF,0,1,20,00,S
          DC    XL16'7FFF0000FFFF0000000000000000D800'
          DC    XL16'7C000000FC000000000000000000F000'
 
 * +QNaN, -QNaN                                      skip xc - NaN
-         VRR_A VCNF,0,1,80,21,S
+         VRR_A VCNF,0,1,80,00,S
          DC    XL16'7FFF0000FFFF0000000000000000D800'
          DC    XL16'7E080000FE080000000000000000F000'
 
 * +SNaN, -SNaN                                      skip xc - NaN
-         VRR_A VCNF,0,1,80,21,S
+         VRR_A VCNF,0,1,80,00,S
          DC    XL16'7FFF0000FFFF0000000000000000D800'
          DC    XL16'7C080000FC080000000000000000F000'
 
 * multiple exception types
 * +Infinity,  -QNaN                                 skip xc - infinity
-         VRR_A VCNF,0,1,A0,21,S
+         VRR_A VCNF,0,1,A0,00,S
          DC    XL16'7FFF0000FFFF0000000000000000D800'
          DC    XL16'7C000000FE080000000000000000F000'
 
 * +Infinity,  -QNaN, -SNaN                          skip xc - infinity
-         VRR_A VCNF,0,1,A0,41,S
+         VRR_A VCNF,0,1,A0,00,S
          DC    XL16'7FFF0000FFFF0000FFFF00000000D800'
          DC    XL16'7C000000FE080000FC0800000000F000'
 
@@ -1031,17 +1037,17 @@ TTABLE   DS    0F
          DC    XL16'00010000000000000000000000000000'
 
 * +Infinity, -Infinity
-         VRR_A VCLFNH,2,0,80,21,S               skip xcheck - infinity
-         DC    XL16'7FC0000000000000FFC0000000000000'
+         VRR_A VCLFNH,2,0,80,00,S               skip xcheck - infinity
+         DC    XL16'7FC00000000000007FC0000000000000'
          DC    XL16'7FFF0000FFFF00000000000000000000'
 
 * inexact - bad m3
-         VRR_A VCLFNH,5,0,08,05,S                    skip xc - inexact
+         VRR_A VCLFNH,5,0,08,00,S                    skip xc - inexact
          DC    XL16'00000000000000000000000000000000'
          DC    XL16'0001000000000000000000000000F000'
 
 * inexact - bad m4
-         VRR_A VCLFNH,2,5,08,05,S                    skip xc - inexact
+         VRR_A VCLFNH,2,5,08,00,S                    skip xc - inexact
          DC    XL16'00000000000000000000000000000000'
          DC    XL16'0001000000000000000000000000F000'
 
@@ -1115,7 +1121,7 @@ TTABLE   DS    0F
 
 * additional tests
 * max  tiny:  (1 - 2^-11) * 2^16 (65504) +1 (overflow)
-         VRR_A VCFN,1,0,20,03,S
+         VRR_A VCFN,1,0,20,00,S
          DC    XL16'7C00000000000000000000000000F000'
          DC    XL16'5E00000000000000000000000000D800'
 
@@ -1124,28 +1130,28 @@ TTABLE   DS    0F
          DC    XL16'0400000000000000000000000000F000'
          DC    XL16'2200000000000000000000000000D800'
 
-* min tiny (subnormal): 2^-24 (0.000000059604644775390625)
-         VRR_A VCFN,1,0,00,00,N
+* min tiny (subnormal): 2^-24 (0.000000059604644775390625) (underflow)
+         VRR_A VCFN,1,0,10,00,N
          DC    XL16'0001000000000000000000000000F000'
          DC    XL16'0E00000000000000000000000000D800'
 
 *  2 underflows
-         VRR_A VCFN,1,0,10,14,S
+         VRR_A VCFN,1,0,10,00,S
          DC    XL16'0000000000000000000000000000F000'
          DC    XL16'0A000B0000000000000000000000D800'
 
 * +infinity, -Infinity
-         VRR_A VCFN,1,0,80,21,S                    skip xc - invalid
+         VRR_A VCFN,1,0,80,00,S                    skip xc - invalid
          DC    XL16'7E000000FE000000000000000000F000'
          DC    XL16'7FFF0000FFFF0000000000000000D800'
 
 * inexact - bad m3
-         VRR_A VCFN,5,0,08,05,S                    skip xc - inexact
+         VRR_A VCFN,5,0,08,00,S                    skip xc - inexact
          DC    XL16'00000000000000000000000000000000'
          DC    XL16'0001000000000000000000000000F000'
 
 * inexact - bad m4
-         VRR_A VCFN,0,5,08,05,S                    skip xc - inexact
+         VRR_A VCFN,0,5,08,00,S                    skip xc - inexact
          DC    XL16'00000000000000000000000000000000'
          DC    XL16'0001000000000000000000000000F000'
 
@@ -1162,7 +1168,7 @@ TTABLE   DS    0F
          DC    XL16'2F650000AF6500000000000000000000'
 
 * +65536, -65536 (overflow)
-         VRR_A VCFN,1,0,20,23,S
+         VRR_A VCFN,1,0,20,00,S
          DC    XL16'7C000000FC0000000000000000000000'
          DC    XL16'5E000000DE0000000000000000000000'
 
@@ -1171,24 +1177,24 @@ TTABLE   DS    0F
          DC    XL16'41000000C10000000000000000000000'
          DC    XL16'40800000C08000000000000000000000'
 
-* +0.00006097, -0.00006097 (about)
-         VRR_A VCFN,1,0,00,00,N
+* +0.00006097, -0.00006097 (about)                  (underflow)
+         VRR_A VCFN,1,0,10,00,N
          DC    XL16'03FF000083FF00000000000000000000'
          DC    XL16'21FF0000A1FF00000000000000000000'
 
 * multiple exception types
 *  +Infinity, overflow
-         VRR_A VCFN,1,0,A0,23,S                     skip xc - infinity
+         VRR_A VCFN,1,0,A0,00,S                     skip xc - infinity
          DC    XL16'7E0000007C0000000000000000000000'
          DC    XL16'7FFF00005E0000000000000000000000'
 
 * Underflow,  -65536 (overflow)               skip xc - dropped digits
-         VRR_A VCFN,1,0,30,23,S
+         VRR_A VCFN,1,0,30,00,S
          DC    XL16'000000007C0000000000000000000000'
          DC    XL16'0A0000005E0000000000000000000000'
 
 * +Infinity, Underflow,  -65536 (overflow)          skip xc - infinity
-         VRR_A VCFN,1,0,B0,43,S
+         VRR_A VCFN,1,0,B0,00,S
          DC    XL16'7E000000000000007C00000000000000'
          DC    XL16'7FFF00000A0000005E00000000000000'
 
@@ -1245,17 +1251,17 @@ TTABLE   DS    0F
          DC    XL16'00000000000000000001000000000000'
 
 * +Infinity, -Infinity
-         VRR_A VCLFNL,2,0,80,61,S           skip xcheck - includes NAN
-         DC    XL16'7FC0000000000000FFC0000000000000'
+         VRR_A VCLFNL,2,0,80,00,S           skip xcheck - includes NAN
+         DC    XL16'7FC00000000000007FC0000000000000'
          DC    XL16'00000000000000007FFF0000FFFF0000'
 
 * inexact - bad m3
-         VRR_A VCLFNL,5,0,08,05,S                    skip xc - inexact
+         VRR_A VCLFNL,5,0,08,00,S                    skip xc - inexact
          DC    XL16'00000000000000000000000000000000'
          DC    XL16'000000000000F0000001000000000000'
 
 * inexact - bad m4
-         VRR_A VCLFNL,2,5,08,05,S                    skip xc - inexact
+         VRR_A VCLFNL,2,5,08,00,S                    skip xc - inexact
          DC    XL16'00000000000000000000000000000000'
          DC    XL16'000000000000F0000001000000000000'
 
@@ -1285,6 +1291,8 @@ TTABLE   DS    0F
          VRR_A VCLFNL,2,0,00,00,N
          DC    XL16'387FC00000000000B87FC00000000000'
          DC    XL16'000000000000000021FF0000A1FF0000'
+
+
 
          DC    F'0'     END OF TABLE
          DC    F'0'

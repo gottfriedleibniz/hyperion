@@ -1,4 +1,4 @@
- TITLE 'zvector-e6-20-NNPconvert (Zvector E6 VRR-c)'
+ TITLE 'zvector-e6-21-VCRNF'
 ***********************************************************************
 *
 *        EXPERIMENTAL pending further PoP definition
@@ -264,14 +264,14 @@ XCHECK   EQU   *
 * cross check: VCRNF   - VECTOR FP CONVERT AND ROUND TO NNP
 *
 XCVCRNF  DS    0F
-         LFPC  FPCINIT                initialize FPC
+         LFPC  FPCMOFF                initialize FPC
 
          VL    V16,V1OUTPUT
          VCLFNH V15,V16,2,0
          STFPC FPC_XC1                save 1st FPC
          VST   V15,XCOUTPUT
 
-         LFPC  FPCINIT                initialize FPC
+         LFPC  FPCMOFF                initialize FPC
 
          VL    V16,V1OUTPUT
          VCLFNL V15,V16,2,0
@@ -542,7 +542,12 @@ FAILTEST LPSWE FAILPSW                Abnormal termination
                                                                 SPACE 2
 CTLR0    DS    F                      CR0
          DS    F
-FPCINIT  DC    XL4'00000000'          FPC before test
+FPCMOFF  DC    XL4'00000000'          FPC masks off
+FPCMON   DC    XL4'F8000000'          FPC masks on
+FPCMIO   DC    XL4'80000000'          FPC mask invalid operation
+FPCMOV   DC    XL4'20000000'          FPC mask overflow
+FPCMUN   DC    XL4'10000000'          FPC mask underflow
+FPCMIE   DC    XL4'08000000'          FPC mask inexact
                                                                SPACE 2
 
          LTORG ,                Literals pool
@@ -751,8 +756,7 @@ FPC_XC_&TNUM DS F               1st cross check FPC
 .*
 *
 X&TNUM   DS    0F
-         LFPC  FPCINIT           initialize FPC
-*         LFPC  =XL4'08000000'         set trap exception
+         LFPC  FPCMOFF           initialize FPC
 
          LGF   R2,V2_&TNUM       get v2
          VLM   V22,V23,0(R2)
@@ -800,7 +804,8 @@ TTABLE   DS    0F
 *
 *----------------------------------------------------------------------
 *   VRR-c   instruction, m4, m5, flags, VXC, SKIP
-*              NOTE: flags and VXC are HEX values
+*           NOTE: flags and VXC are HEX values
+*              and VXC should always by 00 as the FPC mask is zero
 *   followed by
 *              v1 - 16 byte expected result
 *              v2 - 16 byte source
@@ -856,37 +861,37 @@ TTABLE   DS    0F
          DC    XL16'C036DB6E00000000 0000000000000000'
 
 * +2^(-126), -2^(-126)
-         VRR_C VCRNF,0,2,10,44,S                 skip xc: underflow
+         VRR_C VCRNF,0,2,10,00,S                 skip xc: underflow
          DC    XL16'0000000000000000 8000000000000000'
          DC    XL16'0080000000000000 0000000000000000'
          DC    XL16'8080000000000000 0000000000000000'
 
 * +2^(-149), -2^(-149) - subnormal
-         VRR_C VCRNF,0,2,10,44,S                 skip xc: underflow
+         VRR_C VCRNF,0,2,10,00,S                 skip xc: underflow
          DC    XL16'0000000000000000 8000000000000000'
          DC    XL16'0000000100000000 0000000000000000'
          DC    XL16'8080000100000000 0000000000000000'
 
-* +2^(128) * (1 - 2^(-24)) , - +2^(128) * (1 - 2^(-24))
-         VRR_C VCRNF,0,2,20,43,S                 skip xc: overflow
+* +2^(128) * (1 - 2^(-24)) , - +2^(128) * (1 - 2^(-24)) : 340282310+32
+         VRR_C VCRNF,0,2,20,00,S                 skip xc: overflow
          DC    XL16'7FFE000000000000 FFFE000000000000'
          DC    XL16'7F7FFFFF00000000 0000000000000000'
          DC    XL16'FF7FFFFF00000000 0000000000000000'
 
 * NAN, -NAN
-         VRR_C VCRNF,0,2,80,41,S                 skip xc: invalid on XC
+         VRR_C VCRNF,0,2,80,00,S                 skip xc: invalid on XC
          DC    XL16'7FFF000000000000 FFFF000000000000'
          DC    XL16'7FC0000000000000 0000000000000000'
          DC    XL16'FFC0000000000000 0000000000000000'
 
 * bad m4 - inexact
-         VRR_C VCRNF,2,2,08,05,S                 skip xc: inexact
+         VRR_C VCRNF,2,2,08,00,S                 skip xc: inexact
          DC    XL16'0000000000000000 0000000000000000'
          DC    XL16'7FC0000000000000 0000000000000000'
          DC    XL16'FFC0000000000000 0000000000000000'
 
 * bad m5 - inexact
-         VRR_C VCRNF,0,3,08,05,S                 skip xc: inexact
+         VRR_C VCRNF,0,3,08,00,S                 skip xc: inexact
          DC    XL16'0000000000000000 0000000000000000'
          DC    XL16'7FC0000000000000 0000000000000000'
          DC    XL16'FFC0000000000000 0000000000000000'
@@ -930,25 +935,25 @@ TTABLE   DS    0F
          DC    XL16'C020000000000000 0000000000000000'
 
 * +Subnormal, -Subnormal
-         VRR_C VCRNF,0,2,10,44,S                 skip xc: lost digits
+         VRR_C VCRNF,0,2,10,00,S                 skip xc: lost digits
          DC    XL16'0000000000000000 8000000000000000'
          DC    XL16'007FFFFF00000000 0000000000000000'
          DC    XL16'807FFFFF00000000 0000000000000000'
 
 * +Infinity, -Infinity
-         VRR_C VCRNF,0,2,20,43,S                 skip xc: lost digits
+         VRR_C VCRNF,0,2,20,00,S                 skip xc: lost digits
          DC    XL16'7FFF000000000000 FFFF000000000000'
          DC    XL16'7F80000000000000 0000000000000000'
          DC    XL16'FF80000000000000 0000000000000000'
 
 * +QNaN, -QNaN
-         VRR_C VCRNF,0,2,80,41,S                 skip xc: lost digits
+         VRR_C VCRNF,0,2,80,00,S                 skip xc: lost digits
          DC    XL16'7FFF000000000000 FFFF000000000000'
          DC    XL16'7FC1000000000000 0000000000000000'
          DC    XL16'FFC1000000000000 0000000000000000'
 
 * +SNaN, -SNaN
-         VRR_C VCRNF,0,2,80,41,S                 skip xc: lost digits
+         VRR_C VCRNF,0,2,80,00,S                 skip xc: lost digits
          DC    XL16'7FFF000000000000 FFFF000000000000'
          DC    XL16'7F81000000000000 0000000000000000'
          DC    XL16'FF81000000000000 0000000000000000'
@@ -957,31 +962,31 @@ TTABLE   DS    0F
 *----------------------------------------------------------------------
 
 * +Subnormal, -Infinity
-         VRR_C VCRNF,0,2,30,43,S                 skip xc: lost digits
+         VRR_C VCRNF,0,2,30,00,S                 skip xc: lost digits
          DC    XL16'0000000000000000 FFFF000000000000'
          DC    XL16'007FFFFF00000000 0000000000000000'
          DC    XL16'FF80000000000000 0000000000000000'
 
 * -Infinity, +Subnormal
-         VRR_C VCRNF,0,2,30,64,S                 skip xc: lost digits
+         VRR_C VCRNF,0,2,30,00,S                 skip xc: lost digits
          DC    XL16'0000000000000000 FFFF000000000000'
          DC    XL16'0000000000000000 0000000000000000'
          DC    XL16'FF80000000000000 007FFFFF00000000'
 
 * +Infinity, -QNaN
-         VRR_C VCRNF,0,2,A0,41,S                 skip xc: lost digits
+         VRR_C VCRNF,0,2,A0,00,S                 skip xc: lost digits
          DC    XL16'7FFF000000000000 FFFF000000000000'
          DC    XL16'7F80000000000000 0000000000000000'
          DC    XL16'FFC1000000000000 0000000000000000'
 
 * +Infinity, -QNaN, +Infinity
-         VRR_C VCRNF,0,2,A0,63,S                 skip xc: lost digits
+         VRR_C VCRNF,0,2,A0,00,S                 skip xc: lost digits
          DC    XL16'7FFF000000000000 FFFF00007FFF0000'
          DC    XL16'7F80000000000000 0000000000000000'
          DC    XL16'FFC1000000000000 7F80000000000000'
 
 * +Infinity, -QNaN, +Subnormal
-         VRR_C VCRNF,0,2,B0,64,S                 skip xc: lost digits
+         VRR_C VCRNF,0,2,B0,00,S                 skip xc: lost digits
          DC    XL16'7FFF000000000000 FFFF000000000000'
          DC    XL16'7F80000000000000 0000000000000000'
          DC    XL16'FFC1000000000000 007FFFFF00000000'
