@@ -9177,6 +9177,7 @@ int sizeof_cmd( int argc, char* argv[], char* cmdline )
 
     // HHC02257 "%s%7d"
 
+    WRMSG( HHC02257, "I", "bool ........... ......", (int) sizeof( bool           ));
     WRMSG( HHC02257, "I", "(unsigned short) ......", (int) sizeof( unsigned short ));
     WRMSG( HHC02257, "I", "(void*) ...............", (int) sizeof( void*          ));
     WRMSG( HHC02257, "I", "(unsigned int) ........", (int) sizeof( unsigned int   ));
