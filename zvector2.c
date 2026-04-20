@@ -36,8 +36,8 @@ facility  code  test#   Instruction                                             
     vd       x   04     E63D VECTOR STORE RIGHTMOST WITH LENGTH                 VSTRL       VSI
     vd       x   09     E63F VECTOR STORE RIGHTMOST WITH LENGTH  (reg)          VSTRLR      VRS-d
     vd       x   10     E649 VECTOR LOAD IMMEDIATE DECIMAL                      VLIP        VRI-h
-    vd3      x          E64A VECTOR CONVERT TO DECIMAL (128)                    VCVDQ       VRI-j
-    vd3      x          E64E VECTOR CONVERT TO BINARY (128)                     VCVBQ       VRR-k
+    vd3      x   24     E64A VECTOR CONVERT TO DECIMAL (128)                    VCVDQ       VRI-j
+    vd3      x   23     E64E VECTOR CONVERT TO BINARY (128)                     VCVBQ       VRR-k
     vd       x   11     E650 VECTOR CONVERT TO BINARY (32)                      VCVB        VRR-i
     vd2      x   12     E651 VECTOR COUNT LEADING ZERO DIGITS                   VCLZDP      VRR-k
     vd       x   11     E652 VECTOR CONVERT TO BINARY (64)                      VCVBG       VRR-i
@@ -61,7 +61,7 @@ facility  code  test#   Instruction                                             
     vd2      x   18     E67C DECIMAL SCALE AND CONVERT AND SPLIT TO HFP         VSCSHP      VRR-b
     vd2      x   19     E67D VECTOR CONVERT HFP TO SCALED DECIMAL               VCSPH       VRR-j
     vd       x   05     E67E VECTOR SHIFT AND DIVIDE DECIMAL                    VSDP        VRI-f
-    vd3                 E67F VECTOR TEST ZONED                                  VTZ         VRI-l
+    vd3      x   22     E67F VECTOR TEST ZONED                                  VTZ         VRI-l
 
     The following E6 z/arch vector instructions are implemented in nnpa.c:
     nn                  E655 VECTOR FP CONVERT TO NNP                           VCNF        VRR-a
