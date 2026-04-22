@@ -828,7 +828,7 @@ static inline void vr_copy_to_vr(REGS* regs, int v1, int v2, int count)
 }
 
 /*-------------------------------------------------------------------*/
-/* Is a packed decimal vector register zero                          */
+/* Is a packed decimal vector register zero (sign is not checked)    */
 /*                                                                   */
 /* Input:                                                            */
 /*      regs    CPU register context for VR access                   */
@@ -837,18 +837,10 @@ static inline void vr_copy_to_vr(REGS* regs, int v1, int v2, int count)
 /*      true    all vr decimal packed digits are zero                */
 /*                                                                   */
 /*-------------------------------------------------------------------*/
-static inline bool vr_is_zero(REGS* regs, int v1)
+static inline bool vr_is_digits_zero(REGS* regs, int v1)
 {
-    int     i;                 /* loop index                         */
-
-    /* first 30 digits, two at a time */
-    for ( i = 0; i < VR_PACKED_SIGN; i ++)
-        if ( regs->VR_B( v1, i)  != 0 ) return false;
-
-    /* 31st digit */
-    if ( ( regs->VR_B( v1,  VR_PACKED_SIGN ) & 0xF0) != 0 ) return false;
-
-    return true;
+    return    regs->VR_D( v1, 0 ) == 0 &&
+            ( regs->VR_D( v1, 1 ) & 0xFFFFFFFFFFFFFFF0ull ) == 0 ;
 }
 
 /*-------------------------------------------------------------------*/
@@ -863,7 +855,7 @@ static inline bool vr_is_zero(REGS* regs, int v1)
 /*-------------------------------------------------------------------*/
 static inline bool vr_is_minus_zero(REGS* regs, int v1)
 {
-    if ( VR_HAS_MINUS_SIGN( v1 ) && vr_is_zero( regs, v1 ) )
+    if ( VR_HAS_MINUS_SIGN( v1 ) && vr_is_digits_zero( regs, v1 ) )
         return true;
 
     return false;
@@ -2453,7 +2445,7 @@ DEF_INST( vector_convert_to_decimal_128 )
         regs->VR_B( v1, VR_PACKED_SIGN) |= 0x0F;   /* forces b'1111' positive sign */
     else
         /* if zero result, force b'1100' positive sign */
-        regs->VR_B( v1, VR_PACKED_SIGN) |= vr_is_zero( regs, v1 ) ? PREFERRED_PLUS : ( (possign) ? PREFERRED_PLUS :  PREFERRED_MINUS) ;
+        regs->VR_B( v1, VR_PACKED_SIGN) |= vr_is_digits_zero( regs, v1 ) ? PREFERRED_PLUS : ( (possign) ? PREFERRED_PLUS :  PREFERRED_MINUS) ;
 
     /* set condition code */
     if (cs)
@@ -2588,7 +2580,7 @@ DEF_INST( vector_convert_to_binary_32 )
         else
         {
             // special case: negative zero is not an overflow
-            if ( vr_is_zero( regs, v2 ) )
+            if ( vr_is_digits_zero( regs, v2 ) )
                 overflow = false;
             else
                 overflow = ( (S64) result.Q.D.L.D < (S64) INT_MIN ) ? true : false;
@@ -2667,7 +2659,7 @@ DEF_INST( vector_count_leading_zero_digits )
     if (cs)
     {
         isNeg = VR_HAS_MINUS_SIGN( v2 );
-        isZero = vr_is_zero( regs, v2 );
+        isZero = vr_is_digits_zero( regs, v2 );
         valid = valid_decimals2 && valid_sign2;
 
         cc = 3; /* invalid */
@@ -2769,7 +2761,7 @@ DEF_INST( vector_convert_to_binary_64 )
         else
         {
             // special case: negative zero is not an overflow
-            if ( vr_is_zero( regs, v2 ) )
+            if ( vr_is_digits_zero( regs, v2 ) )
                 overflow = false;
             else
                 overflow = ( result.Q.D.H.D != (U64) -1 ) || ( (result.Q.D.L.D & 0x8000000000000000ULL) == 0 );
@@ -3297,7 +3289,7 @@ DEF_INST( vector_perform_sign_operation_decimal )
     /* initialize V1 */
     lv_copy_to_vr( regs, v1, lregs, LV2, rdc );
     overflow = lv_leading_zero(lregs , LV2) < (MAX_DECIMAL_DIGITS - rdc);
-    isZero = vr_is_zero(regs, v1);
+    isZero = vr_is_digits_zero(regs, v1);
 
     /* programmer note: letting compiler optimize the following! */
     switch (so)
@@ -4109,7 +4101,7 @@ DEF_INST( decimal_scale_and_convert_to_hfp )
     }
 
     /* zero check */
-    if ( vr_is_zero( regs, v2) )
+    if ( vr_is_digits_zero( regs, v2) )
     {
         SET_VR_ZERO( v1 );          /* true zero; all formats */
 
@@ -4703,7 +4695,7 @@ DEF_INST(decimal_scale_and_convert_and_split_to_hfp )
     }
 
     /* zero check */
-    if ( vr_is_zero( regs, v2) )
+    if ( vr_is_digits_zero( regs, v2) )
     {
         SET_VR_ZERO( v1 );          /* true zeros */
 
