@@ -386,8 +386,8 @@ LOGM_DLL_IMPORT int  panel_command_capture( char* cmd, char** resp, bool quiet )
 #define HHC00227 "%1d:%04X Tape file %s, type %s: %s tape volume %s being auto loaded"
 #define HHC00228 "Tape autoloader: file request fn %s"
 #define HHC00229 "Tape autoloader: adding %s value %s"
-//efine HHC00230 (available)
-//efine HHC00231 (available)
+#define HHC00230 "Tape file %s not found"
+#define HHC00231 "Incorrect number of arguments"
 //efine HHC00232 (available)
 //efine HHC00233 (available)
 //efine HHC00234 (available)

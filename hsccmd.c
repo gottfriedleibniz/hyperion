@@ -7635,6 +7635,158 @@ BYTE     unitstat, code = 0;
 }
 
 /*-------------------------------------------------------------------*/
+/* unmount command - unmount a tape file from a tape drive           */
+/*-------------------------------------------------------------------*/
+DLL_EXPORT int unmount_cmd( int argc, char *argv[], char *cmdline )
+{
+    int     rc, unmount_argc;
+    DEVBLK* dev = NULL;
+    char    unmount_cmdline[ 2 * _MAX_PATH ] = {0};
+    char    szdevnum [ 16 ] = {0};
+    char*   unmount_argv[ MAX_ARGS ] = {0};
+    U16     unmount_devnum  =  0;
+    U16     unmount_lcss    =  0;
+
+    // unmount <devn> ===> devinit <devn> *
+
+    if (argc != 2)
+    {
+        // "Incorrect number of arguments"
+        WRMSG( HHC00231,"E" );
+        return -1;
+    }
+
+    if (strchr( argv[1], ':'))
+        STRLCPY( szdevnum, argv[1] );
+    else
+        MSGBUF( szdevnum, "0:%s", argv[1] );
+
+    if ((rc = parse_single_devnum( szdevnum, &unmount_lcss, &unmount_devnum )) < 0)
+        return -1;    // (message already displayed)
+
+    if (!(dev = find_device_by_devnum( unmount_lcss, unmount_devnum )))
+    {
+        // HHC02200 "%1d:%04X device not found"
+        WRMSG( HHC02200, "E", unmount_lcss, unmount_devnum );
+        return -1;
+    }
+
+    // Build the corresponding "devinit" command...
+    MSGBUF( unmount_cmdline, "devinit %1d:%04X *", unmount_lcss, unmount_devnum );
+
+    parse_args( unmount_cmdline, MAX_ARGS, unmount_argv, &unmount_argc );
+
+    return devinit_cmd( unmount_argc, unmount_argv, unmount_cmdline );
+}
+
+/*-------------------------------------------------------------------*/
+/* mount command - mount a tape file onto a tape drive               */
+/*-------------------------------------------------------------------*/
+DLL_EXPORT int mount_cmd( int argc, char *argv[], char *cmdline )
+{
+    // mount <file> [ON|ONTO] <devn> ===> devinit <devn> <file>
+
+    DEVBLK* dev             =  NULL;
+    int    i, drive_argnum  =  0;
+    U16    mount_devnum     =  0;
+    U16    mount_lcss       =  0;
+    int    mount_argc       =  0;
+    bool   has_blanks       = false;
+
+    char   mount_szdevnum [     _MAX_PATH ] = {0};
+    char   mount_tapename [     _MAX_PATH ] = {0};
+    char   mount_cmdline  [ 2 * _MAX_PATH ] = {0};
+    char   save_cmdline   [ 2 * _MAX_PATH ] = {0};
+    char*  mount_argv     [      MAX_ARGS ] = {0};
+
+    UNREFERENCED( cmdline );
+
+    // Chcek for correct number of arguments...
+
+    if (argc > 4)
+    {
+        // "Incorrect number of arguments"
+        WRMSG( HHC00231,"E" );
+        return -1;
+    }
+
+    if (argc < 3)
+    {
+        // "Missing argument(s). Type 'help %s' for assistance."
+        WRMSG( HHC02202,"E", argv[0] );
+        return -1;
+    }
+
+    // tape file name...
+    STRLCPY( mount_tapename, argv[1] );
+    has_blanks = strpbrk( mount_tapename, WHITESPACE ) ? true : false;
+
+    if (!sysblk.auto_tape_create) // if not "autoinit", file MUST exist
+    {
+        if (strcmp( mount_tapename, "*" ) != 0) // (unless it's "no tape")
+        {
+            if (access( mount_tapename, F_OK ) != 0) // (does it?)
+            {
+                char filename[ _MAX_PATH + 2 ] = {0};
+                if (!has_blanks)
+                    STRLCPY( filename, mount_tapename );
+                else
+                    MSGBUF( filename, "\"%s\"", mount_tapename );
+                
+                // "Tape file %s not found"
+                WRMSG( HHC00230,"E", filename );
+                return -1;
+            }
+        }
+    }
+
+    if (argc == 4) // possible "ON" or "ONTO"?
+    {
+        if (!CMD( argv[ 2 ], ONTO, 2 ))
+        {
+            // "Incorrect number of arguments"
+            WRMSG( HHC00231,"E" );
+            return -1;
+        }
+        drive_argnum = 3; // argnum of tapedrive device number
+    }
+    else
+        drive_argnum = 2; // argnum of tapedrive device number
+
+    // tape drive devnum...
+
+    if (strchr( argv[ drive_argnum ], ':'))
+        STRLCPY( mount_szdevnum, argv[ drive_argnum ]);
+    else
+        MSGBUF( mount_szdevnum, "0:%s", argv[ drive_argnum ]);
+
+    if ((i = parse_single_devnum( mount_szdevnum, &mount_lcss, &mount_devnum )) < 0)
+        return -1;    // (message already displayed)
+
+    if (!(dev = find_device_by_devnum( mount_lcss, mount_devnum )))
+    {
+        // HHC02200 "%1d:%04X device not found"
+        WRMSG( HHC02200, "E", mount_lcss, mount_devnum );
+        return -1;
+    }
+
+    // Build the corresponding "devinit" command...
+    MSGBUF( mount_cmdline
+
+        , "devinit %1d:%04X %s%s%s"
+
+        , mount_lcss, mount_devnum
+        , has_blanks ? "\"" : ""
+        , mount_tapename
+        , has_blanks ? "\"" : ""
+    );
+
+    parse_args( mount_cmdline, MAX_ARGS, mount_argv, &mount_argc );
+
+    return devinit_cmd( mount_argc, mount_argv, mount_cmdline );
+}
+
+/*-------------------------------------------------------------------*/
 /* devinit command - assign/open a file for a configured device      */
 /*-------------------------------------------------------------------*/
 DLL_EXPORT int devinit_cmd(int argc, char *argv[], char *cmdline)

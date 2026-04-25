@@ -952,6 +952,30 @@
   "where dynamic modules should be loaded from. Only one directory may be\n"    \
   "specified. Enclose the path within double quotes if it contains blanks.\n"
 
+#define loadtape_cmd_desc       "Alias for mount"
+#define unload_cmd_desc         "Alias for unmount"
+#define dismount_cmd_desc       "Alias for unmount"
+
+#define mount_cmd_desc          "mount tape onto a tape drive"
+#define mount_cmd_help          \
+                                \
+  "Format:      \"mount <tape> [ON|ONTO] <drive>\"\n"                           \
+  "\n"                                                                          \
+  "Mounts tape file \"<tape>\" onto tape drive device \"<drive>\". This\n"      \
+  "command is simply an alternative format of the \"devinit\" command that\n"   \
+  "is normally used to mount tapes onto tape drives. All it does is issue\n"    \
+  "an appropriate devinit command for you.\n"
+
+#define unmount_cmd_desc        "unloads a tape from a tape drive"
+#define unmount_cmd_help        \
+                                \
+  "Format:      \"unmount <drive>\"\n"                                          \
+  "\n"                                                                          \
+  "Unmounts (rewinds and unloads) the currently mounted tape file (if one is\n" \
+  "mounted) from the specified tape drive. This command is an alternative\n"    \
+  "format of the \"devinit\" command that is normally used to dismount tapes\n" \
+  "from tape drives. It just issues an appropriate devinit command for you.\n"
+
 #define mtapeinit_cmd_desc      "Control tape initialization"
 #define mtapeinit_cmd_help      \
                                 \
@@ -2027,6 +2051,14 @@ COMMAND( "k",                       k_cmd,                  SYSCMDNOPER,        
 COMMAND( "loadcore",                loadcore_cmd,           SYSCMDNOPER,        loadcore_cmd_desc,      loadcore_cmd_help   )
 COMMAND( "loadtext",                loadtext_cmd,           SYSCMDNOPER,        loadtext_cmd_desc,      loadtext_cmd_help   )
 COMMAND( "maxcpu",                  maxcpu_cmd,             SYSCMDNOPER,        maxcpu_cmd_desc,        NULL                )
+
+COMMAND( "loadtape",                mount_cmd,              SYSCMDNOPER,        loadtape_cmd_desc,      NULL                )
+COMMAND( "unload",                  unmount_cmd,            SYSCMDNOPER,        unload_cmd_desc,        NULL                )
+COMMAND( "dismount",                unmount_cmd,            SYSCMDNOPER,        dismount_cmd_desc,      NULL                )
+
+COMMAND( "mount",                   mount_cmd,              SYSCMDNOPER,        mount_cmd_desc,         mount_cmd_help      )
+COMMAND( "unmount",                 unmount_cmd,            SYSCMDNOPER,        unmount_cmd_desc,       unmount_cmd_help    )
+
 CMDABBR( "mounted_tape_reinit",  9, mounted_tape_reinit_cmd,SYSCMDNOPER,        mtapeinit_cmd_desc,     mtapeinit_cmd_help  )
 COMMAND( "netdev",                  netdev_cmd,             SYSCMDNOPER,        netdev_cmd_desc,        netdev_cmd_help     )
 COMMAND( "numcpu",                  numcpu_cmd,             SYSCMDNOPER,        numcpu_cmd_desc,        NULL                )
