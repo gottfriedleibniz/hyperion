@@ -7641,13 +7641,15 @@ DLL_EXPORT int unmount_cmd( int argc, char *argv[], char *cmdline )
 {
     int     rc, unmount_argc;
     DEVBLK* dev = NULL;
-    char    unmount_cmdline[ 2 * _MAX_PATH ] = {0};
+    char    unmount_cmdline[ 2 * MAX_PATH ] = {0};
     char    szdevnum [ 16 ] = {0};
     char*   unmount_argv[ MAX_ARGS ] = {0};
     U16     unmount_devnum  =  0;
     U16     unmount_lcss    =  0;
 
     // unmount <devn> ===> devinit <devn> *
+
+    UNREFERENCED( cmdline );
 
     if (argc != 2)
     {
@@ -7693,11 +7695,11 @@ DLL_EXPORT int mount_cmd( int argc, char *argv[], char *cmdline )
     int    mount_argc       =  0;
     bool   has_blanks       = false;
 
-    char   mount_szdevnum [     _MAX_PATH ] = {0};
-    char   mount_tapename [     _MAX_PATH ] = {0};
-    char   mount_cmdline  [ 2 * _MAX_PATH ] = {0};
-    char   save_cmdline   [ 2 * _MAX_PATH ] = {0};
-    char*  mount_argv     [      MAX_ARGS ] = {0};
+    char   mount_szdevnum [     MAX_PATH ] = {0};
+    char   mount_tapename [     MAX_PATH ] = {0};
+    char   mount_cmdline  [ 2 * MAX_PATH ] = {0};
+//  char   save_cmdline   [ 2 * MAX_PATH ] = {0};
+    char*  mount_argv     [     MAX_ARGS ] = {0};
 
     UNREFERENCED( cmdline );
 
@@ -7727,12 +7729,12 @@ DLL_EXPORT int mount_cmd( int argc, char *argv[], char *cmdline )
         {
             if (access( mount_tapename, F_OK ) != 0) // (does it?)
             {
-                char filename[ _MAX_PATH + 2 ] = {0};
+                char filename[ MAX_PATH + 2 ] = {0};
                 if (!has_blanks)
                     STRLCPY( filename, mount_tapename );
                 else
                     MSGBUF( filename, "\"%s\"", mount_tapename );
-                
+
                 // "Tape file %s not found"
                 WRMSG( HHC00230,"E", filename );
                 return -1;
