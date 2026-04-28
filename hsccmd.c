@@ -1506,7 +1506,7 @@ static char* check_define_default_automount_dir()
     /* Define default AUTOMOUNT directory if needed */
     if (sysblk.tamdir && sysblk.defdir == NULL)
     {
-        char cwd[ MAX_PATH ];
+        char cwd[ PATH_MAX ];
         TAMDIR *pNewTAMDIR = malloc( sizeof(TAMDIR) );
         if (!pNewTAMDIR)
         {
@@ -1534,7 +1534,7 @@ static char* check_define_default_automount_dir()
 /* Add directory to AUTOMOUNT allowed/disallowed directories list    */
 /*                                                                   */
 /* Input:  tamdir     pointer to work character array of at least    */
-/*                    MAX_PATH size containing an allowed/disallowed */
+/*                    PATH_MAX size containing an allowed/disallowed */
 /*                    directory specification, optionally prefixed   */
 /*                    with the '+' or '-' indicator.                 */
 /*                                                                   */
@@ -1557,38 +1557,38 @@ static char* check_define_default_automount_dir()
 /*-------------------------------------------------------------------*/
 static int add_tamdir( char *tamdir, TAMDIR **ppTAMDIR )
 {
-    char pathname[MAX_PATH];
+    char pathname[PATH_MAX];
     int  rc, rej = 0;
-    char dirwrk[ MAX_PATH ] = {0};
+    char dirwrk[ PATH_MAX ] = {0};
 
     *ppTAMDIR = NULL;
 
     if (*tamdir == '-')
     {
         rej = 1;
-        memmove (tamdir, tamdir+1, MAX_PATH);
+        memmove (tamdir, tamdir+1, PATH_MAX);
     }
     else if (*tamdir == '+')
     {
         rej = 0;
-        memmove (tamdir, tamdir+1, MAX_PATH);
+        memmove (tamdir, tamdir+1, PATH_MAX);
     }
 
     /* Convert tamdir to absolute path ending with a slash */
 
 #if defined( _MSVC_ )
     /* (expand any embedded %var% environment variables) */
-    rc = expand_environ_vars( tamdir, dirwrk, MAX_PATH );
+    rc = expand_environ_vars( tamdir, dirwrk, PATH_MAX );
     if (rc == 0)
-        strlcpy (tamdir, dirwrk, MAX_PATH);
+        strlcpy (tamdir, dirwrk, PATH_MAX);
 #endif
 
     if (!realpath( tamdir, dirwrk ))
         return (1); /* ("unresolvable path") */
-    strlcpy (tamdir, dirwrk, MAX_PATH);
+    strlcpy (tamdir, dirwrk, PATH_MAX);
 
-    hostpath(pathname, tamdir, MAX_PATH);
-    strlcpy (tamdir, pathname, MAX_PATH);
+    hostpath(pathname, tamdir, PATH_MAX);
+    strlcpy (tamdir, pathname, PATH_MAX);
 
     /* Verify that the path is valid */
     if (access( tamdir, R_OK | W_OK ) != 0)
@@ -1597,7 +1597,7 @@ static int add_tamdir( char *tamdir, TAMDIR **ppTAMDIR )
     /* Append trailing path separator if needed */
     rc = (int)strlen( tamdir );
     if (tamdir[rc-1] != *PATH_SEP)
-        strlcat (tamdir, PATH_SEP, MAX_PATH);
+        strlcat (tamdir, PATH_SEP, PATH_MAX);
 
     /* Check for duplicate/conflicting specification */
     for (*ppTAMDIR = sysblk.tamdir;
@@ -1647,7 +1647,7 @@ static int add_tamdir( char *tamdir, TAMDIR **ppTAMDIR )
 /*-------------------------------------------------------------------*/
 int automount_cmd(int argc, char *argv[], char *cmdline)
 {
-char pathname[MAX_PATH];
+char pathname[PATH_MAX];
 int rc;
 
     UNREFERENCED(cmdline);
@@ -1691,7 +1691,7 @@ int rc;
     if ( CMD(argv[1],add,3) || *argv[1] == '+' )
     {
         char *argv2;
-        char tamdir[MAX_PATH+1]; /* +1 for optional '+' or '-' prefix */
+        char tamdir[PATH_MAX+1]; /* +1 for optional '+' or '-' prefix */
         TAMDIR* pTAMDIR = NULL;
 //      int was_empty = (sysblk.tamdir == NULL);
 
@@ -1719,8 +1719,8 @@ int rc;
 
         // Add the requested entry...
 
-        hostpath(pathname, argv2, MAX_PATH);
-        strlcpy (tamdir, pathname, MAX_PATH);
+        hostpath(pathname, argv2, PATH_MAX);
+        strlcpy (tamdir, pathname, PATH_MAX);
 
         rc = add_tamdir( tamdir, &pTAMDIR );
 
@@ -1770,7 +1770,7 @@ int rc;
 
                 if (sysblk.defdir == NULL)
                 {
-                    static char cwd[ MAX_PATH ];
+                    static char cwd[ PATH_MAX ];
 
                     VERIFY( getcwd( cwd, sizeof(cwd) ) != NULL );
                     rc = (int)strlen( cwd );
@@ -1805,9 +1805,9 @@ int rc;
     if ( CMD(argv[1],del,3) || *argv[1] == '-')
     {
         char *argv2;
-        char tamdir1[MAX_PATH+1] = {0};     // (resolved path)
-        char tamdir2[MAX_PATH+1] = {0};     // (expanded but unresolved path)
-        char workdir[MAX_PATH+1] = {0};     // (work)
+        char tamdir1[PATH_MAX+1] = {0};     // (resolved path)
+        char tamdir2[PATH_MAX+1] = {0};     // (expanded but unresolved path)
+        char workdir[PATH_MAX+1] = {0};     // (work)
         char *tamdir = tamdir1;             // (-> tamdir2 on retry)
 
         TAMDIR* pPrevTAMDIR = NULL;
@@ -1839,14 +1839,14 @@ int rc;
         // Convert argument to absolute path ending with a slash
 
         STRLCPY( tamdir2, argv2 );
-        if      (tamdir2[0] == '-') memmove (&tamdir2[0], &tamdir2[1], MAX_PATH);
-        else if (tamdir2[0] == '+') memmove (&tamdir2[0], &tamdir2[1], MAX_PATH);
+        if      (tamdir2[0] == '-') memmove (&tamdir2[0], &tamdir2[1], PATH_MAX);
+        else if (tamdir2[0] == '+') memmove (&tamdir2[0], &tamdir2[1], PATH_MAX);
 
 #if defined( _MSVC_ )
         // (expand any embedded %var% environment variables)
-        rc = expand_environ_vars( tamdir2, workdir, MAX_PATH );
+        rc = expand_environ_vars( tamdir2, workdir, PATH_MAX );
         if (rc == 0)
-            strlcpy (tamdir2, workdir, MAX_PATH);
+            strlcpy (tamdir2, workdir, PATH_MAX);
 #endif
 
         if (sysblk.defdir == NULL
@@ -1869,10 +1869,10 @@ int rc;
 
         if (realpath(tamdir1, workdir) != NULL)
         {
-            strlcpy (tamdir1, workdir, MAX_PATH);
+            strlcpy (tamdir1, workdir, PATH_MAX);
             rc = (int)strlen( tamdir1 );
             if (tamdir1[rc-1] != *PATH_SEP)
-                strlcat (tamdir1, PATH_SEP, MAX_PATH);
+                strlcat (tamdir1, PATH_SEP, PATH_MAX);
             tamdir = tamdir1;   // (try tamdir1 first)
         }
         else
@@ -1880,10 +1880,10 @@ int rc;
 
         rc = (int)strlen( tamdir2 );
         if (tamdir2[rc-1] != *PATH_SEP)
-            strlcat (tamdir2, PATH_SEP, MAX_PATH);
+            strlcat (tamdir2, PATH_SEP, PATH_MAX);
 
-        hostpath(pathname, tamdir2, MAX_PATH);
-        strlcpy (tamdir2, pathname, MAX_PATH);
+        hostpath(pathname, tamdir2, PATH_MAX);
+        strlcpy (tamdir2, pathname, PATH_MAX);
 
         // Find entry to be deleted...
 
@@ -1937,7 +1937,7 @@ int rc;
 
                             if (!pCurrTAMDIR)
                             {
-                                static char cwd[ MAX_PATH ] = {0};
+                                static char cwd[ PATH_MAX ] = {0};
 
                                 VERIFY( getcwd( cwd, sizeof(cwd) ) != NULL );
                                 rc = (int)strlen( cwd );
@@ -3270,7 +3270,7 @@ int sclproot_cmd( int argc, char* argv[], char* cmdline )
     {
         if ((basedir = get_sce_dir()))
         {
-            char buf[ MAX_PATH + 64 ];
+            char buf[ PATH_MAX + 64 ];
             char* p = strchr( basedir, ' ' );
 
             if (!p)
@@ -7641,7 +7641,7 @@ DLL_EXPORT int unmount_cmd( int argc, char *argv[], char *cmdline )
 {
     int     rc, unmount_argc;
     DEVBLK* dev = NULL;
-    char    unmount_cmdline[ 2 * MAX_PATH ] = {0};
+    char    unmount_cmdline[ 2 * PATH_MAX ] = {0};
     char    szdevnum [ 16 ] = {0};
     char*   unmount_argv[ MAX_ARGS ] = {0};
     U16     unmount_devnum  =  0;
@@ -7695,10 +7695,9 @@ DLL_EXPORT int mount_cmd( int argc, char *argv[], char *cmdline )
     int    mount_argc       =  0;
     bool   has_blanks       = false;
 
-    char   mount_szdevnum [     MAX_PATH ] = {0};
-    char   mount_tapename [     MAX_PATH ] = {0};
-    char   mount_cmdline  [ 2 * MAX_PATH ] = {0};
-//  char   save_cmdline   [ 2 * MAX_PATH ] = {0};
+    char   mount_szdevnum [     PATH_MAX ] = {0};
+    char   mount_tapename [     PATH_MAX ] = {0};
+    char   mount_cmdline  [ 2 * PATH_MAX ] = {0};
     char*  mount_argv     [     MAX_ARGS ] = {0};
 
     UNREFERENCED( cmdline );
@@ -7727,9 +7726,9 @@ DLL_EXPORT int mount_cmd( int argc, char *argv[], char *cmdline )
     {
         if (strcmp( mount_tapename, "*" ) != 0) // (unless it's "no tape")
         {
-            if (access( mount_tapename, F_OK ) != 0) // (does it?)
+            if (access( mount_tapename, F_OK ) != 0) // (does it exist?)
             {
-                char filename[ MAX_PATH + 2 ] = {0};
+                char filename[ PATH_MAX + 2 ] = {0}; // (no, error!)
                 if (!has_blanks)
                     STRLCPY( filename, mount_tapename );
                 else
@@ -7757,7 +7756,7 @@ DLL_EXPORT int mount_cmd( int argc, char *argv[], char *cmdline )
 
     // tape drive devnum...
 
-    if (strchr( argv[ drive_argnum ], ':'))
+    if (strchr( argv[ drive_argnum ], ':'))  // (LCSS specified?)
         STRLCPY( mount_szdevnum, argv[ drive_argnum ]);
     else
         MSGBUF( mount_szdevnum, "0:%s", argv[ drive_argnum ]);
@@ -7942,7 +7941,7 @@ REGS *regs;
     U64     total;                      /* Total bytes to be written */
     U64     saved;                      /* Total bytes saved so far  */
     BYTE    c;                          /* (dummy sscanf work area)  */
-    char    pathname[MAX_PATH];         /* fname in host path format */
+    char    pathname[PATH_MAX];         /* fname in host path format */
     time_t  begtime, curtime;           /* progress messages times   */
     char    fmt_mem[8];                 /* #of M/G/etc. saved so far */
 
@@ -9305,7 +9304,7 @@ int herclogo_cmd(int argc,char *argv[], char *cmdline)
                   && strlen(sysblk.hercules_pgmpath) > 0 )
     {
         char altfn[FILENAME_MAX];
-        char pathname[MAX_PATH];
+        char pathname[PATH_MAX];
 
         memset(altfn,0,sizeof(altfn));
 
