@@ -1813,38 +1813,16 @@ int     rc;
 
             process_script_file( "-", true );
 
-            /* We come here only if the user did ctl-d on a tty,
-               or we reached EOF on stdin.  No quit command has
-               been issued (yet) since that (via do_shutdown())
-               would not return.  So we issue the quit command
-               here once all CPUs have quiesced, since with no
-               CPUs doing anything and stdin at EOF, there's no
-               longer any reason for us to stick around!
-
-               UNLESS, of course, there were never at any CPUs
-               defined/configured to begin with! (i.e. "NUMCPU 0"
-               was specified, such as would be the case if Hercules
-               was running solely as a Shared Device Server with
-               no guest operating IPLed or running for example).
-
-               In such a case we must continue running in order
-               to continue serving Shared Dasd I/O requests for
-               our Shared Device clients. So we continue running
-               FOREVER. (Yes, *FOREVER!*) We NEVER exit. We can
-               only go away (disappear) when the user wants us to,
-               by either explicitly KILLING the Hercules process
-               itself, or by issuing the 'quit' command via e.g.
-               our own builtin HTTP Server interface.
+            /* "NOUI" mode means there is essentially no normal way
+                to control Hercules (because there is no stdin), so
+                we essentially continue running "forever"... or until
+                such time as the user either issues the "quit" or "exit"
+                command via some other means (such as via our builtin
+                HTTP Server interface for example) or by them forcibly
+                KILLING the Hercules process itself...
             */
-            while (0
-                || sysblk.started_mask  /* CPU(s) still running?     */
-                || !sysblk.config_mask  /* ZERO CPUs configured?     */
-            )
-                USLEEP( 10 * 1000 );    /* Wait on CPU(s) or forever */
-
-            if (sysblk.config_mask)     /* If NUMCPU > 0, then do    */
-                                        /* direct call to ensure shutdown  */
-                do_shutdown();          /* before returning to bootstrap.c */
+            while (1)                   /* Keep running ... */
+                USLEEP( 10 * 1000 );    /* FOREVER! ...     */
         }
     }
 
