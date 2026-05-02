@@ -1152,7 +1152,7 @@ DLL_EXPORT int hprintf(int s,char *fmt,...)
         return -1;
     }
 
-    rc = hwrite(s, bfr, rc + 1);
+    rc = hwrite(s, bfr, rc);
     free(bfr);
     return rc;
 }

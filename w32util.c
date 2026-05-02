@@ -4001,7 +4001,7 @@ DLL_EXPORT int w32_fprintf( FILE* stream, const char* format, ... )
         return -1;
     }
 
-    rc = send( sock, buff, bytes + 1, 0 );
+    rc = send( sock, buff, bytes, 0 );
 
     free( buff );
 
