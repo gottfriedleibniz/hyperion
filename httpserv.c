@@ -14,7 +14,7 @@
 /* When a request comes in a http_request thread is started,         */
 /* which will handle the request.                                    */
 /*                                                                   */
-/* When authentication is required (auth parm on the HTTPPORT      */
+/* When authentification is required (auth parm on the HTTPPORT      */
 /* statement) then the user will be authenticated based on the       */
 /* userid and password supplied on the HTTPPORT statement, if        */
 /* these where not supplied then the userid and password of the      */
@@ -252,13 +252,47 @@ static void http_error(WEBBLK *webblk, char *err, char *header, char *info)
 /*-------------------------------------------------------------------*/
 /*                      http_timestring                              */
 /*-------------------------------------------------------------------*/
-static char *http_tfmt = "%a, %d %b %Y %H:%M:%S %Z";
-
 static char *http_timestring(char *time_buff,int buff_size, time_t t)
 {
     struct tm *tm = gmtime(&t); // HTTP standard defines GMT
-    strftime(time_buff, buff_size, http_tfmt, tm);
+    strftime(time_buff, buff_size, "%a, %d %b %Y %H:%M:%S %Z", tm);
     return time_buff;
+}
+
+/*-------------------------------------------------------------------*/
+/*                      gett_http_time                               */
+/* convert http format date from If-Modified-Since                   */
+/*-------------------------------------------------------------------*/
+static time_t get_http_time(const char *date_str) 
+{
+    // Example: "Wed, 21 Oct 2015 07:28:00 GMT"
+    static const char *months = "JanFebMarAprMayJunJulAugSepOctNovDec";
+    char wkday[4], month_str[4], tz[4];
+    int day, year, hour, min, sec;
+    struct tm http_tm;
+    char *m;
+    
+    if (sscanf(date_str, "%3s, %d %3s %d %d:%d:%d %3s",
+               wkday, &day, month_str, &year,
+               &hour, &min, &sec, tz) != 8) {
+        return (time_t)-1;
+    }
+    
+    if ( ! (m = strstr(months, month_str)))
+    {
+        return (time_t)-1;
+    }
+
+    memset(&http_tm, 0, sizeof(struct tm));
+    http_tm.tm_mday = day;
+    http_tm.tm_mon  = (m - months) / 3;
+    http_tm.tm_year = year - 1900;
+    http_tm.tm_hour = hour;
+    http_tm.tm_min  = min;
+    http_tm.tm_sec  = sec;
+    http_tm.tm_isdst = 0;    //explicit for mktime as GMT
+    
+    return mktime(&http_tm);
 }
 
 /*-------------------------------------------------------------------*/
@@ -626,13 +660,7 @@ static void *http_request(void* arg)
             if(!strcasecmp(pointer,"If-Modified-Since:"))
             {
                 // save browser sent file last modification time, if any
-                struct tm browser_mod_time;
-
-                // memset required as mktime queries full structure
-                memset(&browser_mod_time, 0, sizeof(struct tm));
-
-                if (strptime(strtok_str, http_tfmt, &browser_mod_time))
-                    webblk->mod_time = mktime(&browser_mod_time);   
+                webblk->mod_time = get_http_time(strtok_str);   
             }
         }
     }
