@@ -536,7 +536,7 @@ typedef int CMPFUNC(const void*, const void*);
 /*-------------------------------------------------------------------*/
 /*      CRASH                       (with hopefully a dump)          */
 /*-------------------------------------------------------------------*/
-#define CRASH()         do { BYTE* p=NULL; *p=0; } while (0)
+#define CRASH()         do { volatile BYTE* p=NULL; *p=0; } while (0)
 
 /*-------------------------------------------------------------------*/
 /*      Perform standard utility initialization                      */
