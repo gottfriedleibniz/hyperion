@@ -1064,6 +1064,7 @@ atomic_update64( &sysblk.txf_stats[ contran ? 1 : 0 ].txf_ ## ctr, +1 )
         CPU_BITMAP started_mask;        /* Started CPUs              */
         CPU_BITMAP waiting_mask;        /* Waiting CPUs              */
         U16     breakasid;              /* Break ASID                */
+        BYTE    breakasid_arn;          /* Break ASID ARN            */
         U64     breakaddr[2];           /* Break address range       */
         U64     traceaddr[2];           /* Tracing address range     */
         U64     auto_trace_beg;         /* Automatic t+ instcount    */

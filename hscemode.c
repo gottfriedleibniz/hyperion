@@ -1259,18 +1259,21 @@ int trace_cmd( int argc, char* argv[], char* cmdline )
     U64   addr[2]         =  {0};       /* Parsed address range      */
     BYTE  c[2]            =  {0};       /* [0]=range sep, [1]=sscanf */
     U16   breakasid       =   0;        /* Optional asid argument    */
+    BYTE  asid_arn        =   0;        /* Access register number    */
+    char  asid_arn_char   =  'P';       /* 'P' or 'H'                */
 
     char  rangemsg [128]  =  {0};       /* MSGBUF work buffer        */
     char  asidmsg  [128]  =  {0};       /* MSGBUF work buffer        */
 
-    bool  trace   =  false;             /* Whether command was 't'   */
-    bool  step    =  false;             /* Whether command was 's'   */
-    bool  breakp  =  false;             /* Whether command was 'b'   */
-    bool  on      =  false;             /* Whether + was specified   */
-    bool  off     =  false;             /* Whether - was specified   */
-    bool  query   =  false;             /* Whether ? was specified   */
-    bool  update  =  false;             /* Whether parms were given  */
-    bool  unlock  =  false;             /* Should do RELEASE_INTLOCK */
+    bool  trace    =  false;            /* Whether command was 't'   */
+    bool  step     =  false;            /* Whether command was 's'   */
+    bool  breakp   =  false;            /* Whether command was 'b'   */
+    bool  breakpPH =  false;            /* Whether P|H was specified */
+    bool  on       =  false;            /* Whether + was specified   */
+    bool  off      =  false;            /* Whether - was specified   */
+    bool  query    =  false;            /* Whether ? was specified   */
+    bool  update   =  false;            /* Whether parms were given  */
+    bool  unlock   =  false;            /* Should do RELEASE_INTLOCK */
 
     cmdline[0] = tolower( (unsigned char)cmdline[0] );
 
@@ -1322,8 +1325,8 @@ int trace_cmd( int argc, char* argv[], char* cmdline )
 
     /* Check for invalid number of arguments */
     if (0
-        // No more than 3 arguments allowed (cmd, range, asid)
-        || (argc > 3)
+        // No more than 4 arguments allowed (cmd, range, asid, P|H)
+        || (argc > 4)
 
         // If explicit - or ? then can't change settings
         || ((off || query) && update)
@@ -1397,7 +1400,34 @@ int trace_cmd( int argc, char* argv[], char* cmdline )
                 return -1;
             }
 
-            breakasid = (U16) (asid & 0xFFFF);
+            breakasid     = (U16) (asid & 0xFFFF);
+            asid_arn      = USE_PRIMARY_SPACE;      // (default)
+            asid_arn_char = 'P';                    // (default)
+
+            /* Parse optional [P|H] parameter, if specified */
+            if (argc >= 4)
+            {
+                breakpPH = true;
+                asid_arn_char = argv[3][0];
+
+                if (0
+                    || strcasecmp( argv[3], "P" ) == 0
+                    || strcasecmp( argv[3], "H" ) == 0
+                )
+                {
+                    switch (toupper( asid_arn_char ))
+                    {
+                        case 'P': asid_arn = USE_PRIMARY_SPACE; break;
+                        case 'H': asid_arn = USE_HOME_SPACE;    break;
+                    }
+                }
+                else
+                {
+                    // Invalid argument %s%s"
+                    WRMSG( HHC02205, "E", argv[3], "" );
+                    return -1;
+                }
+            }
         }
     }
     else
@@ -1424,9 +1454,10 @@ int trace_cmd( int argc, char* argv[], char* cmdline )
             {
                 if (update)
                 {
-                    sysblk.traceaddr[0] = addr[0];
-                    sysblk.traceaddr[1] = addr[1];
-                    sysblk.breakasid    = 0;
+                    sysblk.traceaddr[0]  = addr[0];
+                    sysblk.traceaddr[1]  = addr[1];
+                    sysblk.breakasid     = 0;
+                    sysblk.breakasid_arn = 0;
                 }
 
                 if (on || off)
@@ -1444,9 +1475,10 @@ int trace_cmd( int argc, char* argv[], char* cmdline )
             {
                 if (update)
                 {
-                    sysblk.breakaddr[0] = addr[0];
-                    sysblk.breakaddr[1] = addr[1];
-                    sysblk.breakasid    = breakasid;
+                    sysblk.breakaddr[0]  = addr[0];
+                    sysblk.breakaddr[1]  = addr[1];
+                    sysblk.breakasid     = breakasid;
+                    sysblk.breakasid_arn = asid_arn;
                 }
 
                 if (on || off)
@@ -1468,6 +1500,7 @@ int trace_cmd( int argc, char* argv[], char* cmdline )
             addr[0]   = sysblk.traceaddr[0];
             addr[1]   = sysblk.traceaddr[1];
             breakasid = 0;
+            asid_arn  = 0;
             on        = sysblk.insttrace;
         }
         else // (step || breakp)
@@ -1475,6 +1508,7 @@ int trace_cmd( int argc, char* argv[], char* cmdline )
             addr[0]   = sysblk.breakaddr[0];
             addr[1]   = sysblk.breakaddr[1];
             breakasid = sysblk.breakasid;
+            asid_arn  = sysblk.breakasid_arn;
             on        = sysblk.instbreak;
         }
     }
@@ -1492,7 +1526,7 @@ int trace_cmd( int argc, char* argv[], char* cmdline )
     }
 
     if (breakasid)
-        MSGBUF( asidmsg, " asid x'%4.4"PRIx16"'", breakasid );
+        MSGBUF( asidmsg, " asid x'%4.4"PRIx16"' %c", breakasid, asid_arn_char );
 
     /* Display (current or new) settings */
 
