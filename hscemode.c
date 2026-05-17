@@ -1268,7 +1268,6 @@ int trace_cmd( int argc, char* argv[], char* cmdline )
     bool  trace    =  false;            /* Whether command was 't'   */
     bool  step     =  false;            /* Whether command was 's'   */
     bool  breakp   =  false;            /* Whether command was 'b'   */
-    bool  breakpPH =  false;            /* Whether P|H was specified */
     bool  on       =  false;            /* Whether + was specified   */
     bool  off      =  false;            /* Whether - was specified   */
     bool  query    =  false;            /* Whether ? was specified   */
@@ -1407,7 +1406,6 @@ int trace_cmd( int argc, char* argv[], char* cmdline )
             /* Parse optional [P|H] parameter, if specified */
             if (argc >= 4)
             {
-                breakpPH = true;
                 asid_arn_char = argv[3][0];
 
                 if (0
