@@ -205,7 +205,7 @@ int ARCH_DEP( system_reset )( const int target_mode, const bool clear,
 
                 regs = sysblk.regs[ i ];
 
-                if (regs->cpustate != CPUSTATE_STOPPED)
+                if (regs->cpustate != CPUSTATE_STOPPED && !regs->diagnose)
                 {
                     wait = true;
 
