@@ -1209,6 +1209,83 @@ U32   code;
         break;
 #endif /* defined(_FEATURE_HOST_RESOURCE_ACCESS_FACILITY) */
 
+    case 0xF1C:
+    /*-----------------------------------------------------------------*/
+    /* Diagnose F1C: Get 32-bits of Hercules feature list              */
+    /*                                                                 */
+    /*  R1: returned 32-bits of hercules facility list.                */
+    /*      In Z/arch mode, result is returned in R1 bits 32-63.       */
+    /*                                                                 */
+    /*  R3: unsigned byte index, in bits 24-31 or 56-63, used to       */
+    /*      select 32-bits within the Hercules facility list.          */
+    /*                                                                 */
+    /*  CC: 0 - byte index is within the hercules facility list.       */
+    /*          R1 contains 32-bits of the facility list at R3 index.  */
+    /*          If there are fewer than 32-bits remaining in the       */
+    /*          facility list, the remaining bits are set to zero.     */
+    /*          R3 is unchanged.                                       */
+    /*                                                                 */
+    /*      3 - byte index is beyond the end of the hercules facility  */
+    /*          list. R1 is set to zero. R3 (bits 24-31 or 56 - 63)    */
+    /*          is updated with the Index of the last valid byte in    */
+    /*          the Hercules facility list.                            */
+    /*                                                                 */
+    /*  Note: see stfl.h for Hercules Facility List definitions        */
+    /*-----------------------------------------------------------------*/
+        {
+            int i;
+            union   { U32 w; BYTE b[4]; } temp;
+            U32 byte_index;
+
+            /* get byte offset into Hercules facility list bits */
+            byte_index = regs->GR_LHLCL(r3);         // bits 56-63
+            byte_index += STFL_HERC_FIRST_BIT / 8;   // (convert from bit offset to byte offset)
+
+            if ( byte_index >= STFL_HERC_BY_SIZE )
+            {
+                regs->psw.cc = 3;   // (beyond end of list)
+                regs->GR_L(r1) = 0;
+                regs->GR_LHLCL(r3) = STFL_HERC_BY_SIZE - (STFL_HERC_FIRST_BIT / 8) -1;
+
+            }
+            else
+            {
+                regs->psw.cc = 0;   // (within list)
+
+                temp.w = 0;
+                for (i=0; i < 4 && byte_index < STFL_HERC_BY_SIZE ; i++, byte_index++)
+                {
+                    temp.b[i] = regs->facility_list[byte_index];
+                }
+                regs->GR_L(r1) = CSWAP32( temp.w );
+            }
+
+#if 0 // (debug)
+            LOGMSG( "Diag F1C: STFL_IBM_BY_SIZE: %d, STFL_IBM_DW_SIZE: %lu\n", STFL_IBM_BY_SIZE, STFL_IBM_DW_SIZE );
+            LOGMSG( "Diag F1C: STFL_HERC_BY_SIZE: %lu, STFL_HERC_DW_SIZE: %lu\n", STFL_HERC_BY_SIZE, STFL_HERC_DW_SIZE );
+            LOGMSG( "Diag F1C: STFL_HERC_FIRST_BIT: %lu\n", STFL_HERC_FIRST_BIT );
+            for (i=0; i < (int) STFL_HERC_DW_SIZE; i++)
+            {
+                LOGMSG( "Diag F1C: facility_list DW%d:  %2.2X %2.2X %2.2X %2.2X %2.2X %2.2X %2.2X %2.2X\n",
+                    i,
+                    regs->facility_list[i*8 +0],
+                    regs->facility_list[i*8 +1],
+                    regs->facility_list[i*8 +2],
+                    regs->facility_list[i*8 +3],
+                    regs->facility_list[i*8 +4],
+                    regs->facility_list[i*8 +5],
+                    regs->facility_list[i*8 +6],
+                    regs->facility_list[i*8 +7] );
+            }
+            LOGMSG( "Diag F1C: CC: %d, r1: R%d, r3: R%d, R%d: %8.8X, R%d: %8.8X\n",
+                     regs->psw.cc, r1, r3,
+                     r1, regs->GR_L(r1),
+                     r3, regs->GR_L(r3)
+                   );
+#endif
+        }
+        break;
+
     case 0xFF8:
     /*---------------------------------------------------------------*/
     /* Diagnose FF8: Hercules Infinite Loop (Malfunctioning CPU)     */
