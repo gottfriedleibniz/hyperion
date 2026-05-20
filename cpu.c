@@ -2208,7 +2208,10 @@ void ARCH_DEP( process_trace )( REGS* regs, BYTE* dest )
                 if (regs->CR_LHL(4) != sysblk.breakasid)
                     regs->stepping = false;
             }
-            else if (sysblk.breakasid_arn == (BYTE)USE_HOME_SPACE)
+            else if (0
+                     || sysblk.breakasid_arn == (BYTE)USE_SECONDARY_SPACE
+                     || sysblk.breakasid_arn == (BYTE)USE_HOME_SPACE
+                    )
             {
                 if (regs->CR_LHL(3) != sysblk.breakasid)
                     regs->stepping = false;

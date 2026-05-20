@@ -1260,7 +1260,7 @@ int trace_cmd( int argc, char* argv[], char* cmdline )
     BYTE  c[2]            =  {0};       /* [0]=range sep, [1]=sscanf */
     U16   breakasid       =   0;        /* Optional asid argument    */
     BYTE  asid_arn        =   0;        /* Access register number    */
-    char  asid_arn_char   =  'P';       /* 'P' or 'H'                */
+    char  asid_arn_char   =  'P';       /* 'P' or 'S' or 'H'         */
 
     char  rangemsg [128]  =  {0};       /* MSGBUF work buffer        */
     char  asidmsg  [128]  =  {0};       /* MSGBUF work buffer        */
@@ -1324,7 +1324,7 @@ int trace_cmd( int argc, char* argv[], char* cmdline )
 
     /* Check for invalid number of arguments */
     if (0
-        // No more than 4 arguments allowed (cmd, range, asid, P|H)
+        // No more than 4 arguments allowed (cmd, range, asid, P|S|H)
         || (argc > 4)
 
         // If explicit - or ? then can't change settings
@@ -1403,20 +1403,22 @@ int trace_cmd( int argc, char* argv[], char* cmdline )
             asid_arn      = USE_PRIMARY_SPACE;      // (default)
             asid_arn_char = 'P';                    // (default)
 
-            /* Parse optional [P|H] parameter, if specified */
+            /* Parse optional [P|S|H] parameter, if specified */
             if (argc >= 4)
             {
                 asid_arn_char = argv[3][0];
 
                 if (0
                     || strcasecmp( argv[3], "P" ) == 0
+                    || strcasecmp( argv[3], "S" ) == 0
                     || strcasecmp( argv[3], "H" ) == 0
                 )
                 {
                     switch (toupper( asid_arn_char ))
                     {
-                        case 'P': asid_arn = USE_PRIMARY_SPACE; break;
-                        case 'H': asid_arn = USE_HOME_SPACE;    break;
+                        case 'P': asid_arn = USE_PRIMARY_SPACE;   break;
+                        case 'S': asid_arn = USE_SECONDARY_SPACE; break;
+                        case 'H': asid_arn = USE_HOME_SPACE;      break;
                     }
                 }
                 else

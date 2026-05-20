@@ -188,14 +188,15 @@
                                 \
   "Format:\n"                                                                   \
   "\n"                                                                          \
-  "     \"b addr-addr   [asid [P|H]]\"\n"                                       \
-  "     \"b addr:addr   [asid [P|H]]\"\n"                                       \
-  "     \"b addr.length [asid [P|H]]\"\n"                                       \
+  "     \"b addr-addr   [asid [P|S|H]]\"\n"                                     \
+  "     \"b addr:addr   [asid [P|S|H]]\"\n"                                     \
+  "     \"b addr.length [asid [P|S|H]]\"\n"                                     \
   "\n"                                                                          \
   "Sets the instruction address or address range where you wish to halt\n"      \
   "execution.  This command is synonymous with the \"s+\" command. If\n"        \
-  "the asid parameter is specified, an optional Primary or Home Address Space\n"\
-  "designation may also be specified. If not specified the default is P.\n"
+  "the asid parameter is specified, an optional Primary, Secondary or Home\n"   \
+  "Address Space designation may also be specified. If not specified the\n"     \
+  "default is P.\n"
 
 #define bear_cmd_desc           "Display or set BEAR register"
 #define bear_cmd_help           \
