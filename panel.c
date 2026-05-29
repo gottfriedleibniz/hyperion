@@ -269,6 +269,8 @@ static REGS  copyregs, copysieregs;     /* Copied regs               */
 /* Screen manipulation primitives                                    */
 /*-------------------------------------------------------------------*/
 
+#define COLOR_TEXT_BG ( sysblk.pan_scrbg ? COLOR_BLACK : COLOR_DEFAULT_BG )
+
 static void beep()
 {
     console_beep( confp );
@@ -672,7 +674,7 @@ static void NP_screen_redraw (REGS *regs)
     /*
      * Draw the static parts of the NP screen
      */
-    set_color (COLOR_LIGHT_GREY, COLOR_BLACK );
+    set_color (COLOR_LIGHT_GREY, COLOR_TEXT_BG );
     clr_screen ();
 
     /* Line 1 - title line */
@@ -709,13 +711,13 @@ static void NP_screen_redraw (REGS *regs)
 
     /* Line 2 - peripheral headings */
     set_pos (2, 41);
-    set_color (COLOR_WHITE, COLOR_BLACK);
+    set_color (COLOR_WHITE, COLOR_TEXT_BG);
     draw_char ('U');
-    set_color (COLOR_LIGHT_GREY, COLOR_BLACK);
+    set_color (COLOR_LIGHT_GREY, COLOR_TEXT_BG);
     draw_text(" Addr Modl Type Assig");
-    set_color (COLOR_WHITE, COLOR_BLACK);
+    set_color (COLOR_WHITE, COLOR_TEXT_BG);
     draw_char ('n');
-    set_color (COLOR_LIGHT_GREY, COLOR_BLACK);
+    set_color (COLOR_LIGHT_GREY, COLOR_TEXT_BG);
     draw_text("ment");
 
     if (sysblk.hicpu)
@@ -732,7 +734,7 @@ static void NP_screen_redraw (REGS *regs)
         draw_text ("PSW");
 
         /* Register area */
-        set_color (COLOR_LIGHT_GREY, COLOR_BLACK);
+        set_color (COLOR_LIGHT_GREY, COLOR_TEXT_BG);
         NPregmode = (regs->arch_mode == ARCH_900_IDX && (NPregdisp == 0 || NPregdisp ==1 || NPregdisp == 3));
         NPregzhost =
 #if defined(_FEATURE_SIE)
@@ -751,7 +753,7 @@ static void NP_screen_redraw (REGS *regs)
         }
 
         /* Register selection */
-        set_color (COLOR_LIGHT_GREY, COLOR_BLACK);
+        set_color (COLOR_LIGHT_GREY, COLOR_TEXT_BG);
         set_pos ((REGS_LINE+8), 6);
         draw_text ("GPR");
         set_pos ((REGS_LINE+8), 14);
@@ -764,22 +766,22 @@ static void NP_screen_redraw (REGS *regs)
         /* Address and data */
         set_pos (ADDR_LINE, 2);
         draw_text ("ADD");
-        set_color (COLOR_WHITE, COLOR_BLACK);
+        set_color (COLOR_WHITE, COLOR_TEXT_BG);
         draw_char ('R');
-        set_color (COLOR_LIGHT_GREY, COLOR_BLACK);
+        set_color (COLOR_LIGHT_GREY, COLOR_TEXT_BG);
         draw_text ("ESS:");
         set_pos (ADDR_LINE, 22);
-        set_color (COLOR_WHITE, COLOR_BLACK);
+        set_color (COLOR_WHITE, COLOR_TEXT_BG);
         draw_char ('D');
-        set_color (COLOR_LIGHT_GREY, COLOR_BLACK);
+        set_color (COLOR_LIGHT_GREY, COLOR_TEXT_BG);
         draw_text ("ATA:");
     }
     else
     {
         set_pos (8, 12);
-        set_color (COLOR_LIGHT_RED, COLOR_BLACK);
+        set_color (COLOR_LIGHT_RED, COLOR_TEXT_BG);
         draw_text ("No CPUs defined");
-        set_color (COLOR_LIGHT_GREY, COLOR_BLACK);
+        set_color (COLOR_LIGHT_GREY, COLOR_TEXT_BG);
     }
 
     /* separator */
@@ -801,7 +803,7 @@ static void NP_screen_redraw (REGS *regs)
     if (sysblk.hicpu)
     {
         set_pos ((BUTTONS_LINE+1), 3);
-        set_color (COLOR_LIGHT_GREY, COLOR_BLACK);
+        set_color (COLOR_LIGHT_GREY, COLOR_TEXT_BG);
         draw_text ("MIPS");
     }
 
@@ -832,7 +834,7 @@ static void NP_screen_redraw (REGS *regs)
     set_pos ((BUTTONS_LINE+2), 32);
     draw_button(COLOR_RED,   COLOR_LIGHT_GREY, COLOR_WHITE,  " P",  "W", "R " );
 
-    set_color (COLOR_LIGHT_GREY, COLOR_BLACK);
+    set_color (COLOR_LIGHT_GREY, COLOR_TEXT_BG);
 
     /* CPU busy graph */
     line = CPU_GRAPH_LINE;                          // this is where the dashes start
@@ -941,7 +943,7 @@ static void NP_update(REGS *regs)
         {
             if (NPhelppaint)
             {
-                set_color (COLOR_LIGHT_GREY, COLOR_BLACK);
+                set_color (COLOR_LIGHT_GREY, COLOR_TEXT_BG);
                 clr_screen ();
                 for (i = 0; *NPhelp[i]; i++)
                 {
@@ -998,7 +1000,7 @@ static void NP_update(REGS *regs)
             NPpswmode = mode;
             NPpswzhost = zhost;
             NPpsw_valid = NPpswstate_valid = 0;
-            set_color (COLOR_LIGHT_GREY, COLOR_BLACK);
+            set_color (COLOR_LIGHT_GREY, COLOR_TEXT_BG);
             set_pos (PSW_LINE, 1);
             fill_text (' ',38);
             set_pos (PSW_LINE+1, 1);
@@ -1012,7 +1014,7 @@ static void NP_update(REGS *regs)
         copy_psw( regs, curr_psw );
         if (!NPpsw_valid || memcmp( NPpsw, curr_psw, sizeof( NPpsw )))
         {
-            set_color (COLOR_LIGHT_YELLOW, COLOR_BLACK);
+            set_color (COLOR_LIGHT_YELLOW, COLOR_TEXT_BG);
             set_pos (PSW_LINE, 3);
             if (mode)
             {
@@ -1051,7 +1053,7 @@ static void NP_update(REGS *regs)
                       mode                               ? 'Z' : '.');
         if (!NPpswstate_valid || strcmp(NPpswstate, buf))
         {
-            set_color( COLOR_LIGHT_YELLOW, COLOR_BLACK );
+            set_color( COLOR_LIGHT_YELLOW, COLOR_TEXT_BG );
             set_pos( mode || zhost ? (PSW_LINE+1) : PSW_LINE, 28 );
             draw_text( buf );
             NPpswstate_valid = 1;
@@ -1073,11 +1075,11 @@ static void NP_update(REGS *regs)
             NPregmode = mode;
             NPregzhost = zhost;
             NPregs_valid = 0;
-            set_color (COLOR_LIGHT_GREY, COLOR_BLACK);
+            set_color (COLOR_LIGHT_GREY, COLOR_TEXT_BG);
         }
 
         /* Display register values (or storage) i*/
-        set_color (COLOR_LIGHT_YELLOW, COLOR_BLACK );
+        set_color (COLOR_LIGHT_YELLOW, COLOR_TEXT_BG );
         addr = NPaddress;
         for (i = 0; i < 16; i++)
         {
@@ -1199,19 +1201,19 @@ static void NP_update(REGS *regs)
         if (!NPregs_valid)
         {
             set_pos ((REGS_LINE+8), 6);
-            set_color (NPregdisp == 0 ? COLOR_LIGHT_YELLOW : COLOR_WHITE, COLOR_BLACK);
+            set_color (NPregdisp == 0 ? COLOR_LIGHT_YELLOW : COLOR_WHITE, COLOR_TEXT_BG);
             draw_char ('G');
 
             set_pos ((REGS_LINE+8), 14);
-            set_color (NPregdisp == 1 ? COLOR_LIGHT_YELLOW : COLOR_WHITE, COLOR_BLACK);
+            set_color (NPregdisp == 1 ? COLOR_LIGHT_YELLOW : COLOR_WHITE, COLOR_TEXT_BG);
             draw_char ('C');
 
             set_pos ((REGS_LINE+8), 22);
-            set_color (NPregdisp == 2 ? COLOR_LIGHT_YELLOW : COLOR_WHITE, COLOR_BLACK);
+            set_color (NPregdisp == 2 ? COLOR_LIGHT_YELLOW : COLOR_WHITE, COLOR_TEXT_BG);
             draw_char ('A');
 
             set_pos ((REGS_LINE+8), 30);
-            set_color (NPregdisp == 3 ? COLOR_LIGHT_YELLOW : COLOR_WHITE, COLOR_BLACK);
+            set_color (NPregdisp == 3 ? COLOR_LIGHT_YELLOW : COLOR_WHITE, COLOR_TEXT_BG);
             draw_char ('F');
         }
 
@@ -1220,14 +1222,14 @@ static void NP_update(REGS *regs)
         /* Address & Data */
         if (!NPaddr_valid)
         {
-            set_color (COLOR_LIGHT_YELLOW, COLOR_BLACK);
+            set_color (COLOR_LIGHT_YELLOW, COLOR_TEXT_BG);
             set_pos (ADDR_LINE, 12);
             draw_fw (NPaddress);
             NPaddr_valid = 1;
         }
         if (!NPdata_valid)
         {
-            set_color (COLOR_LIGHT_YELLOW, COLOR_BLACK);
+            set_color (COLOR_LIGHT_YELLOW, COLOR_TEXT_BG);
             set_pos (ADDR_LINE, 30);
             draw_fw (NPdata);
             NPdata_valid = 1;
@@ -1237,7 +1239,7 @@ static void NP_update(REGS *regs)
     /* Rates */
     if ((!NPmips_valid || sysblk.mipsrate != NPmips) && sysblk.hicpu)
     {
-        set_color (COLOR_LIGHT_YELLOW, COLOR_BLACK);
+        set_color (COLOR_LIGHT_YELLOW, COLOR_TEXT_BG);
         set_pos (BUTTONS_LINE, 1);
         if((sysblk.mipsrate / 1000000) > 999)
           MSGBUF(buf, "%2d,%03d", sysblk.mipsrate / 1000000000, sysblk.mipsrate % 1000000000 / 1000000);
@@ -1260,7 +1262,7 @@ static void NP_update(REGS *regs)
 #endif
     )
     {
-        set_color (COLOR_LIGHT_YELLOW, COLOR_BLACK);
+        set_color (COLOR_LIGHT_YELLOW, COLOR_TEXT_BG);
         set_pos (BUTTONS_LINE, 8);
         MSGBUF(buf, "%6.6s", format_int(sysblk.siosrate));
         draw_text (buf);
@@ -1277,7 +1279,7 @@ static void NP_update(REGS *regs)
             {
                 if (!NPcpugraph_valid || NPcpugraphpct[i] != -2.0)
                 {
-                    set_color (COLOR_RED, COLOR_BLACK);
+                    set_color (COLOR_RED, COLOR_TEXT_BG);
                     set_pos (CPU_GRAPH_LINE+1+i, 6);
                     draw_text ("OFFLINE");
                     fill_text (' ', 38);
@@ -1288,7 +1290,7 @@ static void NP_update(REGS *regs)
             {
                 if (!NPcpugraph_valid || NPcpugraphpct[i] != -1.0)
                 {
-                    set_color (COLOR_LIGHT_YELLOW, COLOR_BLACK);
+                    set_color (COLOR_LIGHT_YELLOW, COLOR_TEXT_BG);
                     set_pos (CPU_GRAPH_LINE+1+i, 6);
                     draw_text ("STOPPED");
                     fill_text (' ', 38);
@@ -1302,14 +1304,14 @@ static void NP_update(REGS *regs)
                     n = 1;
                 else if (n > 34)
                     n = 34;
-                set_color (n > 17 ? COLOR_WHITE : COLOR_LIGHT_GREY, COLOR_BLACK);
+                set_color (n > 17 ? COLOR_WHITE : COLOR_LIGHT_GREY, COLOR_TEXT_BG);
                 set_pos (CPU_GRAPH_LINE+1+i, 6);
                 fill_text ('*', n+3);
                 fill_text (' ', 38);
                 NPcpugraphpct[i] = sysblk.regs[i]->cpupct;
             }
 
-            set_color (COLOR_LIGHT_GREY, COLOR_BLACK);
+            set_color (COLOR_LIGHT_GREY, COLOR_TEXT_BG);
         }
         NPcpugraph_valid = 1;
     }
@@ -1328,7 +1330,7 @@ static void NP_update(REGS *regs)
         if (!NPdevices_valid || online != NPonline[i])
         {
             set_pos (DEV_LINE+i, 41);
-            set_color (online ? COLOR_LIGHT_GREEN : COLOR_LIGHT_GREY, COLOR_BLACK);
+            set_color (online ? COLOR_LIGHT_GREEN : COLOR_LIGHT_GREY, COLOR_TEXT_BG);
             draw_char (i < 26 ? 'A' + i : '.');
             NPonline[i] = online;
         }
@@ -1337,7 +1339,7 @@ static void NP_update(REGS *regs)
         if (!NPdevices_valid || dev->devnum != NPdevnum[i] || NPbusy[i] != busy)
         {
             set_pos (DEV_LINE+i, 43);
-            set_color (busy ? COLOR_LIGHT_YELLOW : COLOR_LIGHT_GREY, COLOR_BLACK);
+            set_color (busy ? COLOR_LIGHT_YELLOW : COLOR_LIGHT_GREY, COLOR_TEXT_BG);
             if (dev == sysblk.sysgdev)
                 STRLCPY( buf, "SYSG" );
             else
@@ -1351,7 +1353,7 @@ static void NP_update(REGS *regs)
         if (!NPdevices_valid || dev->devtype != NPdevtype[i] || open != NPopen[i])
         {
             set_pos (DEV_LINE+i, 48);
-            set_color (open ? COLOR_LIGHT_GREEN : COLOR_LIGHT_GREY, COLOR_BLACK);
+            set_color (open ? COLOR_LIGHT_GREEN : COLOR_LIGHT_GREY, COLOR_TEXT_BG);
             MSGBUF (buf, "%4.4X", dev->devtype);
             draw_text (buf);
             NPdevtype[i] = dev->devtype;
@@ -1362,7 +1364,7 @@ static void NP_update(REGS *regs)
         (dev->hnd->query)(dev, &devclass, sizeof(devnam), devnam);
         if (!NPdevices_valid || strcmp(NPdevnam[i], devnam))
         {
-            set_color (COLOR_LIGHT_GREY, COLOR_BLACK);
+            set_color (COLOR_LIGHT_GREY, COLOR_TEXT_BG);
             set_pos (DEV_LINE+i, 53);
             MSGBUF (buf, "%-4.4s", devclass);
             draw_text (buf);
@@ -1416,7 +1418,7 @@ static void NP_update(REGS *regs)
         }
         else if (cons_rows >= 24)
         {
-            set_color (COLOR_LIGHT_GREY, COLOR_BLACK);
+            set_color (COLOR_LIGHT_GREY, COLOR_TEXT_BG);
             set_pos (cons_rows, 1);
             fill_text ('-', 38);
         }
@@ -1434,7 +1436,7 @@ static void NP_update(REGS *regs)
         }
         else if (cons_rows >= 24)
         {
-            set_color( COLOR_LIGHT_GREY, COLOR_BLACK );
+            set_color( COLOR_LIGHT_GREY, COLOR_TEXT_BG );
             set_pos( cons_rows, 41) ;
             fill_text( '-', cons_cols );
         }

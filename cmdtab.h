@@ -1078,7 +1078,7 @@
                                 \
   "Format:\n"                                                                       \
   "\n"                                                                              \
-  "  panopt [FULLpath|NAMEonly] [RATE=n] [MSGCOLOR=NO|DARK|LIGHT] [TITLE=xxx]\n"    \
+  "  panopt [FULLpath|NAMEonly] [RATE=n] [MSGCOLOR=NO|DARK|LIGHT] [BG=YES|NO] [TITLE=xxx]\n" \
   "\n"                                                                              \
   "NAMEONLY requests the extended panel screen (that displays the list of\n"        \
   "devices and is reached by pressing the ESC key) to display the emulated\n"       \
@@ -1092,6 +1092,9 @@
   "MSGCOLOR=DARK displays colorized panel messages meant for dark colored\n"        \
   "panels (e.g. white text on black background) whereas MSGCOLOR=LIGHT is\n"        \
   "meant for light colored panels (e.g. black text on white background).\n"         \
+  "\n"                                                                              \
+  "BG=YES|NO toggles the black background (YES) or terminal background (NO) on\n"   \
+  "the panel screen.\n"                                                             \
   "\n"                                                                              \
   "TITLE=xxx sets an optional console window title-bar string to be used in\n"      \
   "place of the default supplied by the windowing system. The entire TITLE=\n"      \

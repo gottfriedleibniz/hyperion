@@ -4581,6 +4581,7 @@ int panopt_cmd( int argc, char* argv[], char* cmdline)
     char*  pantitle     = NULL;
     int    panrate      = sysblk.panrate;
     int    pan_colors   = sysblk.pan_colors;
+    int    pan_scrbg    = sysblk.pan_scrbg;
     bool   devnameonly  = sysblk.devnameonly ? true : false;
     char   buf[256];
     int    i;
@@ -4588,7 +4589,7 @@ int panopt_cmd( int argc, char* argv[], char* cmdline)
     UNREFERENCED( cmdline );
     UPPER_ARGV_0(  argv   );
 
-    // panopt [FULLPATH|NAMEONLY] [RATE=nnn] [MSGCOLOR=NO|DARK|LIGHT] [TITLE=xxx]
+    // panopt [FULLPATH|NAMEONLY] [RATE=nnn] [MSGCOLOR=NO|DARK|LIGHT] [BG=YES|NO] [TITLE=xxx]
 
     if (argc <= 1)
     {
@@ -4597,12 +4598,13 @@ int panopt_cmd( int argc, char* argv[], char* cmdline)
         char* quote = sysblk.pantitle ?
             strpbrk( sysblk.pantitle, WHITESPACE ) ? "\"" : "" : "";
 
-        MSGBUF( buf, "%s RATE=%d MSGCOLOR=%s %sTITLE=%s%s"
+        MSGBUF( buf, "%s RATE=%d MSGCOLOR=%s BG=%s %sTITLE=%s%s"
             , sysblk.devnameonly ? "NAMEONLY" : "FULLPATH"
             , sysblk.panrate
             , sysblk.pan_colors == PANC_NONE  ? "NO"    :
               sysblk.pan_colors == PANC_DARK  ? "DARK"  :
               sysblk.pan_colors == PANC_LIGHT ? "LIGHT" : "(err!)"
+            , sysblk.pan_scrbg ? "YES" : "NO"
             , quote , sysblk.pantitle ? sysblk.pantitle : "(default)" , quote
         );
 
@@ -4627,6 +4629,8 @@ int panopt_cmd( int argc, char* argv[], char* cmdline)
         else if (CMD( argv[i], MSGCOLOR=NO,    11 )) pan_colors  = PANC_NONE;
         else if (CMD( argv[i], MSGCOLOR=DARK,  13 )) pan_colors  = PANC_DARK;
         else if (CMD( argv[i], MSGCOLOR=LIGHT, 14 )) pan_colors  = PANC_LIGHT;
+        else if (CMD( argv[i], BG=YES,          2 )) pan_scrbg  = 1;
+        else if (CMD( argv[i], BG=NO,           5 )) pan_scrbg  = 0;
         else if (CMD( argv[i], RATE=FAST,       9 )) panrate = PANEL_REFRESH_RATE_FAST;
         else if (CMD( argv[i], RATE=SLOW,       9 )) panrate = PANEL_REFRESH_RATE_SLOW;
         else if (strncasecmp( argv[i], "RATE=", 5 ) == 0)
@@ -4681,6 +4685,7 @@ int panopt_cmd( int argc, char* argv[], char* cmdline)
 
     sysblk.panrate     = panrate;
     sysblk.pan_colors  = pan_colors;
+    sysblk.pan_scrbg   = pan_scrbg;
     sysblk.devnameonly = devnameonly;
 
     if (pantitle)
@@ -4696,12 +4701,13 @@ int panopt_cmd( int argc, char* argv[], char* cmdline)
         char* quote = sysblk.pantitle ?
             strpbrk( sysblk.pantitle, WHITESPACE ) ? "\"" : "" : "";
 
-        MSGBUF( buf, "%s RATE=%d MSGCOLOR=%s %sTITLE=%s%s"
+        MSGBUF( buf, "%s RATE=%d MSGCOLOR=%s BG=%s %sTITLE=%s%s"
             , sysblk.devnameonly ? "NAMEONLY" : "FULLPATH"
             , sysblk.panrate
             , sysblk.pan_colors == PANC_NONE  ? "NO"    :
               sysblk.pan_colors == PANC_DARK  ? "DARK"  :
               sysblk.pan_colors == PANC_LIGHT ? "LIGHT" : "(err!)"
+            , sysblk.pan_scrbg ? "YES" : "NO"
             , quote , sysblk.pantitle ? sysblk.pantitle : "(default)" , quote
         );
 

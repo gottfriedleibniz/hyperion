@@ -1165,6 +1165,7 @@ int     rc;
                                 sysblk.cpuserial, 0 );
 
     sysblk.panrate = PANEL_REFRESH_RATE_SLOW;
+    sysblk.pan_scrbg = 1;
 
     /* set default Program Interrupt Trace */
     sysblk.pgminttr = OS_DEFAULT;
