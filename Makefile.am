@@ -906,6 +906,7 @@ EXTRA_DIST =                  \
   readme/README.TCPNJE.md         \
   readme/README.TRACEFILE.md      \
   readme/README.VMFPLC2.md        \
+  readme/README.WebSocket.md      \
   readme/README.WIN64.md          \
   RELEASE.NOTES               \
   retail-all.jobs             \
