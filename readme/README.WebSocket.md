@@ -3,14 +3,16 @@
 
 # WebSocket Console Transport (`WSCNSLPORT`)
 
-1. [Introduction](#Introduction)
-2. [How it works](#How-it-works)
-3. [Configuration](#Configuration)
-4. [Runtime command](#Runtime-command)
-5. [Connecting a client](#Connecting-a-client)
-6. [Quick test with `websocat`](#Quick-test-with-websocat)
-7. [Constraints and caveats](#Constraints-and-caveats)
-8. [Bug reports](#Bug-reports)
+## Contents
+
+1. [Introduction](#introduction)
+2. [How it works](#how-it-works)
+3. [Configuration](#configuration)
+4. [Runtime command](#runtime-command)
+5. [Connecting a client](#connecting-a-client)
+6. [Quick test with `websocat`](#quick-test-with-websocat)
+7. [Constraints and caveats](#constraints-and-caveats)
+8. [Bug reports](#bug-reports)
 
 ## Introduction
 
