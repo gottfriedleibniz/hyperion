@@ -897,7 +897,8 @@ static int qeth_read_pipe (int fd, OSA_PIME* pime)
     char* msg = (char*)pime;
     int len = 0;
     int rem = 0;
-    int rc, errnum;
+    int errnum = 0;
+    int rc;
     PTT_QETH_TRACE( "b4 rdpipe", 0,0,pime->signal );
     for (;;)
     {   /* Start of for(;;) to read first byte */
@@ -943,7 +944,8 @@ static int qeth_write_pipe (int fd, OSA_PIME* pime)
     char* msg = (char*)pime;
     int len = pime->length;
     int wrt = 0;
-    int rc, errnum;
+    int errnum = 0;
+    int rc;
 
     PTT_QETH_TRACE( "b4 wrpipe", 0,len,pime->signal );
     for (;;)
