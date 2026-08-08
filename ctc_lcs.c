@@ -3264,8 +3264,6 @@ int  ParseArgs( DEVBLK* pDEVBLK, PLCSBLK pLCSBLK,
     struct in_addr  addr;               // Work area for addresses
     MAC             mac;
     int             i;
-    int             iDiscTrace;
-    int             iTraceLen;
 #if defined(OPTION_W32_CTCI)
     int             iKernBuff;
     int             iIOBuff;
@@ -3426,34 +3424,16 @@ int  ParseArgs( DEVBLK* pDEVBLK, PLCSBLK pLCSBLK,
             saw_conf = 1;
             break;
 
-        case 's':     // Size to be traced when discarding a frame. Default is 0.
+        case 's':     // (DEPRECATED!)
 
-            iDiscTrace = atoi( optarg );
-
-            if ((iDiscTrace < LCS_DISC_TRACE_MINIMUM || iDiscTrace > LCS_DISC_TRACE_MAXIMUM) && iDiscTrace != LCS_DISC_TRACE_ZERO)
-            {
-                // "%1d:%04X CTC: option %s value %s invalid"
-                WRMSG( HHC00916, "E", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname,
-                       "discard trace size", optarg );
-                return -1;
-            }
-
-            pLCSBLK->iDiscTrace = iDiscTrace;
+            // "%1d:%04X %s: option '%s' has been deprecated"
+            WRMSG( HHC01251, "W", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, "s" );
             break;
 
-        case 't':     // Size to be traced of structures or frames. Default is LCS_TRACE_LEN_DEFAULT, i.e. 128.
+        case 't':     // (DEPRECATED!)
 
-            iTraceLen = atoi( optarg );
-
-            if ((iTraceLen < LCS_TRACE_LEN_MINIMUM || iTraceLen > LCS_TRACE_LEN_MAXIMUM) && iTraceLen != LCS_TRACE_LEN_ZERO)
-            {
-                // "%1d:%04X CTC: option %s value %s invalid"
-                WRMSG( HHC00916, "E", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname,
-                       "maximum trace size", optarg );
-                return -1;
-            }
-
-            pLCSBLK->iTraceLen = iTraceLen;
+            // "%1d:%04X %s: option '%s' has been deprecated"
+            WRMSG( HHC01251, "W", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, "t" );
             break;
 
         case 'd':
