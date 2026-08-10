@@ -5012,7 +5012,7 @@ static const BYTE Inbound_CC0A[INBOUND_CC0A_SIZE] =
 
         if (pLCSDEV->pLCSBLK->fDebug)
         {
-            WRMSG( HHC03983, "I", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, "Created LCSCONN Outbound (Process_0C0A)");
+            WRMSG( HHC03983, "D", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, "Created LCSCONN Outbound (Process_0C0A)");
             net_data_trace( pDEVBLK, (BYTE*)pLCSCONN, sizeof(LCSCONN), NO_DIRECTION, 'D', "LCSCONN", 0 );
         }
 
@@ -5024,7 +5024,7 @@ static const BYTE Inbound_CC0A[INBOUND_CC0A_SIZE] =
         {
             if (pLCSDEV->pLCSBLK->fDebug)
             {
-                WRMSG( HHC03983, "I", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, "Found LCSCONN Inbound (Process_0C0A)");
+                WRMSG( HHC03983, "D", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, "Found LCSCONN Inbound (Process_0C0A)");
                 net_data_trace( pDEVBLK, (BYTE*)pLCSCONN, sizeof(LCSCONN), NO_DIRECTION, 'D', "LCSCONN", 0 );
             }
 
@@ -5036,7 +5036,7 @@ static const BYTE Inbound_CC0A[INBOUND_CC0A_SIZE] =
 
             if (pLCSDEV->pLCSBLK->fDebug)
             {
-                WRMSG( HHC03983, "I", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, "Updated LCSCONN Inbound (Process_0C0A)");
+                WRMSG( HHC03983, "D", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, "Updated LCSCONN Inbound (Process_0C0A)");
                 net_data_trace( pDEVBLK, (BYTE*)pLCSCONN, sizeof(LCSCONN), NO_DIRECTION, 'D', "LCSCONN", 0 );
             }
         }
@@ -5044,7 +5044,7 @@ static const BYTE Inbound_CC0A[INBOUND_CC0A_SIZE] =
         {
             if (pLCSDEV->pLCSBLK->fDebug)
             {
-                WRMSG( HHC03983, "E", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, "Found and released existing LCSCONN Outbound (Process_0C0A)");
+                WRMSG( HHC03983, "D", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, "Found and released existing LCSCONN Outbound (Process_0C0A)");
                 net_data_trace( pDEVBLK, (BYTE*)pLCSCONN, sizeof(LCSCONN), NO_DIRECTION, 'D', "LCSCONN", 0 );
             }
 
@@ -5070,7 +5070,7 @@ static const BYTE Inbound_CC0A[INBOUND_CC0A_SIZE] =
 
             if (pLCSDEV->pLCSBLK->fDebug)
             {
-                WRMSG( HHC03983, "I", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, "Created LCSCONN Outbound (Process_0C0A)");
+                WRMSG( HHC03983, "D", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, "Created LCSCONN Outbound (Process_0C0A)");
                 net_data_trace( pDEVBLK, (BYTE*)pLCSCONN, sizeof(LCSCONN), NO_DIRECTION, 'D', "LCSCONN", 0 );
             }
 
@@ -6080,7 +6080,6 @@ static const BYTE Inbound_CD00[INBOUND_CD00_SIZE] =
     LLC         llcout;
     BYTE        frameout[64];
     char        llcmsg[256];
-    char        llcms2[256];
 
     pDEVBLK = pLCSDEV->pDEVBLK[ LCS_READ_SUBCHANN ];  /* SNA has only one device */
     pLCSBLK = pLCSDEV->pLCSBLK;
@@ -6119,9 +6118,7 @@ static const BYTE Inbound_CD00[INBOUND_CD00_SIZE] =
         pLCSCONN = find_connection_by_remote_mac( pLCSDEV, &pEthFrame->bSrcMAC );
         if (!pLCSCONN)
         {
-            snprintf( llcmsg, sizeof(llcmsg), "LLC information frame received: CR=%u, NR=%u, NS=%u", llc.hwCR, llc.hwNR, llc.hwNS );
-            snprintf( llcms2, sizeof(llcms2), "LCSCONN not found (%s)", llcmsg );
-            WRMSG( HHC03983, "W", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, llcms2 );  /* FixMe! Proper error msg here! */
+            WRMSG( HHC03983, "W", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, "LCSCONN not found (information)");  /* FixMe! Proper error msg here! */
             break;
         }
 
@@ -6227,8 +6224,8 @@ static const BYTE Inbound_CD00[INBOUND_CD00_SIZE] =
         {
             if (pLCSPORT->pLCSBLK->fDebug)
             {
-                snprintf( llcms2, sizeof(llcms2), "LLC supervisory frame sent: CR=%u, SS=%s, PF=%u, NR=%u", llcout.hwCR, "Receiver Ready", llcout.hwPF, llcout.hwNR );
-                WRMSG( HHC03983, "D", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, llcms2 );  /* FixMe! Proper msg number! */
+                snprintf( llcmsg, sizeof(llcmsg), "LLC supervisory frame sent: CR=%u, SS=%s, PF=%u, NR=%u", llcout.hwCR, "Receiver Ready", llcout.hwPF, llcout.hwNR );
+                WRMSG( HHC03983, "D", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, llcmsg );  /* FixMe! Proper msg number! */
             }
         }
         else
@@ -6263,9 +6260,7 @@ static const BYTE Inbound_CD00[INBOUND_CD00_SIZE] =
             pLCSCONN = find_connection_by_remote_mac( pLCSDEV, &pEthFrame->bSrcMAC );
             if (!pLCSCONN)
             {
-                snprintf( llcmsg, sizeof(llcmsg), "LLC supervisory frame received: CR=%u, SS=%s, PF=%u, NR=%u", llc.hwCR, "Receiver Ready", llc.hwPF, llc.hwNR );
-                snprintf( llcms2, sizeof(llcms2), "LCSCONN not found (%s)", llcmsg );
-                WRMSG( HHC03983, "W", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, llcms2 );  /* FixMe! Proper error msg here! */
+                WRMSG( HHC03983, "W", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, "LCSCONN not found (RR)");  /* FixMe! Proper error msg here! */
                 break;
             }
 
@@ -6312,8 +6307,8 @@ static const BYTE Inbound_CD00[INBOUND_CD00_SIZE] =
             {
                 if (pLCSPORT->pLCSBLK->fDebug)
                 {
-                    snprintf( llcms2, sizeof(llcms2), "LCS: LLC supervisory frame sent: CR=%u, SS=%s, PF=%u, NR=%u", llcout.hwCR, "Receiver Ready", llcout.hwPF, llcout.hwNR );
-                    WRMSG( HHC03983, "D", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, llcms2 );  /* FixMe! Proper msg number! */
+                    snprintf( llcmsg, sizeof(llcmsg), "LCS: LLC supervisory frame sent: CR=%u, SS=%s, PF=%u, NR=%u", llcout.hwCR, "Receiver Ready", llcout.hwPF, llcout.hwNR );
+                    WRMSG( HHC03983, "D", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, llcmsg );  /* FixMe! Proper msg number! */
                 }
             }
             else
@@ -6385,9 +6380,7 @@ static const BYTE Inbound_CD00[INBOUND_CD00_SIZE] =
             pLCSCONN = find_connection_by_remote_mac( pLCSDEV, &pEthFrame->bSrcMAC );
             if (!pLCSCONN)
             {
-                snprintf( llcmsg, sizeof(llcmsg), "LLC unnumbered frame received: CR=%u, M=%s", llc.hwCR, "DISC" );
-                snprintf( llcms2, sizeof(llcms2), "LCSCONN not found (%s)", llcmsg );
-                WRMSG( HHC03983, "W", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, llcms2 );  /* FixMe! Proper error msg here! */
+                WRMSG( HHC03983, "W", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, "LCSCONN not found (DISC cmd)");  /* FixMe! Proper error msg here! */
                 break;
             }
 
@@ -6426,9 +6419,7 @@ static const BYTE Inbound_CD00[INBOUND_CD00_SIZE] =
             pLCSCONN = find_connection_by_remote_mac( pLCSDEV, &pEthFrame->bSrcMAC );
             if (!pLCSCONN)
             {
-                snprintf( llcmsg, sizeof(llcmsg), "LLC unnumbered frame received: CR=%u, M=%s", llc.hwCR, "UA" );
-                snprintf( llcms2, sizeof(llcms2), "LCSCONN not found (%s)", llcmsg );
-                WRMSG( HHC03983, "W", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, llcms2 );  /* FixMe! Proper error msg here! */
+                WRMSG( HHC03983, "W", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, "LCSCONN not found (UA rsp)");  /* FixMe! Proper error msg here! */
                 break;
             }
 
@@ -6472,9 +6463,7 @@ static const BYTE Inbound_CD00[INBOUND_CD00_SIZE] =
             pLCSCONN = find_connection_by_remote_mac( pLCSDEV, &pEthFrame->bSrcMAC );
             if (!pLCSCONN)
             {
-                snprintf( llcmsg, sizeof(llcmsg), "LLC unnumbered frame received: CR=%u, M=%s", llc.hwCR, "SABME" );
-                snprintf( llcms2, sizeof(llcms2), "LCSCONN not found (%s)", llcmsg );
-                WRMSG( HHC03983, "W", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, llcms2 );  /* FixMe! Proper error msg here! */
+                WRMSG( HHC03983, "W", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, "LCSCONN not found (SABME cmd)");  /* FixMe! Proper error msg here! */
                 break;
             }
 
@@ -6551,10 +6540,10 @@ static const BYTE Inbound_CD00[INBOUND_CD00_SIZE] =
             if (pLCSBLK->fDebug)
             {
                 snprintf( llcmsg, sizeof(llcmsg), "LLC unnumbered frame received: CR=%u, M=%s", llc.hwCR, "FRMR" );
-                snprintf( llcms2, sizeof(llcms2), "CF=%4.4X, NR=%u, NS=%u, V=%u, Z=%u, Y=%u, X=%u, W=%u",
+                WRMSG( HHC03983, "D", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, llcmsg );  /* FixMe! Proper msg number! */
+                snprintf( llcmsg, sizeof(llcmsg), "CF=%4.4X, NR=%u, NS=%u, V=%u, Z=%u, Y=%u, X=%u, W=%u",
                                             llc.hwCF, llc.hwNR, llc.hwNS, llc.hwV, llc.hwZ, llc.hwY, llc.hwX, llc.hwW );
                 WRMSG( HHC03983, "D", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, llcmsg );  /* FixMe! Proper msg number! */
-                WRMSG( HHC03983, "D", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, llcms2 );  /* FixMe! Proper msg number! */
             }
 
             break;
@@ -6585,10 +6574,7 @@ static const BYTE Inbound_CD00[INBOUND_CD00_SIZE] =
             {
                 if (!pLCSCONN)
                 {
-                    snprintf( llcmsg, sizeof(llcmsg), "LLC unnumbered frame received: CR=%u, M=%s", llc.hwCR, "XID" );
-                    snprintf( llcms2, sizeof(llcms2), "LCSCONN not found (%s)", llcmsg );
-                    WRMSG( HHC03983, "W", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, llcms2 );  /* FixMe! Proper error msg here! */
-                    /* FixMe! Need a proper error msg here! */
+                    WRMSG( HHC03983, "W", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, "LCSCONN not found (XID rsp)");  /* FixMe! Proper error msg here! */
                     break;
                 }
             }
@@ -6598,9 +6584,7 @@ static const BYTE Inbound_CD00[INBOUND_CD00_SIZE] =
                 {
                     if ( iDatasize > 0 )  // Is there an XID0 or an XID3 and CV's?
                     {
-                        snprintf( llcmsg, sizeof(llcmsg), "LLC unnumbered frame received: CR=%u, M=%s", llc.hwCR, "XID" );
-                        snprintf( llcms2, sizeof(llcms2), "LCSCONN not found (%s)", llcmsg );
-                        WRMSG( HHC03983, "W", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, llcms2 );  /* FixMe! Proper error msg here! */
+                        WRMSG( HHC03983, "W", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, "LCSCONN not found (XID cmd)");  /* FixMe! Proper error msg here! */
                         break;
                     }
 
@@ -6616,9 +6600,7 @@ static const BYTE Inbound_CD00[INBOUND_CD00_SIZE] =
 
                     if (pLCSDEV->pLCSBLK->fDebug)
                     {
-                        snprintf( llcmsg, sizeof(llcmsg), "LLC unnumbered frame received: CR=%u, M=%s", llc.hwCR, "XID" );
-                        snprintf( llcms2, sizeof(llcms2), "Created LCSCONN Inbound (%s)", llcmsg );
-                        WRMSG( HHC03983, "W", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, llcms2 );  /* FixMe! Proper error msg here! */
+                        WRMSG( HHC03983, "D", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, "Created LCSCONN Inbound (XID cmd)");  /* FixMe! Proper error msg here! */
                         net_data_trace( pDEVBLK, (BYTE*)pLCSCONN, sizeof(LCSCONN), NO_DIRECTION, 'D', "LCSCONN", 0 );
                     }
 
@@ -6630,9 +6612,7 @@ static const BYTE Inbound_CD00[INBOUND_CD00_SIZE] =
                     {
                         if (pLCSDEV->pLCSBLK->fDebug)
                         {
-                            snprintf( llcmsg, sizeof(llcmsg), "LLC unnumbered frame received: CR=%u, M=%s", llc.hwCR, "XID" );
-                            snprintf( llcms2, sizeof(llcms2), "Found LCSCONN Inbound (%s)", llcmsg );
-                            WRMSG( HHC03983, "W", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, llcms2 );  /* FixMe! Proper error msg here! */
+                            WRMSG( HHC03983, "D", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, "Found LCSCONN Inbound (XID cmd)");  /* FixMe! Proper error msg here! */
                             net_data_trace( pDEVBLK, (BYTE*)pLCSCONN, sizeof(LCSCONN), NO_DIRECTION, 'D', "LCSCONN", 0 );
                         }
                     }
@@ -6640,9 +6620,7 @@ static const BYTE Inbound_CD00[INBOUND_CD00_SIZE] =
                     {
                         if (pLCSDEV->pLCSBLK->fDebug)
                         {
-                            snprintf( llcmsg, sizeof(llcmsg), "LLC unnumbered frame received: CR=%u, M=%s", llc.hwCR, "XID" );
-                            snprintf( llcms2, sizeof(llcms2), "Found existing LCSCONN Outbound, changed to LCSCONN Inbound (%s)", llcmsg );
-                            WRMSG( HHC03983, "W", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, llcms2 );  /* FixMe! Proper error msg here! */
+                            WRMSG( HHC03983, "D", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, "Found existing LCSCONN Outbound, changed to LCSCON Inbound (XID cmd)");  /* FixMe! Proper error msg here! */
                             net_data_trace( pDEVBLK, (BYTE*)pLCSCONN, sizeof(LCSCONN), NO_DIRECTION, 'D', "LCSCONN", 0 );
                         }
 
@@ -6738,13 +6716,11 @@ static const BYTE Inbound_CD00[INBOUND_CD00_SIZE] =
             if (llc.hwCR)  // Response. Tell VTAM the remote system has responded to VTAM's TEST.
             {
 
-                // XID response, find the connection block.
+                // TEST response, find the connection block.
                 pLCSCONN = find_connection_by_remote_mac( pLCSDEV, &pEthFrame->bSrcMAC );
                 if (!pLCSCONN)
                 {
-                    snprintf( llcmsg, sizeof(llcmsg), "LLC unnumbered frame received: CR=%u, M=%s", llc.hwCR, "TEST" );
-                    snprintf( llcms2, sizeof(llcms2), "LCSCONN not found (%s)", llcmsg );
-                    WRMSG( HHC03983, "W", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, llcms2 );  /* FixMe! Proper error msg here! */
+                    WRMSG( HHC03983, "W", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, "LCSCONN not found (TEST rsp)");  /* FixMe! Proper error msg here! */
                     break;
                 }
 
@@ -6793,10 +6769,10 @@ static const BYTE Inbound_CD00[INBOUND_CD00_SIZE] =
                 if (!pEthFrameOut)                 // if the allocate failed...
                 {
                     // Report the bad news.
-                    MSGBUF( llcms2, "malloc(%d)", (int)iSize );
+                    MSGBUF( llcmsg, "malloc(%d)", (int)iSize );
                     // HHC00900 "%1d:%04X %s: error in function %s: %s"
                     WRMSG(HHC00900, "E", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname,
-                                         llcms2, strerror(errno) );
+                                         llcmsg, strerror(errno) );
                     break;
                 }
                 memcpy( pEthFrameOut, pEthFrame, iSize );
@@ -6830,8 +6806,8 @@ static const BYTE Inbound_CD00[INBOUND_CD00_SIZE] =
                 {
                     if (pLCSPORT->pLCSBLK->fDebug)
                     {
-                        snprintf( llcms2, sizeof(llcms2), "LCS: LLC unnumbered frame sent: CR=%u, M=%s", llcout.hwCR, "TEST" );
-                        WRMSG( HHC03983, "D", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, llcms2 );  /* FixMe! Proper msg number! */
+                        snprintf( llcmsg, sizeof(llcmsg), "LLC unnumbered frame sent: CR=%u, M=%s", llcout.hwCR, "TEST" );
+                        WRMSG( HHC03983, "D", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname, llcmsg );  /* FixMe! Proper msg number! */
                     }
                 }
                 else
