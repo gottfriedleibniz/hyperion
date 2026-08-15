@@ -10073,7 +10073,10 @@ int qproc_cmd( int argc, char* argv[], char* cmdline )
             struct rusage  rusage;
             char*          pmsg     = "";
 
-            if (getrusage( (int) sysblk.cputid[i], &rusage ) == 0)
+            // The code below can never work as a "man getrusage" will show.
+            // On Windows "getrusage" does not even exist.  
+            // This needs reworking if these statistics are desired.
+            if ( /* getrusage( (int) sysblk.cputid[i], &rusage ) == */ 0)
             {
                 char    kdays[18], udays[18];
 

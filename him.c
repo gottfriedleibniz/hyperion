@@ -2011,6 +2011,7 @@ static void debug_pf( const char* __fmt, ... )
       write( 5, write_buf, writebuf_len );
     #else
       TRACE( "%s", write_buf );
+      UNREFERENCED( writebuf_len );
     #endif
 #else
     UNREFERENCED( __fmt );
