@@ -2621,7 +2621,18 @@ LOGM_DLL_IMPORT int  panel_command_capture( char* cmd, char** resp, bool quiet )
 
 //efine HHC05087 - HHC05099 (available)
 
-// range 05100 - 05199 available
+#define HHC05100 "UTUN_CONTROL_NAME too long"
+#define HHC05101 "socket(SYSPROTO_CONTROL) error: %s"
+#define HHC05102 "ioctl(CTLIOCGINFO) error: %s"
+#define HHC05103 "connect(AF_SYS_CONTROL) error: %s"
+#define HHC05104 "malloc() failed in send_fd"
+#define HHC05105 "sendmsg() failed in send_fd: %s"
+#define HHC05106 "open_utun() failed in hercifc"
+#define HHC05107 "%s created"
+#define HHC05108 "Point-to-Point net device %s: Invalid guest IPv4 address %s"
+#define HHC05109 "Point-to-Point net device %s: Invalid destination IPv4 address %s"
+
+// range 05110 - 05199 available
 // range 05200 - 05299 available
 // range 05300 - 05399 available
 // range 05400 - 05499 available

@@ -122,6 +122,7 @@ DISABLE_GCC_UNUSED_FUNCTION_WARNING;
 #include "qeth.h"
 #include "opcode.h"
 #include "inline.h"
+#include "tuntap.h"
 
 
 /*-------------------------------------------------------------------*/
@@ -700,6 +701,11 @@ char charip4[48];
             // HHC03805 "%1d:%04X %s: %s: Registered guest IP address %s"
             WRMSG(HHC03805, "I", LCSS_DEVNUM, dev->typname, grp->ttifname,
                     charip4 );
+
+#if defined( HAVE_NET_IF_UTUN_H )
+            return TUNTAP_SetPt2PtAddr( grp->ttifname, grp->ttipaddr, charip4 );
+#endif // defined( HAVE_NET_IF_UTUN_H )                    
+
             return 0;
         }
     }
@@ -1106,6 +1112,8 @@ static int qeth_enable_interface (DEVBLK *dev, OSA_GRP *grp)
             | (grp->promisc ? IFF_PROMISC : 0)
             );
 
+#if !defined( HAVE_NET_IF_UTUN_H )
+
     rc = TUNTAP_SetFlags( grp->ttifname, flags );
     if (rc != 0)
     {
@@ -1113,6 +1121,13 @@ static int qeth_enable_interface (DEVBLK *dev, OSA_GRP *grp)
             "E", "qeth_enable_interface() failed" );
         return rc;
     }
+
+#else
+
+    UNREFERENCED( rc );
+    UNREFERENCED( flags );
+    
+#endif // !defined( HAVE_NET_IF_UTUN_H )    
 
     grp->enabled = 1;
     qeth_report_using( dev, grp );
@@ -1287,6 +1302,8 @@ static int qeth_create_interface (DEVBLK *dev, OSA_GRP *grp)
             MSGBUF( buf, "TUNTAP_SetDestAddr(\"%s\") failed", grp->ttipaddr );
             return QERRMSG( dev, grp, errno, "E", buf );
         }
+#elif defined( HAVE_NET_IF_UTUN_H )
+        
 #else /* Linux - and FreeBSD, albeit not very pretty */
         if ((rc = TUNTAP_SetIPAddr( grp->ttifname, grp->ttipaddr )) != 0)
         {
@@ -1836,7 +1853,11 @@ U16 offph;
                               if (was_enabled)
                                   VERIFY( qeth_disable_interface( dev, grp ) == 0);
 #endif
-                              rc = TUNTAP_SetDestAddr( grp->ttifname, ipaddr );
+
+#if !defined( HAVE_NET_IF_UTUN_H )
+                              rc = TUNTAP_SetDestAddr( grp->ttifname, ipaddr );                              
+#endif // defined( HAVE_NET_IF_UTUN_H )
+
 #if defined( OPTION_W32_CTCI )
                               if (was_enabled)
                                   VERIFY( qeth_enable_interface( dev, grp ) == 0);
