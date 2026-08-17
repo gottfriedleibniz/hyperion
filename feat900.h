@@ -241,7 +241,7 @@
 #define FEATURE_VM_BLOCKIO
 
 /* ARM64 processor? */
-#if defined( _M_ARM64 ) || defined( _M_ARM64EC )
+#if defined( __aarch64__ ) || defined( _M_ARM64 ) || defined( _M_ARM64EC )
   /* #WoA: Unconditionally assume NEON and CRYPTO are available when compiling
    * with MSVC and check for feature flags otherwise. */
   #if defined( _MSVC_ ) || defined( __ARM_NEON )
