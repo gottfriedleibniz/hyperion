@@ -1531,6 +1531,37 @@ DEF_INST( vector_count_leading_zeros )
 /*-------------------------------------------------------------------*/
 /* E754 VGEM   - Vector Generate Element Masks               [VRR-a] */
 /*-------------------------------------------------------------------*/
+/*
+ * MSVC 19.51.36231 for ARM64 incorrectly unrolls this function:
+ * 
+ * x64 (19.51.36231; Correct):
+ * 	.text:00000001006EEB4E 41 0F 49 C1           cmovns  eax, r9d
+ * 	.text:00000001006EEB52 88 44 D3 0F           mov     [rbx+regs*8+15], al
+ * 	.text:00000001006EEB56 8D 04 36              lea     eax, [rsi+rsi] ; rsi*2
+ * 	.text:00000001006EEB59 85 C0                 test    eax, eax
+ * 	.text:00000001006EEB5B 8D 04 B5 00 00 00 00  lea     eax, ds:0[rsi*4]
+ * 	.text:00000001006EEB62 41 0F 49 C9           cmovns  ecx, r9d        ; Set ecx to zero if rsi*2 is not signed
+ * 	.text:00000001006EEB66 85 C0                 test    eax, eax
+ * 	.text:00000001006EEB68 88 4C D3 0E           mov     [rbx+regs*8+14], cl
+ * 
+ * ARM64 (19.51.36231; Incorrect):
+ * 	.text:0000000100712810 7F 02 00 71           CMP     W19, #0
+ * 	.text:0000000100712814 EA A3 88 1A           CSEL    W10, WZR, W8, GE
+ * 	.text:0000000100712818 2A 3D 00 39           STRB    W10, [X9,#0xF]
+ * 	.text:000000010071281C EA A3 88 1A           CSEL    W10, WZR, W8, GE ; ???
+ * 	.text:0000000100712820 2A 39 00 39           STRB    W10, [X9,#0xE]
+ * 	.text:0000000100712824 6A 76 1E 53           LSL     W10, W19, #2
+ * 
+ * ARM64 (19.44.35225; Correct):
+ *  .text:00000001006E8F9C BF 01 00 71           CMP     W13, #0
+ *  .text:00000001006E8FA0 EA A3 88 1A           CSEL    W10, WZR, W8, GE
+ *  .text:00000001006E8FA4 2A 3D 00 39           STRB    W10, [X9,#0xF]
+ *  .text:00000001006E8FA8 AB 79 1F 53           LSL     W11, W13, #1
+ *  .text:00000001006E8FAC 7F 01 00 71           CMP     W11, #0
+ *  .text:00000001006E8FB0 6B 79 1F 53           LSL     W11, W11, #1
+ *  .text:00000001006E8FB4 EA A3 88 1A           CSEL    W10, WZR, W8, GE
+ *  .text:00000001006E8FB8 2A 39 00 39           STRB    W10, [X9,#0xE]
+ */
 DEF_INST( vector_generate_element_masks )
 {
     int     v1, v2, m3, m4, m5;
