@@ -972,7 +972,9 @@ inline int cmpxchg16(U64 *old1, U64 *old2, U64 new1, U64 new2, volatile void *pt
 /*                      Hardware Sync                                */
 /*-------------------------------------------------------------------*/
 #if defined( OPTION_HARDWARE_SYNC_ALL ) || defined( OPTION_HARDWARE_SYNC_BCR_ONLY )
-  #if defined( _MSVC_ )
+  #if defined( _M_ARM64 ) || defined( _M_ARM64EC )
+    #define HARDWARE_SYNC()         __dmb(_ARM64_BARRIER_ISH)
+  #elif defined( _MSVC_ )
     #pragma intrinsic              ( _mm_mfence )
     #define HARDWARE_SYNC()          _mm_mfence()
   #else // gcc presumed

@@ -106,7 +106,7 @@ facility  code  test#   Instruction                                             
 
 
 /* ("arm_neon.h" type-conflict workaround...) */
-#if defined( __aarch64__ )
+#if defined( __aarch64__ ) || defined( _M_ARM64 ) || defined( _M_ARM64EC )
 #undef  float16_t
 #undef  float32_t
 #undef  float64_t

@@ -43,7 +43,8 @@
 
 /*-------------------------------------------------------------------*/
 
-#if defined( _GCC_SSE2_ ) || defined ( _MSVC_ )
+#if defined( _GCC_SSE2_ ) || (defined ( _MSVC_ ) && \
+                             !defined( _M_ARM64 ) && !defined( _M_ARM64EC ))
 
 static inline void __clear_page( void* addr, size_t pgszmod64 )
 {

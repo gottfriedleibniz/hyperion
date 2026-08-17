@@ -301,7 +301,10 @@ inline int mult_logical_long( U64* high, U64* lo, U64 md, U64 mr )
 inline QW bswap_128( QW input )
 {
     QW swapped;
-#if defined(_M_X64) || defined( __SSE4_2__ )
+#if defined( _M_ARM64 ) || defined( _M_ARM64EC )
+    uint8x16_t rev64 = vrev64q_u8(vreinterpretq_u8_s32(input.v));
+    swapped.v = vreinterpretq_s32_u8(vextq_u8(rev64, rev64, 8));
+#elif defined(_M_X64) || defined( __SSE4_2__ )
     __m128i swapmask = _mm_set_epi8( 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 );
     __m128i work = input.v;
 
