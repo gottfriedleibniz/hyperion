@@ -938,6 +938,10 @@ EXTRA_DIST =                  \
   crypto/lib/crypto64.pdb                 \
   crypto/lib/crypto64d.lib                \
   crypto/lib/crypto64d.pdb                \
+  crypto/lib/crypto64arm64.lib            \
+  crypto/lib/crypto64arm64.pdb            \
+  crypto/lib/crypto64arm64d.lib           \
+  crypto/lib/crypto64arm64d.pdb           \
   crypto/lib/libcrypto32.a                \
   crypto/lib/libcrypto32d.a               \
   crypto/lib/libcrypto64.a                \
@@ -962,6 +966,10 @@ EXTRA_DIST =                  \
   decNumber/lib/decNumber64.pdb           \
   decNumber/lib/decNumber64d.lib          \
   decNumber/lib/decNumber64d.pdb          \
+  decNumber/lib/decNumberarm64.lib        \
+  decNumber/lib/decNumberarm64.pdb        \
+  decNumber/lib/decNumberarm64d.lib       \
+  decNumber/lib/decNumberarm64d.pdb       \
   decNumber/lib/libdecNumber32.a          \
   decNumber/lib/libdecNumber32d.a         \
   decNumber/lib/libdecNumber64.a          \
@@ -980,6 +988,10 @@ EXTRA_DIST =                  \
   SoftFloat/lib/SoftFloat64.pdb           \
   SoftFloat/lib/SoftFloat64d.lib          \
   SoftFloat/lib/SoftFloat64d.pdb          \
+  SoftFloat/lib/SoftFloatarm64.lib        \
+  SoftFloat/lib/SoftFloatarm64.pdb        \
+  SoftFloat/lib/SoftFloatarm64d.lib       \
+  SoftFloat/lib/SoftFloatarm64d.pdb       \
   SoftFloat/lib/libSoftFloat32.a          \
   SoftFloat/lib/libSoftFloat32d.a         \
   SoftFloat/lib/libSoftFloat64.a          \
@@ -1001,6 +1013,10 @@ EXTRA_DIST =                  \
   telnet/lib/telnet64.pdb                 \
   telnet/lib/telnet64d.lib                \
   telnet/lib/telnet64d.pdb                \
+  telnet/lib/telnetarm64.lib              \
+  telnet/lib/telnetarm64.pdb              \
+  telnet/lib/telnetarm64d.lib             \
+  telnet/lib/telnetarm64d.pdb             \
   telnet/telnet.LICENSE.txt               \
   telnet/telnet.README.txt                \
   $(extpkg_headers)
