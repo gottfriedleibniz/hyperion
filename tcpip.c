@@ -511,6 +511,7 @@ static void EZASOKET (u_int  func, int  aux1, int  aux2, talk_ptr t) {
 
         if (check_not_sock (aux1, t)) return;
 
+#if defined( OPTION_USE_X75_NONE_BLOCKING_SEND )
         /* X'75' runs on the emulated CPU thread, so this send() must
            never block: a client that stops reading fills the host send
            buffer, a blocking send() would then freeze the CPU, and the
@@ -547,6 +548,15 @@ static void EZASOKET (u_int  func, int  aux1, int  aux2, talk_ptr t) {
             }
             return;
         }
+#else /* !OPTION_USE_X75_NONE_BLOCKING_SEND: original blocking send() */
+        if ((l = send (Ccom_han [aux1], t->buffer_in, t->len_in, 0)) == SOCKET_ERROR) {
+
+            Cerr [aux1] = Get_errno ();
+
+            t->ret_cd = -1;
+            return;
+        }
+#endif
 
         t->ret_cd = l;
         return;
