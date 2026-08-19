@@ -511,6 +511,44 @@ static void EZASOKET (u_int  func, int  aux1, int  aux2, talk_ptr t) {
 
         if (check_not_sock (aux1, t)) return;
 
+#if defined( OPTION_USE_X75_NONE_BLOCKING_SEND )
+        /* X'75' runs on the emulated CPU thread, so this send() must
+           never block: a client that stops reading fills the host send
+           buffer, a blocking send() would then freeze the CPU, and the
+           Hercules watchdog reacts to a stalled CPU by crashing the whole
+           emulator.  Send without blocking and mirror the RECV/ACCEPT
+           contract -- a blocking guest socket is told to retry (-2), a
+           non-blocking one gets -1 with hEWOULDBLOCK. */
+#if defined( MSG_DONTWAIT )
+        l = send (Ccom_han [aux1], t->buffer_in, t->len_in, MSG_DONTWAIT);
+#else
+        timeout.tv_sec  = 0;
+        timeout.tv_usec = 0;
+        FD_ZERO (&sockets);
+        FD_SET (Ccom_han [aux1], &sockets);
+        if (select (Ccom_han [aux1] + 1, NULL, &sockets, NULL, &timeout) == 0) {
+            if (Ccom_blk [aux1]) {
+                t->ret_cd = -2;
+            } else {
+                Cerr [aux1] = hEWOULDBLOCK;
+                t->ret_cd = -1;
+            }
+            return;
+        }
+        l = send (Ccom_han [aux1], t->buffer_in, t->len_in, 0);
+#endif
+        if (l == SOCKET_ERROR) {
+
+            Cerr [aux1] = Get_errno ();
+
+            if (Cerr [aux1] == hEWOULDBLOCK && Ccom_blk [aux1]) {
+                t->ret_cd = -2;   /* blocking socket: guest retries (mirrors RECV) */
+            } else {
+                t->ret_cd = -1;
+            }
+            return;
+        }
+#else /* !OPTION_USE_X75_NONE_BLOCKING_SEND: original blocking send() */
         if ((l = send (Ccom_han [aux1], t->buffer_in, t->len_in, 0)) == SOCKET_ERROR) {
 
             Cerr [aux1] = Get_errno ();
@@ -518,6 +556,7 @@ static void EZASOKET (u_int  func, int  aux1, int  aux2, talk_ptr t) {
             t->ret_cd = -1;
             return;
         }
+#endif
 
         t->ret_cd = l;
         return;
