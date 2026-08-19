@@ -78,6 +78,8 @@ static void gh534_fix( int msglen, BYTE* /*EBCDIC*/ e_msg )
     static       int   P_status_len;
     static const char* PQ_status   = "P+q";
     static       int   PQ_status_len;
+    static const char* ignore_private  = "<";
+    static       int   ignore_private_len;
     static       bool  o3008ContNext  = false;  // OSC 3008 string continues on next message
 
     BYTE  *p, *p2;   // (work)
@@ -116,6 +118,7 @@ static void gh534_fix( int msglen, BYTE* /*EBCDIC*/ e_msg )
         OSC3008_len   = (int) strlen( OSC3008 );
         P_status_len  = (int) strlen( P_status );
         PQ_status_len = (int) strlen( PQ_status );
+        ignore_private_len = (int) strlen( ignore_private );
         o3008ContNext = false;
     }
 
@@ -273,6 +276,15 @@ static void gh534_fix( int msglen, BYTE* /*EBCDIC*/ e_msg )
             */
             ++p; --msglen;  // (skip past this non-ESC)
             continue;       // (look for the next ESC)
+        }
+
+        /* additional filter */
+        /* Is this an ignore_private parameter? */
+        if (memchr( ignore_private, *(p+1), ignore_private_len ))
+        {
+            p += 2;         //skip past the ESC and the private parameter
+            msglen -= 2;
+            continue;
         }
 
         /* Remove the ESCape right away */
