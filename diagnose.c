@@ -25,6 +25,7 @@
 #include "hercules.h"
 #include "opcode.h"
 #include "inline.h"
+#include "hmcwdt.h"
 
 #ifndef COMPILE_THIS_ONLY_ONCE
 #define COMPILE_THIS_ONLY_ONCE
@@ -354,15 +355,6 @@ U32   code;
         break;
 #endif
 
-#if 0
-    case 0x288;:
-    /*---------------------------------------------------------------*/
-    /* Diagnose 288: Control Virtual Machine Time Bomb               */
-    /*---------------------------------------------------------------*/
-        regs->psw.cc = ARCH_DEP(vm_timebomb) (r1, r3, regs);
-        break;
-#endif
-
 #ifdef FEATURE_EMULATE_VM
     case 0x000:
     /*---------------------------------------------------------------*/
@@ -548,6 +540,164 @@ U32   code;
         regs->psw.cc = 0;
         break;
 #endif /*FEATURE_EMULATE_VM*/
+
+    case 0x288:
+    /*---------------------------------------------------------------*/
+    /* Diagnose 288: Hardware Management Console Watchdog Timer      */
+    /*               (Control Virtual Machine Time Bomb)             */
+    /*---------------------------------------------------------------*/
+    /* DIAG  r1,r3,0x288                                             */
+    /*---------------------------------------------------------------*/
+    /* On entry                                                      */
+    /*    r1  (even): unsigned int: function subcode 1, 2, or 3      */
+    /*    r1+1 (odd): unsigned int: timeout in seconds               */
+    /*                (minimum: 15 seconds, maximum: 3600 seconds)   */
+    /*                                                               */
+    /*    r3 (even):  not used and should be 0.                      */
+    /*    r3+1 (odd): not used and should be 0.                      */
+    /*---------------------------------------------------------------*/
+    /* Note: Linux source (https://github.com/torvalds/linux) and    */
+    /*       experimentation with s390 Ubuntu 26.04 was used to      */
+    /*       develop this version of Diag 288.                       */
+    /*       Referenced Linux source was 7.1-rc3 and file            */
+    /*       'drivers/watchdog/diag288_wdt.c'                        */
+    /*---------------------------------------------------------------*/
+    /* For zLinux, an exception is the only method used to           */
+    /* communicate an error to the guest OS. A condition code,       */
+    /* or a return code in a register, are not used  to indicate     */
+    /* an error state.                                               */
+    /*                                                               */
+    /* An exception is raised for:                                   */
+    /* - privileged operation exception                              */
+    /*     - program check if running problem state                  */
+    /* - specification exception                                     */
+    /*     - r1 or r3 are not even registers                         */
+    /*     - watchdog timer is disabled                              */
+    /*     - function subcode is not 1, 2, or 3                      */
+    /* - operations exception                                        */
+    /*     - timeout is less than 15 seconds                         */
+    /*               (no check is made for maximum)                  */
+    /*     - already initialized (subcode 1 specified when timer     */
+    /*               is already active)                              */
+    /*     - not initialized (subcode 2 or 3 specified when timer    */
+    /*               has not been initialized)                       */
+    /*---------------------------------------------------------------*/
+    {
+        U32 subcode = regs->GR_L(r1);        /* subcode             */
+        U32 timeout = regs->GR_L(r1+1);      /* timeout in seconds  */
+
+        if ( sysblk.hmcwdt_debug )
+        {
+            logmsg(">>>> DIAG288: subcode=%d\n", subcode);
+        }
+
+        PTT_ERR("*DIAG288",regs->GR_G(r1),regs->GR_G(r3),regs->psw.IA_L);
+
+        /* some validation */
+        /* Check: Is running in problem state? */
+        PRIV_CHECK(regs);
+
+        /* Check: Is Rx an even register number? */
+        /* Check: is disabled?                   */
+        if (    0        ||
+                (r1 & 1) ||
+                (r3 & 1) ||
+                HMCWDT_IS_DISABLED
+            )
+        {
+            ARCH_DEP(program_interrupt) (regs, PGM_SPECIFICATION_EXCEPTION);
+        }
+
+        switch( subcode )
+        {
+        case HMCWDT_FUNC_OPEN:         //subcode 0
+            if ( sysblk.hmcwdt_debug )
+            {
+                logmsg(">>>> WDT_FUNC_INIT: enter subcode:%d, timeout:%d\n", subcode, timeout);
+            }
+
+            /* Check: is enabled-active? */
+            /* Check: minimum timeout */
+            if  (   0                           ||
+                    HMCWDT_IS_ENABLED_ACTIVE    ||
+                    timeout < HMCWDT_MIN_INTERVAL
+                )
+            {
+                ARCH_DEP(program_interrupt)(regs, PGM_OPERATION_EXCEPTION);
+            }
+
+            /* initialize timer */
+            if ( hmcwdt_diag288_open( timeout) != 0)
+            {
+                // "Watchdog timer thread did not start in expected time"
+                WRMSG( HHC01959, "E", "timer thread did not start in expected time" );
+
+                ARCH_DEP(program_interrupt)(regs, PGM_OPERATION_EXCEPTION);
+            }
+            break;
+
+        case HMCWDT_FUNC_RESET:       //subcode 1
+            if ( sysblk.hmcwdt_debug )
+                {
+                    logmsg(">>>> WDT_FUNC_RESET: enter subcode:%d, timeout:%d\n", subcode, timeout);
+                }
+
+            /* Check: is enabled-inactive? */
+            /* Check: minimum timeout */
+            if (    0                           ||
+                    HMCWDT_IS_ENABLED_INACTIVE  ||
+                    timeout < HMCWDT_MIN_INTERVAL
+                )
+            {
+                ARCH_DEP(program_interrupt)(regs, PGM_OPERATION_EXCEPTION);
+            }
+
+            /* reset / change timer */
+            if ( hmcwdt_diag288_reset( timeout ) != 0)
+            {
+                ARCH_DEP(program_interrupt)(regs, PGM_OPERATION_EXCEPTION);
+            }
+            break;
+
+        case HMCWDT_FUNC_CLOSE:       //subcode 2
+            if ( sysblk.hmcwdt_debug )
+                {
+                    logmsg(">>>> WDT_FUNC_CLOSE: enter subcode:%d, timeout:%d\n", subcode, timeout);
+                }
+
+            /* Check: is enabled-inactive? */
+            if ( HMCWDT_IS_ENABLED_INACTIVE )
+            {
+                ARCH_DEP(program_interrupt)(regs, PGM_OPERATION_EXCEPTION);
+            }
+
+            /* cancel/stop timer */
+            switch ( hmcwdt_diag288_close( timeout ) )
+            {
+                case -2:
+                    // "Watchdog timer thread is not active"
+                    WRMSG( HHC01959, "E", "timer thread is not active" );
+                    ARCH_DEP(program_interrupt)(regs, PGM_OPERATION_EXCEPTION);
+                    break;
+
+                case -1:
+                    // "Watchdog timer thread did not stop in expected time"
+                    WRMSG( HHC01959, "E", "timer thread did not stop in expected time" );
+                    ARCH_DEP(program_interrupt)(regs, PGM_OPERATION_EXCEPTION);
+
+                    break;
+
+                default:
+                    break;
+            }
+            break;
+
+        default:
+            ARCH_DEP(program_interrupt)(regs, PGM_SPECIFICATION_EXCEPTION);
+        } /* end switch(subcode) */
+
+        break;
+    } /* end diag 0x288 */
 
 #define DIAG308_DEBUG false
 

@@ -1218,6 +1218,24 @@ atomic_update64( &sysblk.txf_stats[ contran ? 1 : 0 ].txf_ ## ctr, +1 )
         TFSIT*      s370_sit;           /* store_int_timer           */
         TFGCT*      gct;                /* get_cpu_timer             */
 
+        /*-----------------------------------------------------------*/
+        /* Hardware Management Console Watchdog Timer (Diagnose 288) */
+        /*-----------------------------------------------------------*/
+        LOCK    hmcwdt_lock;            /* LOCK for below fields     */
+
+        unsigned char                   /* Flags                     */
+                hmcwdt_enabled:1,       /* 1=Watchdog timer enabled  */
+                hmcwdt_active:1,        /* 1=timer is active         */
+                hmcwdt_canceled:1,      /* 1=shutdown timer          */
+                hmcwdt_doing_cmds:1,    /* 1=actioning cmds          */
+                hmcwdt_debug:1;         /* 1=debug mode              */
+
+        char    hmcwdt_cmdsep;          /* Separator char for cmds   */
+        char*   hmcwdt_cmds;            /* cmds to execute on        */
+                                        /*    watchdog timer trigger */
+        U64     hmcwdt_expire_time;     /* Watchdog timer expire usec*/
+        TID     hmcwdt_tid;             /* Thread-id: watchdog timer */
+
         /* Merged Counters for all CPUs                              */
         U64     instcount;              /* Instruction counter       */
         U32     mipsrate;               /* Instructions per second   */
@@ -1952,7 +1970,7 @@ struct DEVBLK {                         /* Device configuration block*/
         BYTE    ckdlcount;              /* Locate record count       */
         BYTE    ckdextcd;               /* extended code             */
         void   *cckd_ext;               /* -> CCKD_EXT, else NULL    */
-        /* 
+        /*
          * #TODO: MSVC handles bit-field packing by aligning members to the
          * boundary of their underlying type, inserting padding to ensure fields
          * do not split across boundaries defined by the type size. Change to

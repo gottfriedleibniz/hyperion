@@ -1234,6 +1234,7 @@ int     rc;
     initialize_lock( &sysblk.crwlock  );
     initialize_lock( &sysblk.ioqlock  );
     initialize_lock( &sysblk.dasdcache_lock );
+    initialize_lock( &sysblk.hmcwdt_lock );
 #if defined( _FEATURE_073_TRANSACT_EXEC_FACILITY )
     initialize_lock( &sysblk.rublock );
 #endif

@@ -1352,11 +1352,11 @@ LOGM_DLL_IMPORT int  panel_command_capture( char* cmd, char** resp, bool quiet )
 #define HHC01952 "%1d:%04X:Diagnose X\'0A4\':%s blk=%8.8X adr=%8.8X len=%8.8X"
 #define HHC01953 "DIAG8 access to shell disallowed by SHCMDOPT setting"
 #define HHC01954 "Hercules-specific DIAG instructions support not included in engine build"
-//efine HHC01955 (available)
-//efine HHC01956 (available)
-//efine HHC01957 (available)
-//efine HHC01958 (available)
-//efine HHC01959 (available)
+#define HHC01955 "HMC Watchdog Timer: %s: %d"
+#define HHC01956 "HMC Watchdog Timer: Error in function %s: %s"
+#define HHC01957 "HMC Watchdog Timer: Can not %s timer. Timer state is: %s"
+#define HHC01958 "HMC Watchdog Timer: %s: %s"
+#define HHC01959 "HMC Watchdog Timer: %s"
 #define HHC01960 "Diagnose 0x308 Subcode %d: Invalid IPL parameter block: version=%d, hdr.len=%u, ccw.len=%u"
 #define HHC01961 "Diagnose 0x308 Subcode %d: %s"
 //efine HHC01962 - HHC01999 (available)
