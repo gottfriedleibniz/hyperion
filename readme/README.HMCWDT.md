@@ -48,30 +48,30 @@ One additional command, 'pause xx', can be included for delay between commands. 
 'pause' is only valid when multiple commands are defined and is not the last command.
 The commands can not include the "hmcwdt" command. 
 
-Note: the command can not be null (hmcwdt cmd "") if the state is 'enabled - active'.
+Note: the command can not be null (hmcwdt cmds "") if the state is 'enabled - active'.
 
 The default is null; no commands are defined. Therefore, two hmcwdt configuration statements
 are required to enable the watchdog timer:
 
 >```plaintext
->hmcwdt cmd "..."
+>hmcwdt cmds "..."
 >hmcwdt enable
 >```
 
 For example:
 
 >```plaintext
->hmcwdt cmd "ssd"
+>hmcwdt cmds "ssd"
 >hmcwdt enable
 >
 >hmcwdt cmdsep ;
->hmcwdt cmd "ssd; pause 30; ipl 120"
+>hmcwdt cmds "ssd; pause 30; ipl 120"
 >hmcwdt enable
 >```
 
 If pause is required, a script may be a better solution.
 
-If the watchdog timer expires, the watchdog timer state becomes 'enabled - inactive' after the commands that been processed.
+If the watchdog timer expires, the watchdog timer state remains 'enabled - active' with the timeout reset to the default, 30 seconds. 
 
 **cmdsep x | cmdsep off**: specify the separator between commands defined by 'hmcwdt cmds'. Off resets the separator to none.
 
@@ -140,7 +140,7 @@ As r1 and r1+1 only require 32 bits (unsigned int), Diag 0x288 is available for 
 
 ### Subcode 1
 
-Initialize (start) the countdown timer. The timer state must be 'enabled - inactive'.
+Open (initialize) the countdown timer. The timer state must be 'enabled - inactive'.
 >
 >```plaintext
 >  r1:     1
@@ -151,7 +151,7 @@ Watchdogs timer state becomes 'enabled - active' with the activation of the hmcw
 
 ### Subcode 2
 
-Change (reset) the countdown timer to specified timeout. The timer state must be 'enabled - active'.
+Reset (change ) the countdown timer to specified timeout. The timer state must be 'enabled - active'.
 
 >```plaintext
 >  r1:     2
@@ -191,7 +191,7 @@ The watchdog timer transitions between three states from hmcwdt commands and the
 >        +--- 'timer expires' ---> { execute cmds } ---+
 >```
 
-If the 'timer expires', { execute cmds } is a temporary execution state where Hercules commands from 'hmcwdt cmds="..."' are parsed and executed in an separate async thread. The timer expiry is reset to the default timeout (30 seconds).
+If the 'timer expires', { execute cmds } is a temporary execution state where Hercules commands from 'hmcwdt cmds "..."' are parsed and executed in an separate async thread. The timer expiry is reset to the default timeout (30 seconds).
 
 ## z/Linux Watchdog Timer Setup
 
