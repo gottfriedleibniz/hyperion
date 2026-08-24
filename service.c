@@ -224,8 +224,12 @@ static void gh534_fix( int msglen, BYTE* /*EBCDIC*/ e_msg )
         // end additional filters
 
         /* Find the start of the next control sequence */
-        if (!(p = memchr( p, ESC, msglen )))
+        if (!(p2 = memchr( p, ESC, msglen )))
             break; // (No control sequences remain! We're done!)
+
+        /* Adjust msglen for skipped bytes */
+        msglen -= (int)(p2 - p);
+        p = p2;
 
         /* If the next character is NOT a "parameter byte", then it's
            obviously not a CSI. It might be some other Linux escape
