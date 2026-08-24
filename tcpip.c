@@ -348,6 +348,31 @@ static void EZASOKET (u_int  func, int  aux1, int  aux2, talk_ptr t) {
 
         if (check_not_sock (m, t)) return;
 
+        /* A guest server that restarts cannot ask for its listening address
+           to be re-usable itself: this interface has no SETSOCKOPT function
+           code, and adding one would only help guests built against it.
+           Without SO_REUSEADDR the host refuses the bind for as long as any
+           connection that was accepted on that port is still in TIME_WAIT,
+           which is what leaves a listening port unusable for a minute or
+           two after the guest program that owned it ended -- even after an
+           orderly shutdown that closed every socket.  So set it here, at
+           the one point every guest bind() passes through.
+
+           This does not let a guest bind over a port another socket is
+           actively LISTENing on, so a server can still tell that a previous
+           instance of itself is up and running.
+
+           Stream sockets only: on a datagram socket SO_REUSEADDR means
+           "share this port", which is not what anything here wants.  A
+           failure of either call is not fatal -- the bind below is what the
+           guest actually asked for. */
+        isock = sizeof (l);
+        if (getsockopt (Ccom_han [m], SOL_SOCKET, SO_TYPE, (char *)&l, &isock) == 0
+            && l == SOCK_STREAM) {
+            k = 1;
+            setsockopt (Ccom_han [m], SOL_SOCKET, SO_REUSEADDR, (const char *)&k, sizeof (k));
+        }
+
 #if defined(__APPLE__)
         bzero ((LPSOCKADDR)&Clocal_adx, sizeof (Clocal_adx)); /* cleanup address */
 #endif
