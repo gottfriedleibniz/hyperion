@@ -177,7 +177,7 @@ inline void concpy( REGS* regs, void* d, void* s, int n )
     ptrdiff_t d1;
 
     /* Copy until ready or 8 byte integral boundary */
-    while (n && ((uintptr_t) u8d & 7))
+    while (n && NOT_ALIGNED_POW2( u8d, U64 ))
     {
         *u8d++ = *u8s++;
         n--;
@@ -248,7 +248,7 @@ inline void concpy_rl( REGS* regs, void* d, void* s, int n )
     ptrdiff_t d1;
 
     /* Copy until ready or 8 byte integral boundary */
-    while (n && ((uintptr_t) u8d & 7))
+    while (n && NOT_ALIGNED_POW2( u8d, U64 ))
     {
         *--u8d = *--u8s;
         n--;
@@ -617,8 +617,8 @@ BYTE   *main1;                          /* Mainstor address          */
 inline void ARCH_DEP( vstore2 )( U16 value, VADR addr, int arn, REGS* regs )
 {
     /* Most common case : Aligned & not crossing page boundary */
-    if (likely(!((VADR_L)addr & 1)
-        || ((VADR_L)addr & PAGEFRAME_BYTEMASK) != PAGEFRAME_BYTEMASK))
+    if (likely(IS_ALIGNED_POW2(addr, U16))
+        || ((VADR_L)addr & PAGEFRAME_BYTEMASK) != PAGEFRAME_BYTEMASK)
     {
         BYTE* mn;
         mn = MADDRL( addr, 2, arn, regs, ACCTYPE_WRITE, regs->psw.pkey );
@@ -635,7 +635,7 @@ inline void ARCH_DEP( vstore2 )( U16 value, VADR addr, int arn, REGS* regs )
 inline void ARCH_DEP( vstore4 )( U32 value, VADR addr, int arn, REGS* regs )
 {
     /* Most common case : Aligned & not crossing page boundary */
-    if (likely(!((VADR_L)addr & 0x03))
+    if (likely(IS_ALIGNED_POW2(addr, U32))
         || (((VADR_L)addr & PAGEFRAME_BYTEMASK) <= (PAGEFRAME_BYTEMASK-3)))
     {
         BYTE *mn;
@@ -655,7 +655,7 @@ inline void ARCH_DEP( vstore8 )( U64 value, VADR addr, int arn, REGS* regs )
 #if defined( OPTION_SINGLE_CPU_DW ) && defined( ASSIST_STORE_DW )
     /* Check alignment. If aligned then we are guaranteed
        not to cross a page boundary */
-    if (likely(!((VADR_L)addr & 0x07)))
+    if (likely(IS_ALIGNED_POW2(addr, U64)))
     {
         /* Most common case : Aligned */
         U64 *mn;
@@ -696,7 +696,7 @@ inline void ARCH_DEP( vstore16 )( QW value, VADR addr, int arn, REGS* regs )
 #if defined( OPTION_SINGLE_CPU_DW ) && defined( ASSIST_STORE_DW )
     /* Check alignment. If aligned then we are guaranteed
        not to cross a page boundary */
-    if (likely(!((VADR_L)addr & 0x0F)))
+    if (likely(IS_ALIGNED_POW2(addr, QW)))
     {
         /* Most common case : Aligned */
         QW *mn;
@@ -794,7 +794,7 @@ BYTE   *mn;                             /* Main storage address      */
 /*-------------------------------------------------------------------*/
 inline U16 ARCH_DEP( vfetch2 )( VADR addr, int arn, REGS* regs )
 {
-    if (likely(!((VADR_L)addr & 0x01))
+    if (likely(IS_ALIGNED_POW2(addr, U16))
         || (((VADR_L)addr & PAGEFRAME_BYTEMASK) != PAGEFRAME_BYTEMASK ))
     {
         BYTE *mn;
@@ -810,7 +810,7 @@ inline U16 ARCH_DEP( vfetch2 )( VADR addr, int arn, REGS* regs )
 /*-------------------------------------------------------------------*/
 inline U32 ARCH_DEP( vfetch4 )( VADR addr, int arn, REGS* regs )
 {
-    if ((likely(!((VADR_L)addr & 0x03))
+    if ((likely(IS_ALIGNED_POW2(addr, U32))
         || (((VADR_L)addr & PAGEFRAME_BYTEMASK) <= (PAGEFRAME_BYTEMASK-3) )))
     {
         BYTE *mn;
@@ -827,7 +827,7 @@ inline U32 ARCH_DEP( vfetch4 )( VADR addr, int arn, REGS* regs )
 inline U64 ARCH_DEP( vfetch8 )( VADR addr, int arn, REGS* regs )
 {
 #if defined( OPTION_SINGLE_CPU_DW ) && defined( ASSIST_STORE_DW )
-    if(likely(!((VADR_L)addr & 0x07)))
+    if (likely(IS_ALIGNED_POW2(addr, U64)))
     {
         /* doubleword aligned fetch */
         U64 *mn;
@@ -858,7 +858,7 @@ inline U64 ARCH_DEP( vfetch8 )( VADR addr, int arn, REGS* regs )
 inline QW ARCH_DEP( vfetch16 )( VADR addr, int arn, REGS* regs )
 {
 #if defined( OPTION_SINGLE_CPU_DW ) && defined( ASSIST_STORE_DW )
-    if(likely(!((VADR_L)addr & 0x0F)))
+    if (likely(IS_ALIGNED_POW2(addr, QW)))
     {
         /* quadword aligned fetch */
         QW *mn;
