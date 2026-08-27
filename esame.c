@@ -4471,7 +4471,7 @@ U32    *p1, *p2;                        /* Mainstor pointers         */
         /* Boundary not crossed */
         n >>= 2;
         for (i=0; i < n; i++, p1++)
-            regs->GR_H( (r1 + i) & 0xF ) = fetch_fw( p1 );
+            FETCH_FW( regs->GR_H( (r1 + i) & 0xF ), p1 );
     }
     else
     {
@@ -4486,12 +4486,12 @@ U32    *p1, *p2;                        /* Mainstor pointers         */
             m >>= 2;
 
             for (i=0; i < m; i++, p1++)
-                regs->GR_H( (r1 + i) & 0xF ) = fetch_fw( p1 );
+                FETCH_FW( regs->GR_H( (r1 + i) & 0xF ), p1 );
 
             n >>= 2;
 
             for (; i < n; i++, p2++)
-                regs->GR_H( (r1 + i) & 0xF ) = fetch_fw( p2 );
+                FETCH_FW( regs->GR_H( (r1 + i) & 0xF ), p2 );
         }
         else
         {
@@ -4560,12 +4560,12 @@ BYTE   *bp1;                            /* Unaligned Mainstor ptr    */
             else
 #endif
             for (i=0; i < n; i++, p1++)
-                regs->GR_G( (r1 + i) & 0xF ) = fetch_dw( p1 );
+                FETCH_DW( regs->GR_G( (r1 + i) & 0xF ), p1 );
         }
         else
         {
             for (i=0; i < n; i++, bp1 += 8)
-                regs->GR_G( (r1 + i) & 0xF ) = fetch_dw( bp1 );
+                FETCH_DW( regs->GR_G( (r1 + i) & 0xF ), bp1 );
         }
     }
     else
@@ -4589,12 +4589,12 @@ BYTE   *bp1;                            /* Unaligned Mainstor ptr    */
             m >>= 3;
 
             for (i=0; i < m; i++, p1++)
-                regs->GR_G( (r1 + i) & 0xF ) = fetch_dw( p1 );
+                FETCH_DW( regs->GR_G( (r1 + i) & 0xF ), p1 );
 
             n >>= 3;
 
             for (; i < n; i++, p2++)
-                regs->GR_G( (r1 + i) & 0xF ) = fetch_dw( p2 );
+                FETCH_DW( regs->GR_G( (r1 + i) & 0xF ), p2 );
         }
         else
         {
@@ -4666,11 +4666,11 @@ U64    *p1, *p2 = NULL;                 /* Mainstor pointers         */
 
     /* Store to first page */
     for (i=0; i < m; i++)
-        store_dw( p1++, regs->CR_G( (r1 + i) & 0xF ));
+        STORE_DW( p1++, regs->CR_G( (r1 + i) & 0xF ));
 
     /* Store to next page */
     for (; i < n; i++)
-        store_dw( p2++, regs->CR_G( (r1 + i) & 0xF ));
+        STORE_DW( p2++, regs->CR_G( (r1 + i) & 0xF ));
 
 } /* end DEF_INST( store_control_long ) */
 #endif /* defined( FEATURE_NEW_ZARCH_ONLY_INSTRUCTIONS ) */
@@ -4725,14 +4725,14 @@ U16     updated = 0;                    /* Updated control regs      */
     /* Load from first page */
     for (i=0; i < m; i++, p1++)
     {
-        regs->CR_G( (r1 + i) & 0xF ) = fetch_dw( p1 );
+        FETCH_DW( regs->CR_G( (r1 + i) & 0xF ), p1 );
         updated |= BIT( (r1 + i) & 0xF );
     }
 
     /* Load from next page */
     for (; i < n; i++, p2++)
     {
-        regs->CR_G( (r1 + i) & 0xF ) = fetch_dw( p2 );
+        FETCH_DW( regs->CR_G( (r1 + i) & 0xF ), p2 );
         updated |= BIT( (r1 + i) & 0xF );
     }
 
@@ -4802,12 +4802,12 @@ BYTE   *bp1;                            /* Unaligned Mainstor ptr    */
         else
 #endif
             for (i=0; i < n; i++)
-                store_dw( p1++, regs->GR_G( (r1 + i) & 0xF ));
+                STORE_DW( p1++, regs->GR_G( (r1 + i) & 0xF ));
         }
         else
         {
             for (i=0; i < n; i++, bp1 += 8)
-                store_dw( bp1, regs->GR_G( (r1 + i) & 0xF ));
+                STORE_DW( bp1, regs->GR_G( (r1 + i) & 0xF ));
         }
     }
     if (likely( n <= m ))
@@ -4828,12 +4828,12 @@ BYTE   *bp1;                            /* Unaligned Mainstor ptr    */
             m >>= 3;
 
             for (i=0; i < m; i++)
-                store_dw( p1++, regs->GR_G( (r1 + i) & 0xF ));
+                STORE_DW( p1++, regs->GR_G( (r1 + i) & 0xF ));
 
             n >>= 3;
 
             for (; i < n; i++)
-                store_dw( p2++, regs->GR_G( (r1 + i) & 0xF ));
+                STORE_DW( p2++, regs->GR_G( (r1 + i) & 0xF ));
         }
         else
         {
@@ -4890,7 +4890,7 @@ U32    *p1, *p2;                        /* Mainstor pointers         */
         /* boundary not crossed */
         n >>= 2;
         for (i=0; i < n; i++)
-            store_fw( p1++, regs->GR_H( (r1 + i) & 0xF ));
+            STORE_FW( p1++, regs->GR_H( (r1 + i) & 0xF ));
     }
     else
     {
@@ -4905,12 +4905,12 @@ U32    *p1, *p2;                        /* Mainstor pointers         */
             m >>= 2;
 
             for (i=0; i < m; i++)
-                store_fw( p1++, regs->GR_H( (r1 + i) & 0xF ));
+                STORE_FW( p1++, regs->GR_H( (r1 + i) & 0xF ));
 
             n >>= 2;
 
             for (; i < n; i++)
-                store_fw( p2++, regs->GR_H( (r1 + i) & 0xF ));
+                STORE_FW( p2++, regs->GR_H( (r1 + i) & 0xF ));
         }
         else
         {
@@ -7938,14 +7938,14 @@ U32    *p1, *p2 = NULL;                 /* Mainstor pointers         */
     /* Load from first page */
     for (i=0; i < m; i++, p1++)
     {
-        regs->AR( (r1 + i) & 0xF ) = fetch_fw( p1 );
+        FETCH_FW( regs->AR( (r1 + i) & 0xF ), p1 );
         SET_AEA_AR( regs, (r1 + i) & 0xF );
     }
 
     /* Load from next page */
     for (; i < n; i++, p2++)
     {
-        regs->AR( (r1 + i) & 0xF ) = fetch_fw( p2 );
+        FETCH_FW( regs->AR( (r1 + i) & 0xF ), p2 );
         SET_AEA_AR( regs, (r1 + i) & 0xF );
     }
 
@@ -8024,7 +8024,7 @@ U32    *p1, *p2;                        /* Mainstor pointers         */
         /* Boundary not crossed */
         n >>= 2;
         for (i=0; i < n; i++, p1++)
-            regs->GR_L( (r1 + i) & 0xF ) = fetch_fw( p1 );
+            FETCH_FW( regs->GR_L( (r1 + i) & 0xF ), p1 );
     }
     else
     {
@@ -8039,12 +8039,12 @@ U32    *p1, *p2;                        /* Mainstor pointers         */
             m >>= 2;
 
             for (i=0; i < m; i++, p1++)
-                regs->GR_L( (r1 + i) & 0xF ) = fetch_fw( p1 );
+                FETCH_FW( regs->GR_L( (r1 + i) & 0xF ), p1 );
 
             n >>= 2;
 
             for (; i < n; i++, p2++)
-                regs->GR_L( (r1 + i) & 0xF ) = fetch_fw( p2 );
+                FETCH_FW( regs->GR_L( (r1 + i) & 0xF ), p2 );
         }
         else
         {
@@ -8261,11 +8261,11 @@ U32    *p1, *p2 = NULL;                 /* Mainstor pointers         */
 
     /* Store at operand beginning */
     for (i=0; i < m; i++)
-        store_fw( p1++, regs->AR( (r1 + i) & 0xF ));
+        STORE_FW( p1++, regs->AR( (r1 + i) & 0xF ));
 
     /* Store on next page */
     for (; i < n; i++)
-        store_fw( p2++, regs->AR( (r1 + i) & 0xF ));
+        STORE_FW( p2++, regs->AR( (r1 + i) & 0xF ));
 
 
 } /* end DEF_INST( store_access_multiple_y ) */
@@ -8393,7 +8393,7 @@ U32    *p1, *p2;                        /* Mainstor pointers         */
         /* boundary not crossed */
         n >>= 2;
         for (i=0; i < n; i++)
-            store_fw( p1++, regs->GR_L( (r1 + i) & 0xF ));
+            STORE_FW( p1++, regs->GR_L( (r1 + i) & 0xF ));
     }
     else
     {
@@ -8408,12 +8408,12 @@ U32    *p1, *p2;                        /* Mainstor pointers         */
             m >>= 2;
 
             for (i=0; i < m; i++)
-                store_fw( p1++, regs->GR_L( (r1 + i) & 0xF ));
+                STORE_FW( p1++, regs->GR_L( (r1 + i) & 0xF ));
 
             n >>= 2;
 
             for (; i < n; i++)
-                store_fw( p2++, regs->GR_L( (r1 + i) & 0xF ));
+                STORE_FW( p2++, regs->GR_L( (r1 + i) & 0xF ));
         }
         else
         {
