@@ -685,7 +685,7 @@ bool    intercept;                      /* False for virtual pgmint  */
     PTT_PGM( "PGM (r)h,g,a", realregs->host, realregs->guest, realregs->sie_active );
 
     /* Prevent machine check when in (almost) interrupt loop */
-    realregs->instcount++;
+    UPDATE_REGS_INSTCOUNT( realregs, 1 );
     UPDATE_SYSBLK_INSTCOUNT( 1 );
 
     /* Release any locks */
@@ -693,7 +693,7 @@ bool    intercept;                      /* False for virtual pgmint  */
         RELEASE_INTLOCK( realregs );
 
     /* Unlock the main storage lock if held */
-    if (sysblk.mainowner == realregs->cpuad)
+    if (IS_MAINOCK_HELD( realregs ))
         RELEASE_MAINLOCK_UNCONDITIONAL( realregs );
 
     /* Ensure psw.IA is set and aia invalidated */
@@ -1946,7 +1946,7 @@ int     aswitch;
             HOSTREGS = regs;
             if (GUESTREGS)
                 HOST(GUESTREGS) = regs;
-            sysblk.regs[cpu] = regs;
+            SET_CPU_REGS(cpu, regs);
             release_lock(&sysblk.cpulock[cpu]);
             if (regs->insttrace && sysblk.traceFILE)
                 tf_0811( regs, get_arch_name( regs ));
@@ -2042,7 +2042,7 @@ int     aswitch;
            to here, thereby causing the instruction counter to not be
            properly updated. Thus, we need to update it here instead.
        */
-        regs->instcount   +=     (i * 2);
+        UPDATE_REGS_INSTCOUNT( regs, (i * 2) );
         UPDATE_SYSBLK_INSTCOUNT( (i * 2) );
 
         /* Perform automatic instruction tracing if it's enabled */
@@ -2094,7 +2094,7 @@ enter_fastest_no_txf_loop:
     ip = INSTRUCTION_FETCH( regs, 0 );
     PROCESS_TRACE( regs, ip, enter_fastest_no_txf_loop );
     EXECUTE_INSTRUCTION( current_opcode_table, ip, regs );
-    regs->instcount++;
+    UPDATE_REGS_INSTCOUNT( regs, 1 );
     UPDATE_SYSBLK_INSTCOUNT( 1 );
 
     for (i=0; i < MAX_CPU_LOOPS/2; i++)
@@ -2102,7 +2102,7 @@ enter_fastest_no_txf_loop:
         UNROLLED_EXECUTE( current_opcode_table, regs );
         UNROLLED_EXECUTE( current_opcode_table, regs );
     }
-    regs->instcount   +=     (i * 2);
+    UPDATE_REGS_INSTCOUNT( regs, (i * 2) );
     UPDATE_SYSBLK_INSTCOUNT( (i * 2) );
 
     /* Perform automatic instruction tracing if it's enabled */
@@ -2124,7 +2124,7 @@ enter_txf_faster_loop:
     ip = INSTRUCTION_FETCH( regs, 0 );
     PROCESS_TRACE( regs, ip, enter_txf_faster_loop );
     EXECUTE_INSTRUCTION( current_opcode_table, ip, regs );
-    regs->instcount++;
+    UPDATE_REGS_INSTCOUNT( regs, 1 );
     UPDATE_SYSBLK_INSTCOUNT( 1 );
 
     for (i=0; i < MAX_CPU_LOOPS/2; i++)
@@ -2139,7 +2139,7 @@ enter_txf_faster_loop:
 
         UNROLLED_EXECUTE( current_opcode_table, regs );
     }
-    regs->instcount   +=     (i * 2);
+    UPDATE_REGS_INSTCOUNT( regs, (i * 2) );
     UPDATE_SYSBLK_INSTCOUNT( (i * 2) );
 
     /* Perform automatic instruction tracing if it's enabled */
@@ -2158,7 +2158,7 @@ enter_txf_slower_loop:
     ip = INSTRUCTION_FETCH( regs, 0 );
     PROCESS_TRACE( regs, ip, enter_txf_slower_loop );
     TXF_EXECUTE_INSTRUCTION( current_opcode_table, ip, regs );
-    regs->instcount++;
+    UPDATE_REGS_INSTCOUNT( regs, 1 );
     UPDATE_SYSBLK_INSTCOUNT( 1 );
 
     for (i=0; i < MAX_CPU_LOOPS/2; i++)
@@ -2173,7 +2173,7 @@ enter_txf_slower_loop:
 
         TXF_UNROLLED_EXECUTE( current_opcode_table, regs );
     }
-    regs->instcount   +=     (i * 2);
+    UPDATE_REGS_INSTCOUNT( regs, (i * 2) );
     UPDATE_SYSBLK_INSTCOUNT( (i * 2) );
 
     /* Perform automatic instruction tracing if it's enabled */
@@ -2244,14 +2244,14 @@ void ARCH_DEP( process_trace )( REGS* regs, BYTE* dest )
             hostregs->cpustate = CPUSTATE_STOPPED;
             sysblk.started_mask &= ~hostregs->cpubit;
             hostregs->stepwait = 1;
-            sysblk.intowner = LOCK_OWNER_NONE;
+            SET_INTOWNER(LOCK_OWNER_NONE);
 
             while (hostregs->cpustate == CPUSTATE_STOPPED)
             {
                 wait_condition( &hostregs->intcond, &sysblk.intlock );
             }
 
-            sysblk.intowner = hostregs->cpuad;
+            SET_INTOWNER(hostregs->cpuad);
             hostregs->stepwait = 0;
             sysblk.started_mask |= hostregs->cpubit;
 
@@ -2498,7 +2498,7 @@ int i;
         ON_IC_INTERRUPT(regs);
         HOSTREGS = regs;
         regs->host = 1;
-        sysblk.regs[cpu] = regs;
+        SET_CPU_REGS(cpu, regs);
         sysblk.config_mask |= regs->cpubit;
         sysblk.started_mask |= regs->cpubit;
     }
@@ -2589,7 +2589,7 @@ static void *cpu_uninit (int cpu, REGS *regs)
         sysblk.config_mask &= ~CPU_BIT(cpu);
         sysblk.started_mask &= ~CPU_BIT(cpu);
         sysblk.waiting_mask &= ~CPU_BIT(cpu);
-        sysblk.regs[cpu] = NULL;
+        SET_CPU_REGS(cpu, NULL);
         sysblk.cpucreateTOD[cpu] = 0;
         release_lock (&sysblk.cpulock[cpu]);
     }
@@ -2610,7 +2610,7 @@ static void *cpu_uninit (int cpu, REGS *regs)
 static void CPU_Wait( REGS* regs )
 {
     /* Indicate we are giving up intlock */
-    sysblk.intowner = LOCK_OWNER_NONE;
+    SET_INTOWNER(LOCK_OWNER_NONE);
 
     /* Wait while SYNCHRONIZE_CPUS is in progress */
     while (sysblk.syncing)
@@ -2648,7 +2648,7 @@ static void CPU_Wait( REGS* regs )
     wait_condition (&regs->intcond, &sysblk.intlock);
 
     /* And we're the owner of intlock once again */
-    sysblk.intowner = regs->cpuad;
+    SET_INTOWNER(regs->cpuad);
 }
 
 /*-------------------------------------------------------------------*/

@@ -412,6 +412,8 @@ typedef int CMPFUNC(const void*, const void*);
 #define CPUSTATE_STOPPING       2       /* CPU is stopping           */
 #define CPUSTATE_STOPPED        3       /* CPU is stopped            */
 
+#define SET_CPU_REGS(_cpu, _regs) \
+  (sysblk.regs[(_cpu)] = (_regs))
 #define IS_CPU_ONLINE(_cpu) \
   (sysblk.regs[(_cpu)] != NULL)
 
@@ -421,9 +423,32 @@ typedef int CMPFUNC(const void*, const void*);
 #define HOSTREGS        HOST(  regs )   // 'regs' presumed
 #define GUESTREGS       GUEST( regs )   // 'regs' presumed
 
+/*-------------------------------------------------------------------*/
+/*                  Instruction Counter Updates                      */
+/*-------------------------------------------------------------------*/
+
 /* Instruction count for a CPU */
 #define INSTCOUNT(_regs) \
  (HOST(_regs)->prevcount + HOST(_regs)->instcount)
+#define UPDATE_REGS_INSTCOUNT( _regs, _count ) \
+        (_regs)->instcount += (_count)
+
+/*
+ * Originally in hinlines.h: atomically update the SYSBLK instruction counter
+ * regardless of compile-time feature flags.
+ */
+#define UPDATE_SYSBLK_INSTCOUNT( _count ) \
+        atomic_update64( &sysblk.instcount, (_count) )
+
+/*-------------------------------------------------------------------*/
+/*                  mainowner/intowner wrappers                      */
+/*-------------------------------------------------------------------*/
+
+#define SET_MAINOWNER(r, owner) ((r)->sysblk->mainowner = (owner))
+#define SET_INTOWNER(owner)     (sysblk.intowner = (owner))
+
+#define IS_MAINOCK_HELD(r)  (sysblk.mainowner == (r)->cpuad)
+#define IS_INTLOCK_HELD(r)  (sysblk.intowner == (r)->cpuad)
 
 /*-------------------------------------------------------------------*/
 /*                  Obtain/Release mainlock                          */
@@ -440,14 +465,14 @@ typedef int CMPFUNC(const void*, const void*);
  do { \
   if (HOST(_regs)->cpubit != (_regs)->sysblk->started_mask) { \
    obtain_lock(&(_regs)->sysblk->mainlock); \
-   (_regs)->sysblk->mainowner = HOST(_regs)->cpuad; \
+   SET_MAINOWNER( (_regs), HOST(_regs)->cpuad ); \
   } \
  } while (0)
 
 #define RELEASE_MAINLOCK_UNCONDITIONAL(_regs) \
  do { \
    if ((_regs)->sysblk->mainowner == HOST(_regs)->cpuad) { \
-     (_regs)->sysblk->mainowner = LOCK_OWNER_NONE; \
+     SET_MAINOWNER( (_regs), LOCK_OWNER_NONE ); \
      release_lock(&(_regs)->sysblk->mainlock); \
    } \
  } while (0)
@@ -480,7 +505,8 @@ typedef int CMPFUNC(const void*, const void*);
 /*-------------------------------------------------------------------*/
 /* Return whether specified CPU is waiting to acquire intlock or not */
 /*-------------------------------------------------------------------*/
-#define AT_SYNCPOINT(_regs) (HOST(_regs)->intwait)
+#define AT_SYNCPOINT(_regs)         (HOST(_regs)->intwait)
+#define SET_AT_SYNCPOINT(_regs, x ) (_regs)->intwait = (x)
 
 /*-------------------------------------------------------------------*/
 /*      Macro to check if DEVBLK is for an existing device           */
