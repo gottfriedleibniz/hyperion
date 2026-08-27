@@ -1068,6 +1068,7 @@ int     rc;
 
     /* Initialize Hercules Threading package */
     hthreads_internal_init();
+    symbols_init();
 
     /* Initialize 'hostinfo' BEFORE display_version is called */
     init_hostinfo( &hostinfo );
