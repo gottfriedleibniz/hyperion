@@ -1829,13 +1829,13 @@ cpustate_stopping:
     if (unlikely(regs->cpustate == CPUSTATE_STOPPED))
     {
         S64 saved_timer = get_cpu_timer(regs);
-        regs->ints_state = IC_INITIAL_STATE;
+        SET_IC_INITIAL_STATE( regs );
         sysblk.started_mask ^= regs->cpubit;
 
         CPU_Wait(regs);
 
         sysblk.started_mask |= regs->cpubit;
-        regs->ints_state |= sysblk.ints_state;
+        REGS_BIT_ISR( regs, SYS_GET_ISR() );
         set_cpu_timer(regs,saved_timer);
 
         ON_IC_INTERRUPT(regs);
@@ -1982,7 +1982,7 @@ int     aswitch;
     regs->program_interrupt = &ARCH_DEP(program_interrupt);
 
     regs->breakortrace = (sysblk.instbreak || (sysblk.insttrace && regs->insttrace));
-    regs->ints_state |= sysblk.ints_state;
+    REGS_BIT_ISR( regs, SYS_GET_ISR() );
 
     /* Establish longjmp destination for cpu thread exit */
     if (setjmp(regs->exitjmp))
