@@ -6849,7 +6849,7 @@ int     orglen1;                        /* Original dest length      */
             len4 = NOCROSSPAGEL( addr2, len2 ) ? len2 : (int)(PAGEFRAME_PAGESIZE - (addr2 & PAGEFRAME_BYTEMASK));
             len = len3 < len4 ? len3 : len4;
             /* Use concpy to ensure Concurrent block update consistency */
-            concpy( regs, dest, source, len );
+            concpy( dest, source, len );
         }
 
         /* Adjust lengths and virtual addresses */
@@ -6976,7 +6976,7 @@ size_t  dstlen,srclen;                  /* Page wide src/dst lengths */
         BYTE *source;
         /* get source frame and copy concurrently */
         source = MADDRL(addr2, copylen, r3, regs, ACCTYPE_READ, regs->psw.pkey);
-        concpy(regs,dest,source,(int)copylen);
+        concpy(dest,source,(int)copylen);
         /* Adjust operands */
         addr2+=(int)copylen;
         len2-=(int)copylen;
