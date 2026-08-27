@@ -3535,8 +3535,12 @@ int prev_rlen3270;
              */
             for (dev = sysblk.firstdev; dev != NULL; dev = dev->nextdev)
             {
-                if (!dev->allocated ||
-                    !dev->console)
+                /* Skip devices which aren't valid connected consoles */
+                if (0
+                    || !dev->allocated
+                    || !dev->console
+                    || !dev->connected
+                )
                     continue;
 
                 /* Try to obtain the device lock */
@@ -3564,7 +3568,8 @@ int prev_rlen3270;
                     OBTAIN_DEVLOCK( dev );
                 }
 
-                if (dev->console && dev->connected)
+                /* Test for valid connected console with data available. */
+                if (dev->allocated && dev->console && dev->connected)
                 {
                     ASSERT( dev->fd >= 0 ); /* (sanity check) */
 
