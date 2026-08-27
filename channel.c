@@ -5400,47 +5400,55 @@ execute_halt:
         /* to the device                                             */
         if (firstccw && !dev->is_immed)
         {
-            /* Reset first CCW indication as we're starting the      */
-            /* subchannel                                            */
-            firstccw = 0;
-
-            /* Subchannel and device are now active, set bits in     */
-            /* SCSW                                                  */
-            /* SA22-7201-05:                                         */
-            /*  p. 16-14, Subchannel-Active                          */
-            /*  pp. 16-14 -- 16-15, Device-Active                    */
-            dev->scsw.flag3 |= (SCSW3_AC_SCHAC | SCSW3_AC_DEVAC);
-
-            /* Process Initial-Status-Interruption Request           */
-            /* SA22-7201-05:                                         */
-            /*  p. 16-11, Zero Condition Code                        */
-            if (dev->scsw.flag1 & SCSW1_I)
+            OBTAIN_INTLOCK( NULL );
             {
                 OBTAIN_DEVLOCK( dev );
                 {
-                    /* Update the CCW address in the SCSW */
-                    STORE_FW(dev->scsw.ccwaddr,ccwaddr);
+                    /* Reset first CCW indication as we're starting the      */
+                    /* subchannel                                            */
+                    firstccw = 0;
 
-                    /* Set the zero condition-code flag in the SCSW */
-                    dev->scsw.flag1 |= SCSW1_Z;
+                    /* Subchannel and device are now active, set bits in     */
+                    /* SCSW                                                  */
+                    /* SA22-7201-05:                                         */
+                    /*  p. 16-14, Subchannel-Active                          */
+                    /*  pp. 16-14 -- 16-15, Device-Active                    */
+                    dev->scsw.flag3 |= (SCSW3_AC_SCHAC | SCSW3_AC_DEVAC);
 
-                    /* Set intermediate status in the SCSW */
-                    dev->scsw.flag3 |= (SCSW3_SC_INTER | SCSW3_SC_PEND);
+                    /* Process Initial-Status-Interruption Request           */
+                    /* SA22-7201-05:                                         */
+                    /*  p. 16-11, Zero Condition Code                        */
+                    if (dev->scsw.flag1 & SCSW1_I)
+                    {
+                        /* Update the CCW address in the SCSW */
+                        STORE_FW(dev->scsw.ccwaddr,ccwaddr);
+
+                        /* Set the zero condition-code flag in the SCSW */
+                        dev->scsw.flag1 |= SCSW1_Z;
+
+                        /* Set intermediate status in the SCSW */
+                        dev->scsw.flag3 |= (SCSW3_SC_INTER | SCSW3_SC_PEND);
+
+                        /*
+                         * Queue the interrupt and update interrupt status. Jumping
+                         * directly to _locked since SCSW3_SC_PEND was just flipped with 
+                         * the INT/DEV locks held.
+                         */
+                        queue_io_interrupt_and_update_status_locked( dev, FALSE, FALSE );
+
+                        if (CCW_TRACING_ACTIVE( dev, tracethis ))
+                        {
+                            if (dev->ccwtrace && sysblk.traceFILE)
+                                tf_1306( dev );
+                            else
+                                // "%1d:%04X CHAN: initial status interrupt"
+                                WRMSG( HHC01306, "I", LCSS_DEVNUM );
+                        }
+                    }
                 }
                 RELEASE_DEVLOCK( dev );
-
-                /* Queue the interrupt and update interrupt status */
-                queue_io_interrupt_and_update_status( dev, FALSE );
-
-                if (CCW_TRACING_ACTIVE( dev, tracethis ))
-                {
-                    if (dev->ccwtrace && sysblk.traceFILE)
-                        tf_1306( dev );
-                    else
-                        // "%1d:%04X CHAN: initial status interrupt"
-                        WRMSG( HHC01306, "I", LCSS_DEVNUM );
-                }
             }
+            RELEASE_INTLOCK( NULL );
         }
 
         /* For WRITE and non-immediate CONTROL operations,
