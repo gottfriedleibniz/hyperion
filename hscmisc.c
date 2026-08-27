@@ -416,7 +416,7 @@ char    buf[512];                       /* MSGBUF work buffer        */
         }
 
         /* Determine opcode and check for addressing exception */
-        opcode = regs->mainstor[aaddr];
+        FETCH_BYTE( opcode, regs->mainstor + aaddr );
         ilc = ILC(opcode);
 
         if (aaddr + ilc > regs->mainlim)
@@ -569,7 +569,7 @@ char    cmd;
             }
 
             /* Update absolute storage */
-            regs->mainstor[aaddr] = newval[i];
+            STORE_BYTE( regs->mainstor + aaddr, newval[i] );
 
         } /* end for(i) */
     }
@@ -789,7 +789,7 @@ size_t  totamt;                         /* Total amount to be dumped */
             }
 
             /* Update absolute storage */
-            regs->mainstor[aaddr] = newval[i];
+            STORE_BYTE( regs->mainstor + aaddr, newval[i] );
         }
     }
 

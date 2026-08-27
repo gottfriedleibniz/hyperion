@@ -3611,7 +3611,7 @@ static QRC write_buffered_packets( DEVBLK* dev, OSA_GRP *grp,
         }
 
         /* Determine if Layer 2 Ethernet frame or Layer 3 IP packet */
-        hdr_id = hdr[0];
+        FETCH_BYTE( hdr_id, hdr );
         switch (hdr_id)
         {
         U16 length;

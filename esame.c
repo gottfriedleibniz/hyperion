@@ -1098,7 +1098,7 @@ bool    local = false;                  /* true == m4 bit 3 is on    */
                     mn = MADDR( asceto, USE_REAL_ADDR, regs, ACCTYPE_WRITE, regs->psw.pkey );
                     FETCH_DW( asce, mn );
                     asce |= ZSEGTAB_I;
-                    mn[7] = asce & 0xFF;
+                    STORE_BYTE( mn + 7, asce & 0xFF );
 
                     /* Calculate the address of the next table entry, noting
                        that it is always a 64-bit address regardless of the
@@ -4503,12 +4503,12 @@ U32    *p1, *p2;                        /* Mainstor pointers         */
             b2 = (BYTE*) p1;
 
             for (i=0; i < m; i++)
-                *b1++ = *b2++;
+                FETCH_BYTE( *b1++, b2++ );
 
             b2 = (BYTE*) p2;
 
             for (; i < n; i++)
-                *b1++ = *b2++;
+                FETCH_BYTE( *b1++, b2++ );
 
             n >>= 2;
 
@@ -4606,12 +4606,12 @@ BYTE   *bp1;                            /* Unaligned Mainstor ptr    */
             b2 = (BYTE*) p1;
 
             for (i=0; i < m; i++)
-                *b1++ = *b2++;
+                FETCH_BYTE( *b1++, b2++ );
 
             b2 = (BYTE*) p2;
 
             for (; i < n; i++)
-                *b1++ = *b2++;
+                FETCH_BYTE( *b1++, b2++ );
 
             n >>= 3;
 
@@ -4848,12 +4848,12 @@ BYTE   *bp1;                            /* Unaligned Mainstor ptr    */
             b2 = (BYTE*) p1;
 
             for (i=0; i < m; i++)
-                *b2++ = *b1++;
+                STORE_BYTE(b2++, *b1++);
 
             b2 = (BYTE*) p2;
 
             for (; i < n; i++)
-                *b2++ = *b1++;
+                STORE_BYTE(b2++, *b1++);
         }
     }
 
@@ -4925,12 +4925,12 @@ U32    *p1, *p2;                        /* Mainstor pointers         */
             b2 = (BYTE*) p1;
 
             for (i=0; i < m; i++)
-                *b2++ = *b1++;
+                STORE_BYTE( b2++, *b1++ );
 
             b2 = (BYTE*) p2;
 
             for (; i < n; i++)
-                *b2++ = *b1++;
+                STORE_BYTE( b2++, *b1++ );
         }
     }
 
@@ -8056,12 +8056,12 @@ U32    *p1, *p2;                        /* Mainstor pointers         */
             b2 = (BYTE*) p1;
 
             for (i=0; i < m; i++)
-                *b1++ = *b2++;
+                FETCH_BYTE( *b1++, b2++ );
 
             b2 = (BYTE*) p2;
 
             for (; i < n; i++)
-                *b1++ = *b2++;
+                FETCH_BYTE( *b1++, b2++ );
 
             n >>= 2;
 
@@ -8428,12 +8428,12 @@ U32    *p1, *p2;                        /* Mainstor pointers         */
             b2 = (BYTE*) p1;
 
             for (i=0; i < m; i++)
-                *b2++ = *b1++;
+                STORE_BYTE( b2++, *b1++ );
 
             b2 = (BYTE*) p2;
 
             for (; i < n; i++)
-                *b2++ = *b1++;
+                STORE_BYTE( b2++, *b1++ );
         }
     }
 

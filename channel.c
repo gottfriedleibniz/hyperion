@@ -4950,9 +4950,9 @@ execute_halt:
             if (1
                 && dev->ccwtrace
                 && !(0
-                     || IS_CCW_READ  ( ccw[0] )
-                     || IS_CCW_RDBACK( ccw[0] )
-                     || IS_CCW_SENSE ( ccw[0] )
+                     || IS_CCW_READ  ( READ_BYTE( ccw ) )
+                     || IS_CCW_RDBACK( READ_BYTE( ccw ) )
+                     || IS_CCW_SENSE ( READ_BYTE( ccw ) )
                     )
             )
                 DISPLAY_CCW( &did_ccw_trace, dev, ccw, addr, count, flags );
