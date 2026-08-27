@@ -82,7 +82,7 @@ void ARCH_DEP( checkstop_all_cpus )( REGS* regs )
     if (!IS_INTLOCK_HELD( regs ))
         CRASH();
 
-    for (i=0; i < sysblk.maxcpu; i++)
+    for (i=0; i < SYS_GET_MAXCPU(); i++)
     {
         if (IS_CPU_ONLINE(i))
         {
@@ -2364,11 +2364,11 @@ int   rc;
     OBTAIN_INTLOCK(NULL);
 
     /* Increment number of CPUs online */
-    sysblk.cpus++;
+    SYS_UPDATE_CPUS(1);
 
     /* Set hi CPU */
-    if (cpu >= sysblk.hicpu)
-        sysblk.hicpu = cpu + 1;
+    if (cpu >= SYS_GET_HICPU())
+        SYS_SET_HICPU( cpu + 1 );
 
     /* Start the TOD clock and CPU timer thread */
     if (!sysblk.todtid)
@@ -2399,16 +2399,16 @@ int   rc;
     } while (regs);
 
     /* Decrement number of CPUs online */
-    sysblk.cpus--;
+    SYS_UPDATE_CPUS(-1);
 
     /* Reset hi cpu */
-    if (cpu + 1 >= sysblk.hicpu)
+    if (cpu + 1 >= SYS_GET_HICPU())
     {
         int i;
-        for (i = sysblk.maxcpu - 1; i >= 0; i--)
+        for (i = SYS_GET_MAXCPU() - 1; i >= 0; i--)
             if (IS_CPU_ONLINE(i))
                 break;
-        sysblk.hicpu = i + 1;
+        SYS_SET_HICPU( i + 1 );
     }
 
     /* Signal cpu has terminated */
@@ -2808,7 +2808,7 @@ void do_automatic_tracing()
         }
 
         /* Enable/disable CPU tracing based on overall trace status */
-        for (cpu=0; cpu < sysblk.maxcpu; cpu++)
+        for (cpu=0; cpu < SYS_GET_MAXCPU(); cpu++)
         {
             if (IS_CPU_ONLINE( cpu ))
                 sysblk.regs[ cpu ]->insttrace = sysblk.insttrace;

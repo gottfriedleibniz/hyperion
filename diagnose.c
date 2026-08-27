@@ -1242,7 +1242,7 @@ U32   code;
         {
             int cpu = regs->GR_LHL( r3 );   // Get desired CPU from r3
 
-            if (cpu < 0 || cpu >= sysblk.maxcpu || !IS_CPU_ONLINE( cpu ))
+            if (cpu < 0 || cpu >= SYS_GET_MAXCPU() || !IS_CPU_ONLINE( cpu ))
             {
                 regs->psw.cc = 3;           // CPU is invalid/offline
                 break;                      // We are done

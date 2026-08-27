@@ -561,7 +561,7 @@ static void* watchdog_thread( void* arg )
             deadlock_reported = true;
         }
 
-        for (cpu=0; cpu < sysblk.maxcpu; cpu++)
+        for (cpu=0; cpu < SYS_GET_MAXCPU(); cpu++)
         {
             /* We're only interested in ONLINE and STARTED CPUs */
             if (0
@@ -626,7 +626,7 @@ static void* watchdog_thread( void* arg )
         /* Report all hung CPUs all at the same time */
         if (hung_cpus_mask && !hung_cpu_reported)
         {
-            for (cpu=0; cpu < sysblk.maxcpu; cpu++)
+            for (cpu=0; cpu < SYS_GET_MAXCPU(); cpu++)
             {
                 if (hung_cpus_mask & CPU_BIT( cpu ))
                 {
@@ -709,7 +709,7 @@ static void* watchdog_thread( void* arg )
                 BYTE* ip;
                 REGS* regs;
 
-                for (cpu=0; cpu < sysblk.maxcpu; cpu++)
+                for (cpu=0; cpu < SYS_GET_MAXCPU(); cpu++)
                 {
                     if (hung_cpus_mask & CPU_BIT( cpu ))
                     {

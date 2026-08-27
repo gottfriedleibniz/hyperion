@@ -1789,7 +1789,7 @@ BYTE*           xstmap;                 /* Xstore bitmap, zero means
         /* Set response code X'0300' if SCCB length
            is insufficient to contain SCP info */
         if ( sccblen < sizeof( SCCB_HEADER ) + sizeof( SCCB_SCP_INFO )
-                + (sizeof( SCCB_CPU_INFO ) * sysblk.maxcpu))
+                + (sizeof( SCCB_CPU_INFO ) * SYS_GET_MAXCPU()))
         {
             sccb->reas = SCCB_REAS_TOO_SHORT;
             sccb->resp = SCCB_RESP_BLOCK_ERROR;
@@ -1852,22 +1852,22 @@ BYTE*           xstmap;                 /* Xstore bitmap, zero means
         STORE_MAIN_HW( sccbscp->vectpsum, VECTOR_PARTIAL_SUM_NUMBER );
 #endif
         /* Set CPU array count and offset in SCCB */
-        STORE_MAIN_HW( sccbscp->numcpu, sysblk.maxcpu  );
+        STORE_MAIN_HW( sccbscp->numcpu, SYS_GET_MAXCPU()  );
         offset = sizeof( SCCB_HEADER ) + sizeof( SCCB_SCP_INFO );
         STORE_MAIN_HW( sccbscp->offcpu, offset );
 
 #if defined( FEATURE_MPF_INFO )
         /* Set MPF array count and offset in SCCB */
-        STORE_MAIN_HW( sccbscp->nummpf, sysblk.maxcpu-1 );
+        STORE_MAIN_HW( sccbscp->nummpf, SYS_GET_MAXCPU()-1 );
 #endif
-        offset += (U16)sizeof( SCCB_CPU_INFO ) * sysblk.maxcpu;
+        offset += (U16)sizeof( SCCB_CPU_INFO ) * SYS_GET_MAXCPU();
         STORE_MAIN_HW( sccbscp->offmpf, offset );
 
         /* Set HSA array count and offset in SCCB */
         STORE_MAIN_HW( sccbscp->numhsa, 0 );
 
 #if defined( FEATURE_MPF_INFO )
-        offset += (U16)sizeof( SCCB_MPF_INFO ) * sysblk.maxcpu-1;
+        offset += (U16)sizeof( SCCB_MPF_INFO ) * SYS_GET_MAXCPU()-1;
 #endif
         STORE_MAIN_HW( sccbscp->offhsa, offset );
 
@@ -1907,7 +1907,7 @@ BYTE*           xstmap;                 /* Xstore bitmap, zero means
         /* Build the CPU information array after the SCP info */
         sccbcpu = (SCCB_CPU_INFO*)(sccbscp+1);
 
-        for (i=0; i < sysblk.maxcpu; i++, sccbcpu++)
+        for (i=0; i < SYS_GET_MAXCPU(); i++, sccbcpu++)
         {
             MAINSTOR_MSET( sccbcpu, 0, sizeof( SCCB_CPU_INFO ));
             sccbcpu->cpa = i;
@@ -2503,7 +2503,7 @@ fflush( efile );
         i = (sclp_command & SCLP_RESOURCE_MASK) >> SCLP_RESOURCE_SHIFT;
 
         /* Return invalid resource in parm if target does not exist */
-        if (i >= sysblk.maxcpu)
+        if (i >= SYS_GET_MAXCPU())
         {
             sccb->reas = SCCB_REAS_INVALID_RSCP;
             sccb->resp = SCCB_RESP_REJECT;
@@ -2523,7 +2523,7 @@ fflush( efile );
         i = (sclp_command & SCLP_RESOURCE_MASK) >> SCLP_RESOURCE_SHIFT;
 
         /* Return invalid resource in parm if target does not exist */
-        if (i >= sysblk.maxcpu)
+        if (i >= SYS_GET_MAXCPU())
         {
             sccb->reas = SCCB_REAS_INVALID_RSCP;
             sccb->resp = SCCB_RESP_REJECT;
@@ -2545,7 +2545,7 @@ fflush( efile );
         i = (sclp_command & SCLP_RESOURCE_MASK) >> SCLP_RESOURCE_SHIFT;
 
         /* Return invalid resource in parm if target does not exist */
-        if (i >= sysblk.maxcpu || !IS_CPU_ONLINE(i))
+        if (i >= SYS_GET_MAXCPU() || !IS_CPU_ONLINE(i))
         {
             sccb->reas = SCCB_REAS_INVALID_RSCP;
             sccb->resp = SCCB_RESP_REJECT;
@@ -2569,7 +2569,7 @@ fflush( efile );
         i = (sclp_command & SCLP_RESOURCE_MASK) >> SCLP_RESOURCE_SHIFT;
 
         /* Return invalid resource in parm if target does not exist */
-        if (i >= sysblk.maxcpu)
+        if (i >= SYS_GET_MAXCPU())
         {
             sccb->reas = SCCB_REAS_INVALID_RSCP;
             sccb->resp = SCCB_RESP_REJECT;

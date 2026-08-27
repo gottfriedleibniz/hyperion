@@ -4762,7 +4762,7 @@ DEF_INST( compare_and_load )
     PERFORM_SERIALIZATION( regs );
 
     /* if not equal, let other CPUs run */
-    if(regs->psw.cc && sysblk.cpus > 1)
+    if(regs->psw.cc && SYS_GET_CPUS() > 1)
         {
             sched_yield();
         }
@@ -4816,7 +4816,7 @@ DEF_INST( compare_and_load_long )
     PERFORM_SERIALIZATION( regs );
 
     /* if not equal, let other CPUs run */
-    if(regs->psw.cc && sysblk.cpus > 1)
+    if(regs->psw.cc && SYS_GET_CPUS() > 1)
         {
             sched_yield();
         }
@@ -4871,7 +4871,7 @@ DEF_INST( compare_and_load_long_fullword )
     PERFORM_SERIALIZATION( regs );
 
     /* if not equal, let other CPUs run */
-    if(regs->psw.cc && sysblk.cpus > 1)
+    if(regs->psw.cc && SYS_GET_CPUS() > 1)
         {
             sched_yield();
         }

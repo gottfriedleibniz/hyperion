@@ -209,7 +209,7 @@ static inline void synchronize_cpus( REGS* regs, const char* location )
 
     /* Deselect processors at a syncpoint and count active processors
      */
-    for (i=0; mask && i < sysblk.hicpu; ++i)
+    for (i=0; mask && i < SYS_GET_HICPU(); ++i)
     {
         i_regs = sysblk.regs[i];
 
@@ -493,8 +493,8 @@ static inline bool are_any_cpus_started_intlock_held()
 {
     int cpu;
 
-    if (sysblk.cpus)
-        for (cpu = 0; cpu < sysblk.hicpu; cpu++)
+    if (SYS_GET_CPUS())
+        for (cpu = 0; cpu < SYS_GET_HICPU(); cpu++)
             if (IS_CPU_ONLINE( cpu ))
                 if (sysblk.regs[ cpu ]->cpustate == CPUSTATE_STARTED)
                     return true;
@@ -508,8 +508,8 @@ static inline bool are_all_cpus_stopped_intlock_held()
 {
     int cpu;
 
-    if (sysblk.cpus)
-        for (cpu = 0; cpu < sysblk.hicpu; cpu++)
+    if (SYS_GET_CPUS())
+        for (cpu = 0; cpu < SYS_GET_HICPU(); cpu++)
             if (IS_CPU_ONLINE( cpu ))
                 if (sysblk.regs[ cpu ]->cpustate != CPUSTATE_STOPPED)
                     return false;

@@ -404,6 +404,18 @@ typedef U64  (*z900_trace_br_func) (int amode,  U64 ia, REGS *regs);
 typedef int CMPFUNC(const void*, const void*);
 
 /*-------------------------------------------------------------------*/
+/*                  CPU Counter Updates                              */
+/*-------------------------------------------------------------------*/
+
+#define SYS_GET_CPUS()      sysblk.cpus
+#define SYS_GET_MAXCPU()    sysblk.maxcpu
+#define SYS_GET_HICPU()     sysblk.hicpu
+
+#define SYS_UPDATE_CPUS(x)  (sysblk.cpus += (x))
+#define SYS_SET_MAXCPU(x)   (sysblk.maxcpu = (x))
+#define SYS_SET_HICPU(x)    (sysblk.hicpu = (x))
+
+/*-------------------------------------------------------------------*/
 /*      CPU state related macros and constants                       */
 /*-------------------------------------------------------------------*/
 

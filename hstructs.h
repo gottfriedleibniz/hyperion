@@ -725,9 +725,9 @@ struct SYSBLK {
         int     iplcpu;                 /* IPL cpu                   */
         int     ipllcss;                /* IPL lcss                  */
         int     numvec;                 /* Number vector processors  */
-        int     maxcpu;                 /* Max number of CPUs        */
-        int     cpus;                   /* Number CPUs configured    */
-        int     hicpu;                  /* Highest online cpunum + 1 */
+        S32     maxcpu;                 /* Max number of CPUs        */
+        S32     cpus;                   /* Number CPUs configured    */
+        S32     hicpu;                  /* Highest online cpunum + 1 */
         int     topology;               /* Configuration topology... */
 #define TOPOLOGY_HORIZ  0               /* ...horizontal polarization*/
 #define TOPOLOGY_VERT   1               /* ...vertical polarization  */

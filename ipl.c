@@ -266,7 +266,7 @@ int ARCH_DEP( system_reset )( const int target_mode, const bool clear,
     if (clear)
     {
         /* Finish reset-clear of all CPUs in the configuration */
-        for (n = 0; n < sysblk.maxcpu; ++n)
+        for (n = 0; n < SYS_GET_MAXCPU(); ++n)
         {
             if (IS_CPU_ONLINE( n ))
             {
@@ -643,7 +643,7 @@ int i, rc = 0;                          /* Array subscript           */
     regs->txf_contran = false;
     regs->txf_UPGM_abort = false;
 #endif
-    for (i = 0; i < sysblk.maxcpu; i++)
+    for (i = 0; i < SYS_GET_MAXCPU(); i++)
         regs->emercpu[i] = 0;
     regs->instinvalid = 1;
 
@@ -874,9 +874,9 @@ void initial_cpu_reset_all()
     REGS* regs;
     int cpu;
 
-    if (sysblk.cpus)
+    if (SYS_GET_CPUS())
     {
-        for (cpu = 0; cpu < sysblk.maxcpu; cpu++)
+        for (cpu = 0; cpu < SYS_GET_MAXCPU(); cpu++)
         {
             if (IS_CPU_ONLINE( cpu ))
             {
