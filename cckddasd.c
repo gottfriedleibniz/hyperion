@@ -2055,7 +2055,9 @@ int             wrs;
     */
     if (!cckdblk.batch)
     {
+#if 0
         cckdblk.wrprio = sysblk.cpuprio - 1;
+#endif
         SET_THREAD_PRIORITY( cckdblk.wrprio, sysblk.qos_user_initiated );
     }
 
