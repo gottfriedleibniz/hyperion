@@ -1726,8 +1726,8 @@ cdsk_space_check:
 
             /* Extract header info */
             comp = buf[0];
-            cyl  = fetch_hw (buf + 1);
-            head = fetch_hw (buf + 3);
+            FETCH_HW(cyl, buf + 1);
+            FETCH_HW(head, buf + 3);
             trk  = cyl * heads + head;
 
             /* Validate header info */
@@ -1873,8 +1873,8 @@ cdsk_recovery:
                     /* Fetch possible trkhdr */
                     memcpy( &trkhdr, &buf[i], CKD_TRKHDR_SIZE );
                     comp =           trkhdr.bin;
-                    cyl  = fetch_hw( trkhdr.cyl );
-                    head = fetch_hw( trkhdr.head );
+                    FETCH_HW( cyl, trkhdr.cyl );
+                    FETCH_HW( head, trkhdr.head );
                     trk  = (cyl * heads) + head;
 
                     /* Validate possible trkhdr */
@@ -2126,7 +2126,7 @@ cdsk_ckd_recover:
 
                     /* Fetch possible trkhdr */
                     comp = buf[i];
-                    blkgrp = fetch_fw (buf + i + 1);
+                    FETCH_FW(blkgrp, buf + i + 1);
 
                     /* Validate possible trkhdr */
                     if (blkgrp < 0 || blkgrp >= blkgrps

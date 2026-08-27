@@ -1996,10 +1996,10 @@ perform_clear_subchan (DEVBLK *dev)
          *   scsw.flag3 |= SCSW3_SC_PEND;
          */
         dev->scsw.flag3 = SCSW3_SC_PEND;
-        store_fw (dev->scsw.ccwaddr, 0);
+        STORE_FW (dev->scsw.ccwaddr, 0);
         dev->scsw.chanstat = 0;
         dev->scsw.unitstat = 0;
-        store_hw (dev->scsw.count, 0);
+        STORE_HW (dev->scsw.count, 0);
 
         /* Queue the pending interrupt and update status */
         QUEUE_IO_INTERRUPT_QLOCKED( &dev->ioint, TRUE );
@@ -2506,12 +2506,12 @@ device_reset (DEVBLK *dev)
         if (dev->shiowaiters)
             signal_condition (&dev->shiocond);
 #endif
-        store_fw (dev->pmcw.intparm, 0);
+        STORE_FW (dev->pmcw.intparm, 0);
         dev->pmcw.flag4 &= ~PMCW4_ISC;
         dev->pmcw.flag5 &= ~(PMCW5_E | PMCW5_LM | PMCW5_MM | PMCW5_D);
         dev->pmcw.pnom = 0;
         dev->pmcw.lpum = 0;
-        store_hw (dev->pmcw.mbi, 0);
+        STORE_HW (dev->pmcw.mbi, 0);
         dev->pmcw.flag27 &= ~PMCW27_S;
 #if defined( _FEATURE_IO_ASSIST )
         dev->pmcw.zone = 0;
@@ -3189,7 +3189,7 @@ ARCH_DEP(raise_pci) (DEVBLK *dev,       /* -> Device block           */
             STORE_FW(dev->pciscsw.ccwaddr,ccwaddr);
             dev->pciscsw.unitstat = 0;
             dev->pciscsw.chanstat = CSW_PCI;
-            store_hw (dev->pciscsw.count, 0);
+            STORE_HW (dev->pciscsw.count, 0);
 
             /* Queue the PCI pending interrupt */
             OBTAIN_IOINTQLK();
@@ -4348,10 +4348,10 @@ ARCH_DEP( device_attention )( DEVBLK* dev, BYTE unitstat )
                 /* GA22-6974-09:                                                 */
                 /*  pp. 2-13 -- 2-14, Attention                                  */
                 dev->attnscsw.flag3 = SCSW3_SC_ALERT | SCSW3_SC_PEND;
-                store_fw (dev->attnscsw.ccwaddr, 0);
+                STORE_FW (dev->attnscsw.ccwaddr, 0);
                 dev->attnscsw.unitstat = unitstat;
                 dev->attnscsw.chanstat = 0;
-                store_hw (dev->attnscsw.count, 0);
+                STORE_HW (dev->attnscsw.count, 0);
 
                 /* Queue the attention interrupt */
                 QUEUE_IO_INTERRUPT_QLOCKED( &dev->attnioint, FALSE );
@@ -4727,7 +4727,7 @@ IOBUF iobuf_initial;                    /* Channel I/O buffer        */
     }
 
     /* Hercules deviation; always zero the SCSW CCW address to start */
-    store_fw(dev->scsw.ccwaddr, 0);
+    STORE_FW(dev->scsw.ccwaddr, 0);
 
     /* Call the i/o start exit */
     if (dev->hnd->start)

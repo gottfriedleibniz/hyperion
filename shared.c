@@ -59,7 +59,7 @@ int      i, j;                          /* Indexes                   */
             if (dev->shrd[i]->purgen >= SHARED_PURGE_MAX)
                 dev->shrd[i]->purgen = -1;
             else
-                store_fw (dev->shrd[i]->purge[dev->shrd[i]->purgen++],
+                STORE_FW (dev->shrd[i]->purge[dev->shrd[i]->purgen++],
                           block);
            SHRDTRACE("notify %d added for id=%d, n=%d",
                    block, dev->shrd[i]->id, dev->shrd[i]->purgen);
@@ -238,7 +238,7 @@ init_retry:
         WRMSG( HHC00702, "S", LCSS_DEVNUM );
         return -1;
     }
-    dev->ckdcyls = fetch_fw (cyls);
+    FETCH_FW(dev->ckdcyls, cyls);
 
     /* Get the device characteristics */
     rc = clientRequest (dev, dev->devchar, sizeof(dev->devchar),
@@ -254,7 +254,7 @@ init_retry:
     dev->numdevchar = rc;
 
     /* Get number of heads from devchar */
-    dev->ckdheads = fetch_hw (dev->devchar + 14);
+    FETCH_HW(dev->ckdheads, dev->devchar + 14);
 
     /* Calculate number of tracks */
     dev->ckdtrks = dev->ckdcyls * dev->ckdheads;
@@ -262,7 +262,7 @@ init_retry:
 
     /* Check the device type */
     if (dev->devtype == 0)
-        dev->devtype = fetch_hw (dev->devchar + 3);
+        FETCH_HW(dev->devtype, dev->devchar + 3);
     else if (dev->devtype != fetch_hw (dev->devchar + 3))
     {
         // "%1d:%04X Shared: remote device %04X is a %04X"
@@ -557,7 +557,7 @@ init_retry:
         WRMSG( HHC00709, "S", LCSS_DEVNUM );
         return -1;
     }
-    dev->fbaorigin = fetch_fw (origin);
+    FETCH_FW(dev->fbaorigin, origin);
 
     /* Get the number of blocks */
     rc = clientRequest (dev, numblks, 4, SHRD_QUERY, SHRD_FBANUMBLK, NULL, NULL);
@@ -569,7 +569,7 @@ init_retry:
         WRMSG( HHC00710, "S", LCSS_DEVNUM );
         return -1;
     }
-    dev->fbanumblk = fetch_fw (numblks);
+    FETCH_FW(dev->fbanumblk, numblks);
 
     /* Get the block size */
     rc = clientRequest (dev, blksiz, 4, SHRD_QUERY, SHRD_FBABLKSIZ, NULL, NULL);
@@ -581,7 +581,7 @@ init_retry:
         WRMSG( HHC00711, "S", LCSS_DEVNUM );
         return -1;
     }
-    dev->fbablksiz = fetch_fw (blksiz);
+    FETCH_FW(dev->fbablksiz, blksiz);
     dev->fbaend = (dev->fbaorigin + dev->fbanumblk) * dev->fbablksiz;
 
     /* Get the device id */
@@ -861,7 +861,7 @@ read_retry:
 
     /* Send the read request for the track to the remote host */
     SHRD_SET_HDR (hdr, SHRD_READ, 0, dev->rmtnum, dev->rmtid, 4);
-    store_fw (hdr + SHRD_HDR_SIZE, trk);
+    STORE_FW (hdr + SHRD_HDR_SIZE, trk);
     rc = clientSend (dev, hdr, NULL, 0);
     if (rc < 0)
     {
@@ -1067,8 +1067,8 @@ write_retry:
     /* The write request contains a 2 byte offset and 4 byte id,
        followed by the data */
     SHRD_SET_HDR (hdr, SHRD_WRITE, 0, dev->rmtnum, dev->rmtid, len + 6);
-    store_hw (hdr + SHRD_HDR_SIZE, dev->bufupdlo);
-    store_fw (hdr + SHRD_HDR_SIZE + 2, block);
+    STORE_HW (hdr + SHRD_HDR_SIZE, dev->bufupdlo);
+    STORE_FW (hdr + SHRD_HDR_SIZE + 2, block);
 
     rc = clientSend (dev, hdr, dev->buf + dev->bufupdlo, len);
     if (rc < 0)
@@ -1206,7 +1206,7 @@ HWORD              comp;                /* Returned compression parm */
         }
 
         /* Connect to the server */
-        store_hw( id, dev->rmtid );
+        STORE_HW( id, dev->rmtid );
         rc = connect( dev->fd, server, len );
 
         if (rc < 0)
@@ -1224,7 +1224,7 @@ HWORD              comp;                /* Returned compression parm */
                 if (rc >= 0)
                 {
                     dev->connected = 1;             // (SHRD_CONNECT success)
-                    dev->rmtid  = fetch_hw( id );   // (must only do ONCE!!!)
+                    FETCH_HW( dev->rmtid, id );   // (must only do ONCE!!!)
                     dev->rmtver = flag >> 4;        // (save server version)
                     dev->rmtrel = flag & 0x0f;      // (save server release)
 
@@ -1249,7 +1249,7 @@ HWORD              comp;                /* Returned compression parm */
                         rc = clientRequest( dev, comp, 2, SHRD_COMPRESS,
                                    (dev->rmtcomps << 4) | dev->rmtcomp, NULL, NULL );
                         if (rc >= 0)
-                            dev->rmtcomp = fetch_hw( comp );
+                            FETCH_HW( dev->rmtcomp, comp );
                     }
                 }
             }
@@ -1766,7 +1766,7 @@ char     trcmsg[32];
         }
         dev->shrd[ix]->release = flag & 0x0f;
         SHRD_SET_HDR (hdr, 0, (SHARED_VERSION << 4) | SHARED_RELEASE, dev->devnum, id, 2);
-        store_hw (buf, id);
+        STORE_HW (buf, id);
         serverSend (dev, ix, hdr, buf, 2);
         break;
 
@@ -2021,8 +2021,8 @@ char     trcmsg[32];
         }
 
         /* Call the I/O write exit */
-        off = fetch_hw (buf);
-        rcd = fetch_fw (buf + 2);
+        FETCH_HW(off, buf);
+        rcd = (int)fetch_fw (buf + 2);
 
         rc = (dev->hnd->write) (dev, rcd, off, buf + 6, len - 6, &flag);
         SHRDTRACE( "server request write rcd %d off %d len %d flag %2.2x rc=%d",
@@ -2063,7 +2063,7 @@ char     trcmsg[32];
                 rc = (dev->hnd->used) (dev);
             else
                 rc = 0;
-            store_fw (buf, rc);
+            STORE_FW (buf, rc);
             SHRD_SET_HDR (hdr, 0, 0, dev->devnum, id, 4);
             serverSend (dev, ix, hdr, buf, 4);
             break;
@@ -2098,25 +2098,25 @@ char     trcmsg[32];
         }
 
         case SHRD_CKDCYLS:
-            store_fw (buf, dev->ckdcyls);
+            STORE_FW (buf, dev->ckdcyls);
             SHRD_SET_HDR (hdr, 0, 0, dev->devnum, id, 4);
             serverSend (dev, ix, hdr, buf, 4);
             break;
 
         case SHRD_FBAORIGIN:
-            store_dw( buf, dev->fbaorigin );
+            STORE_DW( buf, dev->fbaorigin );
             SHRD_SET_HDR (hdr, 0, 0, dev->devnum, id, 4);
             serverSend (dev, ix, hdr, buf, 4);
             break;
 
         case SHRD_FBANUMBLK:
-            store_fw (buf, dev->fbanumblk);
+            STORE_FW (buf, dev->fbanumblk);
             SHRD_SET_HDR (hdr, 0, 0, dev->devnum, id, 4);
             serverSend (dev, ix, hdr, buf, 4);
             break;
 
         case SHRD_FBABLKSIZ:
-            store_fw (buf, dev->fbablksiz);
+            STORE_FW (buf, dev->fbablksiz);
             SHRD_SET_HDR (hdr, 0, 0, dev->devnum, id, 4);
             serverSend (dev, ix, hdr, buf, 4);
             break;
@@ -2131,9 +2131,9 @@ char     trcmsg[32];
     case SHRD_COMPRESS:
 #if defined( HAVE_ZLIB )
         dev->shrd[ix]->comp = (flag & 0x0f);
-        store_hw (buf, dev->shrd[ix]->comp);
+        STORE_HW (buf, dev->shrd[ix]->comp);
 #else
-        store_hw (buf, 0);
+        STORE_HW (buf, 0);
 #endif
         dev->shrd[ix]->comps = (flag & 0xf0) >> 4;
         SHRD_SET_HDR (hdr, 0, 0, dev->devnum, id, 2);

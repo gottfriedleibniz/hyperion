@@ -2308,7 +2308,7 @@ static const unsigned int               /* Turn reg bytes off by mask*/
            If so, set the fetched byte to 0 to force zero cc */
         if (!r3) vbyte[0] = 0;
 
-        n = fetch_fw (vbyte);
+        FETCH_FW(n, vbyte);
         regs->psw.cc = n ? n & 0x80000000 ?
                        1 : 2 : 0;
 
@@ -4434,8 +4434,8 @@ U32     rwork1[16], rwork2[16];         /* Intermediate work areas   */
     /* Load a register at a time */
     for (i = 0; i < n; i++)
     {
-        regs->GR_H((r1 + i) & 0xF) = fetch_fw(&rwork1[i]);
-        regs->GR_L((r1 + i) & 0xF) = fetch_fw(&rwork2[i]);
+        FETCH_FW(regs->GR_H((r1 + i) & 0xF), &rwork1[i]);
+        FETCH_FW(regs->GR_L((r1 + i) & 0xF), &rwork2[i]);
     }
 
 } /* end DEF_INST(load_multiple_disjoint) */
@@ -7859,7 +7859,7 @@ static const unsigned int               /* Turn reg bytes off by mask*/
            If so, set the fetched byte to 0 to force zero cc */
         if (!r3) vbyte[0] = 0;
 
-        n = fetch_fw (vbyte);
+        FETCH_FW(n, vbyte);
         regs->psw.cc = n ? n & 0x80000000 ?
                        1 : 2 : 0;
 

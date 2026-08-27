@@ -464,7 +464,7 @@ int rc;
     {
         for(i=0; i < 16; i++)
         {
-            regs->GR_L(i) = fetch_fw( &sysblk.iplparmstring[i*4] );
+            FETCH_FW( regs->GR_L(i), &sysblk.iplparmstring[i*4] );
         }
         sysblk.haveiplparm = 0;
     }

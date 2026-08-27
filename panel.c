@@ -1190,7 +1190,7 @@ static void NP_update(REGS *regs)
                 if (!NPregs_valid || NPregs64[i] != fetch_dw(regs->mainstor + aaddr))
                 {
                     draw_dw (fetch_dw(regs->mainstor + aaddr));
-                    NPregs64[i] = fetch_dw(regs->mainstor + aaddr);
+                    FETCH_DW(NPregs64[i], regs->mainstor + aaddr);
                 }
                 break;
             }
@@ -1955,7 +1955,7 @@ size_t  loopcount;                      /* Number of iterations done */
                             aaddr = APPLY_PREFIXING (NPaddress, regs->PX);
                             if (aaddr > regs->mainlim)
                                 break;
-                            store_fw (regs->mainstor + aaddr, NPdata);
+                            STORE_FW(regs->mainstor + aaddr, NPdata);
                             redraw_status = 1;
                             break;
                         case 'I':                   /* Display */
