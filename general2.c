@@ -1732,10 +1732,19 @@ int     rc;                             /* Return code               */
     if ( ECMODE(&regs->psw) )
 #endif
     {
+#if 0
+        U32 svcint = ((U32)0 << 24)     | /* psa->svcint[0] */
+            ((U32)REAL_ILC(regs) << 16) | /* psa->svcint[1] */
+            ((U32)0 << 8)               | /* psa->svcint[2] */
+            ((U32)i & 0xFF);              /* psa->svcint[3] */
+
+        STORE_FW( &psa->svcint, svcint );
+#else
         psa->svcint[0] = 0;
         psa->svcint[1] = REAL_ILC(regs);
         psa->svcint[2] = 0;
         psa->svcint[3] = i;
+#endif
     }
 
     /* Store current PSW at PSA+X'20' */
