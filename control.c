@@ -7612,6 +7612,30 @@ VADR    effective_addr1;                /* Effective address         */
     /* AND system mask with immediate operand */
     regs->psw.sysmask &= i2;
 
+    /*
+     * #RACE: SET_IC_MASK may set BIT(IC_IO) depending on the state of the PSW
+     * (i.e., psw.sysmask) while a device thread is updating its status. Does
+     * not seem that big of a concern. Validate this.
+     *
+     * Line numbers omitted:
+     *  Read of size 4 at 0x72c80000004c by thread T51 (mutexes: write M0, write M1, write M2):
+     *    #0 Update_IC_IOPENDING_QLocked $(BUILD_DIR)/../channel.c c // ON_IC_IOPENDING
+     *    #1 queue_io_interrupt_and_update_status_locked $(BUILD_DIR)/../channel.c
+     *    #2 s370_execute_ccw_chain $(BUILD_DIR)/../channel.c
+     *    #3 call_execute_ccw_chain $(BUILD_DIR)/../channel.c
+     *    #4 device_thread $(BUILD_DIR)/../channel.c
+     *
+     *  Previous write of size 4 at 0x72c80000004c by thread T3:
+     *    #0 s370_store_then_and_system_mask $(BUILD_DIR)/../control.c
+     *    #1 s370_run_cpu $(BUILD_DIR)/../cpu.c
+     *    #2 cpu_thread $(BUILD_DIR)/../cpu.c
+     *    #3 hthread_func $(BUILD_DIR)/../hthreads.c
+     *
+     * Also:
+     *  Previous write of size 4 at 0x72c80000004c by thread T3:
+     *    #0 s370_store_then_or_system_mask $(BUILD_DIR)/../control.c // SET_IC_MASK
+     *    #1 s370_execute $(BUILD_DIR)/../general1.c
+     */
     SET_IC_MASK( regs );
     TEST_SET_AEA_MODE( regs );
 

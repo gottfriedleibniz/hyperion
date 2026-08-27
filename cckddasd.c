@@ -1813,6 +1813,33 @@ bool            cont = true;            /* Continue running boolean  */
                 obtain_lock( &cckd->cckdiolock );
                 {
                     cckd_flush_cache( dev );
+                    /*
+                     * #RACE: One location where cckd->needsdh is referenced
+                     * without having obtained cckdiolock. Requires validation.
+                     *
+                     * Line numbers omitted:
+                     *   Write of size 1 at 0x72880001500b by thread T23 (mutexes: write M0):
+                     *     #0 cckd64_writer_write $(BUILD_DIR)/../cckddasd64.c // cckd->needsdh = 1;    \* We've updated the file. *\/
+                     *     #1 cckd_writer_write $(BUILD_DIR)/../cckddasd.c
+                     *     #2 cckd_writer $(BUILD_DIR)/../cckddasd.c
+                     *     #3 hthread_func $(BUILD_DIR)/../hthreads.c
+                     *
+                     *   Previous read of size 1 at 0x72880001500b by thread T20 (mutexes: write M1, write M2):
+                     *     #0 cckd_dh $(BUILD_DIR)/../cckddasd.c
+                     *     #1 hthread_func $(BUILD_DIR)/../hthreads.c
+                     *
+                     * The cckd->cckdwaiters increment is also caught by TSAN,
+                     * but is of little-to-no concern:
+                     *   Read of size 4 at 0x728800004858 by thread T16:
+                     *     #0 cckd64_dasd_end $(BUILD_DIR)/../cckddasd64.c // CCKD_TRACE ... dev->bufcur, dev->cache, cckd->cckdwaiters);
+                     *     #1 cckd_dasd_end $(BUILD_DIR)/../cckddasd.c
+                     *     #2 z900_execute_ccw_chain $(BUILD_DIR)/../channel.c
+                     *     #3 call_execute_ccw_chain $(BUILD_DIR)/../channel.c
+                     *   
+                     *   Previous write of size 4 at 0x728800004858 by thread T20 (mutexes: write M0, write M1):
+                     *     #0 cckd_dh $(BUILD_DIR)/../cckddasd.c // cckd->cckdwaiters++;
+                     *     #1 hthread_func $(BUILD_DIR)/../hthreads.c
+                     */
                     if (cckd->needsdh && !cckd->stopping && !sysblk.shutdown)
                     {
                         CCKD_TRACE("needs hardening");
@@ -5703,6 +5730,21 @@ int             gc;                     /* Garbage collection state  */
 
         cckd->bufused = 0;
 
+        /*
+         * #RACE: Racing around CCKD_OPT_OPENED. Requires validation.
+         *
+         * Line numbers omitted:
+         *  Read of size 1 at 0x72880000aa0b by thread T59 (mutexes: write M0, write M1):
+         *    #0 cckd_gcol_dev $(BUILD_DIR)/../cckddasd.c // if (!(cckd->cdevhdr[cckd->sfn].cdh_opts & CCKD_OPT_OPENED))
+         *    #1 cckd_gcol $(BUILD_DIR)/../cckddasd.c
+         *    #2 hthread_func $(BUILD_DIR)/../hthreads.c
+         *  
+         *  Previous write of size 1 at 0x72880000aa0b by thread T58 (mutexes: write M2):
+         *    #0 cckd_gcstart $(BUILD_DIR)/../cckddasd.c // cckd->cdevhdr[ cckd->sfn ].cdh_opts |= (CCKD_OPT_OPENED | CCKD_OPT_OPENRW);
+         *    #1 cckd_writer_write $(BUILD_DIR)/../cckddasd.c
+         *    #2 cckd_writer $(BUILD_DIR)/../cckddasd.c
+         *    #3 hthread_func $(BUILD_DIR)/../hthreads.c
+         */
         /* If OPENED bit not on then flush if updated */
         if (!(cckd->cdevhdr[cckd->sfn].cdh_opts & CCKD_OPT_OPENED))
         {
