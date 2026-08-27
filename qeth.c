@@ -1661,7 +1661,10 @@ U16 offph;
                         }
 
                         if (was_enabled)
-                            VERIFY( qeth_enable_interface( dev, grp ) == 0);
+                        {
+                            rc = qeth_enable_interface( dev, grp );
+                            VERIFY( rc == 0 );
+                        }
 
                         if (rc != 0)
                         {
