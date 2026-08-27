@@ -52,7 +52,7 @@ int cpu_cmd( int argc, char* argv[], char* cmdline )
     if (0
         || sscanf(argv[1], "%x%c", &cpu, &c) != 1
         || cpu < 0
-        || cpu >= sysblk.maxcpu
+        || cpu >= SYS_GET_MAXCPU()
     )
     {
         // "Invalid argument %s%s"
@@ -231,7 +231,7 @@ int on = -1;
         if (rc == 0)
         {
             // configure number of online CPUs (i.e. NUMCPU)
-            rc = configure_numcpu( on ? sysblk.maxcpu : 0 );
+            rc = configure_numcpu( on ? SYS_GET_MAXCPU() : 0 );
         }
     }
     else if (argc == 1)

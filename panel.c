@@ -919,6 +919,7 @@ static void NP_update(REGS *regs)
     int     i, n;
     int     mode, zhost;
     int     cpupct_total;
+    ALIGN_16
     QWORD   curr_psw;
     U32     addr, aaddr;
     DEVBLK *dev;
@@ -1016,22 +1017,22 @@ static void NP_update(REGS *regs)
             set_pos (PSW_LINE, 3);
             if (mode)
             {
-                draw_dw( fetch_dw( curr_psw ));
+                draw_dw( READ_DW( curr_psw ));
                 set_pos( PSW_LINE, 22 );
-                draw_dw( fetch_dw( curr_psw + 8 ));
+                draw_dw( READ_DW( curr_psw + 8 ));
             }
             else if (zhost)
             {
-                draw_fw( fetch_fw( curr_psw ));
-                draw_fw( fetch_fw( curr_psw + 4 )); /* *JJ */
+                draw_fw( READ_FW( curr_psw ));
+                draw_fw( READ_FW( curr_psw + 4 )); /* *JJ */
                 set_pos( PSW_LINE, 22 );
                 draw_text( "----------------" ); /* *JJ */
             }
             else
             {
-                draw_fw( fetch_fw( curr_psw ));
+                draw_fw( READ_FW( curr_psw ));
                 set_pos( PSW_LINE, 12 );
-                draw_fw( fetch_fw( curr_psw + 4 ));
+                draw_fw( READ_FW( curr_psw + 4 ));
             }
             NPpsw_valid = 1;
             memcpy( NPpsw, curr_psw, sizeof( NPpsw ));
@@ -1186,10 +1187,10 @@ static void NP_update(REGS *regs)
                     draw_text("                ");
                     break;
                 }
-                if (!NPregs_valid || NPregs64[i] != fetch_dw(regs->mainstor + aaddr))
+                if (!NPregs_valid || NPregs64[i] != READ_DW(regs->mainstor + aaddr))
                 {
-                    draw_dw (fetch_dw(regs->mainstor + aaddr));
-                    NPregs64[i] = fetch_dw(regs->mainstor + aaddr);
+                    draw_dw (READ_DW(regs->mainstor + aaddr));
+                    FETCH_DW(NPregs64[i], regs->mainstor + aaddr);
                 }
                 break;
             }
@@ -1954,7 +1955,7 @@ size_t  loopcount;                      /* Number of iterations done */
                             aaddr = APPLY_PREFIXING (NPaddress, regs->PX);
                             if (aaddr > regs->mainlim)
                                 break;
-                            store_fw (regs->mainstor + aaddr, NPdata);
+                            STORE_FW(regs->mainstor + aaddr, NPdata);
                             redraw_status = 1;
                             break;
                         case 'I':                   /* Display */
@@ -3120,10 +3121,10 @@ FinishShutdown:
                 if (IS_CPU_ONLINE(sysblk.pcpu))
                 {
                     len += idx_snprintf( len, buf, sizeof(buf), "PSW=%8.8X%8.8X ",
-                                   fetch_fw( curr_psw ), fetch_fw( curr_psw + 4 ));
+                                   READ_FW( curr_psw ), READ_FW( curr_psw + 4 ));
                     if (regs->arch_mode == ARCH_900_IDX)
                         len += idx_snprintf( len, buf, sizeof(buf), "%16.16"PRIX64" ",
-                                        fetch_dw( curr_psw + 8 ));
+                                        READ_DW( curr_psw + 8 ));
 #if defined(_FEATURE_SIE)
                     else
                         if( SIE_MODE(regs) )

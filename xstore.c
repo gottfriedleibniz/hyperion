@@ -82,7 +82,7 @@ size_t  xoffs;                          /* Byte offset into xpndstor */
     maddr = MADDRL (vaddr, 4096, USE_REAL_ADDR, regs, ACCTYPE_WRITE, 0);
 
     /* Copy data from expanded to main */
-    memcpy (maddr, sysblk.xpndstor + xoffs, XSTORE_PAGESIZE);
+    MAINSTOR_MCOPY (maddr, sysblk.xpndstor + xoffs, XSTORE_PAGESIZE);
 
     /* cc0 means pgin ok */
     regs->psw.cc = 0;
@@ -149,7 +149,7 @@ size_t  xoffs;                          /* Byte offset into xpndstor */
     maddr = MADDR (vaddr, USE_REAL_ADDR, regs, ACCTYPE_READ, 0);
 
     /* Copy data from main to expanded */
-    memcpy (sysblk.xpndstor + xoffs, maddr, XSTORE_PAGESIZE);
+    MAINSTOR_MCOPY (sysblk.xpndstor + xoffs, maddr, XSTORE_PAGESIZE);
 
     /* cc0 means pgout ok */
     regs->psw.cc = 0;
@@ -309,7 +309,7 @@ BYTE    xpkey1 = 0, xpkey2 = 0;         /* Expanded storage keys     */
 #if defined(FEATURE_EXPANDED_STORAGE)
         if(rc == 2)
         {
-            FETCH_W(pte2,regs->mainstor + raddr2);
+            FETCH_MAIN_W(pte2,regs->mainstor + raddr2);
             /* If page is invalid in real storage but valid in expanded
                storage then xpblk2 now contains expanded storage block# */
             if(pte2 & PAGETAB_ESVALID)
@@ -343,7 +343,7 @@ BYTE    xpkey1 = 0, xpkey2 = 0;         /* Expanded storage keys     */
 #endif /*!defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)*/
                 if (xpkeya > regs->mainlim)
                     regs->program_interrupt (regs, PGM_ADDRESSING_EXCEPTION);
-                xpkey2 = regs->mainstor[xpkeya];
+                FETCH_MAIN_BYTE( xpkey2, regs->mainstor + xpkeya );
 
 /*DEBUG logmsg("MVPG pte2 = " F_CREG ", xkey2 = %2.2X, xpblk2 = %5.5X, akey2 = %2.2X\n",
                   pte2,xpkey2,xpblk2,akey2);  */
@@ -404,7 +404,7 @@ BYTE    xpkey1 = 0, xpkey2 = 0;         /* Expanded storage keys     */
 #if defined(FEATURE_EXPANDED_STORAGE)
         if(rc == 2)
         {
-            FETCH_W(pte1,regs->mainstor + raddr1);
+            FETCH_MAIN_W(pte1,regs->mainstor + raddr1);
             /* If page is invalid in real storage but valid in expanded
                storage then xpblk1 now contains expanded storage block# */
             if(pte1 & PAGETAB_ESVALID)
@@ -438,7 +438,7 @@ BYTE    xpkey1 = 0, xpkey2 = 0;         /* Expanded storage keys     */
 #endif /*!defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)*/
                 if (xpkeya > regs->mainlim)
                     regs->program_interrupt (regs, PGM_ADDRESSING_EXCEPTION);
-                xpkey1 = regs->mainstor[xpkeya];
+                FETCH_MAIN_BYTE( xpkey1, regs->mainstor + xpkeya );
 
 /*DEBUG  logmsg("MVPG pte1 = " F_CREG ", xkey1 = %2.2X, xpblk1 = %5.5X, akey1 = %2.2X\n",
                   pte1,xpkey1,xpblk1,akey1);  */
@@ -548,20 +548,20 @@ BYTE    xpkey1 = 0, xpkey2 = 0;         /* Expanded storage keys     */
         ARCH_DEP( or_storage_key_by_ptr )( sk1, (STORKEY_REF | STORKEY_CHANGE) );
 
         /* Set Expanded Storage reference bit in the PTE */
-        STORE_W(regs->mainstor + raddr2, pte2 | PAGETAB_ESREF);
+        STORE_MAIN_W(regs->mainstor + raddr2, pte2 | PAGETAB_ESREF);
 
         /* Move 4K bytes from expanded storage to main storage */
-        memcpy (main1,
+        MAINSTOR_MCOPY (main1,
                 sysblk.xpndstor + ((size_t)xpblk2 << XSTORE_PAGESHIFT),
                 XSTORE_PAGESIZE);
     }
     else if (xpvalid1)
     {
         /* Set Expanded Storage reference and change bits in the PTE */
-        STORE_W(regs->mainstor + raddr1, pte1 | PAGETAB_ESREF | PAGETAB_ESCHA);
+        STORE_MAIN_W(regs->mainstor + raddr1, pte1 | PAGETAB_ESREF | PAGETAB_ESCHA);
 
         /* Move 4K bytes from main storage to expanded storage */
-        memcpy (sysblk.xpndstor + ((size_t)xpblk1 << XSTORE_PAGESHIFT),
+        MAINSTOR_MCOPY (sysblk.xpndstor + ((size_t)xpblk1 << XSTORE_PAGESHIFT),
                 main2,
                 XSTORE_PAGESIZE);
     }
@@ -572,7 +572,7 @@ BYTE    xpkey1 = 0, xpkey2 = 0;         /* Expanded storage keys     */
         ARCH_DEP( or_storage_key_by_ptr )( sk1, (STORKEY_REF | STORKEY_CHANGE) );
 
         /* Move 4K bytes from main storage to main storage */
-        memcpy (main1, main2, XSTORE_PAGESIZE);
+        MAINSTOR_MCOPY (main1, main2, XSTORE_PAGESIZE);
     }
 
     /* Return condition code zero */

@@ -73,8 +73,8 @@
 
   /* ESAME linkage stack header entry */
   /* LSHE words 1 and 2 contain the backward stack entry address */
-  #define FETCH_BSEA(_bsea,_lshe)       FETCH_DW(_bsea,_lshe)
-  #define STORE_BSEA(_lshe,_bsea)       STORE_DW(_lshe,_bsea)
+  #define FETCH_BSEA(_bsea,_lshe)       FETCH_MAIN_DW(_bsea,_lshe)
+  #define STORE_BSEA(_lshe,_bsea)       STORE_MAIN_DW(_lshe,_bsea)
   #define LSHE_BSEA     0xFFFFFFFFFFFFFFF8ULL  /* Backward address   */
   #define LSHE_RESV     0x06            /* Reserved bits - must be 0 */
   #define LSHE_BVALID   0x01            /* Backward address is valid */
@@ -82,7 +82,7 @@
 
   /* ESAME linkage stack trailer entry */
   /* LSTE words 1 and 2 contain the forward section header address */
-  #define FETCH_FSHA(_fsha,_lste)       FETCH_DW(_fsha,_lste)
+  #define FETCH_FSHA(_fsha,_lste)       FETCH_MAIN_DW(_fsha,_lste)
   #define LSTE_FSHA     0xFFFFFFFFFFFFFFF8ULL  /* Forward address    */
   #define LSTE_RESV     0x06            /* Reserved bits - must be 0 */
   #define LSTE_FVALID   0x01            /* Forward address is valid  */
@@ -187,7 +187,7 @@ int  i;
 #if defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)
     /* Fetch word 0 of the TCB */
     atcba = ARCH_DEP(abs_trap_addr) (tcba, regs, ACCTYPE_READ);
-    FETCH_FW(tcba0, regs->mainstor + atcba);
+    FETCH_MAIN_FW(tcba0, regs->mainstor + atcba);
 #endif /*defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)*/
 
     /* Advance to offset +12 */
@@ -195,7 +195,7 @@ int  i;
     atcba = ARCH_DEP(abs_trap_addr) (tcba, regs, ACCTYPE_READ);
 
     /* Fetch word 3 of the TCB */
-    FETCH_FW(tsao, regs->mainstor + atcba);
+    FETCH_MAIN_FW(tsao, regs->mainstor + atcba);
     tsao &= 0x7FFFFFF8;
 
     /* Advance to offset +20 */
@@ -204,7 +204,7 @@ int  i;
         atcba = ARCH_DEP(abs_trap_addr) (tcba, regs, ACCTYPE_READ);
 
     /* Fetch word 5 of the TCB */
-    FETCH_FW(trap_ia, regs->mainstor + atcba);
+    FETCH_MAIN_FW(trap_ia, regs->mainstor + atcba);
     trap_ia &= 0x7FFFFFFF;
 
     /* Calculate last byte stored */
@@ -248,18 +248,18 @@ int  i;
         trap_flags |= TRAP0_TRAP4;
 
     /* Trap flags at offset +0 */
-    STORE_FW(regs->mainstor + tsaa1, trap_flags);
+    STORE_MAIN_FW(regs->mainstor + tsaa1, trap_flags);
     /* Reserved zero's stored at offset +4 */
-    STORE_FW(regs->mainstor + tsaa1 + 4, 0);
+    STORE_MAIN_FW(regs->mainstor + tsaa1 + 4, 0);
 
     tsaa1 += 8;
     if((tsaa1 & PAGEFRAME_BYTEMASK) == 0)
         tsaa1 = tsaa2;
 
     /* Bits 33-63 of Second-Op address of TRAP4 at offset +8 */
-    STORE_FW(regs->mainstor + tsaa1, trap_operand);
+    STORE_MAIN_FW(regs->mainstor + tsaa1, trap_operand);
     /* Access register 15 at offset +12 */
-    STORE_FW(regs->mainstor + tsaa1 + 4, regs->AR(15));
+    STORE_MAIN_FW(regs->mainstor + tsaa1 + 4, regs->AR(15));
 
     tsaa1 += 8;
     if((tsaa1 & PAGEFRAME_BYTEMASK) == 0)
@@ -280,7 +280,7 @@ int  i;
     }
 
     /* bits 0-63 of PSW at offset +16 */
-    memcpy(regs->mainstor + tsaa1, trap_psw, 8);
+    MAINSTOR_MCOPY(regs->mainstor + tsaa1, trap_psw, 8);
     tsaa1 += 8;
     if((tsaa1 & PAGEFRAME_BYTEMASK) == 0)
     {
@@ -292,12 +292,12 @@ int  i;
     /* bits 64-127 of PSW at offset +24 */
     if(tcba0 & TCB0_P)
     {
-        memcpy(regs->mainstor + tsaa1, trap_psw + 8, 8);
+        MAINSTOR_MCOPY(regs->mainstor + tsaa1, trap_psw + 8, 8);
     }
     else
     {
 #endif /*defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)*/
-        memset(regs->mainstor + tsaa1, 0, 8);
+        MAINSTOR_MSET(regs->mainstor + tsaa1, 0, 8);
 #if defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)
     }
 #endif /*defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)*/
@@ -310,7 +310,7 @@ int  i;
     if(tcba0 & TCB0_R)
         for(i = 0; i < 16; i++)
         {
-            STORE_DW(regs->mainstor + tsaa1, regs->GR_G(i));
+            STORE_MAIN_DW(regs->mainstor + tsaa1, regs->GR_G(i));
             tsaa1 += 8;
             if((tsaa1 & PAGEFRAME_BYTEMASK) == 0)
                 tsaa1 = tsaa2;
@@ -319,7 +319,7 @@ int  i;
 #endif /*defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)*/
         for(i = 0; i < 16; i++)
         {
-            STORE_FW(regs->mainstor + tsaa1, regs->GR_L(i));
+            STORE_MAIN_FW(regs->mainstor + tsaa1, regs->GR_L(i));
             tsaa1 += 4;
             if((tsaa1 & PAGEFRAME_BYTEMASK) == 0)
                 tsaa1 = tsaa2;
@@ -403,7 +403,7 @@ int     i;                              /* Array subscript           */
 
     /* Fetch the entry descriptor of the current entry */
     absold = ARCH_DEP(abs_stack_addr) (lsea, regs, ACCTYPE_READ);
-    memcpy (&lsed, regs->mainstor+absold, sizeof(LSED));
+    MAINSTOR_MCOPY (&lsed, regs->mainstor+absold, sizeof(LSED));
     lseaold = lsea;
 
     DBGMSG( "stack: Current stack entry at " F_VADR "\n", lsea );
@@ -439,7 +439,7 @@ int     i;                              /* Array subscript           */
 
         /* Fetch the entry descriptor of the next section's header */
         absold = ARCH_DEP(abs_stack_addr) (fsha, regs, ACCTYPE_READ);
-        memcpy (&lsed, regs->mainstor+absold, sizeof(LSED));
+        MAINSTOR_MCOPY (&lsed, regs->mainstor+absold, sizeof(LSED));
         lseaold = fsha;
 
         DBGMSG("stack: et=%2.2X si=%2.2X rfs=%2.2X%2.2X "
@@ -498,13 +498,13 @@ int     i;                              /* Array subscript           */
     {
 #if defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)
         /* Store the 64-bit general register in the stack entry */
-        STORE_DW(regs->mainstor + abs, regs->GR_G(i));
+        STORE_MAIN_DW(regs->mainstor + abs, regs->GR_G(i));
 
         DBGMSG("stack: GPR%d=" F_GREG " stored at V:" F_VADR
                 " A:" F_RADR "\n", i, regs->GR_G(i), lsea, abs);
 #else /*!defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)*/
         /* Store the 32-bit general register in the stack entry */
-        STORE_FW(regs->mainstor + abs, regs->GR_L(i));
+        STORE_MAIN_FW(regs->mainstor + abs, regs->GR_L(i));
 
         DBGMSG("stack: GPR%d=" F_GREG " stored at V:" F_VADR
                 " A:" F_RADR "\n", i, regs->GR_L(i), lsea, abs);
@@ -526,7 +526,7 @@ int     i;                              /* Array subscript           */
     for (i = 0; i < 16; i++)
     {
         /* Store the access register in the stack entry */
-        STORE_FW(regs->mainstor + abs, regs->AR(i));
+        STORE_MAIN_FW(regs->mainstor + abs, regs->AR(i));
 
         DBGMSG("stack: AR%d=" F_AREG " stored at V:" F_VADR
                 " A:" F_RADR "\n", i, regs->AR(i), lsea, abs);
@@ -544,9 +544,9 @@ int     i;                              /* Array subscript           */
 #endif /*!defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)*/
 
     /* Store the PKM, SASN, EAX, and PASN in bytes 128-135 */
-    STORE_FW(regs->mainstor + abs, regs->CR_L(3));
-    STORE_HW(regs->mainstor + abs + 4, regs->CR_LHH(8));
-    STORE_HW(regs->mainstor + abs + 6, regs->CR_LHL(4));
+    STORE_MAIN_FW(regs->mainstor + abs, regs->CR_L(3));
+    STORE_MAIN_HW(regs->mainstor + abs + 4, regs->CR_LHH(8));
+    STORE_MAIN_HW(regs->mainstor + abs + 6, regs->CR_LHL(4));
 
     DBGMSG("stack: PKM=%2.2X%2.2X SASN=%2.2X%2.2X "
             "EAX=%2.2X%2.2X PASN=%2.2X%2.2X \n"
@@ -568,7 +568,7 @@ int     i;                              /* Array subscript           */
 
     /* Store bits 0-63 of the current PSW in bytes 136-143 */
     ARCH_DEP(store_psw) (regs, currpsw);
-    memcpy (regs->mainstor + abs, currpsw, 8);
+    MAINSTOR_MCOPY (regs->mainstor + abs, currpsw, 8);
 
 #if defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)
     /* For ESAME, use the addressing mode bits from the return
@@ -576,28 +576,28 @@ int     i;                              /* Array subscript           */
     if (retna & 0x01)
     {
         /* For a 64-bit return address, set bits 31 and 32 */
-        regs->mainstor[abs+3] |= 0x01;
-        regs->mainstor[abs+4] |= 0x80;
+        (void)OR_MAIN_BYTE( regs->mainstor + (abs+3), 0x01 );
+        (void)OR_MAIN_BYTE( regs->mainstor + (abs+4), 0x80 );
         retna &= 0xFFFFFFFFFFFFFFFEULL;
     }
     else if (retna & 0x80000000)
     {
         /* For a 31-bit return address, clear bit 31 and set bit 32 */
-        regs->mainstor[abs+3] &= 0xFE;
-        regs->mainstor[abs+4] |= 0x80;
+        (void)AND_MAIN_BYTE( regs->mainstor + (abs+3), 0xFE );
+        (void)OR_MAIN_BYTE( regs->mainstor + (abs+4), 0x80 );
         retna &= 0x7FFFFFFF;
     }
     else
     {
         /* For a 24-bit return address, clear bits 31 and 32 */
-        regs->mainstor[abs+3] &= 0xFE;
-        regs->mainstor[abs+4] &= 0x7F;
+        (void)AND_MAIN_BYTE( regs->mainstor + (abs+3), 0xFE );
+        (void)AND_MAIN_BYTE( regs->mainstor + (abs+4), 0x7F );
         retna &= 0x00FFFFFF;
     }
 #else /*!defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)*/
     /* For ESA/390, replace bytes 140-143 by the return address,
        with the high-order bit indicating the addressing mode */
-    STORE_FW(regs->mainstor + abs + 4, retna);
+    STORE_MAIN_FW(regs->mainstor + abs + 4, retna);
 #endif /*!defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)*/
 
     DBGMSG("stack: PSW=%2.2X%2.2X%2.2X%2.2X %2.2X%2.2X%2.2X%2.2X "
@@ -622,20 +622,20 @@ int     i;                              /* Array subscript           */
     {
       #if defined(FEATURE_CALLED_SPACE_IDENTIFICATION)
         /* Store the called-space identification in bytes 144-147 */
-        STORE_FW(regs->mainstor + abs, csi);
+        STORE_MAIN_FW(regs->mainstor + abs, csi);
       #endif /*defined(FEATURE_CALLED_SPACE_IDENTIFICATION)*/
 
         /* Store the PC number in bytes 148-151 */
-        STORE_FW(regs->mainstor + abs + 4, pcnum);
+        STORE_MAIN_FW(regs->mainstor + abs + 4, pcnum);
     }
     else
     {
       #if defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)
         /* Store the called address and amode in bytes 144-151 */
-        STORE_DW(regs->mainstor + abs, calla);
+        STORE_MAIN_DW(regs->mainstor + abs, calla);
       #else /*!defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)*/
         /* Store the called address and amode in bytes 148-151 */
-        STORE_FW(regs->mainstor + abs + 4, calla);
+        STORE_MAIN_FW(regs->mainstor + abs + 4, calla);
       #endif /*!defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)*/
     }
 
@@ -649,7 +649,7 @@ int     i;                              /* Array subscript           */
         abs = abs2;
 
     /* Store zeroes in bytes 152-159 */
-    memset (regs->mainstor+abs, 0, 8);
+    MAINSTOR_MSET (regs->mainstor+abs, 0, 8);
 
     /* Update virtual and absolute addresses to point to byte 160 */
     lsea += 8;
@@ -662,7 +662,7 @@ int     i;                              /* Array subscript           */
 
 #if defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)
     /* For ESAME, store zeroes in bytes 160-167 */
-    memset (regs->mainstor+abs, 0, 8);
+    MAINSTOR_MSET (regs->mainstor+abs, 0, 8);
 
     /* Update virtual and absolute addresses to point to byte 168 */
     lsea += 8;
@@ -674,7 +674,7 @@ int     i;                              /* Array subscript           */
         abs = abs2;
 
     /* For ESAME, store the return address in bytes 168-175 */
-    STORE_DW (regs->mainstor + abs, retna);
+    STORE_MAIN_DW (regs->mainstor + abs, retna);
 
     DBGMSG("stack: PSW2=%2.2X%2.2X%2.2X%2.2X %2.2X%2.2X%2.2X%2.2X "
             "stored at V:" F_VADR " A:" F_RADR "\n",
@@ -698,8 +698,8 @@ int     i;                              /* Array subscript           */
        store the PASTEIN (CR4 bits 0-31) in bytes 180-183 */
     if (ASN_AND_LX_REUSE_ENABLED(regs))
     {
-        STORE_FW(regs->mainstor + abs, regs->CR_H(3));
-        STORE_FW(regs->mainstor + abs + 4, regs->CR_H(4));
+        STORE_MAIN_FW(regs->mainstor + abs, regs->CR_H(3));
+        STORE_MAIN_FW(regs->mainstor + abs + 4, regs->CR_H(4));
 
         DBGMSG("stack: SASTEIN=%2.2X%2.2X%2.2X%2.2X "
                 "PASTEIN=%2.2X%2.2X%2.2X%2.2X \n"
@@ -725,7 +725,7 @@ int     i;                              /* Array subscript           */
     for (i = 0; i < 16; i++)
     {
         /* Store the access register in the stack entry */
-        STORE_FW(regs->mainstor + abs, regs->AR(i));
+        STORE_MAIN_FW(regs->mainstor + abs, regs->AR(i));
 
         DBGMSG("stack: AR%d=" F_AREG " stored at V:" F_VADR
                 " A:" F_RADR "\n", i, regs->AR(i), lsea, abs);
@@ -752,7 +752,7 @@ int     i;                              /* Array subscript           */
     /* Store the linkage stack entry descriptor in the last eight
        bytes of the new state entry (bytes 160-167 for ESA/390,
        or bytes 288-295 for ESAME) */
-    memcpy (regs->mainstor+abs, &lsed2, sizeof(LSED));
+    MAINSTOR_MCOPY (regs->mainstor+abs, &lsed2, sizeof(LSED));
 
     DBGMSG( "stack: New stack entry at " F_VADR "\n", lsea );
     DBGMSG( "stack: et=%2.2X si=%2.2X rfs=%2.2X%2.2X nes=%2.2X%2.2X\n",
@@ -762,7 +762,7 @@ int     i;                              /* Array subscript           */
     /* [5.12.3.3] Update the current entry */
     STORE_HW(lsed.nes, LSSE_SIZE);
     absold = ARCH_DEP(abs_stack_addr) (lseaold, regs, ACCTYPE_WRITE);
-    memcpy (regs->mainstor+absold, &lsed, sizeof(LSED));
+    MAINSTOR_MCOPY (regs->mainstor+absold, &lsed, sizeof(LSED));
 
     DBGMSG( "stack: Previous stack entry updated at A:" F_RADR "\n",
             absold );
@@ -823,7 +823,7 @@ VADR    bsea;                           /* Backward stack entry addr */
 
     /* Fetch the entry descriptor of the current entry */
     abs = ARCH_DEP(abs_stack_addr) (lsea, regs, ACCTYPE_READ);
-    memcpy (lsedptr, regs->mainstor+abs, sizeof(LSED));
+    MAINSTOR_MCOPY (lsedptr, regs->mainstor+abs, sizeof(LSED));
 
     DBGMSG( "stack: Stack entry located at " F_VADR "\n", lsea );
     DBGMSG( "stack: et=%2.2X si=%2.2X rfs=%2.2X%2.2X nes=%2.2X%2.2X\n",
@@ -859,7 +859,7 @@ VADR    bsea;                           /* Backward stack entry addr */
 
         /* Fetch the entry descriptor of the designated entry */
         abs = ARCH_DEP(abs_stack_addr) (lsea, regs, ACCTYPE_READ);
-        memcpy (lsedptr, regs->mainstor+abs, sizeof(LSED));
+        MAINSTOR_MCOPY (lsedptr, regs->mainstor+abs, sizeof(LSED));
 
         DBGMSG("stack: et=%2.2X si=%2.2X rfs=%2.2X%2.2X "
                 "nes=%2.2X%2.2X\n",
@@ -918,8 +918,8 @@ RADR    abs;                            /* Absolute address          */
 
     /* Store the modify values into the state entry */
     abs = ARCH_DEP(abs_stack_addr) (lsea, regs, ACCTYPE_WRITE);
-    STORE_FW(regs->mainstor + abs, m1);
-    STORE_FW(regs->mainstor + abs + 4, m2);
+    STORE_MAIN_FW(regs->mainstor + abs, m1);
+    STORE_MAIN_FW(regs->mainstor + abs + 4, m2);
 
 } /* end function ARCH_DEP(stack_modify) */
 
@@ -977,7 +977,7 @@ RADR    abs;                            /* Absolute address          */
 
         /* Load bits 0-63 of ESAME PSW from bytes 136-143 */
         abs = ARCH_DEP(abs_stack_addr) (lsea, regs, ACCTYPE_READ);
-        FETCH_DW(psw1, regs->mainstor + abs);
+        FETCH_MAIN_DW(psw1, regs->mainstor + abs);
 
         /* Point to byte 168 of the state entry */
         lsea += 32;
@@ -988,7 +988,7 @@ RADR    abs;                            /* Absolute address          */
             abs = ARCH_DEP(abs_stack_addr) (lsea, regs, ACCTYPE_READ);
 
         /* Load bits 64-127 of ESAME PSW from bytes 168-175 */
-        FETCH_DW(psw2, regs->mainstor + abs);
+        FETCH_MAIN_DW(psw2, regs->mainstor + abs);
 
         /* For code 4, return ESAME PSW in general register pair */
         if (code == 4)
@@ -1022,8 +1022,8 @@ RADR    abs;                            /* Absolute address          */
 
         /* Load the SASTEIN, PASTEIN from bytes 176-179, 180-183*/
         abs = ARCH_DEP(abs_stack_addr) (lsea, regs, ACCTYPE_READ);
-        FETCH_FW(regs->GR_H(r1), regs->mainstor + abs);
-        FETCH_FW(regs->GR_H(r1+1), regs->mainstor + abs + 4);
+        FETCH_MAIN_FW(regs->GR_H(r1), regs->mainstor + abs);
+        FETCH_MAIN_FW(regs->GR_H(r1+1), regs->mainstor + abs + 4);
 
         return;
 
@@ -1037,8 +1037,8 @@ RADR    abs;                            /* Absolute address          */
 
     /* Load the general register pair from the state entry */
     abs = ARCH_DEP(abs_stack_addr) (lsea, regs, ACCTYPE_READ);
-    FETCH_FW(regs->GR_L(r1), regs->mainstor + abs);
-    FETCH_FW(regs->GR_L(r1+1), regs->mainstor + abs + 4);
+    FETCH_MAIN_FW(regs->GR_L(r1), regs->mainstor + abs);
+    FETCH_MAIN_FW(regs->GR_L(r1+1), regs->mainstor + abs + 4);
 
 } /* end function ARCH_DEP(stack_extract) */
 
@@ -1114,18 +1114,18 @@ int     i;                              /* Array subscript           */
             {
                 /* For ESAME PR and EREGG instructions,
                    load all 64 bits of the register */
-                FETCH_DW(regs->GR_G(i), regs->mainstor + abs);
+                FETCH_MAIN_DW(regs->GR_G(i), regs->mainstor + abs);
             } else {
                 /* For ESAME EREG instruction, load bits 32-63 of
                    the register, and leave bits 0-31 unchanged */
-                FETCH_FW(regs->GR_L(i), regs->mainstor + abs + 4);
+                FETCH_MAIN_FW(regs->GR_L(i), regs->mainstor + abs + 4);
             }
 
             DBGMSG("stack: GPR%d=" F_GREG " loaded from V:" F_VADR
                     " A:" F_RADR "\n", i, regs->GR(i), lsea, abs);
     #else /*!defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)*/
             /* For ESA/390, load a 32-bit general register */
-            FETCH_FW(regs->GR_L(i), regs->mainstor + abs);
+            FETCH_MAIN_FW(regs->GR_L(i), regs->mainstor + abs);
 
             DBGMSG("stack: GPR%d=" F_GREG " loaded from V:" F_VADR
                     " A:" F_RADR "\n", i, regs->GR(i), lsea, abs);
@@ -1160,7 +1160,7 @@ int     i;                              /* Array subscript           */
         if ((r1 <= r2 && i >= r1 && i <= r2)
             || (r1 > r2 && (i >= r1 || i <= r2)))
         {
-            FETCH_FW(regs->AR(i),regs->mainstor + abs);
+            FETCH_MAIN_FW(regs->AR(i),regs->mainstor + abs);
             SET_AEA_AR(regs, i);
 
             DBGMSG("  stack: AR%d=" F_AREG " loaded from V:" F_VADR
@@ -1207,6 +1207,7 @@ int     i;                              /* Array subscript           */
 /*-------------------------------------------------------------------*/
 int ARCH_DEP(program_return_unstack) (REGS *regs, RADR *lsedap, int *rc)
 {
+ALIGN_8
 QWORD   newpsw;                         /* New PSW                   */
 LSED    lsed;                           /* Linkage stack entry desc. */
 VADR    lsea;                           /* Linkage stack entry addr  */
@@ -1244,16 +1245,16 @@ VADR    lsep;                           /* Virtual addr of entry desc.
     if ((lsed.uet & LSED_UET_ET) == LSED_UET_PC)
     {
         /* Fetch the PKM from bytes 128-129 of the stack entry */
-        FETCH_HW(pkm,regs->mainstor + abs);
+        FETCH_MAIN_HW(pkm,regs->mainstor + abs);
 
         /* Fetch the SASN from bytes 130-131 of the stack entry */
-        FETCH_HW(sasn,regs->mainstor + abs + 2);
+        FETCH_MAIN_HW(sasn,regs->mainstor + abs + 2);
 
         /* Fetch the EAX from bytes 132-133 of the stack entry */
-        FETCH_HW(eax,regs->mainstor + abs + 4);
+        FETCH_MAIN_HW(eax,regs->mainstor + abs + 4);
 
         /* Fetch the PASN from bytes 134-135 of the stack entry */
-        FETCH_HW(pasn,regs->mainstor + abs + 6);
+        FETCH_MAIN_HW(pasn,regs->mainstor + abs + 6);
 
         DBGMSG("  stack: PKM=%2.2X%2.2X SASN=%2.2X%2.2X "
                 "EAX=%2.2X%2.2X PASN=%2.2X%2.2X \n"
@@ -1299,7 +1300,7 @@ VADR    lsep;                           /* Virtual addr of entry desc.
             lsea, abs);
 
     /* Copy PSW bits 0-63 from bytes 136-143 of the stack entry */
-    memcpy (newpsw, regs->mainstor + abs, 8);
+    MAINSTOR_MCOPY (newpsw, regs->mainstor + abs, 8);
 
 #if defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)
     /* For ESAME, advance to byte 168 of the stack entry */
@@ -1312,7 +1313,7 @@ VADR    lsep;                           /* Virtual addr of entry desc.
         abs = ARCH_DEP(abs_stack_addr) (lsea, regs, ACCTYPE_READ);
 
     /* Copy ESAME PSW bits 64-127 from bytes 168-175 */
-    memcpy (newpsw + 8, regs->mainstor + abs, 8);
+    MAINSTOR_MCOPY (newpsw + 8, regs->mainstor + abs, 8);
 
     /* Update virtual and absolute addresses to point to byte 176 */
     lsea += 8;
@@ -1329,8 +1330,8 @@ VADR    lsep;                           /* Virtual addr of entry desc.
     if ((lsed.uet & LSED_UET_ET) == LSED_UET_PC
         && ASN_AND_LX_REUSE_ENABLED(regs))
     {
-        FETCH_FW(regs->CR_H(3), regs->mainstor + abs);
-        FETCH_FW(regs->CR_H(4), regs->mainstor + abs + 4);
+        FETCH_MAIN_FW(regs->CR_H(3), regs->mainstor + abs);
+        FETCH_MAIN_FW(regs->CR_H(4), regs->mainstor + abs + 4);
 
         DBGMSG("  stack: SASTEIN=%2.2X%2.2X%2.2X%2.2X "
                 "PASTEIN=%2.2X%2.2X%2.2X%2.2X \n"

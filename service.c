@@ -616,7 +616,7 @@ SCCB_EVD_BK*  evd_bk  = (SCCB_EVD_BK*) (evd_hdr + 1 );
 BYTE*         evd_msg = (BYTE*)        (evd_bk  + 1 );
 
     /* Get SCCB length */
-    FETCH_HW( sccb_len, sccb->length  );
+    FETCH_MAIN_HW_UL( sccb_len, sccb->length  );
 
     /* Command length */
     event_msglen = (int)strlen( servc_scpcmdstr );
@@ -639,31 +639,31 @@ BYTE*         evd_msg = (BYTE*)        (evd_bk  + 1 );
     {
         /* Set new SCCB length */
         sccb_len = evd_len + sizeof( SCCB_HEADER );
-        STORE_HW( sccb->length, sccb_len  );
+        STORE_MAIN_HW( sccb->length, sccb_len  );
         sccb->type &= ~SCCB_TYPE_VARIABLE;
     }
 
     /* Set length in event header */
-    STORE_HW( evd_hdr->totlen, evd_len );
+    STORE_MAIN_HW( evd_hdr->totlen, evd_len );
 
     /* Set type in event header */
     evd_hdr->type = type;
 
     /* Set message length in event data block */
     i = evd_len - sizeof( SCCB_EVD_HDR );
-    STORE_HW( evd_bk->msglen, i  );
+    STORE_MAIN_HW( evd_bk->msglen, i  );
 
-    memcpy( evd_bk->const1, const1_template,
+    MAINSTOR_MCOPY( evd_bk->const1, const1_template,
                     sizeof( const1_template ));
     i -=            sizeof( const1_template ) + 2;
-    STORE_HW( evd_bk->cplen, i  );
+    STORE_MAIN_HW_UL( evd_bk->cplen, i  );
 
-    memcpy( evd_bk->const2, const2_template,
+    MAINSTOR_MCOPY( evd_bk->const2, const2_template,
                     sizeof( const2_template ));
     i -=            sizeof( const2_template ) + 2;
-    STORE_HW( evd_bk->tdlen, i  );
+    STORE_MAIN_HW_UL( evd_bk->tdlen, i  );
 
-    memcpy( evd_bk->const3, const3_template,
+    MAINSTOR_MCOPY( evd_bk->const3, const3_template,
                     sizeof( const3_template ));
     i -=            sizeof( const3_template ) + 2;
 
@@ -711,7 +711,7 @@ static void sclp_cpident( SCCB_HEADER* sccb )
     for (i=7; i >= 0 && sysname[i] == ' '; i--) sysname[i] = 0;
     for (i=7; i >= 0 && sysplex[i] == ' '; i--) sysplex[i] = 0;
 
-    FETCH_DW( syslevel, cpi_bk->system_level );
+    FETCH_MAIN_DW_UL( syslevel, cpi_bk->system_level );
 
     // "Control program identification: type %s, name %s, sysplex %s, level %"PRIX64
     WRMSG( HHC00004, "I", systype, sysname, sysplex, syslevel );
@@ -816,7 +816,7 @@ U16           evd_len;
 SCCB_EVD_HDR* evd_hdr = (SCCB_EVD_HDR*)( sccb    + 1 );
 SCCB_SGQ_BK*  sgq_bk  = (SCCB_SGQ_BK*) ( evd_hdr + 1 );
 
-    FETCH_HW( sccb_len, sccb->length );
+    FETCH_MAIN_HW_UL( sccb_len, sccb->length );
     evd_len = sizeof( SCCB_EVD_HDR ) + sizeof( SCCB_SGQ_BK );
 
     /* Set response code X'75F0' if SCCB length exceeded */
@@ -828,24 +828,24 @@ SCCB_SGQ_BK*  sgq_bk  = (SCCB_SGQ_BK*) ( evd_hdr + 1 );
     }
 
     /* Zero all fields */
-    memset( evd_hdr, 0, evd_len );
+    MAINSTOR_MSET( evd_hdr, 0, evd_len );
 
     /* Update SCCB length field if variable request */
     if (sccb->type & SCCB_TYPE_VARIABLE)
     {
         /* Set new SCCB length */
         sccb_len = evd_len + sizeof( SCCB_HEADER );
-        STORE_HW( sccb->length, sccb_len );
+        STORE_MAIN_HW( sccb->length, sccb_len );
         sccb->type &= ~SCCB_TYPE_VARIABLE;
     }
 
     /* Set length in event header */
-    STORE_HW( evd_hdr->totlen, evd_len );
+    STORE_MAIN_HW( evd_hdr->totlen, evd_len );
 
     /* Set type in event header */
     evd_hdr->type = SCCB_EVD_TYPE_SIGQ;
 
-    STORE_HW( sgq_bk->count, servc_signal_quiesce_count );
+    STORE_MAIN_HW( sgq_bk->count, servc_signal_quiesce_count );
     sgq_bk->unit = servc_signal_quiesce_unit;
 
     /* Set response code X'0020' in SCCB header */
@@ -883,7 +883,7 @@ U32           residual;                 /* Residual data count       */
 BYTE         cmdcode;                   /* 3270 read/write command   */
 
     /* Calculate the address and length of the 3270 datastream */
-    FETCH_HW( evd_len, evd_hdr->totlen );
+    FETCH_MAIN_HW_UL( evd_len, evd_hdr->totlen );
     sysg_data = (BYTE*)(evd_hdr+1);
     sysg_len  = evd_len - sizeof( SCCB_EVD_HDR );
 
@@ -1025,10 +1025,10 @@ U32            residual;                /* Residual data count       */
     if (dev != NULL)
     {
         /* Zeroize the event data header */
-        memset( evd_hdr, 0, sizeof( SCCB_EVD_HDR ));
+        MAINSTOR_MSET( evd_hdr, 0, sizeof( SCCB_EVD_HDR ));
 
         /* Calculate maximum data length */
-        FETCH_HW( sccblen, sccb->length );
+        FETCH_MAIN_HW_UL( sccblen, sccb->length );
         evd_len = sccblen - sizeof( SCCB_HEADER );
         sysg_data = (BYTE*)(evd_hdr+1);
         sysg_len = evd_len - sizeof( SCCB_EVD_HDR );
@@ -1141,12 +1141,12 @@ U32            residual;                /* Residual data count       */
         {
             /* Set new SCCB length */
             sccblen = evd_len + sizeof( SCCB_HEADER );
-            STORE_HW( sccb->length, sccblen );
+            STORE_MAIN_HW( sccb->length, sccblen );
             sccb->type &= ~SCCB_TYPE_VARIABLE;
         }
 
         /* Set length in event header */
-        STORE_HW( evd_hdr->totlen, evd_len );
+        STORE_MAIN_HW( evd_hdr->totlen, evd_len );
 
         /* Set type in event header */
         evd_hdr->type = SCCB_EVD_TYPE_SYSG;
@@ -1188,7 +1188,7 @@ BYTE*         sysa_data;
 int           i;
 
     LOGMSG( "SYSA write:" );
-    FETCH_HW( evd_len, evd_hdr->totlen );
+    FETCH_MAIN_HW_UL( evd_len, evd_hdr->totlen );
     sysa_data = (BYTE*)(evd_hdr+1);
     sysa_len = evd_len - sizeof( SCCB_EVD_HDR );
 
@@ -1700,7 +1700,7 @@ BYTE*           xstmap;                 /* Xstore bitmap, zero means
     sccb = (SCCB_HEADER*)(regs->mainstor + sccb_absolute_addr);
 
     /* Load SCCB length from header */
-    FETCH_HW( sccblen, sccb->length  );
+    FETCH_MAIN_HW( sccblen, sccb->length  );
 
     /* Set the main storage reference bit */
     ARCH_DEP( or_storage_key )( sccb_absolute_addr, STORKEY_REF );
@@ -1789,7 +1789,7 @@ BYTE*           xstmap;                 /* Xstore bitmap, zero means
         /* Set response code X'0300' if SCCB length
            is insufficient to contain SCP info */
         if ( sccblen < sizeof( SCCB_HEADER ) + sizeof( SCCB_SCP_INFO )
-                + (sizeof( SCCB_CPU_INFO ) * sysblk.maxcpu))
+                + (sizeof( SCCB_CPU_INFO ) * SYS_GET_MAXCPU()))
         {
             sccb->reas = SCCB_REAS_TOO_SHORT;
             sccb->resp = SCCB_RESP_BLOCK_ERROR;
@@ -1798,7 +1798,7 @@ BYTE*           xstmap;                 /* Xstore bitmap, zero means
 
         /* Point to SCCB data area following SCCB header */
         sccbscp = (SCCB_SCP_INFO*)(sccb+1);
-        memset( sccbscp, 0, sizeof( SCCB_SCP_INFO ));
+        MAINSTOR_MSET( sccbscp, 0, sizeof( SCCB_SCP_INFO ));
 
         /* Set main storage size in SCCB...
          *
@@ -1822,63 +1822,63 @@ BYTE*           xstmap;                 /* Xstore bitmap, zero means
         incsizemb = (sysblk.mainsize + (MAX_1MINCR_STORSIZE - 1)) / MAX_1MINCR_STORSIZE;
         realinc = sysblk.mainsize / (incsizemb << SHIFT_MEGABYTE);
 
-        STORE_HW( sccbscp->realinum, realinc );
+        STORE_MAIN_HW( sccbscp->realinum, realinc );
         sccbscp->realiszm = (incsizemb & 0xFF);
         sccbscp->realbszk = 4;
-        STORE_HW( sccbscp->realiint, 1 );
+        STORE_MAIN_HW( sccbscp->realiint, 1 );
 
 #if defined( _900 ) || defined( FEATURE_001_ZARCH_INSTALLED_FACILITY )
         /* SIE supports the full address range */
         sccbscp->maxvm = 0;
         /* realiszm is valid */
-        STORE_FW( sccbscp->grzm, 0 );
+        STORE_MAIN_FW( sccbscp->grzm, 0 );
         /* Number of storage increments installed in esame mode */
-        STORE_DW( sccbscp->grnmx, realinc );
+        STORE_MAIN_DW( sccbscp->grnmx, realinc );
 #endif
 
 #if defined( FEATURE_EXPANDED_STORAGE )
         /* Set expanded storage size in SCCB */
         xstincnum = sysblk.xpndsize /
                     (XSTORE_INCREMENT_SIZE >> XSTORE_PAGESHIFT);
-        STORE_FW( sccbscp->xpndinum, xstincnum );
+        STORE_MAIN_FW( sccbscp->xpndinum, xstincnum );
         xstblkinc = XSTORE_INCREMENT_SIZE >> XSTORE_PAGESHIFT;
-        STORE_FW( sccbscp->xpndsz4K, xstblkinc );
+        STORE_MAIN_FW( sccbscp->xpndsz4K, xstblkinc );
 #endif
 
 #if defined( FEATURE_S370_S390_VECTOR_FACILITY )
         /* Set the Vector section size in the SCCB */
-        STORE_HW( sccbscp->vectssiz, VECTOR_SECTION_SIZE );
+        STORE_MAIN_HW( sccbscp->vectssiz, VECTOR_SECTION_SIZE );
         /* Set the Vector partial sum number in the SCCB */
-        STORE_HW( sccbscp->vectpsum, VECTOR_PARTIAL_SUM_NUMBER );
+        STORE_MAIN_HW( sccbscp->vectpsum, VECTOR_PARTIAL_SUM_NUMBER );
 #endif
         /* Set CPU array count and offset in SCCB */
-        STORE_HW( sccbscp->numcpu, sysblk.maxcpu );
+        STORE_MAIN_HW( sccbscp->numcpu, SYS_GET_MAXCPU()  );
         offset = sizeof( SCCB_HEADER ) + sizeof( SCCB_SCP_INFO );
-        STORE_HW( sccbscp->offcpu, offset );
+        STORE_MAIN_HW( sccbscp->offcpu, offset );
 
 #if defined( FEATURE_MPF_INFO )
         /* Set MPF array count and offset in SCCB */
-        STORE_HW( sccbscp->nummpf, sysblk.maxcpu-1 );
+        STORE_MAIN_HW( sccbscp->nummpf, SYS_GET_MAXCPU()-1 );
 #endif
-        offset += (U16)sizeof( SCCB_CPU_INFO ) * sysblk.maxcpu;
-        STORE_HW( sccbscp->offmpf, offset );
+        offset += (U16)sizeof( SCCB_CPU_INFO ) * SYS_GET_MAXCPU();
+        STORE_MAIN_HW( sccbscp->offmpf, offset );
 
         /* Set HSA array count and offset in SCCB */
-        STORE_HW( sccbscp->numhsa, 0 );
+        STORE_MAIN_HW( sccbscp->numhsa, 0 );
 
 #if defined( FEATURE_MPF_INFO )
-        offset += (U16)sizeof( SCCB_MPF_INFO ) * sysblk.maxcpu-1;
+        offset += (U16)sizeof( SCCB_MPF_INFO ) * SYS_GET_MAXCPU()-1;
 #endif
-        STORE_HW( sccbscp->offhsa, offset );
+        STORE_MAIN_HW( sccbscp->offhsa, offset );
 
         /* Build the MPF information array after the CPU info */
         /* Move IPL load parameter to SCCB */
         get_loadparm( sccbscp->loadparm );
 
         /* Set installed features bit mask in SCCB */
-        memcpy( sccbscp->ifm, ARCH_DEP( scpinfo_ifm ), sizeof( sccbscp->ifm ));
+        MAINSTOR_MCOPY( sccbscp->ifm, ARCH_DEP( scpinfo_ifm ), sizeof( sccbscp->ifm ));
 
-        memcpy( sccbscp->cfg, ARCH_DEP( scpinfo_cfg ), sizeof( sccbscp->cfg ));
+        MAINSTOR_MCOPY( sccbscp->cfg, ARCH_DEP( scpinfo_cfg ), sizeof( sccbscp->cfg ));
         /* sccbscp->cfg11 = ARCH_DEP( scpinfo_cfg11 ); */
 
         /* Turn off bits for facilities that aren't enabled */
@@ -1907,12 +1907,12 @@ BYTE*           xstmap;                 /* Xstore bitmap, zero means
         /* Build the CPU information array after the SCP info */
         sccbcpu = (SCCB_CPU_INFO*)(sccbscp+1);
 
-        for (i=0; i < sysblk.maxcpu; i++, sccbcpu++)
+        for (i=0; i < SYS_GET_MAXCPU(); i++, sccbcpu++)
         {
-            memset( sccbcpu, 0, sizeof( SCCB_CPU_INFO ));
+            MAINSTOR_MSET( sccbcpu, 0, sizeof( SCCB_CPU_INFO ));
             sccbcpu->cpa = i;
             sccbcpu->tod = 0;
-            memcpy( sccbcpu->cpf, ARCH_DEP( scpinfo_cpf ), sizeof( sccbcpu->cpf ));
+            MAINSTOR_MCOPY( sccbcpu->cpf, ARCH_DEP( scpinfo_cpf ), sizeof( sccbcpu->cpf ));
             sccbcpu->ptyp = sysblk.ptyp[i];
 
 #if defined( FEATURE_CRYPTO )
@@ -1933,7 +1933,7 @@ BYTE*           xstmap;                 /* Xstore bitmap, zero means
 #if defined( FEATURE_MPF_INFO )
 
         /* Define machine capacity */
-        STORE_FW( sccbscp->rcci, 10000 );
+        STORE_MAIN_FW_UL( sccbscp->rcci, 10000 );
 
         /* Fill in the MP Factors array */
         sccbmpf = (SCCB_MPF_INFO*)(sccbcpu);
@@ -1979,11 +1979,11 @@ docheckstop:
 
         /* Point to SCCB data area following SCCB header */
         sccbchp = (SCCB_CHSET_INFO*)(sccb+1);
-        memset( sccbchp, 0, sizeof( SCCB_CHSET_INFO ));
+        MAINSTOR_MSET( sccbchp, 0, sizeof( SCCB_CHSET_INFO ));
 #else
         /* Point to SCCB data area following SCCB header */
         sccbchp = (SCCB_CHP_INFO*)(sccb+1);
-        memset( sccbchp, 0, sizeof( SCCB_CHP_INFO ));
+        MAINSTOR_MSET( sccbchp, 0, sizeof( SCCB_CHP_INFO ));
 #endif
 
 #if defined( FEATURE_CHANNEL_SUBSYSTEM )
@@ -2053,7 +2053,7 @@ docheckstop:
 
         /* Point to SCCB data area following SCCB header */
         sccbcsi = (SCCB_CSI_INFO*)(sccb+1);
-        memset( sccbcsi, 0, sizeof( SCCB_CSI_INFO ));
+        MAINSTOR_MSET( sccbcsi, 0, sizeof( SCCB_CSI_INFO ));
 
         sccbcsi->csif[0] =
             0
@@ -2086,7 +2086,7 @@ docheckstop:
 
         /* Point to SCCB data area following SCCB header */
         evd_hdr = (SCCB_EVD_HDR*)(sccb+1);
-        FETCH_HW( evd_len, evd_hdr->totlen );
+        FETCH_MAIN_HW_UL( evd_len, evd_hdr->totlen );
 
         switch (evd_hdr->type)
         {
@@ -2095,17 +2095,17 @@ docheckstop:
 
             while (sccblen > sizeof( SCCB_HEADER ))
             {
-                FETCH_HW( evd_len, evd_hdr->totlen );
+                FETCH_MAIN_HW_UL( evd_len, evd_hdr->totlen );
 
                 /* Point to the Message Control Data Block */
                 mcd_bk = (SCCB_MCD_BK*)(evd_hdr+1);
-                FETCH_HW( mcd_len, mcd_bk->length );
+                FETCH_MAIN_HW_UL( mcd_len, mcd_bk->length );
 
                 obj_hdr = (SCCB_OBJ_HDR*)(mcd_bk+1);
 
                 while (mcd_len > sizeof( SCCB_MCD_BK ))
                 {
-                    FETCH_HW( obj_len, obj_hdr->length );
+                    FETCH_MAIN_HW_UL( obj_len, obj_hdr->length );
 
                     if (obj_len == 0)
                     {
@@ -2114,7 +2114,7 @@ docheckstop:
                         break;
                     }
 
-                    FETCH_HW( obj_type, obj_hdr->type );
+                    FETCH_MAIN_HW_UL( obj_type, obj_hdr->type );
 
                     if (obj_type == SCCB_OBJ_TYPE_MESSAGE)
                     {
@@ -2380,7 +2380,7 @@ fflush( efile );
         evd_mask = (SCCB_EVT_MASK*)(sccb+1);
 
         /* Get length of single mask field */
-        FETCH_HW( masklen, evd_mask->length );
+        FETCH_MAIN_HW_UL( masklen, evd_mask->length );
 
         /* Save old mask settings in order to suppress superfluous messages */
         old_cp_recv_mask = servc_cp_recv_mask & ARCH_DEP( sclp_send_mask ) & SCCB_EVENT_CONS_RECV_MASK;
@@ -2407,7 +2407,7 @@ fflush( efile );
         }
 
         /* Write the events that we support back */
-        memset( &evd_mask->masks[ 2*masklen ], 0, 2 * masklen );
+        MAINSTOR_MSET( &evd_mask->masks[ 2*masklen ], 0, 2 * masklen );
 
         for (i=0; (i < 4) && ((U32)i < masklen); i++)
         {
@@ -2487,7 +2487,7 @@ fflush( efile );
         xstmap = (BYTE*)(sccbxmap+1);
 
         /* Set all blocks available */
-        memset( xstmap, 0, xstblkinc/8);
+        MAINSTOR_MSET( xstmap, 0, xstblkinc/8);
 
         /* Set response code X'0010' in SCCB header */
         sccb->reas = SCCB_REAS_NONE;
@@ -2503,7 +2503,7 @@ fflush( efile );
         i = (sclp_command & SCLP_RESOURCE_MASK) >> SCLP_RESOURCE_SHIFT;
 
         /* Return invalid resource in parm if target does not exist */
-        if (i >= sysblk.maxcpu)
+        if (i >= SYS_GET_MAXCPU())
         {
             sccb->reas = SCCB_REAS_INVALID_RSCP;
             sccb->resp = SCCB_RESP_REJECT;
@@ -2523,7 +2523,7 @@ fflush( efile );
         i = (sclp_command & SCLP_RESOURCE_MASK) >> SCLP_RESOURCE_SHIFT;
 
         /* Return invalid resource in parm if target does not exist */
-        if (i >= sysblk.maxcpu)
+        if (i >= SYS_GET_MAXCPU())
         {
             sccb->reas = SCCB_REAS_INVALID_RSCP;
             sccb->resp = SCCB_RESP_REJECT;
@@ -2545,7 +2545,7 @@ fflush( efile );
         i = (sclp_command & SCLP_RESOURCE_MASK) >> SCLP_RESOURCE_SHIFT;
 
         /* Return invalid resource in parm if target does not exist */
-        if (i >= sysblk.maxcpu || !IS_CPU_ONLINE(i))
+        if (i >= SYS_GET_MAXCPU() || !IS_CPU_ONLINE(i))
         {
             sccb->reas = SCCB_REAS_INVALID_RSCP;
             sccb->resp = SCCB_RESP_REJECT;
@@ -2569,7 +2569,7 @@ fflush( efile );
         i = (sclp_command & SCLP_RESOURCE_MASK) >> SCLP_RESOURCE_SHIFT;
 
         /* Return invalid resource in parm if target does not exist */
-        if (i >= sysblk.maxcpu)
+        if (i >= SYS_GET_MAXCPU())
         {
             sccb->reas = SCCB_REAS_INVALID_RSCP;
             sccb->resp = SCCB_RESP_REJECT;

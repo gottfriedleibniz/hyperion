@@ -478,16 +478,16 @@ init_track (int trklen, BYTE *trkbuf, int cyl, int head, int *usedv)
     /* Build the home address in the track buffer */
     trkhdr = (CKD_TRKHDR*) trkbuf;
     trkhdr->bin = 0;
-    store_hw( trkhdr->cyl,  cyl  );
-    store_hw( trkhdr->head, head );
+    STORE_HW( trkhdr->cyl,  cyl  );
+    STORE_HW( trkhdr->head, head );
 
     /* Build a standard record zero in the track buffer */
     rechdr = (CKD_RECHDR*) (trkbuf + CKD_TRKHDR_SIZE);
-    store_hw( rechdr->cyl,  cyl  );
-    store_hw( rechdr->head, head );
+    STORE_HW( rechdr->cyl,  cyl  );
+    STORE_HW( rechdr->head, head );
               rechdr->rec  = 0;
               rechdr->klen = 0;
-    store_hw( rechdr->dlen, CKD_R0_DLEN );
+    STORE_HW( rechdr->dlen, CKD_R0_DLEN );
 
     /* Set number of bytes used in track buffer */
     *usedv = CKD_TRKHDR_SIZE + CKD_RECHDR_SIZE + CKD_R0_DLEN;
@@ -645,11 +645,11 @@ CKD_RECHDR     *rechdr;                 /* -> Record header          */
     /* Add data block to virtual track buffer */
     (*rec)++;
     rechdr = (CKD_RECHDR*)(cif->trkbuf + *usedv);
-    store_hw( rechdr->cyl,   (U16)  *cyl  );
-    store_hw( rechdr->head,  (U16)  *head );
+    STORE_HW( rechdr->cyl,   (U16)  *cyl  );
+    STORE_HW( rechdr->head,  (U16)  *head );
               rechdr->rec  = (BYTE) *rec;
               rechdr->klen = (BYTE)  keylen;
-    store_hw( rechdr->dlen,  (U16)   datalen );
+    STORE_HW( rechdr->dlen,  (U16)   datalen );
     *usedv += CKD_RECHDR_SIZE;
     memcpy( cif->trkbuf + *usedv, blk->kdarea, keylen + datalen );
     *usedv += keylen + datalen;
@@ -875,8 +875,8 @@ CKD_RECHDR      rechdr;                 /* Record header             */
     /* Validate the track header */
     if (0
         ||           trkhdr.bin    != 0
-        || fetch_hw( trkhdr.cyl  ) != cyl
-        || fetch_hw( trkhdr.head ) != head
+        || READ_HW( trkhdr.cyl  ) != cyl
+        || READ_HW( trkhdr.head ) != head
     )
     {
         // "File %s: cyl[%04X/%d] head[%04X/%d]; invalid track header %02X%02X%02X%02X%02X"
@@ -1016,7 +1016,7 @@ time_t          timeval;                /* Current time value        */
     convert_to_ebcdic (f1dscb->ds1dsnam, 44, dsname);
     f1dscb->ds1fmtid = 0xF1;
     convert_to_ebcdic (f1dscb->ds1dssn, 6, volser);
-    store_hw( f1dscb->ds1volsq, 1 );
+    STORE_HW( f1dscb->ds1volsq, 1 );
     f1dscb->ds1credt[0] = (BYTE) tmptr->tm_year;
     f1dscb->ds1credt[1] = (tmptr->tm_yday >> 8) & 0xFF;
     f1dscb->ds1credt[2] = tmptr->tm_yday & 0xFF;
@@ -1030,27 +1030,27 @@ time_t          timeval;                /* Current time value        */
     f1dscb->ds1dsorg[1] = 0;
     f1dscb->ds1recfm = recfm;
     f1dscb->ds1optcd = 0;
-    store_hw( f1dscb->ds1blkl,  blksz );
-    store_hw( f1dscb->ds1lrecl, lrecl );
+    STORE_HW( f1dscb->ds1blkl,  blksz );
+    STORE_HW( f1dscb->ds1lrecl, lrecl );
     f1dscb->ds1keyl = (BYTE) keyln;
-    store_hw( f1dscb->ds1rkp, 0 );
+    STORE_HW( f1dscb->ds1rkp, 0 );
     f1dscb->ds1dsind = DS1DSIND_LASTVOL;
     if ((blksz & 0x07) == 0)
         f1dscb->ds1dsind |= DS1DSIND_BLKSIZ8;
-    store_fw( f1dscb->ds1scalo, spsec );
+    STORE_FW( f1dscb->ds1scalo, spsec );
     f1dscb->ds1scalo[0] =
         (units == 'C' ? DS1SCALO_UNITS_CYL : DS1SCALO_UNITS_TRK);
     f1dscb->ds1lstar[0] = (lasttrk >> 8) & 0xFF;
     f1dscb->ds1lstar[1] = lasttrk & 0xFF;
     f1dscb->ds1lstar[2] = (BYTE) lastrec;
-    store_hw( f1dscb->ds1trbal, trkbal );
+    STORE_HW( f1dscb->ds1trbal, trkbal );
     f1dscb->ds1ext1.xttype =
         (units == 'C' ? XTTYPE_CYLBOUND : XTTYPE_DATA);
     f1dscb->ds1ext1.xtseqn = 0;
-    store_hw( f1dscb->ds1ext1.xtbcyl, bcyl );
-    store_hw( f1dscb->ds1ext1.xtbtrk, bhead );
-    store_hw( f1dscb->ds1ext1.xtecyl, ecyl );
-    store_hw( f1dscb->ds1ext1.xtetrk, ehead );
+    STORE_HW( f1dscb->ds1ext1.xtbcyl, bcyl );
+    STORE_HW( f1dscb->ds1ext1.xtbtrk, bhead );
+    STORE_HW( f1dscb->ds1ext1.xtecyl, ecyl );
+    STORE_HW( f1dscb->ds1ext1.xtetrk, ehead );
     return 0;
 } /* end function build_format1_dscb */
 
@@ -1131,19 +1131,19 @@ int             tolfact;                /* Device tolerance          */
     f4dscb->ds4hcchh[1] = numcyls & 0xFF;
     f4dscb->ds4hcchh[2] = 0;
     f4dscb->ds4hcchh[3] = 0;
-    store_hw( f4dscb->ds4noatk, 0 );
+    STORE_HW( f4dscb->ds4noatk, 0 );
     f4dscb->ds4vtoci = DS4VTOCI_DOS;
     f4dscb->ds4noext = 1;
     f4dscb->ds4devsz[0] = (numcyls >> 8) & 0xFF;
     f4dscb->ds4devsz[1] = numcyls & 0xFF;
     f4dscb->ds4devsz[2] = (numheads >> 8) & 0xFF;
     f4dscb->ds4devsz[3] = numheads & 0xFF;
-    store_hw( f4dscb->ds4devtk, physlen );
+    STORE_HW( f4dscb->ds4devtk, physlen );
     f4dscb->ds4devi = kbconst;
     f4dscb->ds4devl = lbconst;
     f4dscb->ds4devk = nkconst;
     f4dscb->ds4devfg = devflag;
-    store_hw( f4dscb->ds4devtl, tolfact );
+    STORE_HW( f4dscb->ds4devtl, tolfact );
     f4dscb->ds4devdt = numdscb;
     f4dscb->ds4devdb = numdblk;
 
@@ -1342,7 +1342,7 @@ char            dsnama[45];             /* Dataset name (ASCIIZ)     */
     numf0dscb = (numtrks * dscbpertrk) - numdscb;
 
     /* Update the format 0 DSCB count in the format 4 DSCB */
-    store_hw( f4dscb->ds4dsrec, numf0dscb );
+    STORE_HW( f4dscb->ds4dsrec, numf0dscb );
 
     /* Calculate the CCHH of the last track of the VTOC */
     abstrk = (outcyl * heads) + outhead;
@@ -1354,10 +1354,10 @@ char            dsnama[45];             /* Dataset name (ASCIIZ)     */
     f4dscb->ds4vtoce.xttype =
         (endhead == heads - 1 ? XTTYPE_CYLBOUND : XTTYPE_DATA);
     f4dscb->ds4vtoce.xtseqn = 0;
-    store_hw( f4dscb->ds4vtoce.xtbcyl, outcyl );
-    store_hw( f4dscb->ds4vtoce.xtbtrk, outhead );
-    store_hw( f4dscb->ds4vtoce.xtecyl, endcyl );
-    store_hw( f4dscb->ds4vtoce.xtetrk, endhead );
+    STORE_HW( f4dscb->ds4vtoce.xtbcyl, outcyl );
+    STORE_HW( f4dscb->ds4vtoce.xtbtrk, outhead );
+    STORE_HW( f4dscb->ds4vtoce.xtecyl, endcyl );
+    STORE_HW( f4dscb->ds4vtoce.xtetrk, endhead );
 
     /* Calculate the minimum volume size */
     if (prealloc)
@@ -2057,8 +2057,8 @@ U16     heads;                          /* Number of tracks/cylinder */
             copyr1->ucbtype[2], copyr1->ucbtype[3],
             dasd_name(copyr1->ucbtype) ) );
 
-    cyls  = fetch_hw( copyr1->cyls  );
-    heads = fetch_hw( copyr1->heads );
+    FETCH_HW( cyls, copyr1->cyls  );
+    FETCH_HW( heads, copyr1->heads );
 
     // "Original device was cyls[%04X/%d], heads[%04X/%d]"
     XMINFF (2, MSG( HHC02552, "I", cyls, cyls, heads, heads ) );
@@ -2202,8 +2202,8 @@ char            hex[49];                /* Character work areas      */
     dirblka[dirblkn] = blkp;
 
     /* Update the CCHHR in the copy of the directory block */
-    store_hw( blkp->cyl,  cyl  );
-    store_hw( blkp->head, head );
+    STORE_HW( blkp->cyl,  cyl  );
+    STORE_HW( blkp->head, head );
               blkp->rec = rec;
 
     /* Load number of bytes in directory block */
@@ -2402,8 +2402,8 @@ BYTE            notelist[1024];         /* Note list                 */
     /* Validate the track header */
     if (0
         ||           trkhdr.bin    != 0
-        || fetch_hw( trkhdr.cyl  ) != cyl
-        || fetch_hw( trkhdr.head ) != head
+        || READ_HW( trkhdr.cyl  ) != cyl
+        || READ_HW( trkhdr.head ) != head
     )
     {
         // "File %s: cyl[%04X/%d] head[%04X/%d] invalid track header %02X%02X%02X%02X%02X"
@@ -3092,7 +3092,7 @@ static char    *sys1name[NUM_SYS1_DATASETS] =
     catent = (PDSDIR*)(datablk.kdarea + keylen + bytes);
 
     /* Set the number of bytes used in this block */
-    store_hw( &datablk.kdarea[ keylen+0 ], bytes );
+    STORE_HW( &datablk.kdarea[ keylen+0 ], bytes );
 
     /* Write the volume index block to the output file */
     rc = write_block (cif, ofname, &datablk, keylen, datalen,
@@ -3202,7 +3202,7 @@ static char    *sys1name[NUM_SYS1_DATASETS] =
     catent = (PDSDIR*)(datablk.kdarea + keylen + bytes);
 
     /* Set the number of bytes used in this block */
-    store_hw( &datablk.kdarea[ keylen+0 ], bytes );
+    STORE_HW( &datablk.kdarea[ keylen+0 ], bytes );
 
     /* Write the index block to the output file */
     rc = write_block (cif, ofname, &datablk, keylen, datalen,
@@ -3348,11 +3348,11 @@ DATABLK         datablk;                /* Data block                */
     diphdr = (DIPHDR*) (datablk.kdarea);
     memset( diphdr, 0, sizeof( DIPHDR ));
 
-    store_hw( diphdr->recid, 0xFFFF );
-    store_hw( diphdr->bcyl, outcyl  );
-    store_hw( diphdr->btrk, outhead );
-    store_hw( diphdr->ecyl, endcyl  );
-    store_hw( diphdr->etrk, endhead );
+    STORE_HW( diphdr->recid, 0xFFFF );
+    STORE_HW( diphdr->bcyl, outcyl  );
+    STORE_HW( diphdr->btrk, outhead );
+    STORE_HW( diphdr->ecyl, endcyl  );
+    STORE_HW( diphdr->etrk, endhead );
 
     diphdr->restart[2] = (outcyl >> 8) & 0xFF;
     diphdr->restart[3] = outcyl & 0xFF;
@@ -3360,8 +3360,8 @@ DATABLK         datablk;                /* Data block                */
     diphdr->restart[5] = outhead & 0xFF;
     diphdr->restart[6] = 1;
 
-    store_hw( diphdr->trkbal, remlen  );
-    store_hw( diphdr->trklen, physlen );
+    STORE_HW( diphdr->trkbal, remlen  );
+    STORE_HW( diphdr->trklen, physlen );
 
     diphdr->reused[2] = (outcyl >> 8) & 0xFF;
     diphdr->reused[3] = outcyl & 0xFF;
@@ -3369,8 +3369,8 @@ DATABLK         datablk;                /* Data block                */
     diphdr->reused[5] = outhead & 0xFF;
     diphdr->reused[6] = 1;
 
-    store_hw( diphdr->lasthead, lasthead );
-    store_hw( diphdr->trklen90, trklen90 );
+    STORE_HW( diphdr->lasthead, lasthead );
+    STORE_HW( diphdr->trklen90, trklen90 );
 
     diphdr->devcode = (ucbtype_code (devtype ) & 0x0F) | 0xF0;
     diphdr->cchh90[0] = (cyl90  >> 8) & 0xFF;
@@ -3629,7 +3629,7 @@ DATABLK         datablk;                /* Data block                */
         outdblu = 14;
         memset( datablk.kdarea, 0, keylen + datalen);
         memcpy( datablk.kdarea, &CKD_ENDTRK, CKD_ENDTRK_SIZE );
-        store_hw( &datablk.kdarea[ keylen+0 ], outdblu );
+        STORE_HW( &datablk.kdarea[ keylen+0 ], outdblu );
         memcpy( datablk.kdarea + keylen + 2, &CKD_ENDTRK, CKD_ENDTRK_SIZE );
 
         /* Write directory blocks to output dataset */

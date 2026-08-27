@@ -722,12 +722,12 @@ static void tf_store_psw( PSW* psw, QWORD* qw, BYTE arch_mode )
     }
 
     if (arch == 370)
-        STORE_DW( addr + 0, do_make_psw64( psw, psw->ilc, arch, !ECMODE( psw )));
+        STORE_MAIN_DW( addr + 0, do_make_psw64( psw, psw->ilc, arch, !ECMODE( psw )));
     else
-        STORE_DW( addr + 0, do_make_psw64( psw, psw->ilc, arch, false ));
+        STORE_MAIN_DW( addr + 0, do_make_psw64( psw, psw->ilc, arch, false ));
 
     if (arch == 900)
-        STORE_DW( addr + 8, psw->IA_G );
+        STORE_MAIN_DW( addr + 8, psw->IA_G );
 }
 
 /*-------------------------------------------------------------------*/

@@ -1726,8 +1726,8 @@ cdsk_space_check:
 
             /* Extract header info */
             comp = buf[0];
-            cyl  = fetch_hw (buf + 1);
-            head = fetch_hw (buf + 3);
+            FETCH_HW(cyl, buf + 1);
+            FETCH_HW(head, buf + 3);
             trk  = cyl * heads + head;
 
             /* Validate header info */
@@ -1873,8 +1873,8 @@ cdsk_recovery:
                     /* Fetch possible trkhdr */
                     memcpy( &trkhdr, &buf[i], CKD_TRKHDR_SIZE );
                     comp =           trkhdr.bin;
-                    cyl  = fetch_hw( trkhdr.cyl );
-                    head = fetch_hw( trkhdr.head );
+                    FETCH_HW( cyl, trkhdr.cyl );
+                    FETCH_HW( head, trkhdr.head );
                     trk  = (cyl * heads) + head;
 
                     /* Validate possible trkhdr */
@@ -1891,18 +1891,18 @@ cdsk_recovery:
                         memcpy( &r0, &buf[i+CKD_TRKHDR_SIZE], CKD_R0_SIZE );
 
                         if (0
-                            || fetch_hw( r0.cyl  ) != cyl         // r0 cyl
-                            || fetch_hw( r0.head ) != head        // r0 head
-                            ||           r0.rec    != 0           // r0 record
-                            ||           r0.klen   != 0           // r0 key length
-                            || fetch_hw( r0.dlen ) != CKD_R0_DLEN // r0 data length
+                            || READ_HW( r0.cyl  ) != cyl         // r0 cyl
+                            || READ_HW( r0.head ) != head        // r0 head
+                            ||           r0.rec    != 0          // r0 record
+                            ||           r0.klen   != 0          // r0 key length
+                            || READ_HW( r0.dlen ) != CKD_R0_DLEN // r0 data length
                         )
                             continue;
                     }
 
                     /* Quick validation for zlib */
                     else if (comp == CCKD_COMPRESS_ZLIB
-                     && fetch_hw(buf + i + 5) % 31 != 0)
+                     && READ_HW(buf + i + 5) % 31 != 0)
                         continue;
 
                     /* Quick validation for bzip2 */
@@ -1950,8 +1950,8 @@ cdsk_recovery:
 
                         memcpy( &trkhdr, &buf[j], CKD_TRKHDR_SIZE );
                         if (0
-                            || fetch_hw( trkhdr.cyl  ) >= cyls
-                            || fetch_hw( trkhdr.head ) >= heads
+                            || READ_HW( trkhdr.cyl  ) >= cyls
+                            || READ_HW( trkhdr.head ) >= heads
                         )
                             continue;
 
@@ -1960,18 +1960,18 @@ cdsk_recovery:
                         {
                             memcpy( &r0, &buf[i+CKD_TRKHDR_SIZE], CKD_R0_SIZE );
                             if (0
-                                || fetch_hw( r0.cyl  ) != fetch_hw( trkhdr.cyl  )
-                                || fetch_hw( r0.head ) != fetch_hw( trkhdr.head )
+                                || READ_HW( r0.cyl  ) != READ_HW( trkhdr.cyl  )
+                                || READ_HW( r0.head ) != READ_HW( trkhdr.head )
                                 ||           r0.rec    != 0
                                 ||           r0.klen   != 0
-                                || fetch_hw( r0.dlen ) != CKD_R0_DLEN
+                                || READ_HW( r0.dlen ) != CKD_R0_DLEN
                             )
                                 continue;
                         }
 
                         /* check zlib compressed header */
                         else if (buf[j] == CCKD_COMPRESS_ZLIB
-                         && fetch_hw(buf + j + 5) % 31 != 0)
+                         && READ_HW(buf + j + 5) % 31 != 0)
                                 continue;
 
                         /* check bzip2 compressed header */
@@ -2126,7 +2126,7 @@ cdsk_ckd_recover:
 
                     /* Fetch possible trkhdr */
                     comp = buf[i];
-                    blkgrp = fetch_fw (buf + i + 1);
+                    FETCH_FW(blkgrp, buf + i + 1);
 
                     /* Validate possible trkhdr */
                     if (blkgrp < 0 || blkgrp >= blkgrps
@@ -2140,7 +2140,7 @@ cdsk_ckd_recover:
 
                     /* Quick validation for zlib */
                     else if (comp == CCKD_COMPRESS_ZLIB
-                     && fetch_hw(buf + i + 5) % 31 != 0)
+                     && READ_HW(buf + i + 5) % 31 != 0)
                         continue;
 
                     /* Quick validation for bzip2 */
@@ -2166,7 +2166,7 @@ cdsk_ckd_recover:
                         if (pass == 0
                          && (len - i - l < CKD_MIN_TRKSIZE
                           || compmask[buf[i+l]]
-                          || fetch_fw (buf+i+l+1) >= (U32)blkgrps)
+                          || READ_FW (buf+i+l+1) >= (U32)blkgrps)
                            )
                             continue;
                         goto cdsk_fba_recover;
@@ -2195,12 +2195,12 @@ cdsk_ckd_recover:
                         if (j - i > (S64)blkgrpsz) break;
 
                         if (compmask[buf[j]] != 0
-                         || fetch_fw(buf+j+1) >= (U32)blkgrps)
+                         || READ_FW(buf+j+1) >= (U32)blkgrps)
                             continue;
 
                         /* check zlib compressed header */
                         if (buf[j] == CCKD_COMPRESS_ZLIB
-                         && fetch_hw(buf + j + 5) % 31 != 0)
+                         && READ_HW(buf + j + 5) % 31 != 0)
                             continue;
 
                         /* check bzip2 compressed header */

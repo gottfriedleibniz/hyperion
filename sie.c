@@ -655,7 +655,7 @@ int     i;                              /* (work)                    */
         /* If a facility list designator was provided
            then it defines the SIE guest facility bits.
         */
-        memcpy( GUESTREGS->facility_list, &regs->mainstor[ fld ], STFL_HERC_BY_SIZE );
+        MAINSTOR_MCOPY( GUESTREGS->facility_list, &regs->mainstor[ fld ], STFL_HERC_BY_SIZE );
 
 #else /* !defined( OPTION_SIE2BK_FLD_COPY) */
 
@@ -664,7 +664,7 @@ int     i;                              /* (work)                    */
            guest facility bits which shouldn't be on.
         */
         for (i=0; i < (int) STFL_IBM_BY_SIZE; i++)
-            GUESTREGS->facility_list[i] &= regs->mainstor[ fld + i ];
+            GUESTREGS->facility_list[i] &= READ_MAIN_BYTE( regs->mainstor + (fld + i) );
 
 #endif /* defined( OPTION_SIE2BK_FLD_COPY) */
     }
@@ -884,7 +884,7 @@ int     i;                              /* (work)                    */
                 FETCH_FW( residue, STATEBK->residue );
 
                 /* Fetch the timer value from location 80 */
-                FETCH_FW( olditimer, GUESTREGS->psa->inttimer );
+                FETCH_MAIN_FW( olditimer, GUESTREGS->psa->inttimer );
 
                 /* Bit position 23 of the interval timer is decremented
                    once for each multiple of 3,333 usecs contained in
@@ -893,7 +893,7 @@ int     i;                              /* (work)                    */
                 itimer = olditimer - ((residue / 3333) >> 4);
 
                 /* Store the timer back */
-                STORE_FW( GUESTREGS->psa->inttimer, itimer );
+                STORE_MAIN_FW( GUESTREGS->psa->inttimer, itimer );
 
                 /* Set interrupt flag and interval timer interrupt pending
                    if the interval timer went from positive to negative
@@ -1009,7 +1009,7 @@ static int ARCH_DEP( run_sie )( REGS* regs )
     /* Load the shadow interval timer */
     {
         S32 itimer;
-        FETCH_FW( itimer, GUESTREGS->psa->inttimer );
+        FETCH_MAIN_FW( itimer, GUESTREGS->psa->inttimer );
         set_int_timer( GUESTREGS, itimer );
     }
 #endif
@@ -1140,14 +1140,14 @@ static int ARCH_DEP( run_sie )( REGS* regs )
                             regs->waittod = now;
 
                             sysblk.waiting_mask  |=  regs->cpubit;
-                            sysblk.intowner       =  LOCK_OWNER_NONE;
+                            SET_INTOWNER(LOCK_OWNER_NONE);
                             {
                                 timed_wait_condition( &regs->intcond, &sysblk.intlock, &waittime );
 
                                 while (sysblk.syncing)
                                      wait_condition( &sysblk.sync_done_cond, &sysblk.intlock );
                             }
-                            sysblk.intowner       =   regs->cpuad;
+                            SET_INTOWNER(regs->cpuad);
                             sysblk.waiting_mask  &=  ~regs->cpubit;
 
                             regs->waittime += host_tod() - regs->waittod;
@@ -1212,7 +1212,7 @@ sie_fetch_instruction:
 
                 PROCESS_TRACE( GUESTREGS, ip, sie_fetch_instruction );
                 EXECUTE_INSTRUCTION( current_opcode_table, ip, GUESTREGS );
-                regs->instcount++;
+                UPDATE_REGS_INSTCOUNT( regs, 1 );
                 UPDATE_SYSBLK_INSTCOUNT( 1 );
                 SIE_PERFMON( SIE_PERF_EXEC_U );
 
@@ -1221,7 +1221,7 @@ sie_fetch_instruction:
                     UNROLLED_EXECUTE( current_opcode_table, GUESTREGS );
                     UNROLLED_EXECUTE( current_opcode_table, GUESTREGS );
                 }
-                regs->instcount +=  (i * 2);
+                UPDATE_REGS_INSTCOUNT( regs, (i * 2) );
                 UPDATE_SYSBLK_INSTCOUNT( (i * 2) );
 
                 /* Perform automatic instruction tracing if it's enabled */
@@ -1239,7 +1239,7 @@ txf_facility_loop:
 
                 PROCESS_TRACE( GUESTREGS, ip, sie_fetch_instruction );
                 EXECUTE_INSTRUCTION( current_opcode_table, ip, GUESTREGS );
-                regs->instcount++;
+                UPDATE_REGS_INSTCOUNT( regs, 1 );
                 UPDATE_SYSBLK_INSTCOUNT( 1 );
                 SIE_PERFMON( SIE_PERF_EXEC_U );
 
@@ -1255,7 +1255,7 @@ txf_facility_loop:
 
                     UNROLLED_EXECUTE( current_opcode_table, GUESTREGS );
                 }
-                regs->instcount +=  (i * 2);
+                UPDATE_REGS_INSTCOUNT( regs, (i * 2) );
                 UPDATE_SYSBLK_INSTCOUNT( (i * 2) );
 
                 /* Perform automatic instruction tracing if it's enabled */
@@ -1266,7 +1266,7 @@ txf_slower_loop:
 
                 PROCESS_TRACE( GUESTREGS, ip, sie_fetch_instruction );
                 TXF_EXECUTE_INSTRUCTION( current_opcode_table, ip, GUESTREGS );
-                regs->instcount++;
+                UPDATE_REGS_INSTCOUNT( regs, 1 );
                 UPDATE_SYSBLK_INSTCOUNT( 1 );
                 SIE_PERFMON( SIE_PERF_EXEC_U );
 
@@ -1282,7 +1282,7 @@ txf_slower_loop:
 
                     TXF_UNROLLED_EXECUTE( current_opcode_table, GUESTREGS );
                 }
-                regs->instcount +=  (i * 2);
+                UPDATE_REGS_INSTCOUNT( regs, (i * 2) );
                 UPDATE_SYSBLK_INSTCOUNT( (i * 2) );
 
                 /* Perform automatic instruction tracing if it's enabled */
@@ -1332,7 +1332,7 @@ endloop:        ; // (nop to make compiler happy)
            */
             if (sysblk.ipled)
             {
-                regs->instcount += MAX_CPU_LOOPS/2;
+                UPDATE_REGS_INSTCOUNT( regs, (MAX_CPU_LOOPS/2) );
                 UPDATE_SYSBLK_INSTCOUNT( MAX_CPU_LOOPS/2 );
 
                 /* Perform automatic instruction tracing if it's enabled */
@@ -1599,7 +1599,7 @@ void ARCH_DEP( sie_exit )( REGS* regs, int icode )
            Interception TDB instead. (Sorry Dan! Could not locate
            Claudia Schiffer's phone number!)
         */
-        memset( HOSTREGS->mainstor + itdba, 0, sizeof( TDB ));
+        MAINSTOR_MSET( HOSTREGS->mainstor + itdba, 0, sizeof( TDB ));
     }
 
 #endif /* defined( FEATURE_073_TRANSACT_EXEC_FACILITY ) */
@@ -1704,8 +1704,8 @@ void ARCH_DEP( sie_exit )( REGS* regs, int icode )
 
             /* Point to PSA fields in state descriptor */
             psa = (void*)(regs->mainstor + SIE_STATE(GUESTREGS) + SIE_IP_PSA_OFFSET);
-            STORE_HW( psa->perint, GUESTREGS->perc   );
-            STORE_W(  psa->peradr, GUESTREGS->peradr );
+            STORE_MAIN_HW( psa->perint, GUESTREGS->perc   );
+            STORE_MAIN_W(  psa->peradr, GUESTREGS->peradr );
         }
 
         if (IS_IC_PER_IF( GUESTREGS ))
@@ -1767,6 +1767,7 @@ DEF_INST(store_zone_parameter)
 {
 int     b2;                             /* Values of R fields        */
 RADR    effective_addr2;                /* address of state desc.    */
+CACHE_ALIGN
 ZPB     zpb;                            /* Zone Parameter Block      */
 int     zone;                           /* Zone number               */
 
@@ -1808,6 +1809,7 @@ DEF_INST(set_zone_parameter)
 {
 int     b2;                             /* Values of R fields        */
 RADR    effective_addr2;                /* address of state desc.    */
+CACHE_ALIGN
 ZPB     zpb;                            /* Zone Parameter Block      */
 int     zone;                           /* Zone number               */
 RADR    mso,                            /* Main Storage Origin       */
@@ -1871,6 +1873,7 @@ RADR    effective_addr2;                /* address of state desc.    */
 U32     ioid;                           /* I/O interruption address  */
 U32     ioparm;                         /* I/O interruption parameter*/
 U32     iointid;                        /* I/O interruption ident    */
+ALIGN_16
 FWORD   tpziid[3];
 int     zone;                           /* Zone number               */
 

@@ -436,140 +436,90 @@ extern inline BYTE cmpxchg8_C11(U64 *old, U64 new, volatile void *ptr);
  * fetch_hw_noswap and fetch_hw
  *-------------------------------------------------------------------*/
 #if !defined(fetch_hw_noswap)
-  #if defined(fetch_hw)
-    #define fetch_hw_noswap(_p) CSWAP16(fetch_hw((_p)))
-  #else
+  #if !defined(fetch_hw)
     extern inline U16 fetch_hw_noswap(const void *ptr);
   #endif
-#endif
-#if !defined(fetch_hw)
-  #define fetch_hw(_p) CSWAP16(fetch_hw_noswap((_p)))
 #endif
 
 /*-------------------------------------------------------------------
  * store_hw_noswap and store_hw
  *-------------------------------------------------------------------*/
 #if !defined(store_hw_noswap)
-  #if defined(store_hw)
-    #define store_hw_noswap(_p, _v) store_hw((_p), CSWAP16(_v))
-  #else
+  #if !defined(store_hw)
     extern inline void store_hw_noswap(void *ptr, U16 value);
   #endif
-#endif
-#if !defined(store_hw)
-  #define store_hw(_p, _v) store_hw_noswap((_p), CSWAP16((_v)))
 #endif
 
 /*-------------------------------------------------------------------
  * fetch_fw_noswap and fetch_fw
  *-------------------------------------------------------------------*/
 #if !defined(fetch_fw_noswap)
-  #if defined(fetch_fw)
-    #define fetch_fw_noswap(_p) CSWAP32(fetch_fw((_p)))
-  #else
+  #if !defined(fetch_fw)
     extern inline U32 fetch_fw_noswap(const void *ptr);
   #endif
-#endif
-#if !defined(fetch_fw)
-  #define fetch_fw(_p) CSWAP32(fetch_fw_noswap((_p)))
 #endif
 
 /*-------------------------------------------------------------------
  * store_fw_noswap and store_fw
  *-------------------------------------------------------------------*/
 #if !defined(store_fw_noswap)
-  #if defined(store_fw)
-    #define store_fw_noswap(_p, _v) store_fw((_p), CSWAP32(_v))
-  #else
+  #if !defined(store_fw)
     extern inline void store_fw_noswap(void *ptr, U32 value);
   #endif
-#endif
-#if !defined(store_fw)
-  #define store_fw(_p, _v) store_fw_noswap((_p), CSWAP32((_v)))
 #endif
 
 /*-------------------------------------------------------------------
  * fetch_f3_noswap and fetch_f3
  *-------------------------------------------------------------------*/
 #if !defined(fetch_f3_noswap)
-  #if defined(fetch_f3)
-    #define fetch_f3_noswap(_p) CSWAP32(fetch_f3((_p)))
-  #else
+  #if !defined(fetch_f3)
     extern inline U32 fetch_f3_noswap(const void *ptr);
   #endif
-#endif
-#if !defined(fetch_f3)
-  #define fetch_f3(_p) CSWAP32(fetch_f3_noswap((_p)))
 #endif
 
 /*-------------------------------------------------------------------
  * store_f3_noswap and store_f3
  *-------------------------------------------------------------------*/
 #if !defined(store_f3_noswap)
-  #if defined(store_f3)
-    #define store_f3_noswap(_p, _v) store_f3((_p), CSWAP32(_v))
-  #else
+  #if !defined(store_f3)
     extern inline void store_f3_noswap(void *ptr, U32 value);
   #endif
-#endif
-#if !defined(store_f3)
-  #define store_f3(_p, _v) store_f3_noswap((_p), CSWAP32((_v)))
 #endif
 
 /*-------------------------------------------------------------------
  * fetch_dw_noswap and fetch_dw
  *-------------------------------------------------------------------*/
 #if !defined(fetch_dw_noswap)
-  #if defined(fetch_dw)
-    #define fetch_dw_noswap(_p) CSWAP64(fetch_dw((_p)))
-  #else
+  #if !defined(fetch_dw)
     extern inline U64 fetch_dw_noswap(const void *ptr);
   #endif
-#endif
-#if !defined(fetch_dw)
-  #define fetch_dw(_p) CSWAP64(fetch_dw_noswap((_p)))
 #endif
 
 /*-------------------------------------------------------------------
  * store_dw_noswap and store_dw
  *-------------------------------------------------------------------*/
 #if !defined(store_dw_noswap)
-  #if defined(store_dw)
-    #define store_dw_noswap(_p, _v) store_dw((_p), CSWAP64(_v))
-  #else
+  #if !defined(store_dw)
     extern inline void store_dw_noswap(void *ptr, U64 value);
   #endif
-#endif
-#if !defined(store_dw)
-  #define store_dw(_p, _v) store_dw_noswap((_p), CSWAP64((_v)))
 #endif
 
 /*-------------------------------------------------------------------
  * fetch_qw_noswap and fetch_qw
  *-------------------------------------------------------------------*/
 #if !defined(fetch_qw_noswap)
-  #if defined(fetch_qw)
-    #define fetch_qw_noswap(_p) CSWAP128(fetch_qw((_p)))
-  #else
+  #if !defined(fetch_qw)
     extern inline QW fetch_qw_noswap(const void *ptr);
   #endif
-#endif
-#if !defined(fetch_qw)
-  #define fetch_qw(_p) CSWAP128(fetch_qw_noswap((_p)))
 #endif
 
 /*-------------------------------------------------------------------
  * store_qw_noswap and store_qw
  *-------------------------------------------------------------------*/
 #if !defined(store_qw_noswap)
-  #if defined(store_qw)
-    #define store_qw_noswap(_p, _v) store_qw((_p), CSWAP128(_v))
-  #else
+  #if !defined(store_qw)
     extern inline void store_qw_noswap(void *ptr, QW value);
   #endif
-#endif
-#if !defined(store_qw)
-  #define store_qw(_p, _v) store_qw_noswap((_p), CSWAP128((_v)))
 #endif
 
 /*-------------------------------------------------------------------

@@ -567,19 +567,19 @@ char            pathname[MAX_PATH];     /* file path in host format  */
                 /* Build the track header */
                 trkhdr = (CKD_TRKHDR*) buf;
                 trkhdr->bin = 0;
-                store_hw( trkhdr->cyl,  (U16) cyl  );
-                store_hw( trkhdr->head, (U16) head );
+                STORE_HW( trkhdr->cyl,  (U16) cyl  );
+                STORE_HW( trkhdr->head, (U16) head );
                 pos = buf + CKD_TRKHDR_SIZE;
 
                 /* Build record zero */
                 r = 0;
                 rechdr = (CKD_RECHDR*) pos;
                 pos += CKD_RECHDR_SIZE;
-                store_hw( rechdr->cyl,  (U16) cyl  );
-                store_hw( rechdr->head, (U16) head );
+                STORE_HW( rechdr->cyl,  (U16) cyl  );
+                STORE_HW( rechdr->head, (U16) head );
                           rechdr->rec  = r;
                           rechdr->klen = 0;
-                store_hw( rechdr->dlen, CKD_R0_DLEN );
+                STORE_HW( rechdr->dlen, CKD_R0_DLEN );
                 pos += CKD_R0_DLEN;
                 r++;
 
@@ -590,11 +590,11 @@ char            pathname[MAX_PATH];     /* file path in host format  */
                     rechdr = (CKD_RECHDR*) pos;
                     pos += CKD_RECHDR_SIZE;
 
-                    store_hw( rechdr->cyl,  (U16) cyl  );
-                    store_hw( rechdr->head, (U16) head );
+                    STORE_HW( rechdr->cyl,  (U16) cyl  );
+                    STORE_HW( rechdr->head, (U16) head );
                               rechdr->rec  = r;
                               rechdr->klen = (BYTE) keylen;
-                    store_hw( rechdr->dlen,  (U16) ipl1len );
+                    STORE_HW( rechdr->dlen,  (U16) ipl1len );
                     r++;
 
                     memcpy( pos, IPL1_KEY, (size_t)keylen );
@@ -618,11 +618,11 @@ char            pathname[MAX_PATH];     /* file path in host format  */
                     /* Build the IPL2 record */
                     rechdr = (CKD_RECHDR*) pos;
                     pos += CKD_RECHDR_SIZE;
-                    store_hw( rechdr->cyl,  (U16) cyl  );
-                    store_hw( rechdr->head, (U16) head );
+                    STORE_HW( rechdr->cyl,  (U16) cyl  );
+                    STORE_HW( rechdr->head, (U16) head );
                               rechdr->rec  = r;
                               rechdr->klen = (BYTE) keylen;
-                    store_hw( rechdr->dlen,  (U16) ipl2len );
+                    STORE_HW( rechdr->dlen,  (U16) ipl2len );
                     r++;
 
                     memcpy( pos, IPL2_KEY, (size_t)keylen );
@@ -632,11 +632,11 @@ char            pathname[MAX_PATH];     /* file path in host format  */
                     /* Build the VOL1 record */
                     rechdr = (CKD_RECHDR*) pos;
                     pos += CKD_RECHDR_SIZE;
-                    store_hw( rechdr->cyl,  (U16) cyl  );
-                    store_hw( rechdr->head, (U16) head );
+                    STORE_HW( rechdr->cyl,  (U16) cyl  );
+                    STORE_HW( rechdr->head, (U16) head );
                               rechdr->rec  = r;
                               rechdr->klen = (BYTE) keylen;
-                    store_hw( rechdr->dlen,  (U16) vol1len );
+                    STORE_HW( rechdr->dlen,  (U16) vol1len );
                     r++;
 
                     memcpy( pos, VOL1_KEY, (size_t)keylen );
@@ -654,11 +654,11 @@ char            pathname[MAX_PATH];     /* file path in host format  */
                             rechdr = (CKD_RECHDR*)pos;
                             pos += CKD_RECHDR_SIZE;
 
-                            store_hw( rechdr->cyl,  (U16) cyl  );
-                            store_hw( rechdr->head, (U16) head );
+                            STORE_HW( rechdr->cyl,  (U16) cyl  );
+                            STORE_HW( rechdr->head, (U16) head );
                                       rechdr->rec  = r;
                                       rechdr->klen = 0;
-                            store_hw( rechdr->dlen, CKD_NULL_FMT2_DLEN );
+                            STORE_HW( rechdr->dlen, CKD_NULL_FMT2_DLEN );
                             pos +=                  CKD_NULL_FMT2_DLEN;
                             r++;
                         }
@@ -673,11 +673,11 @@ char            pathname[MAX_PATH];     /* file path in host format  */
                     pos += CKD_RECHDR_SIZE;
 
                     /* track 1 record 1 count */
-                    store_hw( rechdr->cyl,  (U16) cyl  );
-                    store_hw( rechdr->head, (U16) head );
+                    STORE_HW( rechdr->cyl,  (U16) cyl  );
+                    STORE_HW( rechdr->head, (U16) head );
                               rechdr->rec  = r;
                               rechdr->klen = 44;
-                    store_hw( rechdr->dlen, 96 );
+                    STORE_HW( rechdr->dlen, 96 );
                     r++;
 
                     /* track 1 record 1 key */
@@ -687,12 +687,12 @@ char            pathname[MAX_PATH];     /* file path in host format  */
                     /* track 1 record 1 data */
                     memset (pos, 0, 96);
                     pos[0] = 0xf4;                            // DS4IDFMT
-                    store_hw(pos + 6, 10);                    // DS4DSREC
+                    STORE_HW(pos + 6, 10);                    // DS4DSREC
                     pos[14] = trks > 65535 ? 0xa0 : 0;        // DS4VTOCI
                     pos[15] = 1;                              // DS4NOEXT
-                    store_hw(pos+18, (U16) volcyls);          // DS4DSCYL
-                    store_hw(pos+20, (U16) heads);            // DS4DSTRK
-                    store_hw(pos+22, ckdtab->len);            // DS4DEVTK
+                    STORE_HW(pos+18, (U16) volcyls);          // DS4DSCYL
+                    STORE_HW(pos+20, (U16) heads);            // DS4DSTRK
+                    STORE_HW(pos+22, ckdtab->len);            // DS4DEVTK
                     pos[27] = 0x30;                           // DS4DEVFG
                     pos[30] = 0x0c;                           // DS4DEVDT
                     pos[61] = 0x01;                           // DS4VTOCE + 00
@@ -708,11 +708,11 @@ char            pathname[MAX_PATH];     /* file path in host format  */
                     pos += CKD_RECHDR_SIZE;
 
                     /* track 1 record 1 count */
-                    store_hw( rechdr->cyl,  (U16) cyl  );
-                    store_hw( rechdr->head, (U16) head );
+                    STORE_HW( rechdr->cyl,  (U16) cyl  );
+                    STORE_HW( rechdr->head, (U16) head );
                               rechdr->rec  = r;
                               rechdr->klen = 44;
-                    store_hw( rechdr->dlen, 96 );
+                    STORE_HW( rechdr->dlen, 96 );
                     r++;
 
                     /* track 1 record 2 key */
@@ -720,8 +720,8 @@ char            pathname[MAX_PATH];     /* file path in host format  */
                     memset (pos+4, 0, 40);
                     if (trks <= 65535)
                     {
-                        store_hw(pos+4, 2);                   // DS5AVEXT + 00
-                        store_hw(pos+6, (U16)(volcyls - 1));  // DS5AVEXT + 02
+                        STORE_HW(pos+4, 2);                   // DS5AVEXT + 00
+                        STORE_HW(pos+6, (U16)(volcyls - 1));  // DS5AVEXT + 02
                         pos[8] = (BYTE)(heads - 2);           // DS5AVEXT + 04
                     }
                     pos += 44;
@@ -738,18 +738,18 @@ char            pathname[MAX_PATH];     /* file path in host format  */
                         pos += CKD_RECHDR_SIZE;
 
                         /* track 1 record 3 count */
-                        store_hw( rechdr->cyl,  (U16) cyl  );
-                        store_hw( rechdr->head, (U16) head );
+                        STORE_HW( rechdr->cyl,  (U16) cyl  );
+                        STORE_HW( rechdr->head, (U16) head );
                                   rechdr->rec  = r;
                                   rechdr->klen = 44;
-                        store_hw( rechdr->dlen, 96 );
+                        STORE_HW( rechdr->dlen, 96 );
                         r++;
 
                         /* track 1 record 2 key */
                         memset (pos, 0x07, 4);                // DS7KEYID
                         memset (pos+4, 0, 40);
-                        store_fw(pos+4, 2);                   // DS7EXTNT + 00
-                        store_fw(pos+8, trks - 1);            // DS7EXTNT + 04
+                        STORE_FW(pos+4, 2);                   // DS7EXTNT + 00
+                        STORE_FW(pos+8, trks - 1);            // DS7EXTNT + 04
                         pos += 44;
 
                         /* track 1 record 2 data */
@@ -763,11 +763,11 @@ char            pathname[MAX_PATH];     /* file path in host format  */
                     {
                         rechdr = (CKD_RECHDR*) pos;
                         pos += CKD_RECHDR_SIZE;
-                        store_hw( rechdr->cyl,  (U16) cyl  );
-                        store_hw( rechdr->head, (U16) head );
+                        STORE_HW( rechdr->cyl,  (U16) cyl  );
+                        STORE_HW( rechdr->head, (U16) head );
                                   rechdr->rec  = r;
                                   rechdr->klen = 44;
-                        store_hw( rechdr->dlen, 96 );
+                        STORE_HW( rechdr->dlen, 96 );
                         pos += 140;
                         r++;
                     }
@@ -778,11 +778,11 @@ char            pathname[MAX_PATH];     /* file path in host format  */
                 {
                     rechdr = (CKD_RECHDR*) pos;
                     pos += CKD_RECHDR_SIZE;
-                    store_hw( rechdr->cyl,  (U16) cyl  );
-                    store_hw( rechdr->head, (U16) head );
+                    STORE_HW( rechdr->cyl,  (U16) cyl  );
+                    STORE_HW( rechdr->head, (U16) head );
                               rechdr->rec  = r;
                               rechdr->klen = 0;
-                    store_hw( rechdr->dlen, 0 );
+                    STORE_HW( rechdr->dlen, 0 );
                     r++;
                 }
                 else if (nullfmt == CKD_NULLTRK_FMT2)
@@ -792,11 +792,11 @@ char            pathname[MAX_PATH];     /* file path in host format  */
                     {
                         rechdr = (CKD_RECHDR*) pos;
                         pos += CKD_RECHDR_SIZE;
-                        store_hw( rechdr->cyl,  (U16) cyl  );
-                        store_hw( rechdr->head, (U16) head );
+                        STORE_HW( rechdr->cyl,  (U16) cyl  );
+                        STORE_HW( rechdr->head, (U16) head );
                                   rechdr->rec  = r;
                                   rechdr->klen = 0;
-                        store_hw( rechdr->dlen, CKD_NULL_FMT2_DLEN );
+                        STORE_HW( rechdr->dlen, CKD_NULL_FMT2_DLEN );
                         pos +=                  CKD_NULL_FMT2_DLEN;
                         r++;
                     }
@@ -1421,7 +1421,7 @@ int create_compressed_fba64( char* fname, U16 devtype, U32 sectsz,
     /* Build the "Track Header" (FBA Block Group Header) */
     blkghdr = (FBA_BKGHDR*) pBuf;        /* (--> block group header) */
     blkghdr->cmp = CCKD_COMPRESS_NONE;   /* (until we know for sure) */
-    store_fw( blkghdr->grpnum, 0 );      /* (group's GROUP number)   */
+    STORE_FW( blkghdr->grpnum, 0 );      /* (group's GROUP number)   */
 
     /* Build the VOL1 label if requested */
     if (!rawflag)

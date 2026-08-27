@@ -108,7 +108,7 @@ BYTE     psw[16];
     started_mask = sysblk.started_mask;
     while (sysblk.started_mask)
     {
-        for (i = 0; i < sysblk.maxcpu; i++)
+        for (i = 0; i < SYS_GET_MAXCPU(); i++)
         {
             if (IS_CPU_ONLINE(i))
             {
@@ -240,7 +240,7 @@ BYTE     psw[16];
     SR_WRITE_HDR(file, SR_DELIMITER, 0);
 
     /* Write CPU data */
-    for (i = 0; i < sysblk.maxcpu; i++)
+    for (i = 0; i < SYS_GET_MAXCPU(); i++)
     {
         if (!IS_CPU_ONLINE(i)) continue;
 
@@ -283,9 +283,9 @@ BYTE     psw[16];
         SR_WRITE_VALUE(file, SR_CPU_SIGP_INI_RESET, regs->sigp_ini_reset, 1);
         SR_WRITE_VALUE(file, SR_CPU_INTS_STATE, regs->ints_state, sizeof(regs->ints_state));
         SR_WRITE_VALUE(file, SR_CPU_INTS_MASK, regs->ints_mask, sizeof(regs->ints_mask));
-        for (j = 0; j < sysblk.maxcpu; j++)
+        for (j = 0; j < SYS_GET_MAXCPU(); j++)
             SR_WRITE_VALUE(file, SR_CPU_MALFCPU+j, regs->malfcpu[j], sizeof(regs->malfcpu[0]));
-        for (j = 0; j < sysblk.maxcpu; j++)
+        for (j = 0; j < SYS_GET_MAXCPU(); j++)
             SR_WRITE_VALUE(file, SR_CPU_EMERCPU+j, regs->emercpu[j], sizeof(regs->emercpu[0]));
         SR_WRITE_VALUE(file, SR_CPU_EXTCCPU, regs->extccpu, sizeof(regs->extccpu));
         SR_WRITE_HDR(file, SR_DELIMITER, 0);
@@ -389,6 +389,7 @@ char    *devargv[16];
 int      devargx=0;
 DEVBLK  *dev = NULL;
 IOINT   *ioq = NULL;
+CACHE_ALIGN
 char     buf[SR_MAX_STRING_LENGTH+1];
 char     zeros[16];
 S64      dreg;
@@ -441,7 +442,7 @@ int      numconfdev=0;
     /* Deconfigure all CPUs */
     TRACE("SR: Deconfiguring all CPUs...\n");
     OBTAIN_INTLOCK(NULL);
-    for (i = 0; i < sysblk.maxcpu; i++)
+    for (i = 0; i < SYS_GET_MAXCPU(); i++)
         if (IS_CPU_ONLINE(i))
             deconfigure_cpu(i);
     RELEASE_INTLOCK(NULL);
@@ -737,10 +738,10 @@ int      numconfdev=0;
         case SR_CPU:
             SR_READ_VALUE(file, len, &i, sizeof(i));
             TRACE("SR: Restoring CPU %d Data...\n", i);
-            if (i >= sysblk.maxcpu)
+            if (i >= SYS_GET_MAXCPU())
             {
                 // "SR: processor CP%02X exceeds max allowed CP%02X"
-                WRMSG(HHC02010, "E", i, sysblk.maxcpu-1);
+                WRMSG(HHC02010, "E", i, SYS_GET_MAXCPU()-1);
                 goto sr_error_exit;
             }
             OBTAIN_INTLOCK(NULL);
@@ -1033,7 +1034,7 @@ int      numconfdev=0;
         case SR_CPU_MALFCPU_31:
             SR_NULL_REGS_CHECK(regs);
             i = key - SR_CPU_MALFCPU;
-            if (i < sysblk.maxcpu)
+            if (i < SYS_GET_MAXCPU())
                 SR_READ_VALUE(file, len, &regs->malfcpu[i], sizeof(regs->malfcpu[0]));
             break;
 
@@ -1071,7 +1072,7 @@ int      numconfdev=0;
         case SR_CPU_EMERCPU_31:
             SR_NULL_REGS_CHECK(regs);
             i = key - SR_CPU_EMERCPU;
-            if (i < sysblk.maxcpu)
+            if (i < SYS_GET_MAXCPU())
                 SR_READ_VALUE(file, len, &regs->emercpu[i], sizeof(regs->emercpu[0]));
             break;
 
@@ -1398,7 +1399,7 @@ int      numconfdev=0;
     TRACE("SR: Resuming CPUs...\n");
     OBTAIN_INTLOCK(NULL);
     ON_IC_IOPENDING;
-    for (i = 0; i < sysblk.maxcpu; i++)
+    for (i = 0; i < SYS_GET_MAXCPU(); i++)
         if (IS_CPU_ONLINE(i) && (started_mask & CPU_BIT(i)))
         {
             sysblk.regs[i]->opinterv = 0;

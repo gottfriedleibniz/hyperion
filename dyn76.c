@@ -375,7 +375,7 @@ void ARCH_DEP(hdiagf18_FC) (U32 options, VADR cmpb, REGS *regs)
 #endif
 
     /* CPB must be on a doubleword and must not cross physical page boundary */
-    if ( ((cmpb & 0x7) != 0 ) ||
+    if ( NOT_ALIGNED_POW2( cmpb, DW ) ||
          (((cmpb + 63) & STORAGE_KEY_PAGEMASK) != (cmpb & STORAGE_KEY_PAGEMASK)) )
         ARCH_DEP(program_interrupt) (regs, PGM_SPECIFICATION_EXCEPTION);
 

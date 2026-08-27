@@ -266,7 +266,7 @@ int ARCH_DEP( system_reset )( const int target_mode, const bool clear,
     if (clear)
     {
         /* Finish reset-clear of all CPUs in the configuration */
-        for (n = 0; n < sysblk.maxcpu; ++n)
+        for (n = 0; n < SYS_GET_MAXCPU(); ++n)
         {
             if (IS_CPU_ONLINE( n ))
             {
@@ -490,7 +490,7 @@ int rc;
     {
         for(i=0; i < 16; i++)
         {
-            regs->GR_L(i) = fetch_fw( &sysblk.iplparmstring[i*4] );
+            FETCH_FW( regs->GR_L(i), &sysblk.iplparmstring[i*4] );
         }
         sysblk.haveiplparm = 0;
     }
@@ -573,20 +573,20 @@ int rc;
     /* Test the EC mode bit in the IPL PSW */
     if (regs->psa->iplpsw[1] & 0x08) {
         /* In EC mode, store device address at locations 184-187 */
-        STORE_FW(regs->psa->ioid, dev->devnum);
+        STORE_MAIN_FW(regs->psa->ioid, dev->devnum);
     } else {
         /* In BC mode, store device address at locations 2-3 */
-        STORE_HW(regs->psa->iplpsw + 2, dev->devnum);
+        STORE_MAIN_HW(regs->psa->iplpsw + 2, dev->devnum);
     }
 #endif /*FEATURE_S370_CHANNEL*/
 
 #ifdef FEATURE_CHANNEL_SUBSYSTEM
     /* Set LPUM */
     dev->pmcw.lpum = 0x80;
-    STORE_FW(regs->psa->ioid, (dev->ssid<<16)|dev->subchan);
+    STORE_MAIN_FW(regs->psa->ioid, (dev->ssid<<16)|dev->subchan);
 
     /* Store zeroes at locations 188-191 */
-    memset (regs->psa->ioparm, 0, 4);
+    MAINSTOR_MSET (regs->psa->ioparm, 0, 4);
 #endif /*FEATURE_CHANNEL_SUBSYSTEM*/
 
     /* Save IPL device number, cpu number and lcss */
@@ -669,7 +669,7 @@ int i, rc = 0;                          /* Array subscript           */
     regs->txf_contran = false;
     regs->txf_UPGM_abort = false;
 #endif
-    for (i = 0; i < sysblk.maxcpu; i++)
+    for (i = 0; i < SYS_GET_MAXCPU(); i++)
         regs->emercpu[i] = 0;
     regs->instinvalid = 1;
 
@@ -900,9 +900,9 @@ void initial_cpu_reset_all()
     REGS* regs;
     int cpu;
 
-    if (sysblk.cpus)
+    if (SYS_GET_CPUS())
     {
-        for (cpu = 0; cpu < sysblk.maxcpu; cpu++)
+        for (cpu = 0; cpu < SYS_GET_MAXCPU(); cpu++)
         {
             if (IS_CPU_ONLINE( cpu ))
             {

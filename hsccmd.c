@@ -1316,7 +1316,7 @@ int g_cmd(int argc, char *argv[], char *cmdline)
         OBTAIN_INTLOCK(NULL);
         sysblk.instbreak = 0;
         SET_IC_TRACE;
-        for (i = 0; i < sysblk.hicpu; i++)
+        for (i = 0; i < SYS_GET_HICPU(); i++)
         {
             if (IS_CPU_ONLINE(i) && sysblk.regs[i]->stepwait)
             {
@@ -3365,14 +3365,14 @@ int engines_cmd( int argc, char* argv[], char* cmdline )
             }
 
             /* (update ptyp work array) */
-            while (count-- > 0 && cpu < sysblk.maxcpu)
+            while (count-- > 0 && cpu < SYS_GET_MAXCPU())
                 ptyp[ cpu++ ] = type;
 
             styp = strtok_r( NULL, ",", &strtok_str );
         }
 
         /* If we make it this far, then update sysblk */
-        for (cpu=0; cpu < sysblk.maxcpu; ++cpu)
+        for (cpu=0; cpu < SYS_GET_MAXCPU(); ++cpu)
         {
             sysblk.ptyp[ cpu ] = ptyp[ cpu ];
 
@@ -3396,7 +3396,7 @@ int engines_cmd( int argc, char* argv[], char* cmdline )
 
         count = 0;
 
-        for (cpu=0; cpu < sysblk.maxcpu; ++cpu)
+        for (cpu=0; cpu < SYS_GET_MAXCPU(); ++cpu)
         {
             if (cpu == 0)
                 count = 1;
@@ -4010,7 +4010,7 @@ BYTE c;
     if ( argc == 2 )
     {
         if (sscanf(argv[1], "%hu%c", &numvec, &c) != 1
-            || numvec > sysblk.maxcpu)
+            || numvec > SYS_GET_MAXCPU())
         {
             WRMSG( HHC01451, "E", argv[1], argv[0] );
             return -1;
@@ -4133,7 +4133,7 @@ int numcpu_cmd( int argc, char* argv[], char* cmdline )
         return -1;
     }
 
-    if (numcpu > sysblk.maxcpu)
+    if (numcpu > SYS_GET_MAXCPU())
     {
         // "Invalid argument %s%s"
         WRMSG( HHC02205, "E", argv[1], "; NUMCPU must be <= MAXCPU" );
@@ -4199,12 +4199,12 @@ int maxcpu_cmd( int argc, char* argv[], char* cmdline )
     /* Display current value */
     if (argc == 1)
     {
-        MSGBUF( msgbuf, "%d", sysblk.maxcpu );
+        MSGBUF( msgbuf, "%d", SYS_GET_MAXCPU() );
 
         // "%-14s: %s"
         WRMSG( HHC02203, "I", argv[0], msgbuf );
 
-        if (sysblk.maxcpu == 0)
+        if (SYS_GET_MAXCPU() == 0)
             return 1;   // warning?
         else
             return 0;   // success
@@ -4228,7 +4228,7 @@ int maxcpu_cmd( int argc, char* argv[], char* cmdline )
         {
             if (MLVL( VERBOSE ))
             {
-                MSGBUF( msgbuf, "%d", sysblk.maxcpu );
+                MSGBUF( msgbuf, "%d", SYS_GET_MAXCPU() );
 
                 // "%-14s set to %s"
                 WRMSG( HHC02204, "I", argv[0], msgbuf );
@@ -8652,7 +8652,7 @@ int OnOffCommand( int argc, char* argv[], char* cmdline )
 
                 sysblk.insttrace = plus_enable_on;
 
-                for (cpu=0; cpu < sysblk.maxcpu; cpu++)
+                for (cpu=0; cpu < SYS_GET_MAXCPU(); cpu++)
                 {
                     if (IS_CPU_ONLINE( cpu ))
                         sysblk.regs[ cpu ]->insttrace = plus_enable_on;
@@ -8690,7 +8690,7 @@ int OnOffCommand( int argc, char* argv[], char* cmdline )
                 // Validate CPU number
                 if (0
                     || cpu16 >= MAX_CPU_ENGS
-                    || cpu16 >= sysblk.maxcpu
+                    || cpu16 >= SYS_GET_MAXCPU()
                     || !IS_CPU_ONLINE( cpu16 )
                 )
                 {
@@ -8710,7 +8710,7 @@ int OnOffCommand( int argc, char* argv[], char* cmdline )
                 // enabled. Otherwise if it's not enabled for any CPU,
                 // then it should be disabled.)
 
-                for (cpu=0; cpu < sysblk.maxcpu; cpu++)
+                for (cpu=0; cpu < SYS_GET_MAXCPU(); cpu++)
                 {
                     if (IS_CPU_ONLINE( cpu ))
                     {
@@ -9799,7 +9799,7 @@ int qcpuid_cmd( int argc, char* argv[], char* cmdline )
         else if (0
             || sscanf( argv[1], "%x%c", &cpunum, &c) != 1
             || cpunum < 0
-            || cpunum >= sysblk.hicpu
+            || cpunum >= SYS_GET_HICPU()
             || !IS_CPU_ONLINE( cpunum )
         )
         {
@@ -9813,7 +9813,7 @@ int qcpuid_cmd( int argc, char* argv[], char* cmdline )
     qcpuid_cpuid( sysblk.cpuid, "SYSBLK" );
 
     /* Show 'CPUID' from REGS */
-    for (cpu=0; cpu < sysblk.hicpu; cpu++)
+    for (cpu=0; cpu < SYS_GET_HICPU(); cpu++)
     {
         if (1
             && IS_CPU_ONLINE( cpu )
@@ -9833,7 +9833,7 @@ int qcpuid_cmd( int argc, char* argv[], char* cmdline )
         qcpuid_cpcsi( sysblk.cpuid, "SYSBLK" );
 
         /* Show 'CPC SI' information from REGS */
-        for (cpu=0; cpu < sysblk.hicpu; cpu++)
+        for (cpu=0; cpu < SYS_GET_HICPU(); cpu++)
         {
             if (1
                 && IS_CPU_ONLINE( cpu )
@@ -10056,7 +10056,7 @@ int qproc_cmd( int argc, char* argv[], char* cmdline )
             sysblk.maxcpu - sysblk.cpus, sysblk.maxcpu );
     }
 
-    for (i=j=0; i < sysblk.maxcpu; i++)
+    for (i=j=0; i < SYS_GET_MAXCPU(); i++)
     {
         if (1
             && IS_CPU_ONLINE( i )
@@ -10078,7 +10078,7 @@ int qproc_cmd( int argc, char* argv[], char* cmdline )
         (mipsrate % 1000000) / 10000,
         sysblk.siosrate, "" );
 
-    for (i=0; i < sysblk.maxcpu; i++)
+    for (i=0; i < SYS_GET_MAXCPU(); i++)
     {
         if (IS_CPU_ONLINE( i ))
         {

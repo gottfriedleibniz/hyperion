@@ -492,6 +492,7 @@ int ARCH_DEP(syncblk_io) (int r1, int r2, REGS *regs)
 U32             i;                      /* Array subscript           */
 U32             numsense;               /* Number of sense bytes     */
 U32             iopaddr;                /* Address of HCPSBIOP       */
+CACHE_ALIGN
 HCPSBIOP        ioparm;                 /* I/O parameter list        */
 DEVBLK         *dev;                    /* -> Device block           */
 U16             devnum;                 /* Device number             */
@@ -748,6 +749,7 @@ int ARCH_DEP(syncgen_io) (int r1, int r2, REGS *regs)
 U32             i;                      /* Array subscript           */
 U32             numsense;               /* Number of sense bytes     */
 U32             iopaddr;                /* Address of HCPSGIOP       */
+CACHE_ALIGN
 HCPSGIOP        ioparm;                 /* I/O parameter list        */
 DEVBLK         *dev;                    /* -> Device block           */
 U16             devnum;                 /* Device number             */
@@ -937,6 +939,7 @@ int        ver, rel;                    /* Version and release number*/
 int        tzdiff;                      /* Time zone differential    */
 U32        idaddr;                      /* Address of storage operand*/
 U32        idlen;                       /* Length of storage operand */
+CACHE_ALIGN
 BYTE       buf[40];                     /* Extended identification   */
 #if defined( HAVE_GETLOGIN_R )
   #if !defined(LOGIN_NAME_MAX)
@@ -1259,6 +1262,7 @@ U32     buflen;                         /* Length of data buffer     */
 int  ARCH_DEP(device_info) (int r1, int r2, REGS *regs)
 {
 DEVBLK   *dev;             /* -> Device block                        */
+CACHE_ALIGN
 VRDCBLOK vrdc;             /* VRDCBLOK                               */
 RADR     blokaddr;         /* Location of the VRDCBLOK               */
 U16      bloklen;          /* Length from the VRDCBLOK               */
@@ -1509,6 +1513,7 @@ time_t  timeval;                        /* Current time              */
 struct  tm *tmptr;                      /* -> Current time structure */
 U32     bufadr;                         /* Real addr of data buffer  */
 U32     buflen;                         /* Length of data buffer     */
+CACHE_ALIGN
 char    buf[64];                        /* Response buffer           */
 BYTE    dattim[64];                     /* Date and time (EBCDIC)    */
 #define DIAG_DATEFMT_SHORT      0x80    /* Date format mm/dd/yy      */

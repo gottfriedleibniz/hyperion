@@ -187,7 +187,7 @@ static inline void set_alsi(DEVBLK *dev, BYTE bits)
     BYTE *alsi = dev->mainstor + dev->qdio.alsi;
 
         obtain_lock(&sysblk.mainlock);
-        *alsi |= bits;
+        (void)OR_MAIN_BYTE(alsi, bits);
         ARCH_DEP( or_dev_4K_storage_key )( dev, dev->qdio.alsi, (STORKEY_REF | STORKEY_CHANGE) );
         release_lock(&sysblk.mainlock);
     }
@@ -205,9 +205,9 @@ static inline void set_dsci(DEVBLK *dev, BYTE bits)
     BYTE *alsi = dev->mainstor + dev->qdio.alsi;
 
         obtain_lock(&sysblk.mainlock);
-        *dsci |= bits;
+        (void)OR_MAIN_BYTE(dsci, bits);
         ARCH_DEP( or_dev_4K_storage_key )( dev, dev->qdio.dsci, (STORKEY_REF | STORKEY_CHANGE) );
-        *alsi |= bits;
+        (void)OR_MAIN_BYTE(alsi, bits);
         ARCH_DEP( or_dev_4K_storage_key )( dev, dev->qdio.alsi, (STORKEY_REF | STORKEY_CHANGE) );
         release_lock(&sysblk.mainlock);
     }

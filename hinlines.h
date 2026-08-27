@@ -209,7 +209,7 @@ static inline void synchronize_cpus( REGS* regs, const char* location )
 
     /* Deselect processors at a syncpoint and count active processors
      */
-    for (i=0; mask && i < sysblk.hicpu; ++i)
+    for (i=0; mask && i < SYS_GET_HICPU(); ++i)
     {
         i_regs = sysblk.regs[i];
 
@@ -243,11 +243,11 @@ static inline void synchronize_cpus( REGS* regs, const char* location )
         sysblk.sync_mask = mask;
         sysblk.syncing   = true;
 
-        sysblk.intowner  = LOCK_OWNER_NONE;
+        SET_INTOWNER(LOCK_OWNER_NONE);
         {
             hthread_wait_condition( &sysblk.all_synced_cond, &sysblk.intlock, location );
         }
-        sysblk.intowner  = HOSTREGS->cpuad;
+        SET_INTOWNER(HOSTREGS->cpuad);
 
         sysblk.syncing   = false;
         hthread_broadcast_condition( &sysblk.sync_done_cond, location );
@@ -341,7 +341,6 @@ static inline void wakeup_cpus_mask( CPU_BITMAP mask, const char* location )
 #define OBTAIN_INTLOCK(r)       Obtain_Interrupt_Lock( r, PTT_LOC )
 #define RELEASE_INTLOCK(r)      Release_Interrupt_Lock( r, PTT_LOC )
 #define TRY_OBTAIN_INTLOCK(r)   Try_Obtain_Interrupt_Lock( r, PTT_LOC )
-#define IS_INTLOCK_HELD(r)      (sysblk.intowner == (r)->cpuad)
 
 static inline void Interrupt_Lock_Obtained( REGS* regs, const char* location )
 {
@@ -366,11 +365,11 @@ static inline void Interrupt_Lock_Obtained( REGS* regs, const char* location )
             hthread_wait_condition( &sysblk.sync_done_cond, &sysblk.intlock, location );
         }
 
-        HOSTREGS->intwait = false;
-        sysblk.intowner = HOSTREGS->cpuad;
+        SET_AT_SYNCPOINT(HOSTREGS, false);
+        SET_INTOWNER(HOSTREGS->cpuad);
     }
     else
-        sysblk.intowner = LOCK_OWNER_OTHER;
+        SET_INTOWNER(LOCK_OWNER_OTHER);
 }
 
 /*-------------------------------------------------------------------*/
@@ -378,7 +377,7 @@ static inline void Interrupt_Lock_Obtained( REGS* regs, const char* location )
 static inline void Obtain_Interrupt_Lock( REGS* regs, const char* location )
 {
     if (regs)
-        HOSTREGS->intwait = true;
+        SET_AT_SYNCPOINT(HOSTREGS, true);
     hthread_obtain_lock( &sysblk.intlock, location );
     Interrupt_Lock_Obtained( regs, location );
 }
@@ -389,11 +388,11 @@ static inline int Try_Obtain_Interrupt_Lock( REGS* regs, const char* location )
 {
     int rc;
     if (regs)
-        HOSTREGS->intwait = true;
+        SET_AT_SYNCPOINT(HOSTREGS, true);
     if ((rc = hthread_try_obtain_lock( &sysblk.intlock, location )) == 0)
         Interrupt_Lock_Obtained( regs, location );
     else if (regs)
-        HOSTREGS->intwait = false;
+        SET_AT_SYNCPOINT(HOSTREGS, false);
     return rc;
 }
 
@@ -402,16 +401,9 @@ static inline int Try_Obtain_Interrupt_Lock( REGS* regs, const char* location )
 static inline void Release_Interrupt_Lock( REGS* regs, const char* location )
 {
     UNREFERENCED( regs );
-    sysblk.intowner = LOCK_OWNER_NONE;
+    SET_INTOWNER(LOCK_OWNER_NONE);
     hthread_release_lock( &sysblk.intlock, location );
 }
-
-/*-------------------------------------------------------------------*/
-/*           Atomically update SYSBLK Instruction Counter            */
-/*-------------------------------------------------------------------*/
-
-#define UPDATE_SYSBLK_INSTCOUNT( _count ) \
-        atomic_add_U64( &sysblk.instcount, (_count) )
 
 /*-------------------------------------------------------------------*/
 /* Stop ALL CPUs                                      (INTLOCK held) */
@@ -470,8 +462,8 @@ static inline bool are_any_cpus_started_intlock_held()
 {
     int cpu;
 
-    if (sysblk.cpus)
-        for (cpu = 0; cpu < sysblk.hicpu; cpu++)
+    if (SYS_GET_CPUS())
+        for (cpu = 0; cpu < SYS_GET_HICPU(); cpu++)
             if (IS_CPU_ONLINE( cpu ))
                 if (sysblk.regs[ cpu ]->cpustate == CPUSTATE_STARTED)
                     return true;
@@ -485,8 +477,8 @@ static inline bool are_all_cpus_stopped_intlock_held()
 {
     int cpu;
 
-    if (sysblk.cpus)
-        for (cpu = 0; cpu < sysblk.hicpu; cpu++)
+    if (SYS_GET_CPUS())
+        for (cpu = 0; cpu < SYS_GET_HICPU(); cpu++)
             if (IS_CPU_ONLINE( cpu ))
                 if (sysblk.regs[ cpu ]->cpustate != CPUSTATE_STOPPED)
                     return false;

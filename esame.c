@@ -247,12 +247,14 @@ U32     ar;                             /* Copy of new AR            */
 U32     gr = 0;                         /* Copy of new GR            */
 #if defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)
 U16     grd_offset = 0;                 /* Offset of disjoint GR_H   */
+ALIGN_16
 BYTE    psw[16];                        /* Copy of new PSW           */
 U64     gr8 = 0;                        /* Copy of new GR - 8 bytes  */
 U32     grd = 0;                        /* Copy of new GR - disjoint */
 U64     ia;                             /* ia for trace              */
 BYTE    amode64;                        /* save for amod64           */
 #else /*!defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)*/
+ALIGN_8
 BYTE    psw[8];                         /* Copy of new PSW           */
 U32     ia;                             /* ia for trace              */
 #endif /*!defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)*/
@@ -275,7 +277,7 @@ CREG    newcr12 = 0;                    /* CR12 upon completion      */
 
     /* Fetch flags from the instruction address space */
     mn = MADDR (pl_addr, USE_INST_SPACE, regs, ACCTYPE_INSTFETCH, regs->psw.pkey);
-    FETCH_HW(flags, mn);
+    FETCH_MAIN_HW(flags, mn);
 
 #if defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)
     /* Bits 0-12 must be zero */
@@ -288,22 +290,22 @@ CREG    newcr12 = 0;                    /* CR12 upon completion      */
 
     /* Fetch the offset to the new psw */
     mn = MADDR (pl_addr + 2, USE_INST_SPACE, regs, ACCTYPE_INSTFETCH, regs->psw.pkey);
-    FETCH_HW(psw_offset, mn);
+    FETCH_MAIN_HW(psw_offset, mn);
 
     /* Fetch the offset to the new ar */
     mn = MADDR (pl_addr + 4, USE_INST_SPACE, regs, ACCTYPE_INSTFETCH, regs->psw.pkey);
-    FETCH_HW(ar_offset, mn);
+    FETCH_MAIN_HW(ar_offset, mn);
 
     /* Fetch the offset to the new gr */
     mn = MADDR (pl_addr + 6, USE_INST_SPACE, regs, ACCTYPE_INSTFETCH, regs->psw.pkey);
-    FETCH_HW(gr_offset, mn);
+    FETCH_MAIN_HW(gr_offset, mn);
 
 #if defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)
     /* Fetch the offset to the new disjoint gr_h */
     if((flags & 0x0003) == 0x0003)
     {
         mn = MADDR (pl_addr + 8, USE_INST_SPACE, regs, ACCTYPE_INSTFETCH, regs->psw.pkey);
-        FETCH_HW(grd_offset, mn);
+        FETCH_MAIN_HW(grd_offset, mn);
     }
 #endif /*defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)*/
 
@@ -589,6 +591,7 @@ int     b2;                             /* Base of effective addr    */
 VADR    effective_addr2;                /* Effective address         */
 int     ovf;                            /* 1=overflow                */
 int     dxf;                            /* 1=data exception          */
+ALIGN_16
 BYTE    dec[16];                        /* Packed decimal operand    */
 
     RXY(inst, regs, r1, x2, b2, effective_addr2);
@@ -631,6 +634,7 @@ int     r1;                             /* Value of R1 field         */
 int     x2;                             /* Index register            */
 int     b2;                             /* Base of effective addr    */
 VADR    effective_addr2;                /* Effective address         */
+ALIGN_16
 BYTE    dec[16];                        /* Packed decimal result     */
 
     RXY(inst, regs, r1, x2, b2, effective_addr2);
@@ -1092,9 +1096,9 @@ bool    local = false;                  /* true == m4 bit 3 is on    */
                     /* Fetch the table entry, set the invalid bit, then
                        store only the byte containing the invalid bit */
                     mn = MADDR( asceto, USE_REAL_ADDR, regs, ACCTYPE_WRITE, regs->psw.pkey );
-                    FETCH_DW( asce, mn );
+                    FETCH_MAIN_DW( asce, mn );
                     asce |= ZSEGTAB_I;
-                    mn[7] = asce & 0xFF;
+                    STORE_MAIN_BYTE( mn + 7, asce & 0xFF );
 
                     /* Calculate the address of the next table entry, noting
                        that it is always a 64-bit address regardless of the
@@ -2155,6 +2159,7 @@ int     m3;                             /* Mask value                */
 int     b2;                             /* effective address base    */
 VADR    effective_addr2;                /* effective address         */
 int     i;                              /* Integer work area         */
+ALIGN_4
 BYTE    rbyte[4];                       /* Register bytes from mask  */
 
     RSY(inst, regs, r1, m3, b2, effective_addr2);
@@ -2272,6 +2277,7 @@ int     r1, r3;                         /* Register numbers          */
 int     b2;                             /* effective address base    */
 VADR    effective_addr2;                /* effective address         */
 int    i;                               /* Integer work area         */
+ALIGN_4
 BYTE   vbyte[4];                        /* Fetched storage bytes     */
 U32    n;                               /* Fetched value             */
 static const int                        /* Length-1 to fetch by mask */
@@ -2302,7 +2308,7 @@ static const unsigned int               /* Turn reg bytes off by mask*/
            If so, set the fetched byte to 0 to force zero cc */
         if (!r3) vbyte[0] = 0;
 
-        n = fetch_fw (vbyte);
+        FETCH_FW(n, vbyte);
         regs->psw.cc = n ? n & 0x80000000 ?
                        1 : 2 : 0;
 
@@ -2521,7 +2527,7 @@ U64     new;                            /* new value                 */
         }
         else
 #endif /*defined(_FEATURE_ZSIE)*/
-            if (sysblk.cpus > 1)
+            if (SYS_GET_CPUS() > 1)
                 sched_yield();
     }
 
@@ -2586,7 +2592,7 @@ U64     newhi, newlo;                   /* new value                 */
         }
         else
 #endif
-            if (sysblk.cpus > 1)
+            if (SYS_GET_CPUS() > 1)
                 sched_yield();
     }
 
@@ -4412,6 +4418,7 @@ int     b2, b4;                         /* Base register numbers     */
 VADR    effective_addr2;                /* Operand2 address          */
 VADR    effective_addr4;                /* Operand4 address          */
 int     i, n;                           /* Integer work areas        */
+CACHE_ALIGN
 U32     rwork1[16], rwork2[16];         /* Intermediate work areas   */
 
     SS(inst, regs, r1, r3, b2, effective_addr2, b4, effective_addr4);
@@ -4427,8 +4434,8 @@ U32     rwork1[16], rwork2[16];         /* Intermediate work areas   */
     /* Load a register at a time */
     for (i = 0; i < n; i++)
     {
-        regs->GR_H((r1 + i) & 0xF) = fetch_fw(&rwork1[i]);
-        regs->GR_L((r1 + i) & 0xF) = fetch_fw(&rwork2[i]);
+        FETCH_FW(regs->GR_H((r1 + i) & 0xF), &rwork1[i]);
+        FETCH_FW(regs->GR_L((r1 + i) & 0xF), &rwork2[i]);
     }
 
 } /* end DEF_INST(load_multiple_disjoint) */
@@ -4446,6 +4453,10 @@ int     b2;                             /* effective address base    */
 VADR    effective_addr2;                /* effective address         */
 int     i, m, n;                        /* Integer work areas        */
 U32    *p1, *p2;                        /* Mainstor pointers         */
+#if defined( OPTION_ATOMIC_MACHDEP )
+int     is_aligned;                     /* p1 is FW-aligned          */
+#endif
+
 
     RSY( inst, regs, r1, r3, b2, effective_addr2 );
     PER_ZEROADDR_XCHECK( regs, b2 );
@@ -4461,10 +4472,18 @@ U32    *p1, *p2;                        /* Mainstor pointers         */
 
     if (likely( n <= m ))
     {
+#if defined( OPTION_ATOMIC_MACHDEP )
+        is_aligned = IS_ALIGNED_POW2( p1, U32 );
+#endif
         /* Boundary not crossed */
         n >>= 2;
         for (i=0; i < n; i++, p1++)
-            regs->GR_H( (r1 + i) & 0xF ) = fetch_fw( p1 );
+#if defined( OPTION_ATOMIC_MACHDEP )
+            if (unlikely( !is_aligned )) /* #UNSWITCH */
+                FETCH_MAIN_FW_UL( regs->GR_H( (r1 + i) & 0xF ), p1 );
+            else
+#endif
+            FETCH_MAIN_FW( regs->GR_H( (r1 + i) & 0xF ), p1 );
     }
     else
     {
@@ -4473,18 +4492,18 @@ U32    *p1, *p2;                        /* Mainstor pointers         */
         effective_addr2 &= ADDRESS_MAXWRAP( regs );
         p2 = (U32*) MADDRL(effective_addr2, n - m, b2, regs, ACCTYPE_READ, regs->psw.pkey );
 
-        if (likely( !(m & 0x3) ))
+        if (likely(IS_ALIGNED_POW2( m, FW )))
         {
             /* Addresses are word aligned */
             m >>= 2;
 
             for (i=0; i < m; i++, p1++)
-                regs->GR_H( (r1 + i) & 0xF ) = fetch_fw( p1 );
+                FETCH_MAIN_FW( regs->GR_H( (r1 + i) & 0xF ), p1 );
 
             n >>= 2;
 
             for (; i < n; i++, p2++)
-                regs->GR_H( (r1 + i) & 0xF ) = fetch_fw( p2 );
+                FETCH_MAIN_FW( regs->GR_H( (r1 + i) & 0xF ), p2 );
         }
         else
         {
@@ -4496,12 +4515,12 @@ U32    *p1, *p2;                        /* Mainstor pointers         */
             b2 = (BYTE*) p1;
 
             for (i=0; i < m; i++)
-                *b1++ = *b2++;
+                FETCH_MAIN_BYTE( *b1++, b2++ );
 
             b2 = (BYTE*) p2;
 
             for (; i < n; i++)
-                *b1++ = *b2++;
+                FETCH_MAIN_BYTE( *b1++, b2++ );
 
             n >>= 2;
 
@@ -4544,7 +4563,7 @@ BYTE   *bp1;                            /* Unaligned Mainstor ptr    */
     {
         /* Boundary not crossed */
         n >>= 3;
-        if (likely(!(((uintptr_t)effective_addr2) & 0x07)))
+        if (likely(IS_ALIGNED_POW2( effective_addr2, DW )))
         {
 #if defined( OPTION_SINGLE_CPU_DW ) && defined( ASSIST_STORE_DW )
             if (regs->cpubit == regs->sysblk->started_mask)
@@ -4553,12 +4572,12 @@ BYTE   *bp1;                            /* Unaligned Mainstor ptr    */
             else
 #endif
             for (i=0; i < n; i++, p1++)
-                regs->GR_G( (r1 + i) & 0xF ) = fetch_dw( p1 );
+                FETCH_MAIN_DW( regs->GR_G( (r1 + i) & 0xF ), p1 );
         }
         else
         {
             for (i=0; i < n; i++, bp1 += 8)
-                regs->GR_G( (r1 + i) & 0xF ) = fetch_dw( bp1 );
+                FETCH_MAIN_DW_UL( regs->GR_G( (r1 + i) & 0xF ), bp1 );
         }
     }
     else
@@ -4568,7 +4587,7 @@ BYTE   *bp1;                            /* Unaligned Mainstor ptr    */
         effective_addr2 &= ADDRESS_MAXWRAP( regs );
         p2 = (U64*) MADDRL(effective_addr2, n - m, b2, regs, ACCTYPE_READ, regs->psw.pkey );
 
-        if (likely( !(m & 0x7) ))
+        if (likely(IS_ALIGNED_POW2( m, DW )))
         {
             /* FIXME: This code blows up on at least Mac OS X Snow Leopard
                (10.6) when compiled for a 32-bit Intel host using gcc 4.2.1
@@ -4582,12 +4601,12 @@ BYTE   *bp1;                            /* Unaligned Mainstor ptr    */
             m >>= 3;
 
             for (i=0; i < m; i++, p1++)
-                regs->GR_G( (r1 + i) & 0xF ) = fetch_dw( p1 );
+                FETCH_MAIN_DW( regs->GR_G( (r1 + i) & 0xF ), p1 );
 
             n >>= 3;
 
             for (; i < n; i++, p2++)
-                regs->GR_G( (r1 + i) & 0xF ) = fetch_dw( p2 );
+                FETCH_MAIN_DW( regs->GR_G( (r1 + i) & 0xF ), p2 );
         }
         else
         {
@@ -4599,12 +4618,12 @@ BYTE   *bp1;                            /* Unaligned Mainstor ptr    */
             b2 = (BYTE*) p1;
 
             for (i=0; i < m; i++)
-                *b1++ = *b2++;
+                FETCH_MAIN_BYTE( *b1++, b2++ );
 
             b2 = (BYTE*) p2;
 
             for (; i < n; i++)
-                *b1++ = *b2++;
+                FETCH_MAIN_BYTE( *b1++, b2++ );
 
             n >>= 3;
 
@@ -4659,11 +4678,11 @@ U64    *p1, *p2 = NULL;                 /* Mainstor pointers         */
 
     /* Store to first page */
     for (i=0; i < m; i++)
-        store_dw( p1++, regs->CR_G( (r1 + i) & 0xF ));
+        STORE_MAIN_DW( p1++, regs->CR_G( (r1 + i) & 0xF ));
 
     /* Store to next page */
     for (; i < n; i++)
-        store_dw( p2++, regs->CR_G( (r1 + i) & 0xF ));
+        STORE_MAIN_DW( p2++, regs->CR_G( (r1 + i) & 0xF ));
 
 } /* end DEF_INST( store_control_long ) */
 #endif /* defined( FEATURE_NEW_ZARCH_ONLY_INSTRUCTIONS ) */
@@ -4696,7 +4715,7 @@ U16     updated = 0;                    /* Updated control regs      */
 #if defined( _FEATURE_ZSIE )
     if (SIE_MODE( regs ))
     {
-        U16 cr_mask = fetch_hw( regs->siebk->lctl_ctl );
+        U16 cr_mask = READ_HW( regs->siebk->lctl_ctl );
         for (i=0; i < n; i++)
             if (cr_mask & BIT( 15 - ( (r1 + i) & 0xF )))
                 longjmp( regs->progjmp, SIE_INTERCEPT_INST );
@@ -4718,14 +4737,14 @@ U16     updated = 0;                    /* Updated control regs      */
     /* Load from first page */
     for (i=0; i < m; i++, p1++)
     {
-        regs->CR_G( (r1 + i) & 0xF ) = fetch_dw( p1 );
+        FETCH_MAIN_DW( regs->CR_G( (r1 + i) & 0xF ), p1 );
         updated |= BIT( (r1 + i) & 0xF );
     }
 
     /* Load from next page */
     for (; i < n; i++, p2++)
     {
-        regs->CR_G( (r1 + i) & 0xF ) = fetch_dw( p2 );
+        FETCH_MAIN_DW( regs->CR_G( (r1 + i) & 0xF ), p2 );
         updated |= BIT( (r1 + i) & 0xF );
     }
 
@@ -4788,7 +4807,7 @@ BYTE   *bp1;                            /* Unaligned Mainstor ptr    */
     {
         /* Boundary not crossed */
         n >>= 3;
-        if (likely(!(((uintptr_t)effective_addr2) & 0x07)))
+        if (likely(IS_ALIGNED_POW2( effective_addr2, DW )))
         {
 #if defined( OPTION_SINGLE_CPU_DW ) && defined( ASSIST_STORE_DW )
         if (regs->cpubit == regs->sysblk->started_mask)
@@ -4797,12 +4816,12 @@ BYTE   *bp1;                            /* Unaligned Mainstor ptr    */
         else
 #endif
             for (i=0; i < n; i++)
-                store_dw( p1++, regs->GR_G( (r1 + i) & 0xF ));
+                STORE_MAIN_DW( p1++, regs->GR_G( (r1 + i) & 0xF ));
         }
         else
         {
             for (i=0; i < n; i++, bp1 += 8)
-                store_dw( bp1, regs->GR_G( (r1 + i) & 0xF ));
+                STORE_MAIN_DW_UL( bp1, regs->GR_G( (r1 + i) & 0xF ));
         }
     }
     if (likely( n <= m ))
@@ -4817,18 +4836,18 @@ BYTE   *bp1;                            /* Unaligned Mainstor ptr    */
         effective_addr2 &= ADDRESS_MAXWRAP( regs );
         p2 = (U64*) MADDRL(effective_addr2, n - m, b2, regs, ACCTYPE_WRITE, regs->psw.pkey );
 
-        if (likely( !(m & 0x7) ))
+        if (likely(IS_ALIGNED_POW2( m, DW )))
         {
             /* double word aligned */
             m >>= 3;
 
             for (i=0; i < m; i++)
-                store_dw( p1++, regs->GR_G( (r1 + i) & 0xF ));
+                STORE_MAIN_DW( p1++, regs->GR_G( (r1 + i) & 0xF ));
 
             n >>= 3;
 
             for (; i < n; i++)
-                store_dw( p2++, regs->GR_G( (r1 + i) & 0xF ));
+                STORE_MAIN_DW( p2++, regs->GR_G( (r1 + i) & 0xF ));
         }
         else
         {
@@ -4843,12 +4862,12 @@ BYTE   *bp1;                            /* Unaligned Mainstor ptr    */
             b2 = (BYTE*) p1;
 
             for (i=0; i < m; i++)
-                *b2++ = *b1++;
+                STORE_MAIN_BYTE(b2++, *b1++);
 
             b2 = (BYTE*) p2;
 
             for (; i < n; i++)
-                *b2++ = *b1++;
+                STORE_MAIN_BYTE(b2++, *b1++);
         }
     }
 
@@ -4885,7 +4904,7 @@ U32    *p1, *p2;                        /* Mainstor pointers         */
         /* boundary not crossed */
         n >>= 2;
         for (i=0; i < n; i++)
-            store_fw( p1++, regs->GR_H( (r1 + i) & 0xF ));
+            STORE_MAIN_FW( p1++, regs->GR_H( (r1 + i) & 0xF ));
     }
     else
     {
@@ -4894,18 +4913,18 @@ U32    *p1, *p2;                        /* Mainstor pointers         */
         effective_addr2 &= ADDRESS_MAXWRAP( regs );
         p2 = (U32*) MADDRL(effective_addr2, n - m, b2, regs, ACCTYPE_WRITE, regs->psw.pkey );
 
-        if (likely( !(m & 0x3) ))
+        if (likely(IS_ALIGNED_POW2( m, FW )))
         {
             /* word aligned */
             m >>= 2;
 
             for (i=0; i < m; i++)
-                store_fw( p1++, regs->GR_H( (r1 + i) & 0xF ));
+                STORE_MAIN_FW( p1++, regs->GR_H( (r1 + i) & 0xF ));
 
             n >>= 2;
 
             for (; i < n; i++)
-                store_fw( p2++, regs->GR_H( (r1 + i) & 0xF ));
+                STORE_MAIN_FW( p2++, regs->GR_H( (r1 + i) & 0xF ));
         }
         else
         {
@@ -4920,12 +4939,12 @@ U32    *p1, *p2;                        /* Mainstor pointers         */
             b2 = (BYTE*) p1;
 
             for (i=0; i < m; i++)
-                *b2++ = *b1++;
+                STORE_MAIN_BYTE( b2++, *b1++ );
 
             b2 = (BYTE*) p2;
 
             for (; i < n; i++)
-                *b2++ = *b1++;
+                STORE_MAIN_BYTE( b2++, *b1++ );
         }
     }
 
@@ -5376,6 +5395,7 @@ DEF_INST(load_program_status_word_extended)
 {
 int     b2;                             /* Base of effective addr    */
 U64     effective_addr2;                /* Effective address         */
+ALIGN_16
 QWORD   qword;
 int     rc;
 
@@ -5428,6 +5448,7 @@ int     rc;
 /*-------------------------------------------------------------------*/
 DEF_INST( load_program_status_word_extended_y )
 {
+ALIGN_16
 QWORD   qword;                          /* PSW fetched from storage  */
 U64     effective_addr1;                /* Effective address         */
 int     b1;                             /* Base of effective addr    */
@@ -6163,7 +6184,7 @@ PSA    *psa;                            /* -> Prefixed storage area  */
     /* Point to PSA in main storage */
     psa = (void*)(regs->mainstor + regs->PX);
 
-    memcpy(psa->stfl, regs->facility_list, sizeof(psa->stfl));
+    MAINSTOR_MCOPY(psa->stfl, regs->facility_list, sizeof(psa->stfl));
 
 } /* end DEF_INST(store_facility_list) */
 #endif /* defined( FEATURE_000_N3_INSTR_FACILITY ) */
@@ -6434,7 +6455,9 @@ int     len;                            /* Second operand length     */
 int     b1, b2;                         /* Base registers            */
 VADR    effective_addr1;                /* Effective address         */
 VADR    effective_addr2;                /* Effective address         */
+CACHE_ALIGN
 BYTE    source[33];                     /* 32 digits + implied sign  */
+ALIGN_16
 BYTE    result[16];                     /* 31-digit packed result    */
 int     i, j;                           /* Array subscripts          */
 
@@ -6477,7 +6500,9 @@ int     len;                            /* Second operand length     */
 int     b1, b2;                         /* Base registers            */
 VADR    effective_addr1;                /* Effective address         */
 VADR    effective_addr2;                /* Effective address         */
+CACHE_ALIGN
 BYTE    source[66];                     /* 32 digits + implied sign  */
+ALIGN_16
 BYTE    result[16];                     /* 31-digit packed result    */
 int     i, j;                           /* Array subscripts          */
 
@@ -6521,7 +6546,9 @@ int     len;                            /* First operand length      */
 int     b1, b2;                         /* Base registers            */
 VADR    effective_addr1;                /* Effective address         */
 VADR    effective_addr2;                /* Effective address         */
+ALIGN_32
 BYTE    result[32];                     /* 32-digit result           */
+ALIGN_16
 BYTE    source[16];                     /* 31-digit packed operand   */
 int     i, j;                           /* Array subscripts          */
 int     cc;                             /* Condition code            */
@@ -6577,7 +6604,9 @@ int     len;                            /* First operand length      */
 int     b1, b2;                         /* Base registers            */
 VADR    effective_addr1;                /* Effective address         */
 VADR    effective_addr2;                /* Effective address         */
+CACHE_ALIGN
 BYTE    result[64];                     /* 32-digit result           */
+ALIGN_16
 BYTE    source[16];                     /* 31-digit packed operand   */
 int     i, j;                           /* Array subscripts          */
 int     cc;                             /* Condition code            */
@@ -7586,7 +7615,7 @@ U32     old;                            /* old value                 */
         }
         else
 #endif /*defined(_FEATURE_SIE)*/
-            if (sysblk.cpus > 1)
+            if (SYS_GET_CPUS() > 1)
                 sched_yield();
     }
 
@@ -7647,7 +7676,7 @@ U64     old, new;                       /* old, new values           */
         }
         else
 #endif /*defined(_FEATURE_SIE)*/
-            if (sysblk.cpus > 1)
+            if (SYS_GET_CPUS() > 1)
                 sched_yield();
     }
 
@@ -7668,6 +7697,7 @@ int     b2;                             /* Base of effective addr    */
 VADR    effective_addr2;                /* Effective address         */
 int     ovf;                            /* 1=overflow                */
 int     dxf;                            /* 1=data exception          */
+ALIGN_8
 BYTE    dec[8];                         /* Packed decimal operand    */
 
     RXY(inst, regs, r1, x2, b2, effective_addr2);
@@ -7714,6 +7744,7 @@ int     r1;                             /* Value of R1 field         */
 int     x2;                             /* Index register            */
 int     b2;                             /* Base of effective addr    */
 VADR    effective_addr2;                /* Effective address         */
+ALIGN_16
 BYTE    dec[16];                        /* Packed decimal result     */
 
     RXY(inst, regs, r1, x2, b2, effective_addr2);
@@ -7823,6 +7854,7 @@ int     r1, r3;                         /* Register numbers          */
 int     b2;                             /* effective address base    */
 VADR    effective_addr2;                /* effective address         */
 int    i;                               /* Integer work area         */
+ALIGN_4
 BYTE   vbyte[4];                        /* Fetched storage bytes     */
 U32    n;                               /* Fetched value             */
 static const int                        /* Length-1 to fetch by mask */
@@ -7853,7 +7885,7 @@ static const unsigned int               /* Turn reg bytes off by mask*/
            If so, set the fetched byte to 0 to force zero cc */
         if (!r3) vbyte[0] = 0;
 
-        n = fetch_fw (vbyte);
+        FETCH_FW(n, vbyte);
         regs->psw.cc = n ? n & 0x80000000 ?
                        1 : 2 : 0;
 
@@ -7932,14 +7964,14 @@ U32    *p1, *p2 = NULL;                 /* Mainstor pointers         */
     /* Load from first page */
     for (i=0; i < m; i++, p1++)
     {
-        regs->AR( (r1 + i) & 0xF ) = fetch_fw( p1 );
+        FETCH_MAIN_FW( regs->AR( (r1 + i) & 0xF ), p1 );
         SET_AEA_AR( regs, (r1 + i) & 0xF );
     }
 
     /* Load from next page */
     for (; i < n; i++, p2++)
     {
-        regs->AR( (r1 + i) & 0xF ) = fetch_fw( p2 );
+        FETCH_MAIN_FW( regs->AR( (r1 + i) & 0xF ), p2 );
         SET_AEA_AR( regs, (r1 + i) & 0xF );
     }
 
@@ -8018,7 +8050,7 @@ U32    *p1, *p2;                        /* Mainstor pointers         */
         /* Boundary not crossed */
         n >>= 2;
         for (i=0; i < n; i++, p1++)
-            regs->GR_L( (r1 + i) & 0xF ) = fetch_fw( p1 );
+            FETCH_MAIN_FW( regs->GR_L( (r1 + i) & 0xF ), p1 );
     }
     else
     {
@@ -8027,18 +8059,18 @@ U32    *p1, *p2;                        /* Mainstor pointers         */
         effective_addr2 &= ADDRESS_MAXWRAP( regs );
         p2 = (U32*) MADDRL(effective_addr2,n - m, b2, regs, ACCTYPE_READ, regs->psw.pkey );
 
-        if (likely( !(m & 0x3) ))
+        if (likely(IS_ALIGNED_POW2( m, FW )))
         {
             /* Addresses are word aligned */
             m >>= 2;
 
             for (i=0; i < m; i++, p1++)
-                regs->GR_L( (r1 + i) & 0xF ) = fetch_fw( p1 );
+                FETCH_MAIN_FW( regs->GR_L( (r1 + i) & 0xF ), p1 );
 
             n >>= 2;
 
             for (; i < n; i++, p2++)
-                regs->GR_L( (r1 + i) & 0xF ) = fetch_fw( p2 );
+                FETCH_MAIN_FW( regs->GR_L( (r1 + i) & 0xF ), p2 );
         }
         else
         {
@@ -8050,12 +8082,12 @@ U32    *p1, *p2;                        /* Mainstor pointers         */
             b2 = (BYTE*) p1;
 
             for (i=0; i < m; i++)
-                *b1++ = *b2++;
+                FETCH_MAIN_BYTE( *b1++, b2++ );
 
             b2 = (BYTE*) p2;
 
             for (; i < n; i++)
-                *b1++ = *b2++;
+                FETCH_MAIN_BYTE( *b1++, b2++ );
 
             n >>= 2;
 
@@ -8255,11 +8287,11 @@ U32    *p1, *p2 = NULL;                 /* Mainstor pointers         */
 
     /* Store at operand beginning */
     for (i=0; i < m; i++)
-        store_fw( p1++, regs->AR( (r1 + i) & 0xF ));
+        STORE_MAIN_FW( p1++, regs->AR( (r1 + i) & 0xF ));
 
     /* Store on next page */
     for (; i < n; i++)
-        store_fw( p2++, regs->AR( (r1 + i) & 0xF ));
+        STORE_MAIN_FW( p2++, regs->AR( (r1 + i) & 0xF ));
 
 
 } /* end DEF_INST( store_access_multiple_y ) */
@@ -8298,6 +8330,7 @@ int     r1, r3;                         /* Register numbers          */
 int     b2;                             /* effective address base    */
 VADR    effective_addr2;                /* effective address         */
 int     i;                              /* Integer work area         */
+ALIGN_4
 BYTE    rbyte[4];                       /* Byte work area            */
 
     RSY(inst, regs, r1, r3, b2, effective_addr2);
@@ -8386,7 +8419,7 @@ U32    *p1, *p2;                        /* Mainstor pointers         */
         /* boundary not crossed */
         n >>= 2;
         for (i=0; i < n; i++)
-            store_fw( p1++, regs->GR_L( (r1 + i) & 0xF ));
+            STORE_MAIN_FW( p1++, regs->GR_L( (r1 + i) & 0xF ));
     }
     else
     {
@@ -8395,18 +8428,18 @@ U32    *p1, *p2;                        /* Mainstor pointers         */
         effective_addr2 &= ADDRESS_MAXWRAP( regs );
         p2 = (U32*) MADDRL(effective_addr2, n - m, b2, regs, ACCTYPE_WRITE, regs->psw.pkey );
 
-        if (likely( !(m & 0x3) ))
+        if (likely(IS_ALIGNED_POW2( m, FW )))
         {
             /* word aligned */
             m >>= 2;
 
             for (i=0; i < m; i++)
-                store_fw( p1++, regs->GR_L( (r1 + i) & 0xF ));
+                STORE_MAIN_FW( p1++, regs->GR_L( (r1 + i) & 0xF ));
 
             n >>= 2;
 
             for (; i < n; i++)
-                store_fw( p2++, regs->GR_L( (r1 + i) & 0xF ));
+                STORE_MAIN_FW( p2++, regs->GR_L( (r1 + i) & 0xF ));
         }
         else
         {
@@ -8421,12 +8454,12 @@ U32    *p1, *p2;                        /* Mainstor pointers         */
             b2 = (BYTE*) p1;
 
             for (i=0; i < m; i++)
-                *b2++ = *b1++;
+                STORE_MAIN_BYTE( b2++, *b1++ );
 
             b2 = (BYTE*) p2;
 
             for (; i < n; i++)
-                *b2++ = *b1++;
+                STORE_MAIN_BYTE( b2++, *b1++ );
         }
     }
 

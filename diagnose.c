@@ -785,6 +785,7 @@ U32   code;
           /*   r1    is not used                                   */
           /*-------------------------------------------------------*/
           {
+            ALIGN_8
             union { U64     psw64;
                     DBLWRD  d_psw;
                   } savedpsw;
@@ -797,7 +798,7 @@ U32   code;
 
             /* short psw should be at address zero */
             /* save and validate                     */
-            memcpy( savedpsw.d_psw, regs->psa->iplpsw, sizeof( savedpsw.d_psw ) );
+            MAINSTOR_MCOPY( savedpsw.d_psw, regs->psa->iplpsw, sizeof( savedpsw.d_psw ) );
 
             /* check that psw bits 0, 2-4 are zero, bit 12 is one, and bits 25-30 are zero.*/
             if ( ( ( CSWAP64(savedpsw.psw64) & 0xB808007E00000000ULL) != 0x0008000000000000ULL ) )
@@ -831,7 +832,7 @@ U32   code;
 
             /* short psw should be at address zero */
             /* restore                               */
-            memcpy( regs->psa->iplpsw, savedpsw.d_psw, sizeof( savedpsw.d_psw ) );
+            MAINSTOR_MCOPY( regs->psa->iplpsw, savedpsw.d_psw, sizeof( savedpsw.d_psw ) );
 
             if ( DIAG308_DEBUG )
                 logmsg(">>>> DIAG308_START_KERNEL: start 's390_common_load_finish'\n");
@@ -941,6 +942,7 @@ U32   code;
           /*-------------------------------------------------------*/
           {
             RADR    stgarea;            /* Storage area real address */
+            CACHE_ALIGN
             struct ipl_parameter_block  ipb;
             U32     headsize;
             U32     bodysize;
@@ -1240,7 +1242,7 @@ U32   code;
         {
             int cpu = regs->GR_LHL( r3 );   // Get desired CPU from r3
 
-            if (cpu < 0 || cpu >= sysblk.maxcpu || !IS_CPU_ONLINE( cpu ))
+            if (cpu < 0 || cpu >= SYS_GET_MAXCPU() || !IS_CPU_ONLINE( cpu ))
             {
                 regs->psw.cc = 3;           // CPU is invalid/offline
                 break;                      // We are done

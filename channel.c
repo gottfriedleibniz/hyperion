@@ -1313,7 +1313,7 @@ PSA_3XX *psa;                           /* -> Prefixed storage area  */
 
     /* Store the channel id word at PSA+X'A8' */
     psa = (PSA_3XX*)(regs->mainstor + regs->PX);
-    STORE_FW(psa->chanid, chanid);
+    STORE_MAIN_FW(psa->chanid, chanid);
 
     /* Exit with condition code 0 indicating channel id stored */
     return 0;
@@ -1996,10 +1996,10 @@ perform_clear_subchan (DEVBLK *dev)
          *   scsw.flag3 |= SCSW3_SC_PEND;
          */
         dev->scsw.flag3 = SCSW3_SC_PEND;
-        store_fw (dev->scsw.ccwaddr, 0);
+        STORE_FW (dev->scsw.ccwaddr, 0);
         dev->scsw.chanstat = 0;
         dev->scsw.unitstat = 0;
-        store_hw (dev->scsw.count, 0);
+        STORE_HW (dev->scsw.count, 0);
 
         /* Queue the pending interrupt and update status */
         QUEUE_IO_INTERRUPT_QLOCKED( &dev->ioint, TRUE );
@@ -2506,12 +2506,12 @@ device_reset (DEVBLK *dev)
         if (dev->shiowaiters)
             signal_condition (&dev->shiocond);
 #endif
-        store_fw (dev->pmcw.intparm, 0);
+        STORE_FW (dev->pmcw.intparm, 0);
         dev->pmcw.flag4 &= ~PMCW4_ISC;
         dev->pmcw.flag5 &= ~(PMCW5_E | PMCW5_LM | PMCW5_MM | PMCW5_D);
         dev->pmcw.pnom = 0;
         dev->pmcw.lpum = 0;
-        store_hw (dev->pmcw.mbi, 0);
+        STORE_HW (dev->pmcw.mbi, 0);
         dev->pmcw.flag27 &= ~PMCW27_S;
 #if defined( _FEATURE_IO_ASSIST )
         dev->pmcw.zone = 0;
@@ -2655,7 +2655,7 @@ int i;
     sclp_reset();
 
     /* Connect each channel set to its home cpu */
-    for (i = 0; i < sysblk.maxcpu; i++)
+    for (i = 0; i < SYS_GET_MAXCPU(); i++)
         if (IS_CPU_ONLINE(i))
             sysblk.regs[i]->chanset = i < FEATURE_LCSS_MAX ? i : 0xFFFF;
 
@@ -3189,7 +3189,7 @@ ARCH_DEP(raise_pci) (DEVBLK *dev,       /* -> Device block           */
             STORE_FW(dev->pciscsw.ccwaddr,ccwaddr);
             dev->pciscsw.unitstat = 0;
             dev->pciscsw.chanstat = CSW_PCI;
-            store_hw (dev->pciscsw.count, 0);
+            STORE_HW (dev->pciscsw.count, 0);
 
             /* Queue the PCI pending interrupt */
             OBTAIN_IOINTQLK();
@@ -3327,7 +3327,7 @@ BYTE    storkey;                        /* Storage key               */
     if (idawfmt == PF_IDAW2)
     {
         /* Fetch format-2 IDAW */
-        FETCH_DW(idaw2, dev->mainstor + idawaddr);
+        FETCH_MAIN_DW(idaw2, dev->mainstor + idawaddr);
 
 #if !defined( FEATURE_001_ZARCH_INSTALLED_FACILITY )
         /* Channel program check in ESA/390 mode
@@ -3344,7 +3344,7 @@ BYTE    storkey;                        /* Storage key               */
     else
     {
         /* Fetch format-1 IDAW */
-        FETCH_FW(idaw1, dev->mainstor + idawaddr);
+        FETCH_MAIN_FW(idaw1, dev->mainstor + idawaddr);
 
         /* Channel program check if bit 0 of
            the format-1 IDAW is not zero */
@@ -3458,8 +3458,8 @@ U16     maxlen;                         /* Maximum allowable length  */
 
     /* Fetch MIDAW from main storage (MIDAW is quadword
        aligned and so cannot cross a page boundary) */
-    FETCH_DW(mword1, dev->mainstor + midawadr);
-    FETCH_DW(mword2, dev->mainstor + midawadr + 8);
+    FETCH_MAIN_DW(mword1, dev->mainstor + midawadr);
+    FETCH_MAIN_DW(mword2, dev->mainstor + midawadr + 8);
 
     /* Channel program check in reserved bits are non-zero */
     if (mword1 & 0xFFFFFFFFFF000000ULL)
@@ -3757,7 +3757,7 @@ BYTE    midawflg;                       /* MIDAW flags               */
                     if (readbackwards)
                     {
                         midawdat = (midawdat - midawlen) + 1;
-                        memcpy_backwards (dev->mainstor + midawdat,
+                        MAINSTOR_MCOPY_RL (dev->mainstor + midawdat,
                                           iobufptr,
                                           midawlen);
 
@@ -3768,7 +3768,7 @@ BYTE    midawflg;                       /* MIDAW flags               */
                     {
                         if (to_iobuf)
                         {
-                            memcpy (iobuf,
+                            MAINSTOR_MCOPY (iobuf,
                                     dev->mainstor + midawdat,
                                     midawlen);
                             prefetch->pos += midawlen;
@@ -3777,7 +3777,7 @@ BYTE    midawflg;                       /* MIDAW flags               */
                         }
                         else
                         {
-                            memcpy (dev->mainstor + midawdat,
+                            MAINSTOR_MCOPY (dev->mainstor + midawdat,
                                     iobuf,
                                     midawlen);
                         }
@@ -3976,7 +3976,7 @@ BYTE    midawflg;                       /* MIDAW flags               */
                 if (readbackwards)
                 {
                     idadata = (idadata - idalen) + 1;
-                    memcpy_backwards( dev->mainstor + idadata,
+                    MAINSTOR_MCOPY_RL( dev->mainstor + idadata,
                                       iobuf + dev->curblkrem + idacount - idalen,
                                       idalen );
 
@@ -3987,11 +3987,11 @@ BYTE    midawflg;                       /* MIDAW flags               */
                 {
                     if (to_iobuf)
                     {
-                        memcpy( iobuf, dev->mainstor + idadata, idalen );
+                        MAINSTOR_MCOPY( iobuf, dev->mainstor + idadata, idalen );
                     }
                     else
                     {
-                        memcpy( dev->mainstor + idadata, iobuf, idalen );
+                        MAINSTOR_MCOPY( dev->mainstor + idadata, iobuf, idalen );
                     }
 
                     /* Increment buffer pointer for next IDAW*/
@@ -4159,7 +4159,7 @@ BYTE    midawflg;                       /* MIDAW flags               */
                 else
                 {
                     /* read backward  - use END of buffer */
-                    memcpy_backwards( dev->mainstor + addr,
+                    MAINSTOR_MCOPY_RL( dev->mainstor + addr,
                         iobufptr, count );
                 }
             }
@@ -4175,7 +4175,7 @@ BYTE    midawflg;                       /* MIDAW flags               */
             /* Handle Write and Control transfer to I/O buffer */
             else if (to_iobuf)
             {
-                memcpy( iobuf, dev->mainstor + addr, count );
+                MAINSTOR_MCOPY( iobuf, dev->mainstor + addr, count );
 
                 prefetch->pos += count;
 
@@ -4187,7 +4187,7 @@ BYTE    midawflg;                       /* MIDAW flags               */
             /* Handle Read transfer from I/O buffer */
             else
             {
-                memcpy( dev->mainstor + addr, iobuf, count );
+                MAINSTOR_MCOPY( dev->mainstor + addr, iobuf, count );
             }
 
 #ifdef FEATURE_S370_CHANNEL
@@ -4345,10 +4345,10 @@ ARCH_DEP( device_attention )( DEVBLK* dev, BYTE unitstat )
                 /* GA22-6974-09:                                                 */
                 /*  pp. 2-13 -- 2-14, Attention                                  */
                 dev->attnscsw.flag3 = SCSW3_SC_ALERT | SCSW3_SC_PEND;
-                store_fw (dev->attnscsw.ccwaddr, 0);
+                STORE_FW (dev->attnscsw.ccwaddr, 0);
                 dev->attnscsw.unitstat = unitstat;
                 dev->attnscsw.chanstat = 0;
-                store_hw (dev->attnscsw.count, 0);
+                STORE_HW (dev->attnscsw.count, 0);
 
                 /* Queue the attention interrupt */
                 QUEUE_IO_INTERRUPT_QLOCKED( &dev->attnioint, FALSE );
@@ -4724,7 +4724,7 @@ IOBUF iobuf_initial;                    /* Channel I/O buffer        */
     }
 
     /* Hercules deviation; always zero the SCSW CCW address to start */
-    store_fw(dev->scsw.ccwaddr, 0);
+    STORE_FW(dev->scsw.ccwaddr, 0);
 
     /* Call the i/o start exit */
     if (dev->hnd->start)
@@ -4786,9 +4786,9 @@ resume_suspend:
         {
             ARCH_DEP( or_dev_storage_key )( dev, mbaddr, (STORKEY_REF | STORKEY_CHANGE) );
             mbk = (MBK*)&dev->mainstor[mbaddr];
-            FETCH_HW(mbcount,mbk->srcount);
+            FETCH_MAIN_HW(mbcount,mbk->srcount);
             mbcount++;
-            STORE_HW(mbk->srcount,mbcount);
+            STORE_MAIN_HW(mbk->srcount,mbcount);
         } else {
             /* Generate subchannel logout indicating program
                check or protection check, and set the subchannel
@@ -4951,9 +4951,9 @@ execute_halt:
             if (1
                 && dev->ccwtrace
                 && !(0
-                     || IS_CCW_READ  ( ccw[0] )
-                     || IS_CCW_RDBACK( ccw[0] )
-                     || IS_CCW_SENSE ( ccw[0] )
+                     || IS_CCW_READ  ( READ_MAIN_BYTE( ccw ) )
+                     || IS_CCW_RDBACK( READ_MAIN_BYTE( ccw ) )
+                     || IS_CCW_SENSE ( READ_MAIN_BYTE( ccw ) )
                     )
             )
                 DISPLAY_CCW( &did_ccw_trace, dev, ccw, addr, count, flags );

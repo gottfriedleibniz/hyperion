@@ -82,7 +82,7 @@ void ARCH_DEP( checkstop_all_cpus )( REGS* regs )
     if (!IS_INTLOCK_HELD( regs ))
         CRASH();
 
-    for (i=0; i < sysblk.maxcpu; i++)
+    for (i=0; i < SYS_GET_MAXCPU(); i++)
     {
         if (IS_CPU_ONLINE(i))
         {
@@ -109,21 +109,21 @@ void ARCH_DEP( store_psw )( REGS* regs, BYTE* addr )
         // 390 or 370 EC-mode
 
 #if !defined( FEATURE_001_ZARCH_INSTALLED_FACILITY )
-        STORE_DW( addr, make_psw64( regs, 390, false ));
+        STORE_MAIN_DW( addr, make_psw64( regs, 390, false ));
 #endif
 
 #if defined( FEATURE_BCMODE )
 
     else    // 370 BC-mode
 
-        STORE_DW( addr, make_psw64( regs, 370, true ));
+        STORE_MAIN_DW( addr, make_psw64( regs, 370, true ));
 
 #elif defined( FEATURE_001_ZARCH_INSTALLED_FACILITY )
 
     // 64-bit z/Architecture mode
 
-    STORE_DW( addr + 0, make_psw64( regs, 900, false ));
-    STORE_DW( addr + 8, regs->psw.IA_G );
+    STORE_MAIN_DW( addr + 0, make_psw64( regs, 900, false ));
+    STORE_MAIN_DW( addr + 8, regs->psw.IA_G );
 
 #endif
 } /* end function ARCH_DEP(store_psw) */
@@ -158,14 +158,14 @@ int ARCH_DEP(load_psw) (REGS *regs, BYTE *addr)
 #if defined( FEATURE_001_ZARCH_INSTALLED_FACILITY )
         regs->psw.zerobyte = addr[3] & 0xFE;
         regs->psw.amode64  = addr[3] & 0x01;
-        regs->psw.zeroword = fetch_fw(addr+4) & 0x7FFFFFFF;
-        regs->psw.IA       = fetch_dw (addr + 8);
+        regs->psw.zeroword = READ_FW(addr+4) & 0x7FFFFFFF;
+        regs->psw.IA       = READ_DW(addr + 8);
         regs->psw.AMASK    = regs->psw.amode64 ? AMASK64
                            : regs->psw.amode   ? AMASK31 : AMASK24;
 #else
         regs->psw.zerobyte = addr[3];
         regs->psw.amode64  = 0;
-        regs->psw.IA       = fetch_fw(addr + 4) & 0x7FFFFFFF;
+        regs->psw.IA       = READ_FW(addr + 4) & 0x7FFFFFFF;
         regs->psw.AMASK    = regs->psw.amode ? AMASK31 : AMASK24;
 #endif
 
@@ -239,7 +239,7 @@ int ARCH_DEP(load_psw) (REGS *regs, BYTE *addr)
         SET_IC_BCMODE_MASK(regs);
 
         /* Processing for S/370 BC mode PSW */
-        regs->psw.intcode = fetch_hw (addr + 2);
+        FETCH_HW(regs->psw.intcode, addr + 2);
         regs->psw.cc = (addr[4] & 0x30) >> 4;
         regs->psw.progmask = (addr[4] & 0x0F);
 
@@ -686,7 +686,7 @@ bool    intercept;                      /* False for virtual pgmint  */
     PTT_PGM( "PGM (r)h,g,a", realregs->host, realregs->guest, realregs->sie_active );
 
     /* Prevent machine check when in (almost) interrupt loop */
-    realregs->instcount++;
+    UPDATE_REGS_INSTCOUNT( realregs, 1 );
     UPDATE_SYSBLK_INSTCOUNT( 1 );
 
     /* Release any locks */
@@ -694,7 +694,7 @@ bool    intercept;                      /* False for virtual pgmint  */
         RELEASE_INTLOCK( realregs );
 
     /* Unlock the main storage lock if held */
-    if (sysblk.mainowner == realregs->cpuad)
+    if (IS_MAINOCK_HELD( realregs ))
         RELEASE_MAINLOCK_UNCONDITIONAL( realregs );
 
     /* Ensure psw.IA is set and aia invalidated */
@@ -1126,8 +1126,8 @@ bool    intercept;                      /* False for virtual pgmint  */
         )
             realregs->perc &= 0xFFFC;
 
-        STORE_HW( psa->perint, realregs->perc   );
-        STORE_W(  psa->peradr, realregs->peradr );
+        STORE_MAIN_HW( psa->perint, realregs->perc   );
+        STORE_MAIN_W(  psa->peradr, realregs->peradr );
 
         if (IS_IC_PER_SA( realregs ) && ACCESS_REGISTER_MODE( &realregs->psw ))
             psa->perarid = realregs->peraid;
@@ -1155,7 +1155,7 @@ bool    intercept;                      /* False for virtual pgmint  */
         psa->pgmint[0] = 0;
         psa->pgmint[1] = ilc;
 
-        STORE_HW( psa->pgmint + 2, pcode );
+        STORE_MAIN_HW( psa->pgmint + 2, pcode );
 
         /* Store the exception access identification at PSA+160 */
         if (0
@@ -1202,7 +1202,7 @@ bool    intercept;                      /* False for virtual pgmint  */
 #endif
         )
         {
-            STORE_DW( psa->TEA_G, regs->TEA );
+            STORE_MAIN_DW( psa->TEA_G, regs->TEA );
         }
 
         /* For z, store translation exception address at PSA+172 */
@@ -1219,7 +1219,7 @@ bool    intercept;                      /* False for virtual pgmint  */
             || code == PGM_EX_TRANSLATION_EXCEPTION
         )
         {
-            STORE_FW( psa->TEA_L, regs->TEA );
+            STORE_MAIN_FW( psa->TEA_L, regs->TEA );
         }
 
 #else /* !defined( FEATURE_001_ZARCH_INSTALLED_FACILITY ) */
@@ -1241,7 +1241,7 @@ bool    intercept;                      /* False for virtual pgmint  */
 #endif
         )
         {
-            STORE_FW( psa->tea, regs->TEA );
+            STORE_MAIN_FW( psa->tea, regs->TEA );
         }
 #endif /* !defined( FEATURE_001_ZARCH_INSTALLED_FACILITY ) */
 
@@ -1254,7 +1254,7 @@ bool    intercept;                      /* False for virtual pgmint  */
 #endif /* !defined( FEATURE_001_ZARCH_INSTALLED_FACILITY ) */
                                                                                  )
         {
-            STORE_FW( psa->DXC, regs->dxc );
+            STORE_MAIN_FW( psa->DXC, regs->dxc );
 
 #if defined( FEATURE_BASIC_FP_EXTENSIONS )
             /* Load data exception code into FPC register byte 2 */
@@ -1269,7 +1269,7 @@ bool    intercept;                      /* False for virtual pgmint  */
         /* Store the monitor class and event code */
         if (code == PGM_MONITOR_EVENT)
         {
-            STORE_HW( psa->monclass, regs->monclass );
+            STORE_MAIN_HW( psa->monclass, regs->monclass );
 
             /* Store the monitor code word at PSA+156 */
             /* or doubleword at PSA+176               */
@@ -1290,15 +1290,15 @@ bool    intercept;                      /* False for virtual pgmint  */
             /*  **** FIXME **** FIXME  *** FIXME ***  */
 
 #if defined( FEATURE_001_ZARCH_INSTALLED_FACILITY )
-            STORE_DW( zmoncode, regs->MONCODE );
+            STORE_MAIN_DW( zmoncode, regs->MONCODE );
 #else
-            STORE_W( psa->moncode, regs->MONCODE );
+            STORE_MAIN_W( psa->moncode, regs->MONCODE );
 #endif
         }
 
 #if defined( FEATURE_PER3 )
         /* Store the breaking event address register in the PSA */
-        STORE_W( psa->bea, regs->bear );
+        STORE_MAIN_W( psa->bea, regs->bear );
         PTT_PGM( "PGM bear", regs->bear, 0, 0 );
 #endif
 
@@ -1512,7 +1512,7 @@ DEVBLK *dev;                            /* dev presenting interrupt  */
         ECMODE(&regs->psw))
     {
         /* For ECMODE, store the I/O device address at PSA+X'B8' */
-        STORE_FW(psa->ioid,
+        STORE_MAIN_FW(psa->ioid,
                  ((((U32)psa->ioid[0] << 8) |
                    ((U32)SSID_TO_LCSS(ioid >> 16) & 0x07)) << 16) |
                  (ioid & 0x0000FFFFUL));
@@ -1543,14 +1543,14 @@ DEVBLK *dev;                            /* dev presenting interrupt  */
 
 #ifdef FEATURE_CHANNEL_SUBSYSTEM
     /* Store X'0001' + subchannel number at PSA+X'B8' */
-    STORE_FW(psa->ioid, ioid);
+    STORE_MAIN_FW(psa->ioid, ioid);
 
     /* Store the I/O interruption parameter at PSA+X'BC' */
-    STORE_FW(psa->ioparm, ioparm);
+    STORE_MAIN_FW(psa->ioparm, ioparm);
 
 #if defined( FEATURE_001_ZARCH_INSTALLED_FACILITY ) || defined( _FEATURE_IO_ASSIST )
     /* Store the I/O interruption identification word at PSA+X'C0' */
-    STORE_FW(psa->iointid, iointid);
+    STORE_MAIN_FW(psa->iointid, iointid);
 #endif
 
     /* Trace the I/O interrupt */
@@ -1639,11 +1639,11 @@ RADR    fsta;                           /* Failing storage address   */
 
 #if !defined( FEATURE_001_ZARCH_INSTALLED_FACILITY )
     /* Set the extended logout area to zeros */
-    memset(psa->storepsw, 0, 16);
+    MAINSTOR_MSET(psa->storepsw, 0, 16);
 #endif
 
     /* Store the machine check interrupt code at PSA+232 */
-    STORE_DW(psa->mckint, mcic);
+    STORE_MAIN_DW(psa->mckint, mcic);
 
     /* Trace the machine check interrupt */
     if (CPU_STEPPING_OR_TRACING(regs, 0))
@@ -1656,14 +1656,14 @@ RADR    fsta;                           /* Failing storage address   */
     }
 
     /* Store the external damage code at PSA+244 */
-    STORE_FW(psa->xdmgcode, xdmg);
+    STORE_MAIN_FW(psa->xdmgcode, xdmg);
 
 #if defined( FEATURE_001_ZARCH_INSTALLED_FACILITY )
     /* Store the failing storage address at PSA+248 */
-    STORE_DW(psa->mcstorad, fsta);
+    STORE_MAIN_DW(psa->mcstorad, fsta);
 #else
     /* Store the failing storage address at PSA+248 */
-    STORE_FW(psa->mcstorad, fsta);
+    STORE_MAIN_FW(psa->mcstorad, fsta);
 #endif
 
 #if defined( FEATURE_073_TRANSACT_EXEC_FACILITY )
@@ -1832,13 +1832,13 @@ cpustate_stopping:
     if (unlikely(regs->cpustate == CPUSTATE_STOPPED))
     {
         S64 saved_timer = get_cpu_timer(regs);
-        regs->ints_state = IC_INITIAL_STATE;
+        SET_IC_INITIAL_STATE( regs );
         sysblk.started_mask ^= regs->cpubit;
 
         CPU_Wait(regs);
 
         sysblk.started_mask |= regs->cpubit;
-        regs->ints_state |= sysblk.ints_state;
+        REGS_BIT_ISR( regs, SYS_GET_ISR() );
         set_cpu_timer(regs,saved_timer);
 
         ON_IC_INTERRUPT(regs);
@@ -1949,7 +1949,7 @@ int     aswitch;
             HOSTREGS = regs;
             if (GUESTREGS)
                 HOST(GUESTREGS) = regs;
-            sysblk.regs[cpu] = regs;
+            SET_CPU_REGS(cpu, regs);
             release_lock(&sysblk.cpulock[cpu]);
             if (regs->insttrace && sysblk.traceFILE)
                 tf_0811( regs, get_arch_name( regs ));
@@ -1985,7 +1985,7 @@ int     aswitch;
     regs->program_interrupt = &ARCH_DEP(program_interrupt);
 
     regs->breakortrace = (sysblk.instbreak || (sysblk.insttrace && regs->insttrace));
-    regs->ints_state |= sysblk.ints_state;
+    REGS_BIT_ISR( regs, SYS_GET_ISR() );
 
     /* Establish longjmp destination for cpu thread exit */
     if (setjmp(regs->exitjmp))
@@ -2045,7 +2045,7 @@ int     aswitch;
            to here, thereby causing the instruction counter to not be
            properly updated. Thus, we need to update it here instead.
        */
-        regs->instcount   +=     (i * 2);
+        UPDATE_REGS_INSTCOUNT( regs, (i * 2) );
         UPDATE_SYSBLK_INSTCOUNT( (i * 2) );
 
         /* Perform automatic instruction tracing if it's enabled */
@@ -2097,7 +2097,7 @@ enter_fastest_no_txf_loop:
     ip = INSTRUCTION_FETCH( regs, 0 );
     PROCESS_TRACE( regs, ip, enter_fastest_no_txf_loop );
     EXECUTE_INSTRUCTION( current_opcode_table, ip, regs );
-    regs->instcount++;
+    UPDATE_REGS_INSTCOUNT( regs, 1 );
     UPDATE_SYSBLK_INSTCOUNT( 1 );
 
     for (i=0; i < MAX_CPU_LOOPS/2; i++)
@@ -2105,7 +2105,7 @@ enter_fastest_no_txf_loop:
         UNROLLED_EXECUTE( current_opcode_table, regs );
         UNROLLED_EXECUTE( current_opcode_table, regs );
     }
-    regs->instcount   +=     (i * 2);
+    UPDATE_REGS_INSTCOUNT( regs, (i * 2) );
     UPDATE_SYSBLK_INSTCOUNT( (i * 2) );
 
     /* Perform automatic instruction tracing if it's enabled */
@@ -2127,7 +2127,7 @@ enter_txf_faster_loop:
     ip = INSTRUCTION_FETCH( regs, 0 );
     PROCESS_TRACE( regs, ip, enter_txf_faster_loop );
     EXECUTE_INSTRUCTION( current_opcode_table, ip, regs );
-    regs->instcount++;
+    UPDATE_REGS_INSTCOUNT( regs, 1 );
     UPDATE_SYSBLK_INSTCOUNT( 1 );
 
     for (i=0; i < MAX_CPU_LOOPS/2; i++)
@@ -2142,7 +2142,7 @@ enter_txf_faster_loop:
 
         UNROLLED_EXECUTE( current_opcode_table, regs );
     }
-    regs->instcount   +=     (i * 2);
+    UPDATE_REGS_INSTCOUNT( regs, (i * 2) );
     UPDATE_SYSBLK_INSTCOUNT( (i * 2) );
 
     /* Perform automatic instruction tracing if it's enabled */
@@ -2161,7 +2161,7 @@ enter_txf_slower_loop:
     ip = INSTRUCTION_FETCH( regs, 0 );
     PROCESS_TRACE( regs, ip, enter_txf_slower_loop );
     TXF_EXECUTE_INSTRUCTION( current_opcode_table, ip, regs );
-    regs->instcount++;
+    UPDATE_REGS_INSTCOUNT( regs, 1 );
     UPDATE_SYSBLK_INSTCOUNT( 1 );
 
     for (i=0; i < MAX_CPU_LOOPS/2; i++)
@@ -2176,7 +2176,7 @@ enter_txf_slower_loop:
 
         TXF_UNROLLED_EXECUTE( current_opcode_table, regs );
     }
-    regs->instcount   +=     (i * 2);
+    UPDATE_REGS_INSTCOUNT( regs, (i * 2) );
     UPDATE_SYSBLK_INSTCOUNT( (i * 2) );
 
     /* Perform automatic instruction tracing if it's enabled */
@@ -2247,14 +2247,14 @@ void ARCH_DEP( process_trace )( REGS* regs, BYTE* dest )
             hostregs->cpustate = CPUSTATE_STOPPED;
             sysblk.started_mask &= ~hostregs->cpubit;
             hostregs->stepwait = 1;
-            sysblk.intowner = LOCK_OWNER_NONE;
+            SET_INTOWNER(LOCK_OWNER_NONE);
 
             while (hostregs->cpustate == CPUSTATE_STOPPED)
             {
                 wait_condition( &hostregs->intcond, &sysblk.intlock );
             }
 
-            sysblk.intowner = hostregs->cpuad;
+            SET_INTOWNER(hostregs->cpuad);
             hostregs->stepwait = 0;
             sysblk.started_mask |= hostregs->cpubit;
 
@@ -2367,11 +2367,11 @@ int   rc;
     OBTAIN_INTLOCK(NULL);
 
     /* Increment number of CPUs online */
-    sysblk.cpus++;
+    SYS_UPDATE_CPUS(1);
 
     /* Set hi CPU */
-    if (cpu >= sysblk.hicpu)
-        sysblk.hicpu = cpu + 1;
+    if (cpu >= SYS_GET_HICPU())
+        SYS_SET_HICPU( cpu + 1 );
 
     /* Start the TOD clock and CPU timer thread */
     if (!sysblk.todtid)
@@ -2402,16 +2402,16 @@ int   rc;
     } while (regs);
 
     /* Decrement number of CPUs online */
-    sysblk.cpus--;
+    SYS_UPDATE_CPUS(-1);
 
     /* Reset hi cpu */
-    if (cpu + 1 >= sysblk.hicpu)
+    if (cpu + 1 >= SYS_GET_HICPU())
     {
         int i;
-        for (i = sysblk.maxcpu - 1; i >= 0; i--)
+        for (i = SYS_GET_MAXCPU() - 1; i >= 0; i--)
             if (IS_CPU_ONLINE(i))
                 break;
-        sysblk.hicpu = i + 1;
+        SYS_SET_HICPU( i + 1 );
     }
 
     /* Signal cpu has terminated */
@@ -2501,7 +2501,7 @@ int i;
         ON_IC_INTERRUPT(regs);
         HOSTREGS = regs;
         regs->host = 1;
-        sysblk.regs[cpu] = regs;
+        SET_CPU_REGS(cpu, regs);
         sysblk.config_mask |= regs->cpubit;
         sysblk.started_mask |= regs->cpubit;
     }
@@ -2592,7 +2592,7 @@ static void *cpu_uninit (int cpu, REGS *regs)
         sysblk.config_mask &= ~CPU_BIT(cpu);
         sysblk.started_mask &= ~CPU_BIT(cpu);
         sysblk.waiting_mask &= ~CPU_BIT(cpu);
-        sysblk.regs[cpu] = NULL;
+        SET_CPU_REGS(cpu, NULL);
         sysblk.cpucreateTOD[cpu] = 0;
         release_lock (&sysblk.cpulock[cpu]);
     }
@@ -2613,7 +2613,7 @@ static void *cpu_uninit (int cpu, REGS *regs)
 static void CPU_Wait( REGS* regs )
 {
     /* Indicate we are giving up intlock */
-    sysblk.intowner = LOCK_OWNER_NONE;
+    SET_INTOWNER(LOCK_OWNER_NONE);
 
     /* Wait while SYNCHRONIZE_CPUS is in progress */
     while (sysblk.syncing)
@@ -2651,7 +2651,7 @@ static void CPU_Wait( REGS* regs )
     wait_condition (&regs->intcond, &sysblk.intlock);
 
     /* And we're the owner of intlock once again */
-    sysblk.intowner = regs->cpuad;
+    SET_INTOWNER(regs->cpuad);
 }
 
 /*-------------------------------------------------------------------*/
@@ -2811,7 +2811,7 @@ void do_automatic_tracing()
         }
 
         /* Enable/disable CPU tracing based on overall trace status */
-        for (cpu=0; cpu < sysblk.maxcpu; cpu++)
+        for (cpu=0; cpu < SYS_GET_MAXCPU(); cpu++)
         {
             if (IS_CPU_ONLINE( cpu ))
                 sysblk.regs[ cpu ]->insttrace = sysblk.insttrace;
