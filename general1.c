@@ -2966,7 +2966,7 @@ int ARCH_DEP( mem_pad_cmp )
 #endif
             default:  // some other length
             {
-                rc = memcmp( m1, m2, neqlen = len );
+                rc = MAINSTOR_MCMP( m1, m2, neqlen = len );
             }
             break;
         }
@@ -2974,13 +2974,13 @@ int ARCH_DEP( mem_pad_cmp )
     else // (3) - Only operand-1 crosses a page boundary
     {
         len1 = PAGEFRAME_PAGESIZE - (ea1 & PAGEFRAME_BYTEMASK);
-        rc = memcmp( m1, m2, neqlen = len1 );
+        rc = MAINSTOR_MCMP( m1, m2, neqlen = len1 );
         if (rc == 0)
         {
             neqidx += neqlen;
             m1 = neq1 = MADDRL((ea1 + len1) & ADDRESS_MAXWRAP( regs ),
                     len - len1 ,b1, regs, ACCTYPE_READ, regs->psw.pkey );
-            rc = memcmp( m1, neq2 = m2, neqlen = len - len1 );
+            rc = MAINSTOR_MCMP( m1, neq2 = m2, neqlen = len - len1 );
         }
     }
 
@@ -3099,7 +3099,7 @@ int ARCH_DEP( mem_cmp )
 #endif
                 default:  // some other length
                 {
-                    rc = memcmp( m1, m2, neqlen = len );
+                    rc = MAINSTOR_MCMP( m1, m2, neqlen = len );
                 }
                 break;
             }
@@ -3107,13 +3107,13 @@ int ARCH_DEP( mem_cmp )
         else // (2) - Operand-2 crosses a page boundary
         {
             len2 = PAGEFRAME_PAGESIZE - (ea2 & PAGEFRAME_BYTEMASK);
-            rc = memcmp( m1, m2, neqlen = len2 );
+            rc = MAINSTOR_MCMP( m1, m2, neqlen = len2 );
             if (rc == 0)
             {
                 neqidx += neqlen;
                 m2 = neq2 = MADDRL((ea2 + len2) & ADDRESS_MAXWRAP( regs ),
                     len + 1 - len2, b2, regs, ACCTYPE_READ, regs->psw.pkey );
-                rc = memcmp( neq1 = m1 + len2, m2, neqlen = len - len2 );
+                rc = MAINSTOR_MCMP( neq1 = m1 + len2, m2, neqlen = len - len2 );
              }
         }
     }
@@ -3124,13 +3124,13 @@ int ARCH_DEP( mem_cmp )
         {
             // (3) - Only operand-1 crosses a page boundary
 
-            rc = memcmp( m1, m2, neqlen = len1 );
+            rc = MAINSTOR_MCMP( m1, m2, neqlen = len1 );
             if (rc == 0)
             {
                 neqidx += neqlen;
                 m1 = neq1 = MADDRL((ea1 + len1) & ADDRESS_MAXWRAP( regs ),
                         len - len1, b1, regs, ACCTYPE_READ, regs->psw.pkey );
-                rc = memcmp( m1, neq2 = m2 + len1, neqlen = len - len1 );
+                rc = MAINSTOR_MCMP( m1, neq2 = m2 + len1, neqlen = len - len1 );
              }
         }
         else // (4) - Both operands cross a page boundary
@@ -3140,7 +3140,7 @@ int ARCH_DEP( mem_cmp )
             {
                 // (4a) - Both operands cross at the same place
 
-                rc = memcmp( m1, m2, neqlen = len1 );
+                rc = MAINSTOR_MCMP( m1, m2, neqlen = len1 );
                 if (rc == 0)
                 {
                     neqidx += neqlen;
@@ -3148,26 +3148,26 @@ int ARCH_DEP( mem_cmp )
                             len - len1, b1, regs, ACCTYPE_READ, regs->psw.pkey );
                     m2 = neq2 = MADDRL((ea2 + len1) & ADDRESS_MAXWRAP( regs ),
                             len - len1, b2, regs, ACCTYPE_READ, regs->psw.pkey );
-                    rc = memcmp( m1, m2, neqlen = len - len1 );
+                    rc = MAINSTOR_MCMP( m1, m2, neqlen = len - len1 );
                 }
             }
             else if (len1 < len2)
             {
                 // (4b) - Operand-1 crosses first
 
-                rc = memcmp( m1, m2, neqlen = len1 );
+                rc = MAINSTOR_MCMP( m1, m2, neqlen = len1 );
                 if (rc == 0)
                 {
                     neqidx += neqlen;
                     m1 = neq1 = MADDRL((ea1 + len1) & ADDRESS_MAXWRAP( regs ),
                             len - len1, b1, regs, ACCTYPE_READ, regs->psw.pkey );
-                    rc = memcmp( m1, neq2 = m2 + len1, neqlen = len2 - len1 );
+                    rc = MAINSTOR_MCMP( m1, neq2 = m2 + len1, neqlen = len2 - len1 );
                     if (rc == 0)
                     {
                         neqidx += neqlen;
                         m2 = neq2 = MADDRL((ea2 + len2) & ADDRESS_MAXWRAP( regs ),
                                 len - len2, b2, regs, ACCTYPE_READ, regs->psw.pkey );
-                        rc = memcmp( neq1 = m1 + len2 - len1, m2, neqlen = len - len2 );
+                        rc = MAINSTOR_MCMP( neq1 = m1 + len2 - len1, m2, neqlen = len - len2 );
                     }
                 }
             }
@@ -3175,19 +3175,19 @@ int ARCH_DEP( mem_cmp )
             {
                 // (4c) - Operand-2 crosses first
 
-                rc = memcmp( m1, m2, neqlen = len2 );
+                rc = MAINSTOR_MCMP( m1, m2, neqlen = len2 );
                 if (rc == 0)
                 {
                     neqidx += neqlen;
                     m2 = neq2 = MADDRL((ea2 + len2) & ADDRESS_MAXWRAP( regs ),
                             len - len2, b2, regs, ACCTYPE_READ, regs->psw.pkey );
-                    rc = memcmp( neq1 = m1 + len2, m2, neqlen = len1 - len2 );
+                    rc = MAINSTOR_MCMP( neq1 = m1 + len2, m2, neqlen = len1 - len2 );
                     if (rc == 0)
                     {
                         neqidx += neqlen;
                         m1 = neq1 = MADDRL((ea1 + len1) & ADDRESS_MAXWRAP( regs ),
                                 len - len1, b1, regs, ACCTYPE_READ, regs->psw.pkey );
-                        rc = memcmp( m1, neq2 = m2 + len1 - len2, neqlen = len - len1 );
+                        rc = MAINSTOR_MCMP( m1, neq2 = m2 + len1 - len2, neqlen = len - len1 );
                     }
                 }
             }
@@ -3318,7 +3318,7 @@ BYTE    *m1, *m2;                       /* Mainstor addresses        */
 
             default:
                 /* (1d) - other compare */
-                rc = memcmp( m1, m2, len + 1 );
+                rc = MAINSTOR_MCMP( m1, m2, len + 1 );
                 break;
             }
         }
@@ -3326,12 +3326,12 @@ BYTE    *m1, *m2;                       /* Mainstor addresses        */
         {
             /* (2) - Second operand crosses a boundary */
             len2 = PAGEFRAME_PAGESIZE - (effective_addr2 & PAGEFRAME_BYTEMASK);
-            rc = memcmp( m1, m2, len2 );
+            rc = MAINSTOR_MCMP( m1, m2, len2 );
             if (rc == 0)
             {
                 m2 = MADDRL((effective_addr2 + len2) & ADDRESS_MAXWRAP( regs ),
                     len + 1 - len2, b2, regs, ACCTYPE_READ, regs->psw.pkey );
-                rc = memcmp( m1 + len2, m2, len - len2 + 1 );
+                rc = MAINSTOR_MCMP( m1 + len2, m2, len - len2 + 1 );
              }
         }
     }
@@ -3342,12 +3342,12 @@ BYTE    *m1, *m2;                       /* Mainstor addresses        */
         if ((effective_addr2 & PAGEFRAME_BYTEMASK) <= PAGEFRAME_BYTEMASK - len )
         {
             /* (3) - First operand crosses a boundary */
-            rc = memcmp( m1, m2, len1 );
+            rc = MAINSTOR_MCMP( m1, m2, len1 );
             if (rc == 0)
             {
                 m1 = MADDRL((effective_addr1 + len1) & ADDRESS_MAXWRAP( regs ),
                    len + 1 - len1, b1, regs, ACCTYPE_READ, regs->psw.pkey );
-                rc = memcmp( m1, m2 + len1, len - len1 + 1 );
+                rc = MAINSTOR_MCMP( m1, m2 + len1, len - len1 + 1 );
              }
         }
         else
@@ -3357,48 +3357,48 @@ BYTE    *m1, *m2;                       /* Mainstor addresses        */
             if (len1 == len2)
             {
                 /* (4a) - Both operands cross at the same time */
-                rc = memcmp( m1, m2, len1 );
+                rc = MAINSTOR_MCMP( m1, m2, len1 );
                 if (rc == 0)
                 {
                     m1 = MADDRL((effective_addr1 + len1) & ADDRESS_MAXWRAP( regs ),
                       len + 1 - len1,b1, regs, ACCTYPE_READ, regs->psw.pkey );
                     m2 = MADDRL((effective_addr2 + len1) & ADDRESS_MAXWRAP( regs ),
                       len + 1 - len1,b2, regs, ACCTYPE_READ, regs->psw.pkey );
-                    rc = memcmp( m1, m2, len - len1 +1 );
+                    rc = MAINSTOR_MCMP( m1, m2, len - len1 +1 );
                 }
             }
             else if (len1 < len2)
             {
                 /* (4b) - First operand crosses first */
-                rc = memcmp( m1, m2, len1 );
+                rc = MAINSTOR_MCMP( m1, m2, len1 );
                 if (rc == 0)
                 {
                     m1 = MADDRL((effective_addr1 + len1) & ADDRESS_MAXWRAP( regs ),
                        len + 1 - len1, b1, regs, ACCTYPE_READ, regs->psw.pkey );
-                    rc = memcmp( m1, m2 + len1, len2 - len1 );
+                    rc = MAINSTOR_MCMP( m1, m2 + len1, len2 - len1 );
                 }
                 if (rc == 0)
                 {
                     m2 = MADDRL((effective_addr2 + len2) & ADDRESS_MAXWRAP( regs ),
                        len + 1 - len2, b2, regs, ACCTYPE_READ, regs->psw.pkey );
-                    rc = memcmp( m1 + len2 - len1, m2, len - len2 + 1 );
+                    rc = MAINSTOR_MCMP( m1 + len2 - len1, m2, len - len2 + 1 );
                 }
             }
             else
             {
                 /* (4c) - Second operand crosses first */
-                rc = memcmp( m1, m2, len2 );
+                rc = MAINSTOR_MCMP( m1, m2, len2 );
                 if (rc == 0)
                 {
                     m2 = MADDRL((effective_addr2 + len2) & ADDRESS_MAXWRAP( regs ),
                      len + 1 - len2, b2, regs, ACCTYPE_READ, regs->psw.pkey );
-                    rc = memcmp( m1 + len2, m2, len1 - len2 );
+                    rc = MAINSTOR_MCMP( m1 + len2, m2, len1 - len2 );
                 }
                 if (rc == 0)
                 {
                     m1 = MADDRL((effective_addr1 + len1) & ADDRESS_MAXWRAP( regs ),
                      len + 1 - len1, b1, regs, ACCTYPE_READ, regs->psw.pkey );
-                    rc = memcmp( m1, m2 + len1 - len2, len - len1 + 1 );
+                    rc = MAINSTOR_MCMP( m1, m2 + len1 - len2, len - len1 + 1 );
                 }
             }
         }
@@ -5610,7 +5610,7 @@ int     cc = 0;                         /* Condition code            */
             if (dest1 == source1)
             {
                /* (1a) - Dest and source are the same */
-               memset( dest1, 0, len + 1 );
+               MAINSTOR_MSET( dest1, 0, len + 1 );
             }
             else
             {
@@ -6841,7 +6841,7 @@ int     orglen1;                        /* Original dest length      */
         if (!len2)
         {
             len = NOCROSSPAGEL( addr1, len1 ) ? len1 : (int)(PAGEFRAME_PAGESIZE - (addr1 & PAGEFRAME_BYTEMASK));
-            memset( dest, pad, len );
+            MAINSTOR_MSET( dest, pad, len );
         }
         else
         {
@@ -6991,7 +6991,7 @@ size_t  dstlen,srclen;                  /* Page wide src/dst lengths */
     if(srclen==0 && dstlen!=0)
     {
         /* here if we need to pad the destination */
-        memset(dest,pad,dstlen);
+        MAINSTOR_MSET(dest,pad,dstlen);
 
         /* Adjust destination operands */
         addr1+=(int)dstlen;

@@ -653,17 +653,17 @@ BYTE*         evd_msg = (BYTE*)        (evd_bk  + 1 );
     i = evd_len - sizeof( SCCB_EVD_HDR );
     STORE_HW( evd_bk->msglen, i  );
 
-    memcpy( evd_bk->const1, const1_template,
+    MAINSTOR_MCOPY( evd_bk->const1, const1_template,
                     sizeof( const1_template ));
     i -=            sizeof( const1_template ) + 2;
     STORE_HW( evd_bk->cplen, i  );
 
-    memcpy( evd_bk->const2, const2_template,
+    MAINSTOR_MCOPY( evd_bk->const2, const2_template,
                     sizeof( const2_template ));
     i -=            sizeof( const2_template ) + 2;
     STORE_HW( evd_bk->tdlen, i  );
 
-    memcpy( evd_bk->const3, const3_template,
+    MAINSTOR_MCOPY( evd_bk->const3, const3_template,
                     sizeof( const3_template ));
     i -=            sizeof( const3_template ) + 2;
 
@@ -828,7 +828,7 @@ SCCB_SGQ_BK*  sgq_bk  = (SCCB_SGQ_BK*) ( evd_hdr + 1 );
     }
 
     /* Zero all fields */
-    memset( evd_hdr, 0, evd_len );
+    MAINSTOR_MSET( evd_hdr, 0, evd_len );
 
     /* Update SCCB length field if variable request */
     if (sccb->type & SCCB_TYPE_VARIABLE)
@@ -1025,7 +1025,7 @@ U32            residual;                /* Residual data count       */
     if (dev != NULL)
     {
         /* Zeroize the event data header */
-        memset( evd_hdr, 0, sizeof( SCCB_EVD_HDR ));
+        MAINSTOR_MSET( evd_hdr, 0, sizeof( SCCB_EVD_HDR ));
 
         /* Calculate maximum data length */
         FETCH_HW( sccblen, sccb->length );
@@ -1798,7 +1798,7 @@ BYTE*           xstmap;                 /* Xstore bitmap, zero means
 
         /* Point to SCCB data area following SCCB header */
         sccbscp = (SCCB_SCP_INFO*)(sccb+1);
-        memset( sccbscp, 0, sizeof( SCCB_SCP_INFO ));
+        MAINSTOR_MSET( sccbscp, 0, sizeof( SCCB_SCP_INFO ));
 
         /* Set main storage size in SCCB...
          *
@@ -1876,9 +1876,9 @@ BYTE*           xstmap;                 /* Xstore bitmap, zero means
         get_loadparm( sccbscp->loadparm );
 
         /* Set installed features bit mask in SCCB */
-        memcpy( sccbscp->ifm, ARCH_DEP( scpinfo_ifm ), sizeof( sccbscp->ifm ));
+        MAINSTOR_MCOPY( sccbscp->ifm, ARCH_DEP( scpinfo_ifm ), sizeof( sccbscp->ifm ));
 
-        memcpy( sccbscp->cfg, ARCH_DEP( scpinfo_cfg ), sizeof( sccbscp->cfg ));
+        MAINSTOR_MCOPY( sccbscp->cfg, ARCH_DEP( scpinfo_cfg ), sizeof( sccbscp->cfg ));
         /* sccbscp->cfg11 = ARCH_DEP( scpinfo_cfg11 ); */
 
         /* Turn off bits for facilities that aren't enabled */
@@ -1909,10 +1909,10 @@ BYTE*           xstmap;                 /* Xstore bitmap, zero means
 
         for (i=0; i < sysblk.maxcpu; i++, sccbcpu++)
         {
-            memset( sccbcpu, 0, sizeof( SCCB_CPU_INFO ));
+            MAINSTOR_MSET( sccbcpu, 0, sizeof( SCCB_CPU_INFO ));
             sccbcpu->cpa = i;
             sccbcpu->tod = 0;
-            memcpy( sccbcpu->cpf, ARCH_DEP( scpinfo_cpf ), sizeof( sccbcpu->cpf ));
+            MAINSTOR_MCOPY( sccbcpu->cpf, ARCH_DEP( scpinfo_cpf ), sizeof( sccbcpu->cpf ));
             sccbcpu->ptyp = sysblk.ptyp[i];
 
 #if defined( FEATURE_CRYPTO )
@@ -1979,11 +1979,11 @@ docheckstop:
 
         /* Point to SCCB data area following SCCB header */
         sccbchp = (SCCB_CHSET_INFO*)(sccb+1);
-        memset( sccbchp, 0, sizeof( SCCB_CHSET_INFO ));
+        MAINSTOR_MSET( sccbchp, 0, sizeof( SCCB_CHSET_INFO ));
 #else
         /* Point to SCCB data area following SCCB header */
         sccbchp = (SCCB_CHP_INFO*)(sccb+1);
-        memset( sccbchp, 0, sizeof( SCCB_CHP_INFO ));
+        MAINSTOR_MSET( sccbchp, 0, sizeof( SCCB_CHP_INFO ));
 #endif
 
 #if defined( FEATURE_CHANNEL_SUBSYSTEM )
@@ -2053,7 +2053,7 @@ docheckstop:
 
         /* Point to SCCB data area following SCCB header */
         sccbcsi = (SCCB_CSI_INFO*)(sccb+1);
-        memset( sccbcsi, 0, sizeof( SCCB_CSI_INFO ));
+        MAINSTOR_MSET( sccbcsi, 0, sizeof( SCCB_CSI_INFO ));
 
         sccbcsi->csif[0] =
             0
@@ -2407,7 +2407,7 @@ fflush( efile );
         }
 
         /* Write the events that we support back */
-        memset( &evd_mask->masks[ 2*masklen ], 0, 2 * masklen );
+        MAINSTOR_MSET( &evd_mask->masks[ 2*masklen ], 0, 2 * masklen );
 
         for (i=0; (i < 4) && ((U32)i < masklen); i++)
         {
@@ -2487,7 +2487,7 @@ fflush( efile );
         xstmap = (BYTE*)(sccbxmap+1);
 
         /* Set all blocks available */
-        memset( xstmap, 0, xstblkinc/8);
+        MAINSTOR_MSET( xstmap, 0, xstblkinc/8);
 
         /* Set response code X'0010' in SCCB header */
         sccb->reas = SCCB_REAS_NONE;

@@ -3019,7 +3019,7 @@ static QRC copy_fragment_to_storage( DEVBLK* dev, QDIO_SBAL *sbal,
 
         /* Continue copying data to Storage Block */
         len = min( *sbrem, (U32)rem );
-        memcpy( dst, src, len );
+        MAINSTOR_MCOPY( dst, src, len );
 
         dst    += len;
         src    += len;
@@ -3134,7 +3134,7 @@ static QRC copy_storage_fragments( DEVBLK* dev, OSA_GRP *grp,
 
         /* Copying packet/frame to device from this storage block */
         len = min( (U32)dev->bufres, sblen );
-        memcpy( dst, sbsrc, len );
+        MAINSTOR_MCOPY( dst, sbsrc, len );
 
         dst         += len;
         dev->buflen += len;

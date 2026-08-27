@@ -1599,7 +1599,7 @@ void ARCH_DEP( sie_exit )( REGS* regs, int icode )
            Interception TDB instead. (Sorry Dan! Could not locate
            Claudia Schiffer's phone number!)
         */
-        memset( HOSTREGS->mainstor + itdba, 0, sizeof( TDB ));
+        MAINSTOR_MSET( HOSTREGS->mainstor + itdba, 0, sizeof( TDB ));
     }
 
 #endif /* defined( FEATURE_073_TRANSACT_EXEC_FACILITY ) */
