@@ -466,7 +466,7 @@ typedef int CMPFUNC(const void*, const void*);
  * regardless of compile-time feature flags.
  */
 #define UPDATE_SYSBLK_INSTCOUNT( _count ) \
-        atomic_update64( &sysblk.instcount, (_count) )
+        atomic_add_U64( &sysblk.instcount, (_count) )
 
 /*-------------------------------------------------------------------*/
 /*                  mainowner/intowner wrappers                      */
