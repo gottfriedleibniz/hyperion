@@ -337,6 +337,59 @@ struct  _CTCBLK
     LOCK        EventLock;                // Condition LOCK
     COND        Event;                    // Condition signal
 
+   /*
+    * #TODO: See the fix/struct_layout branch and clang's ms-bitfields
+    * documentation describing the rules used by different compilers for
+    * structuring and packing bitfields. A potential solution may involve
+    * reorganizing the bitfields based on ownership (e.g., Lock versus EventLock).
+    *
+    * Line numbers omitted:
+    *  Write of size 2 at 0x72a80000b070 by thread T10 (mutexes: write M0):
+    *    #0 CTCI_EnqueueIPFrame $(BUILD_DIR)/../ctc_ctci.c // pCTCBLK->fDataPending = 1;
+    *    #1 CTCI_ReadThread $(BUILD_DIR)/../ctc_ctci.c
+    *    #2 hthread_func $(BUILD_DIR)/../hthreads.c
+    *
+    *  Previous write of size 2 at 0x72a80000b070 by thread T15 (mutexes: write M1):
+    *    #0 CTCI_Read $(BUILD_DIR)/../ctc_ctci.c // pCTCBLK->fReadWaiting = 1;
+    *    #1 CTCI_ExecuteCCW $(BUILD_DIR)/../ctc_ctci.c
+    *    #2 z900_execute_ccw_chain $(BUILD_DIR)/../channel.c
+    *    #3 call_execute_ccw_chain $(BUILD_DIR)/../channel.c
+    *    #4 device_thread $(BUILD_DIR)/../channel.c
+    *    #5 hthread_func $(BUILD_DIR)/../hthreads.c
+    *
+    *  Write of size 2 at 0x72a80000b070 by thread T14 (mutexes: write M0):
+    *    #0 CTCI_Read $(BUILD_DIR)/../ctc_ctci.c:751 // pCTCBLK->fReadWaiting = 0;
+    *    #1 CTCI_ExecuteCCW $(BUILD_DIR)/../ctc_ctci.c
+    *    #2 z900_execute_ccw_chain $(BUILD_DIR)/../channel.c
+    *    #3 call_execute_ccw_chain $(BUILD_DIR)/../channel.c
+    *    #4 device_thread $(BUILD_DIR)/../channel.c
+    *    #5 hthread_func $(BUILD_DIR)/../hthreads.c
+    *
+    *  Previous write of size 2 at 0x72a80000b070 by thread T10 (mutexes: write M1):
+    *    #0 CTCI_EnqueueIPFrame $(BUILD_DIR)/../ctc_ctci.c // pCTCBLK->fDataPending = 1;
+    *    #1 CTCI_ReadThread $(BUILD_DIR)/../ctc_ctci.c
+    *    #2 hthread_func $(BUILD_DIR)/../hthreads.c
+    *
+    *  Write of size 2 at 0x72a80000b070 by thread T14 (mutexes: write M0):
+    *    #0 CTCI_Read $(BUILD_DIR)/../ctc_ctci.c // pCTCBLK->fReadWaiting = 0;
+    *    #1 CTCI_ExecuteCCW $(BUILD_DIR)/../ctc_ctci.c
+    *    #2 z900_execute_ccw_chain $(BUILD_DIR)/../channel.c
+    *    #3 call_execute_ccw_chain $(BUILD_DIR)/../channel.c
+    *    #4 device_thread $(BUILD_DIR)/../channel.c
+    *    #5 hthread_func $(BUILD_DIR)/../hthreads.c
+    *
+    *  Previous write of size 2 at 0x72a80000b070 by thread T21 (mutexes: write M1, write M2):
+    *    #0 CTCI_Close $(BUILD_DIR)/../ctc_ctci.c // pCTCBLK->fCloseInProgress = 1;
+    *    #1 detach_devblk $(BUILD_DIR)/../config.c
+    *    #2 free_group $(BUILD_DIR)/../config.c
+    *    #3 detach_devblk $(BUILD_DIR)/../config.c
+    *    #4 detach_subchan $(BUILD_DIR)/../config.c
+    *    #5 release_config $(BUILD_DIR)/../config.c
+    *    #6 hdl_atexit $(BUILD_DIR)/../hdl.c
+    *    #7 do_shutdown_now $(BUILD_DIR)/../hscmisc.c
+    *    #8 do_shutdown $(BUILD_DIR)/../hscmisc.c
+    *    #9 quit_thread $(BUILD_DIR)/../hsccmd.c
+    */
     u_int       fDebug:1;                 // Debugging
     u_int       fOldFormat:1;             // Old Config Format
     u_int       fCreated:1;               // Interface Created
