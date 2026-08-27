@@ -804,7 +804,7 @@ struct SYSBLK {
                                            (slot 0 = unconstrained)  */
 #define TXF_STATS( ctr, contran )       \
                                         \
-atomic_update64( &sysblk.txf_stats[ contran ? 1 : 0 ].txf_ ## ctr, +1 )
+atomic_add_U64( &sysblk.txf_stats[ contran ? 1 : 0 ].txf_ ## ctr, +1 )
 
 #define TXF_CONSTRAINED( contran ) (contran ? "CONSTRAINED" : "UNconstrained" )
 

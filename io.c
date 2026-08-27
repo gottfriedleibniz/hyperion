@@ -845,6 +845,27 @@ DEVBLK *dev;                            /* dev presenting interrupt  */
     PERFORM_SERIALIZATION( regs );
     PERFORM_CHKPT_SYNC( regs );
 
+    /*
+     * #RACE: Racing around BIT(IC_IO) manipulation. If a program is spinning on
+     * TPI until CC=1 (e.g., 'TPI' + 'BC 8,X' or 'JZ X') then TSAN should catch
+     * this (and it does). Leaving this comment in as an example.
+     *
+     * Line numbers omitted:
+     *  Write of size 4 at 0x00000052eccc by thread T7 (mutexes: write M0, write M1, write M2):
+     *    #0 Update_IC_IOPENDING_QLocked $(BUILD_DIR)/../channel.c // OFF_IC_IOPENDING -> BIT(IC_IO) manipulation
+     *    #1 z900_present_io_interrupt $(BUILD_DIR)/../channel.c
+     *    #2 z900_perform_io_interrupt $(BUILD_DIR)/../cpu.c
+     *    #3 z900_process_interrupt $(BUILD_DIR)/../cpu.c
+     *    #4 z900_run_cpu $(BUILD_DIR)/../cpu.c
+     *    #5 cpu_thread $(BUILD_DIR)/../cpu.c
+     *    #6 hthread_func $(BUILD_DIR)/../hthreads.c
+     *
+     *  Previous read of size 4 at 0x00000052eccc by thread T9:
+     *    #0 z900_test_pending_interruption $(BUILD_DIR)/../io.c // if (IS_IC_IOPENDING)
+     *    #1 z900_run_cpu $(BUILD_DIR)/../cpu.c
+     *    #2 cpu_thread $(BUILD_DIR)/../cpu.c
+     *    #3 hthread_func $(BUILD_DIR)/../hthreads.c
+     */
     if (IS_IC_IOPENDING)
     {
         OBTAIN_INTLOCK( regs );
@@ -1107,8 +1128,7 @@ BYTE    ccwkey;                         /* Bits 0-3=key, 4=suspend   */
     }
 
     /* If CSW pending, drain interrupt and present the CSW */
-    if (IOPENDING(dev) &&
-        testio(regs, dev, inst[1]) == 1)
+    if (testio(regs, dev, inst[1]) == 1)
         regs->psw.cc = 1;
 
     /* Else, if RIO, resume the subchannel operation */

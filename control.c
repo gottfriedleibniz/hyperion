@@ -2230,6 +2230,9 @@ U16     updated = 0;                    /* Updated control regs      */
         updated |= BIT( (r1 + i) & 0xF );
     }
 
+    /* Obtain the interrupt lock for *all* interrupt mask/state handling */
+    OBTAIN_INTLOCK( regs );
+
     /* Actions based on updated control regs */
     SET_IC_MASK( regs );
 
@@ -2242,20 +2245,20 @@ U16     updated = 0;                    /* Updated control regs      */
 #else
     if (updated & (BIT( 1 ) | BIT( 7 ) | BIT( 13 )))
         SET_AEA_COMMON( regs );
+
     if (updated & BIT( regs->AEA_AR( USE_INST_SPACE )))
         INVALIDATE_AIA( regs );
 #endif
     if (updated & BIT( 9 ))
     {
-        OBTAIN_INTLOCK( regs );
-        {
-            SET_IC_PER( regs );
-        }
-        RELEASE_INTLOCK( regs );
+        SET_IC_PER( regs );
 
+        RELEASE_INTLOCK( regs );
         if (EN_IC_PER_SA( regs ))
             ARCH_DEP( invalidate_tlb )( regs, ~(ACC_WRITE | ACC_CHECK) );
     }
+    else
+        RELEASE_INTLOCK( regs );
 
     RETURN_INTCHECK( regs );
 
@@ -2305,10 +2308,16 @@ int     amode64;
         /* Set the breaking event address register */
         SET_BEAR_REG( regs, regs->ip - 4 );
 
+        /* Obtain the interrupt lock for load_psw and s390_load_psw */
+        OBTAIN_INTLOCK( regs );
+
         /* Load updated PSW (ESA/390 Format in ESAME mode) */
 #if !defined( FEATURE_001_ZARCH_INSTALLED_FACILITY )
         if ((rc = ARCH_DEP( load_psw )( regs, dword )))
+        {
+            RELEASE_INTLOCK( regs );
             ARCH_DEP( program_interrupt )( regs, rc );
+        }
 #else
         /* Make the PSW valid for ESA/390 mode
            after first saving our amode64 flag */
@@ -2346,6 +2355,8 @@ int     amode64;
             if (!regs->psw.amode)
             {
                 regs->psw.zeroilc = 1;
+
+                RELEASE_INTLOCK( regs );
                 ARCH_DEP( program_interrupt )( regs, PGM_SPECIFICATION_EXCEPTION );
             }
         }
@@ -2356,7 +2367,10 @@ int     amode64;
 
         /* Check for Load PSW success/failure */
         if (rc)
+        {
+            RELEASE_INTLOCK( regs );
             ARCH_DEP( program_interrupt )( regs, rc );
+        }
 
         /* Clear the high word of the instruction address since
            the 's390_load_psw' function didn't do that for us */
@@ -2364,6 +2378,7 @@ int     amode64;
 
 #endif /* defined( FEATURE_001_ZARCH_INSTALLED_FACILITY ) */
 
+        RELEASE_INTLOCK( regs );
     }
     PERFORM_CHKPT_SYNC( regs );
     PERFORM_SERIALIZATION( regs );
@@ -3732,10 +3747,17 @@ int     rc;                             /* return code from load_psw */
     PERFORM_SERIALIZATION( regs );
     PERFORM_CHKPT_SYNC( regs );
 
+    OBTAIN_INTLOCK( regs );
     INVALIDATE_AIA( regs );
 
     /* Create a working copy of the CPU registers... */
     memcpy( &newregs, regs, sysblk.regs_copy_len );
+
+    /* Save the primary ASN (CR4) and primary STD (CR1) */
+    oldpasn = regs->CR_LHL( 4 );
+    oldpstd = regs->CR( 1 );
+
+    RELEASE_INTLOCK( regs );
 
     /* Now INVALIDATE ALL TLB ENTRIES in our working copy.. */
     memset( &newregs.tlb.vaddr, 0, TLBN * sizeof(DW) );
@@ -3748,10 +3770,6 @@ int     rc;                             /* return code from load_psw */
     /* Set the breaking event address register in the copy */
     SET_BEAR_REG( &newregs, newregs.ip - (likely( !newregs.execflag ) ? 2 :
                                         newregs.exrl ? 6 : 4) );
-
-    /* Save the primary ASN (CR4) and primary STD (CR1) */
-    oldpasn = regs->CR_LHL( 4 );
-    oldpstd = regs->CR( 1 );
 
     /* Perform the unstacking process */
     etype = ARCH_DEP( program_return_unstack )( &newregs, &alsed, &rc );
@@ -3908,11 +3926,13 @@ int     rc;                             /* return code from load_psw */
     } /* end if (LSED_UET_PC) */
 
     /* Update the updated CPU registers from the working copy */
+    OBTAIN_INTLOCK( regs );
     memcpy( &regs->psw,      &newregs.psw,       sizeof( newregs.psw       ));
     memcpy(  regs->gr,        newregs.gr,        sizeof( newregs.gr        ));
     memcpy(  regs->cr_struct, newregs.cr_struct, sizeof( newregs.cr_struct ));
     memcpy(  regs->ar,        newregs.ar,        sizeof( newregs.ar        ));
     regs->bear = newregs.bear;
+    RELEASE_INTLOCK( regs );
 
     /* Set the main storage reference and change bits */
     ARCH_DEP( or_storage_key )( alsed, (STORKEY_REF | STORKEY_CHANGE) );
@@ -7598,6 +7618,30 @@ VADR    effective_addr1;                /* Effective address         */
     /* AND system mask with immediate operand */
     regs->psw.sysmask &= i2;
 
+    /*
+     * #RACE: SET_IC_MASK may set BIT(IC_IO) depending on the state of the PSW
+     * (i.e., psw.sysmask) while a device thread is updating its status. Does
+     * not seem that big of a concern. Validate this.
+     *
+     * Line numbers omitted:
+     *  Read of size 4 at 0x72c80000004c by thread T51 (mutexes: write M0, write M1, write M2):
+     *    #0 Update_IC_IOPENDING_QLocked $(BUILD_DIR)/../channel.c c // ON_IC_IOPENDING
+     *    #1 queue_io_interrupt_and_update_status_locked $(BUILD_DIR)/../channel.c
+     *    #2 s370_execute_ccw_chain $(BUILD_DIR)/../channel.c
+     *    #3 call_execute_ccw_chain $(BUILD_DIR)/../channel.c
+     *    #4 device_thread $(BUILD_DIR)/../channel.c
+     *
+     *  Previous write of size 4 at 0x72c80000004c by thread T3:
+     *    #0 s370_store_then_and_system_mask $(BUILD_DIR)/../control.c
+     *    #1 s370_run_cpu $(BUILD_DIR)/../cpu.c
+     *    #2 cpu_thread $(BUILD_DIR)/../cpu.c
+     *    #3 hthread_func $(BUILD_DIR)/../hthreads.c
+     *
+     * Also:
+     *  Previous write of size 4 at 0x72c80000004c by thread T3:
+     *    #0 s370_store_then_or_system_mask $(BUILD_DIR)/../control.c // SET_IC_MASK
+     *    #1 s370_execute $(BUILD_DIR)/../general1.c
+     */
     SET_IC_MASK( regs );
     TEST_SET_AEA_MODE( regs );
 

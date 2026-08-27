@@ -995,13 +995,10 @@ cckd_read_trk_retry:
         }
         buf = cache_getbuf(CACHE_DEVBUF, fnd, 0);
 
-        cache_unlock (CACHE_DEVBUF);
-
-        CCKD_TRACE( "%d rdtrk[%d] %d cache hit buf %p:%2.2x%2.2x%2.2x%2.2x%2.2x",
-                    ra, fnd, trk, buf, buf[0], buf[1], buf[2], buf[3], buf[4]);
-
         cckdblk.stats_switches++;  cckd->switches++;
         cckdblk.stats_cachehits++; cckd->cachehits++;
+
+        cache_unlock (CACHE_DEVBUF);
 
         /* if read/write is in progress then wait for it to finish */
         while (cache_getflag(CACHE_DEVBUF, fnd) & CCKD_CACHE_IOBUSY)
@@ -1018,6 +1015,10 @@ cckd_read_trk_retry:
             CCKD_TRACE( "%d rdtrk[%d] %d io wait complete",
                         ra, fnd, trk);
         }
+
+        /* Wait until the read/write is completed before tracing buf */
+        CCKD_TRACE( "%d rdtrk[%d] %d cache hit buf %p:%2.2x%2.2x%2.2x%2.2x%2.2x",
+                    ra, fnd, trk, buf, buf[0], buf[1], buf[2], buf[3], buf[4]);
 
         release_lock (&cckd->cckdiolock);
 
@@ -1117,12 +1118,12 @@ cckd_read_trk_retry:
         broadcast_condition (&cckd->cckdiocond);
     }
 
-    release_lock (&cckd->cckdiolock);
-
     if (ra)
     {
         cckdblk.stats_readaheads++; cckd->readaheads++;
     }
+
+    release_lock (&cckd->cckdiolock);
 
     CCKD_TRACE( "%d rdtrk[%d] %d complete buf %p:%2.2x%2.2x%2.2x%2.2x%2.2x",
                 ra, lru, trk, buf, buf[0], buf[1], buf[2], buf[3], buf[4]);

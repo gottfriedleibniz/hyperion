@@ -19,11 +19,15 @@
 /*-------------------------------------------------------------------*/
 
 #if defined( OPTION_ATOMIC_SKEYS )
-  #define OR_SKEY(  ptr, op )       H_ATOMIC_OP( ptr, op, or,  Or,  | )
-  #define AND_SKEY( ptr, op )       H_ATOMIC_OP( ptr, op, and, And, & )
+  #define OR_SKEY(  ptr, op )       ((void)atomic_or_U8( ptr, op ))
+  #define AND_SKEY( ptr, op )       ((void)atomic_and_U8( ptr, op ))
+  #define LOAD_SKEY( ptr )          (*(ptr))
+  #define STORE_SKEY( ptr, value )  (*(ptr) = (value))
 #else
   #define OR_SKEY(  ptr, op )       (*(ptr) |= (op))
   #define AND_SKEY( ptr, op )       (*(ptr) &= (op))
+  #define LOAD_SKEY( ptr )          (*(ptr))
+  #define STORE_SKEY( ptr, value )  (*(ptr) = (value))
 #endif
 
 #if defined( OPTION_SKEY_ABS_CHECK ) // (helps to catch instruction bugs)
@@ -125,11 +129,16 @@ inline BYTE ARCH_DEP( _get_storage_key )( U64 abs, BYTE K )
     UNREFERENCED( K ); // (for FEATURE_4K_STORAGE_KEYS case)
     if (IS_DOUBLE_KEYED_4K_BYTE_BLOCK( K ))
     {
-        skey  = *_get_storekey1_ptr( abs );
-        skey |= *_get_storekey2_ptr( abs ) & ~(STORKEY_KEY);
+        BYTE* skey1_ptr = _get_storekey1_ptr( abs );
+        BYTE* skey2_ptr = _get_storekey2_ptr( abs );
+        skey  = LOAD_SKEY( skey1_ptr );
+        skey |= LOAD_SKEY( skey2_ptr ) & ~(STORKEY_KEY);
     }
     else
-        skey  = *_get_storekey_ptr(  abs, K );
+    {
+        BYTE* skey_ptr  = _get_storekey_ptr(  abs, K );
+        skey = LOAD_SKEY( skey_ptr );
+    }
     return skey;
 }
 
@@ -139,11 +148,16 @@ inline BYTE ARCH_DEP( _get_dev_storage_key )( DEVBLK* dev, U64 abs, BYTE K )
     UNREFERENCED( K ); // (for FEATURE_4K_STORAGE_KEYS case)
     if (IS_DOUBLE_KEYED_4K_BYTE_BLOCK( K ))
     {
-        skey  = *_get_dev_storekey1_ptr( dev, abs );
-        skey |= *_get_dev_storekey2_ptr( dev, abs ) & ~(STORKEY_KEY);
+        BYTE* skey1_ptr = _get_dev_storekey1_ptr( dev, abs );
+        BYTE* skey2_ptr = _get_dev_storekey2_ptr( dev, abs );
+        skey  = LOAD_SKEY( skey1_ptr );
+        skey |= LOAD_SKEY( skey2_ptr ) & ~(STORKEY_KEY);
     }
     else
-        skey  = *_get_dev_storekey_ptr(  dev, abs, K );
+    {
+        BYTE* skey_ptr  = _get_dev_storekey_ptr(  dev, abs, K );
+        skey = LOAD_SKEY( skey_ptr );
+    }
     return skey;
 }
 
@@ -152,12 +166,15 @@ inline void ARCH_DEP( _put_storage_key )( U64 abs, BYTE key, BYTE K )
     UNREFERENCED( K ); // (for FEATURE_4K_STORAGE_KEYS case)
     if (IS_DOUBLE_KEYED_4K_BYTE_BLOCK( K ))
     {
-        *_get_storekey1_ptr( abs ) = key;
-        *_get_storekey2_ptr( abs ) = key;
+        BYTE* skey1_ptr = _get_storekey1_ptr( abs );
+        BYTE* skey2_ptr = _get_storekey2_ptr( abs );
+        STORE_SKEY( skey1_ptr, key );
+        STORE_SKEY( skey2_ptr, key );
     }
     else
     {
-        *_get_storekey_ptr(  abs, K ) = key;
+        BYTE* skey_ptr  = _get_storekey_ptr(  abs, K );
+        STORE_SKEY( skey_ptr, key );
     }
 }
 

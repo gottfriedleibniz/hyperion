@@ -4729,6 +4729,9 @@ U16     updated = 0;                    /* Updated control regs      */
         updated |= BIT( (r1 + i) & 0xF );
     }
 
+    /* Obtain the interrupt lock for *all* interrupt mask/state handling */
+    OBTAIN_INTLOCK( regs );
+
     /* Actions based on updated control regs */
     SET_IC_MASK( regs );
 
@@ -4740,15 +4743,14 @@ U16     updated = 0;                    /* Updated control regs      */
 
     if (updated & BIT( 9 ))
     {
-        OBTAIN_INTLOCK( regs );
-        {
-            SET_IC_PER( regs );
-        }
-        RELEASE_INTLOCK( regs );
+        SET_IC_PER( regs );
 
+        RELEASE_INTLOCK( regs );
         if (EN_IC_PER_SA( regs ))
             ARCH_DEP( invalidate_tlb )( regs, ~(ACC_WRITE | ACC_CHECK) );
     }
+    else
+        RELEASE_INTLOCK( regs );
 
     RETURN_INTCHECK( regs );
 
@@ -5400,8 +5402,14 @@ int     rc;
     /* Set the breaking event address register */
     SET_BEAR_REG(regs, regs->ip - 4);
 
-    /* Load updated PSW */
-    if ( ( rc = ARCH_DEP(load_psw) ( regs, qword ) ) )
+    /* Obtain the interrupt lock for load_psw */
+    OBTAIN_INTLOCK( regs );
+    {
+        /* Load updated PSW */
+        rc = ARCH_DEP(load_psw) ( regs, qword );
+    }
+    RELEASE_INTLOCK( regs );
+    if (rc)
         regs->program_interrupt (regs, rc);
 
     /* Perform serialization and checkpoint synchronization */
@@ -5455,8 +5463,14 @@ BYTE    i1;                             /* Immediate byte from instr */
         )
             regs->program_interrupt( regs, PGM_SPECIAL_OPERATION_EXCEPTION );
 
-        /* Load updated PSW */
-        if ((rc = ARCH_DEP( load_psw )( regs, qword )))
+        /* Obtain the interrupt lock for load_psw */
+        OBTAIN_INTLOCK( regs );
+        {
+            /* Load updated PSW */
+            rc = ARCH_DEP( load_psw )( regs, qword );
+        }
+        RELEASE_INTLOCK( regs );
+        if (rc)
             regs->program_interrupt( regs, rc );
     }
     PERFORM_SERIALIZATION( regs );
@@ -7340,7 +7354,7 @@ BYTE   *dest;                           /* Pointer to target byte    */
     OBTAIN_MAINLOCK( regs );
     {
         /* AND byte with immediate operand, setting condition code */
-        regs->psw.cc = (H_ATOMIC_OP( dest, i2, and, And, & ) != 0);
+        regs->psw.cc = (atomic_and_U8( dest, i2 ) != 0);
     }
     RELEASE_MAINLOCK( regs );
 
@@ -7743,7 +7757,7 @@ BYTE   *dest;                           /* Pointer to target byte    */
     OBTAIN_MAINLOCK( regs );
     {
         /* XOR byte with immediate operand, setting condition code */
-        regs->psw.cc = (H_ATOMIC_OP( dest, i2, xor, Xor, ^ ) != 0);
+        regs->psw.cc = (atomic_xor_U8( dest, i2 ) != 0);
     }
     RELEASE_MAINLOCK( regs );
 
@@ -8144,7 +8158,7 @@ BYTE   *dest;                           /* Pointer to target byte    */
     OBTAIN_MAINLOCK( regs );
     {
         /* OR byte with immediate operand, setting condition code */
-        regs->psw.cc = (H_ATOMIC_OP( dest, i2, or, Or, | ) != 0);
+        regs->psw.cc = (atomic_or_U8( dest, i2 ) != 0);
     }
     RELEASE_MAINLOCK( regs );
 

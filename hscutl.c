@@ -317,9 +317,15 @@ typedef struct _SYMBOL_TOKEN
 #define SYMBOL_QUAL_2   '('
 #define SYMBOL_QUAL_3   ')'
 
+static LOCK symbols_lock = { NULL };
 static SYMBOL_TOKEN **symbols=NULL;
 static int symbol_count=0;
 static int symbol_max=0;
+
+DLL_EXPORT void symbols_init(void)
+{
+    initialize_lock(&symbols_lock);
+}
 
 /* This function retrieves or allocates a new SYMBOL_TOKEN */
 static SYMBOL_TOKEN *get_symbol_token(const char *sym, int alloc)
@@ -392,11 +398,27 @@ static SYMBOL_TOKEN *get_symbol_token(const char *sym, int alloc)
     return(tok);
 }
 
+/* This function updates a SYMBOL_TOKEN creating a new token if required */
+static SYMBOL_TOKEN *set_symbol_token(const char *sym, const char *value)
+{
+    SYMBOL_TOKEN *tok;
+    if ((tok = get_symbol_token(sym, 1)))
+    {
+        size_t size = strlen(value) + 1;
+        if (tok->val != NULL)
+            free(tok->val);
+        if ((tok->val = (char*)malloc(size)))
+            strlcpy(tok->val, value, size);
+    }
+    return tok;
+}
+
 DLL_EXPORT void del_symbol(const char *sym)
 {
     SYMBOL_TOKEN        *tok;
     int i;
 
+    obtain_lock( &symbols_lock );
     for(i=0;i<symbol_count;i++)
     {
         tok=symbols[i];
@@ -414,52 +436,39 @@ DLL_EXPORT void del_symbol(const char *sym)
             if ( tok->var != NULL ) free(tok->var);
             free(tok);
             symbols[i] = NULL;
-            return;
+            break;
         }
     }
-
-    return;
+    release_lock( &symbols_lock );
 }
 
 DLL_EXPORT void set_symbol(const char *sym, const char *value)
 {
-    SYMBOL_TOKEN *tok;
-    size_t size;
-
     if ( sym == NULL || value == NULL || strlen(sym) == 0 )
         return;
 
-    tok=get_symbol_token(sym,1);
-    if(tok==NULL)
+    obtain_lock( &symbols_lock );
     {
-        return;
+        set_symbol_token(sym, value);
     }
-    if(tok->val!=NULL)
-    {
-        free(tok->val);
-    }
-    size = strlen(value)+1;
-    tok->val=malloc(size);
-    if(tok->val==NULL)
-    {
-        return;
-    }
-    strlcpy(tok->val,value,size);
-    return;
+    release_lock( &symbols_lock );
 }
 
 DLL_EXPORT const char* get_symbol( const char* sym )
 {
     SYMBOL_TOKEN* tok;
-    char buf[ MAX_ENVVAR_LEN ];
+    char buf[ MAX_ENVVAR_LEN ] = "";
+    if ( sym == NULL || strlen(sym) == 0 )
+        return "";
 
+    obtain_lock( &symbols_lock );
     if (CMD( sym, DATE, 4 ))
     {
         // Rebuild new value each time date/time symbol is retrieved
         time_t  raw_tt;
         time( &raw_tt );                // YYYYMMDD
         strftime( buf, sizeof( buf ) - 1, "%Y%m%d", localtime( &raw_tt ));
-        set_symbol( sym = "DATE", buf );
+        set_symbol_token( sym = "DATE", buf );
     }
     else if (CMD( sym, TIME, 4 ))
     {
@@ -467,7 +476,7 @@ DLL_EXPORT const char* get_symbol( const char* sym )
         time_t  raw_tt;
         time( &raw_tt );                // HHMMSS
         strftime( buf, sizeof( buf ) - 1, "%H%M%S", localtime( &raw_tt ));
-        set_symbol( sym = "TIME", buf );
+        set_symbol_token( sym = "TIME", buf );
     }
 
     if (!(tok = get_symbol_token( sym, 0 )))
@@ -475,10 +484,11 @@ DLL_EXPORT const char* get_symbol( const char* sym )
         // Add this environment variable to our DEFSYM pool
         const char* val = getenv( sym );
         MSGBUF( buf, "%s", val ? val : "" );
-        set_symbol( sym, buf );
+        set_symbol_token( sym, buf );
         // (now try again; should succeed this time)
         tok = get_symbol_token( sym, 0 );
     }
+    release_lock( &symbols_lock );
     return tok->val;
 }
 
@@ -1514,6 +1524,7 @@ int initialize_utility( int argc, char* argv[],
     */
     memset( &sysblk, 0, sizeof( SYSBLK ));      // (must be first)
     hthreads_internal_init();                   // (must be second)
+    symbols_init();                             // (must be early)
     SET_THREAD_NAME( exename );                 // (then other stuff)
     sysblk.msglvl = DEFAULT_MLVL;
     sysblk.sysgroup = DEFAULT_SYSGROUP;

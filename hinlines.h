@@ -407,42 +407,11 @@ static inline void Release_Interrupt_Lock( REGS* regs, const char* location )
 }
 
 /*-------------------------------------------------------------------*/
-/*           Atomically update 32-bit/64-bit value                   */
-/*-------------------------------------------------------------------*/
-static inline void atomic_update32( volatile S32* p, S32 count )
-{
-#if defined( _MSVC_ )
-    InterlockedExchangeAdd( p, count );
-#else // GCC (and CLANG?)
-  #if defined( HAVE_SYNC_BUILTINS )
-    __sync_fetch_and_add( p, count );
-  #else
-    *p += count;  /* (N.B. non-atomic!) */
-  #endif
-#endif
-}
-static inline void atomic_update64( volatile S64* p, S64 count )
-{
-#if defined( _MSVC_ )
-    InterlockedExchangeAdd64( p, count );
-#else // GCC (and CLANG?)
-  #if defined( HAVE_SYNC_BUILTINS )
-    __sync_fetch_and_add( p, count );
-  #else
-    *p += count;  /* (N.B. non-atomic!) */
-  #endif
-#endif
-}
-#if !defined( _MSVC_ ) && !defined( HAVE_SYNC_BUILTINS )
-  WARNING( "Missing atomic 32/64 bit increment support!" )
-#endif
-
-/*-------------------------------------------------------------------*/
 /*           Atomically update SYSBLK Instruction Counter            */
 /*-------------------------------------------------------------------*/
 
 #define UPDATE_SYSBLK_INSTCOUNT( _count ) \
-        atomic_update64( &sysblk.instcount, (_count) )
+        atomic_add_U64( &sysblk.instcount, (_count) )
 
 /*-------------------------------------------------------------------*/
 /* Stop ALL CPUs                                      (INTLOCK held) */

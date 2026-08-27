@@ -288,6 +288,35 @@ static void* con1052_panel_command( char *cmd )
             WRMSG( HHC00013, "I", dev->filename, LCSS_DEVNUM, input );
             LOGMSG( "%s\n", input );
 
+            /*
+             * #RACE: PEBKAC, but worth documenting:
+             *
+             * Two script threads resuming simultaneously. This was observed on
+             * aarch64-linux-gnu when linking GCC with TSAN, where TSAN failed
+             * to correctly intercept (sig)longjmp. This caused shadow stack
+             * desynchronization (i.e., logging large stack traces) that altered
+             * thread timing.
+             *
+             * Log:
+             *  16:38:57 HHC02263I Script 6: processing resumed...
+             *  16:38:57 HHC02263I Script 5: processing resumed...
+             *  16:38:57 HHC00013I '/' input entered for console 0:0009: ""
+             *  16:38:57 HHC00013I '/' input entered for console 0:0009: "d t"
+             *
+             * Line numbers omitted:
+             *  Write of size 4 at 0xffffe74495f8 by thread T60:
+             *    #0 <null> <null> (hdt1052c.so+...) // con1052_panel_command: dev->keybdrem = i;
+             *    #1 process_script_file ../script.c
+             *    #2 script_thread ../script.c
+             *    #3 hthread_func ../hthreads.c
+             *  
+             *  Previous write of size 4 at 0xffffe74495f8 by thread T59:
+             *    #0 <null> <null> (hdt1052c.so+...) // con1052_panel_command: dev->keybdrem = i;
+             *    #1 process_script_file ../script.c
+             *    #2 script_thread ../script.c
+             *    #3 hthread_func ../hthreads.c
+             */
+
             /* Convert ASCII input to EBCDIC */
             for (i=0; i < dev->bufsize && input[i] != '\0'; i++)
                 dev->buf[i] = isprint( (unsigned char)input[i] ) ?

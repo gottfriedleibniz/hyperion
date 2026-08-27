@@ -243,7 +243,7 @@ int configure_storage( U64 mainsize /* number of 4K pages */ )
     U32    skeysize;
 
     /* Ensure all CPUs have been stopped */
-    if (are_any_cpus_started())
+    if (are_any_cpus_started_intlock_held())
         return HERRCPUONL;
 
     /* Release storage and return if deconfiguring */
@@ -434,7 +434,7 @@ int configure_xstorage( U64 xpndsize )
     char*  mfree  = NULL;
 
     /* Ensure all CPUs have been stopped */
-    if (are_any_cpus_started())
+    if (are_any_cpus_started_intlock_held())
         return HERRCPUONL;
 
     /* Release storage and return if zero or deconfiguring */
@@ -913,12 +913,16 @@ int     cpu;
     RELEASE_IOQLOCK();
 
     /* release storage          */
-    sysblk.lock_mainstor = 0;
-    WRMSG( HHC01427, "I", "Main", !configure_storage(~0ULL) ? "" : "not " );
+    OBTAIN_INTLOCK(NULL);
+    {
+        sysblk.lock_mainstor = 0;
+        WRMSG( HHC01427, "I", "Main", !configure_storage(~0ULL) ? "" : "not " );
 
-    /* release expanded storage */
-    sysblk.lock_xpndstor = 0;
-    WRMSG( HHC01427, "I", "Expanded", !configure_xstorage(~0ULL) ? "" : "not ");
+        /* release expanded storage */
+        sysblk.lock_xpndstor = 0;
+        WRMSG( HHC01427, "I", "Expanded", !configure_xstorage(~0ULL) ? "" : "not ");
+    }
+    RELEASE_INTLOCK(NULL);
 
     WRMSG(HHC01422, "I");
 } /* end function release_config */

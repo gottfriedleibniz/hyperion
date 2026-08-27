@@ -281,7 +281,7 @@ BYTE   *dest;                           /* Pointer to target byte    */
     OBTAIN_MAINLOCK( regs );
     {
         /* AND byte with immediate operand, setting condition code */
-        regs->psw.cc = (H_ATOMIC_OP( dest, i2, and, And, & ) != 0);
+        regs->psw.cc = (atomic_and_U8( dest, i2 ) != 0);
     }
     RELEASE_MAINLOCK( regs );
 
@@ -5534,7 +5534,7 @@ BYTE   *dest;                           /* Pointer to target byte    */
     OBTAIN_MAINLOCK( regs );
     {
         /* XOR byte with immediate operand, setting condition code */
-        regs->psw.cc = (H_ATOMIC_OP( dest, i2, xor, Xor, ^ ) != 0);
+        regs->psw.cc = (atomic_xor_U8( dest, i2 ) != 0);
     }
     RELEASE_MAINLOCK( regs );
 
@@ -5741,6 +5741,24 @@ BYTE   *ip;                             /* -> executed instruction   */
     memset(regs->exinst, 0, 8);
 #endif
 
+    /*
+     * #RACE: self-modifying code, dynamic subsystem patching, or JIT? Ensure
+     * the memcpy is atomic. Validation required.
+     *
+     * Line numbers omitted:
+     *  Read of size 4 at 0x7f2e96ab48a0 by thread T3:
+     *    #0 z900_execute $(BUILD_DIR)/../general1.c // memcpy (regs->exinst, ip, 8);
+     *    #1 z900_run_cpu $(BUILD_DIR)/../cpu.c
+     *    #2 cpu_thread $(BUILD_DIR)/../cpu.c
+     *    #3 hthread_func $(BUILD_DIR)/../hthreads.c
+     *
+     *  Previous atomic write of size 1 at 0x7f2e96ab48a0 by thread T7:
+     *    #0 atomic_or_U8 $(BUILD_DIR)/../hatomic.h // New API: regs->psw.cc = (atomic_or_U8( dest, i2 ) != 0);
+     *    #1 z900_or_immediate $(BUILD_DIR)/../general2.c // Old Code: regs->psw.cc = (H_ATOMIC_OP( dest, i2, or, Or, | ) != 0);
+     *    #2 z900_run_cpu $(BUILD_DIR)/../cpu.c
+     *    #3 cpu_thread $(BUILD_DIR)/../cpu.c
+     *    #4 hthread_func $(BUILD_DIR)/../hthreads.c
+     */
     /* Fetch target instruction from operand address */
     ip = INSTRUCTION_FETCH(regs, 1);
     if (ip != regs->exinst)
@@ -5810,7 +5828,6 @@ DEF_INST(execute_relative_long)
 
     /* Fetch target instruction from operand address */
     ip = INSTRUCTION_FETCH( regs, 1 );
-
     if (ip != regs->exinst)
         memcpy( regs->exinst, ip, 8 );
 
@@ -6857,6 +6874,40 @@ int     orglen1;                        /* Original dest length      */
         regs->GR_LA24( r1+1 ) = len1;
         regs->GR_LA24( r2+1 ) = len2;
 
+        /*
+         * #RACE: Since MVCL is interruptible, TSAN may (albeit, infrequently)
+         * report races involving BIT(IC_IO) state updates while the interrupt
+         * is being processed. This is expected on hosts with relaxed memory 
+         * ordering. Leaving this comment in for documentation purposes:
+         *
+         * Line numbers omitted:
+         *  Read of size 4 at 0x72c800000048 by thread T49:
+         *    #0 z900_move_long $(BUILD_DIR)/../general1.c // OPEN_IC_*PENDING( regs )
+         *    #1 z900_run_cpu $(BUILD_DIR)/../cpu.c
+         *    #2 cpu_thread $(BUILD_DIR)/../cpu.c
+         *
+         *  Previous write of size 4 at 0x72c800000048 by thread T73 (mutexes: write M0, write M1, write M2):
+         *    #0 Update_IC_IOPENDING_QLocked $(BUILD)/../channel.c
+         *    #1 s370_raise_pci $(BUILD)/../channel.c
+         *    #2 s370_execute_ccw_chain $(BUILD)/../channel.c
+         *    #3 call_execute_ccw_chain $(BUILD)/../channel.c
+         *    #4 device_thread $(BUILD)/../channel.c
+         *
+         * Also (the insignificant and common races with timer_thread):
+         *  Write of size 4 at 0x72c800000048 by thread T5 (mutexes: write M0):
+         *    #0 update_cpu_timer $(BUILD_DIR)/../timer.c // ON_IC_CLKC(regs);
+         *    #1 update_tod_clock $(BUILD_DIR)/../clock.c
+         *    #2 timer_thread $(BUILD_DIR)/../timer.c
+         *
+         * Also (the insignificant and common races with STORKEY_INVALIDATE):
+         *  Write of size 4 at 0x72c800078048 by thread T8 (mutexes: write M0):
+         *    #0 z900_reset_reference_bit_extended $(BUILD_DIR)/../control.c // STORKEY_INVALIDATE( regs, pageaddr );
+         *    #1 z900_run_cpu $(BUILD_DIR)/../cpu.c
+         *    #2 cpu_thread $(BUILD_DIR)/../cpu.c
+         *
+         *  Previous write of size 4 at 0x72c800048048 by thread T5 (mutexes: write M0):
+         *    #0 z900_sske_or_pfmf_procedure $(BUILD_DIR)/../control.c // STORKEY_INVALIDATE( regs, abspage );
+         */
         /* Check for pending interrupt */
         if (1
             && len1 > 256
