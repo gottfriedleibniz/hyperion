@@ -2480,7 +2480,8 @@ int     ix = TLBIX(addr);               /* TLB index                 */
     if (likely( acctype & ACC_READ ))
     {
         /* Program check if fetch protected location */
-        if (unlikely(ARCH_DEP(is_fetch_protected) (addr, *regs->dat.storkey, akey, regs)))
+        BYTE skey = LOAD_SKEY(regs->dat.storkey);
+        if (unlikely(ARCH_DEP(is_fetch_protected) (addr, skey, akey, regs)))
         {
             if (SIE_MODE(regs)) HOSTREGS->dat.protect = 0;
             goto vabs_prot_excp;
@@ -2499,7 +2500,8 @@ int     ix = TLBIX(addr);               /* TLB index                 */
     else /* (acctype & (ACC_WRITE | ACC_CHECK)) */
     {
         /* Program check if store protected location */
-        if (unlikely(ARCH_DEP(is_store_protected) (addr, *regs->dat.storkey, akey, regs)))
+        BYTE skey = LOAD_SKEY(regs->dat.storkey);
+        if (unlikely(ARCH_DEP(is_store_protected) (addr, skey, akey, regs)))
         {
             if (SIE_MODE(regs)) HOSTREGS->dat.protect = 0;
             goto vabs_prot_excp;
