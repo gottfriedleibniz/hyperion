@@ -875,8 +875,8 @@ CKD_RECHDR      rechdr;                 /* Record header             */
     /* Validate the track header */
     if (0
         ||           trkhdr.bin    != 0
-        || fetch_hw( trkhdr.cyl  ) != cyl
-        || fetch_hw( trkhdr.head ) != head
+        || READ_HW( trkhdr.cyl  ) != cyl
+        || READ_HW( trkhdr.head ) != head
     )
     {
         // "File %s: cyl[%04X/%d] head[%04X/%d]; invalid track header %02X%02X%02X%02X%02X"
@@ -2402,8 +2402,8 @@ BYTE            notelist[1024];         /* Note list                 */
     /* Validate the track header */
     if (0
         ||           trkhdr.bin    != 0
-        || fetch_hw( trkhdr.cyl  ) != cyl
-        || fetch_hw( trkhdr.head ) != head
+        || READ_HW( trkhdr.cyl  ) != cyl
+        || READ_HW( trkhdr.head ) != head
     )
     {
         // "File %s: cyl[%04X/%d] head[%04X/%d] invalid track header %02X%02X%02X%02X%02X"

@@ -3085,7 +3085,7 @@ CKD_RECHDR      rn;                     /* Record-n (r0, r1 ... rn)  */
     if (0
         || rn.rec  != 0
         || rn.klen != 0
-        || fetch_hw( rn.dlen ) != CKD_R0_DLEN
+        || READ_HW( rn.dlen ) != CKD_R0_DLEN
     )
     {
         CCKD_TRACE( "validation failed: bad r0%s", "" );

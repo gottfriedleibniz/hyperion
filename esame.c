@@ -4703,7 +4703,7 @@ U16     updated = 0;                    /* Updated control regs      */
 #if defined( _FEATURE_ZSIE )
     if (SIE_MODE( regs ))
     {
-        U16 cr_mask = fetch_hw( regs->siebk->lctl_ctl );
+        U16 cr_mask = READ_HW( regs->siebk->lctl_ctl );
         for (i=0; i < n; i++)
             if (cr_mask & BIT( 15 - ( (r1 + i) & 0xF )))
                 longjmp( regs->progjmp, SIE_INTERCEPT_INST );

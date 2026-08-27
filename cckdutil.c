@@ -1950,18 +1950,18 @@ cdsk_recovery:
 
                     /* Quick validation for compress none */
                     if (comp == CCKD_COMPRESS_NONE
-                     && (fetch_hw (buf + i +  5) != cyl   // r0 cyl
-                      || fetch_hw (buf + i +  7) != head  // r0 head
-                      || buf[i +  9] != 0                 // r0 record
-                      || buf[i + 10] != 0                 // r0 key length
-                      || fetch_hw (buf + i + 11) != 8     // r0 data length
+                     && (READ_HW (buf + i +  5) != cyl   // r0 cyl
+                      || READ_HW (buf + i +  7) != head  // r0 head
+                      || buf[i +  9] != 0                // r0 record
+                      || buf[i + 10] != 0                // r0 key length
+                      || READ_HW (buf + i + 11) != 8     // r0 data length
                         )
                        )
                         continue;
 
                     /* Quick validation for zlib */
                     else if (comp == CCKD_COMPRESS_ZLIB
-                     && fetch_hw(buf + i + 5) % 31 != 0)
+                     && READ_HW(buf + i + 5) % 31 != 0)
                         continue;
 
                     /* Quick validation for bzip2 */
@@ -2004,20 +2004,20 @@ cdsk_recovery:
                         if (j - i > (int)trksz) break;
 
                         if (compmask[buf[j]] != 0
-                         || fetch_hw(buf+j+1) >= cyls
-                         || fetch_hw(buf+j+3) >= heads)
+                         || READ_HW(buf+j+1) >= cyls
+                         || READ_HW(buf+j+3) >= heads)
                             continue;
 
                         /* check uncompressed hdr */
                         if (buf[j] == CCKD_COMPRESS_NONE
-                         && (fetch_hw (buf+j+5) != fetch_hw(buf+j+1)
-                          || fetch_hw (buf+j+7) != fetch_hw(buf+j+3)
+                         && (READ_HW (buf+j+5) != READ_HW(buf+j+1)
+                          || READ_HW (buf+j+7) != READ_HW(buf+j+3)
                           || buf[j+9] != 0      || buf[j+10] != 0
-                          || fetch_hw(buf+j+11) != 8))
+                          || READ_HW(buf+j+11) != 8))
                                 continue;
                         /* check zlib compressed header */
                         else if (buf[j] == CCKD_COMPRESS_ZLIB
-                         && fetch_hw(buf + j + 5) % 31 != 0)
+                         && READ_HW(buf + j + 5) % 31 != 0)
                                 continue;
                         /* check bzip2 compressed header */
                         else if (buf[j] == CCKD_COMPRESS_BZIP2
@@ -2185,7 +2185,7 @@ cdsk_ckd_recover:
 
                     /* Quick validation for zlib */
                     else if (comp == CCKD_COMPRESS_ZLIB
-                     && fetch_hw(buf + i + 5) % 31 != 0)
+                     && READ_HW(buf + i + 5) % 31 != 0)
                         continue;
 
                     /* Quick validation for bzip2 */
@@ -2211,7 +2211,7 @@ cdsk_ckd_recover:
                         if (pass == 0
                          && (len - i - l < CKD_TRKHDR_SIZE+8
                           || compmask[buf[i+l]]
-                          || fetch_fw (buf+i+l+1) >= (unsigned int)blkgrps)
+                          || READ_FW (buf+i+l+1) >= (unsigned int)blkgrps)
                            )
                             continue;
                         goto cdsk_fba_recover;
@@ -2240,12 +2240,12 @@ cdsk_ckd_recover:
                         if (j - i > (int)blkgrpsz) break;
 
                         if (compmask[buf[j]] != 0
-                         || fetch_fw(buf+j+1) >= (unsigned int)blkgrps)
+                         || READ_FW(buf+j+1) >= (unsigned int)blkgrps)
                             continue;
 
                         /* check zlib compressed header */
                         if (buf[j] == CCKD_COMPRESS_ZLIB
-                         && fetch_hw(buf + j + 5) % 31 != 0)
+                         && READ_HW(buf + j + 5) % 31 != 0)
                             continue;
 
                         /* check bzip2 compressed header */
@@ -2996,8 +2996,8 @@ BYTE            buf2[64*1024];          /* Uncompressed buffer       */
 
     /* Check ha */
     if (0
-        || fetch_hw( ha.cyl  ) != trk / heads
-        || fetch_hw( ha.head ) != trk % heads
+        || READ_HW( ha.cyl  ) != trk / heads
+        || READ_HW( ha.head ) != trk % heads
     )
         return 0; // (error: bad home address record!)
 
@@ -3009,11 +3009,11 @@ BYTE            buf2[64*1024];          /* Uncompressed buffer       */
 
     /* Validate r0 count */
     if (0
-        || fetch_hw( rn.cyl  ) != fetch_hw( ha.cyl  )
-        || fetch_hw( rn.head ) != fetch_hw( ha.head )
+        || READ_HW( rn.cyl  ) != READ_HW( ha.cyl  )
+        || READ_HW( rn.head ) != READ_HW( ha.head )
         || rn.rec  != 0
         || rn.klen != 0
-        || fetch_hw( rn.dlen ) != CKD_R0_DLEN
+        || READ_HW( rn.dlen ) != CKD_R0_DLEN
     )
         return 0; // (error: bad r0 count!) */)
 
@@ -3047,13 +3047,13 @@ BYTE            buf2[64*1024];          /* Uncompressed buffer       */
            be 0 (there can be only ONE r0 and we already processed it).
         */
         if (0
-            || fetch_hw( rn.head ) >= heads
+            || READ_HW( rn.head ) >= heads
             || rn.rec == 0
         )
             break; // (error: bad rn count!)
 
         /* Calculate buffer index to the next possible user record */
-        len2 = CKD_RECHDR_SIZE + rn.klen + fetch_hw( rn.dlen );
+        len2 = CKD_RECHDR_SIZE + rn.klen + READ_HW( rn.dlen );
     }
 
     /* Include length of END-OF-TRACK record too if requested */

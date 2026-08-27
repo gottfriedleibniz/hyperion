@@ -456,9 +456,9 @@ CASSERT( sizeof( SHRD_HDR ) == sizeof( DBLWRD ), shared_h );
         (_cmd)    = shdr->cmd;                                       \
         (_code)   = shdr->code;                                      \
                                                                      \
-        (_devnum) = (U16) fetch_hw( &shdr->devnum );                 \
-        (_len)    = (int) fetch_hw( &shdr->len    );                 \
-        (_id)     = (int) fetch_hw( &shdr->id     );                 \
+        (_devnum) = (U16) READ_HW( &shdr->devnum );                  \
+        (_len)    = (int) READ_HW( &shdr->len    );                  \
+        (_id)     = (int) READ_HW( &shdr->id     );                  \
     }                                                                \
     while (0)
 
