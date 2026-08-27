@@ -239,8 +239,7 @@ BYTE    ate;                            /* Authority table entry     */
 
 /* Conditions which always cause program check */
 auth_addr_excp:
-    regs->program_interrupt( regs, PGM_ADDRESSING_EXCEPTION );
-    UNREACHABLE_CODE( return false );
+    CALL_PROGRAM_INTERRUPT_AND_RETURN( regs, PGM_ADDRESSING_EXCEPTION, false );
 }
 #endif /* defined( FEATURE_DUAL_ADDRESS_SPACE ) */
 

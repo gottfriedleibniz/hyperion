@@ -2608,7 +2608,7 @@ DEF_INST( vector_convert_to_binary_32 )
     /* masked overflow? */
     if ( !iom && overflow && FOMASK(&regs->psw))
     {
-        regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
     }
 
     ZVECTOR_END( regs );
@@ -2788,7 +2788,7 @@ DEF_INST( vector_convert_to_binary_64 )
     /* masked overflow? */
     if ( !iom && overflow && FOMASK(&regs->psw))
     {
-        regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
     }
 
     ZVECTOR_END( regs );
@@ -3705,7 +3705,7 @@ DEF_INST( vector_pack_zoned_register )
     /* masked overflow? */
     if ( !iom && overflowed  && DOMASK(&regs->psw))
     {
-        regs->program_interrupt (regs, PGM_DECIMAL_OVERFLOW_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_DECIMAL_OVERFLOW_EXCEPTION);
     }
 
     ZVECTOR_END( regs );

@@ -1691,7 +1691,7 @@ DEF_INST( operation_exception )
 static void ( ATTR_REGPARM(2) operation_exception )( BYTE inst[], REGS* regs )
 {
     INST_UPDATE_PSW( regs, ILC( inst[0] ), ILC( inst[0] ));
-    regs->program_interrupt( regs, PGM_OPERATION_EXCEPTION );
+    CALL_PROGRAM_INTERRUPT( regs, PGM_OPERATION_EXCEPTION );
 }
 
 /*-------------------------------------------------------------------*/

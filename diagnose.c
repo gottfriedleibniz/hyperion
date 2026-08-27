@@ -1236,7 +1236,7 @@ U32   code;
 
         if (opt > 1)                        // Unsupported option?
         {
-            regs->program_interrupt( regs, PGM_SPECIFICATION_EXCEPTION );
+            CALL_PROGRAM_INTERRUPT( regs, PGM_SPECIFICATION_EXCEPTION );
         }
         else if (opt == 1)                  // Count for specific CPU?
         {

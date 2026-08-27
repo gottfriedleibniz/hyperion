@@ -64,7 +64,7 @@ int     r1, r2;                         /* Values of R fields        */
 
     /* Program check if fixed-point overflow */
     if ( regs->psw.cc == 3 && FOMASK(&regs->psw) )
-        regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT( regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION );
 
     /* Check for PER 1 GRA event */
     PER_GRA_CHECK( regs, PER_GRA_MASK( r1 ));
@@ -96,7 +96,7 @@ U32     n;                              /* 32-bit operand values     */
 
     /* Program check if fixed-point overflow */
     if ( regs->psw.cc == 3 && FOMASK(&regs->psw) )
-        regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
 
     /* Check for PER 1 GRA event */
     PER_GRA_CHECK( regs, PER_GRA_MASK( r1 ));
@@ -128,7 +128,7 @@ S32     n;                              /* 32-bit operand values     */
 
     /* Program check if fixed-point overflow */
     if ( regs->psw.cc == 3 && FOMASK(&regs->psw) )
-        regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
 
     /* Check for PER 1 GRA event */
     PER_GRA_CHECK( regs, PER_GRA_MASK( r1 ));
@@ -155,7 +155,7 @@ U16     i2;                             /* 16-bit immediate op       */
 
     /* Program check if fixed-point overflow */
     if ( regs->psw.cc == 3 && FOMASK(&regs->psw) )
-        regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
 
 }
 #endif /* defined( FEATURE_IMMEDIATE_AND_RELATIVE ) */
@@ -2178,7 +2178,7 @@ U16     rmask = 0x0000;                 /* (modified registers mask) */
         || GR_A(2,regs) & 1
         || GR_A(3,regs) & 1
     )
-        regs->program_interrupt (regs, PGM_SPECIFICATION_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_SPECIFICATION_EXCEPTION);
 
     /* Initialize "end-of-operand-data" index value... */
     max_index = effective_addr2 & 0x7FFE;
@@ -2513,11 +2513,11 @@ BYTE    sc;                             /* Store characteristic      */
 
     /* Program check if function code is greater than 1 or 2 */
     if (fc > MAX_CSST_FC)
-        regs->program_interrupt (regs, PGM_SPECIFICATION_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_SPECIFICATION_EXCEPTION);
 
     /* Program check if store characteristic is greater than 3 or 4 */
     if (sc > MAX_CSST_SC)
-        regs->program_interrupt (regs, PGM_SPECIFICATION_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_SPECIFICATION_EXCEPTION);
 
     /* Calculate length minus 1 of second operand */
     ln2 = (1 << sc) - 1;
@@ -2541,7 +2541,7 @@ BYTE    sc;                             /* Store characteristic      */
 #if defined( FEATURE_033_CSS_FACILITY_2 )
     if((r3 & 1) && (fc == 2))
     {
-        regs->program_interrupt (regs, PGM_SPECIFICATION_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_SPECIFICATION_EXCEPTION);
     }
 #endif
 
@@ -3738,7 +3738,7 @@ BYTE    termchar;                       /* Terminating character     */
 
     /* Program check if bits 0-23 of register 0 not zero */
     if ((regs->GR_L(0) & 0xFFFFFF00) != 0)
-        regs->program_interrupt( regs, PGM_SPECIFICATION_EXCEPTION );
+        CALL_PROGRAM_INTERRUPT( regs, PGM_SPECIFICATION_EXCEPTION );
 
     /* Load string terminating character from register 0 bits 24-31 */
     termchar = regs->GR_LHLCL(0);
@@ -5363,7 +5363,7 @@ BYTE    dec[8];                         /* Packed decimal operand    */
     if (dxf)
     {
         regs->dxc = DXC_DECIMAL;
-        regs->program_interrupt (regs, PGM_DATA_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_DATA_EXCEPTION);
     }
 
     /* Overflow if result exceeds 31 bits plus sign */
@@ -5375,7 +5375,7 @@ BYTE    dec[8];                         /* Packed decimal operand    */
 
     /* Program check if overflow (R1 contains rightmost 32 bits) */
     if (ovf)
-        regs->program_interrupt (regs, PGM_FIXED_POINT_DIVIDE_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_DIVIDE_EXCEPTION);
 
     /* Check for PER 1 GRA event */
     PER_GRA_CHECK( regs, PER_GRA_MASK( r1 ));
@@ -5455,7 +5455,7 @@ int     divide_overflow;                /* 1=divide overflow         */
 
     /* Program check if overflow */
     if ( divide_overflow )
-        regs->program_interrupt (regs, PGM_FIXED_POINT_DIVIDE_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_DIVIDE_EXCEPTION);
 
     /* Check for PER 1 GRA event */
     PER_GRA_CHECK( regs, PER_GRA_MASK2( r1, r1+1 ));
@@ -5492,7 +5492,7 @@ int     divide_overflow;                /* 1=divide overflow         */
 
     /* Program check if overflow */
     if ( divide_overflow )
-        regs->program_interrupt (regs, PGM_FIXED_POINT_DIVIDE_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_DIVIDE_EXCEPTION);
 
     /* Check for PER 1 GRA event */
     PER_GRA_CHECK( regs, PER_GRA_MASK2( r1, r1+1 ));
@@ -5807,7 +5807,7 @@ BYTE   *ip;                             /* -> executed instruction   */
            )
 #endif
     )
-        regs->program_interrupt( regs, PGM_EXECUTE_EXCEPTION );
+        CALL_PROGRAM_INTERRUPT( regs, PGM_EXECUTE_EXCEPTION );
 
     /* Save the address of the instruction in case the instruction
        being executed causes a break in sequential instruction flow.
@@ -5910,7 +5910,7 @@ DEF_INST(execute_relative_long)
     /* Program check if recursive execute */
     if (regs->exinst[0] == 0x44 ||
        (regs->exinst[0] == 0xc6 && !(regs->exinst[1] & 0x0f)))
-        regs->program_interrupt( regs, PGM_EXECUTE_EXCEPTION );
+        CALL_PROGRAM_INTERRUPT( regs, PGM_EXECUTE_EXCEPTION );
 
     /* Save the address of the instruction in case the instruction
        being executed causes a break in sequential instruction flow.
@@ -6343,7 +6343,7 @@ int     r1, r2;                         /* Values of R fields        */
         regs->GR_L(r1) = regs->GR_L(r2);
         regs->psw.cc = 3;
         if ( FOMASK(&regs->psw) )
-            regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+            CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
         return;
     }
 
@@ -6516,7 +6516,7 @@ int     r1, r2;                         /* Values of R fields        */
         regs->GR_L(r1) = regs->GR_L(r2);
         regs->psw.cc = 3;
         if ( FOMASK(&regs->psw) )
-            regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+            CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
         return;
     }
 
@@ -6546,7 +6546,7 @@ CREG    n;                              /* Work                      */
 
     /* Program check if monitor class exceeds 15 */
     if ( i2 > 0x0F )
-        regs->program_interrupt (regs, PGM_SPECIFICATION_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_SPECIFICATION_EXCEPTION);
 
     /* Ignore if monitor mask in control register 8 is zero */
     n = (regs->CR(8) & CR8_MCMASK) << i2;
@@ -6658,7 +6658,7 @@ CREG    n;                              /* Work                      */
     regs->MONCODE = effective_addr1;
 
     /* Generate a monitor event program interruption */
-    regs->program_interrupt (regs, PGM_MONITOR_EVENT);
+    CALL_PROGRAM_INTERRUPT(regs, PGM_MONITOR_EVENT);
 }
 
 
@@ -7250,7 +7250,7 @@ BYTE    termchar;                       /* Terminating character     */
 
     /* Program check if bits 0-23 of register 0 not zero */
     if ((regs->GR_L(0) & 0xFFFFFF00) != 0)
-        regs->program_interrupt (regs, PGM_SPECIFICATION_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_SPECIFICATION_EXCEPTION);
 
     /* Load string terminating character from register 0 bits 24-31 */
     termchar = regs->GR_LHLCL(0);

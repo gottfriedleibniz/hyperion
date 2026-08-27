@@ -1483,7 +1483,7 @@ S64     stglen;                        /* Storage extent area length */
          /* Check to ensure extent information can be stored */
          if (stgarea > regs->mainlim - 16)
          {
-             regs->program_interrupt (regs, PGM_ADDRESSING_EXCEPTION);
+             CALL_PROGRAM_INTERRUPT(regs, PGM_ADDRESSING_EXCEPTION);
          }
          /* Set start of storage extent to zero */
          ARCH_DEP(store_doubleword_absolute)(0,stgarea,regs);

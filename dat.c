@@ -416,7 +416,7 @@ asn_asn_tran_spec_excp:
 #endif
 
 asn_prog_check:
-    regs->program_interrupt (regs, code);
+    CALL_PROGRAM_INTERRUPT_AND_RETURN(regs, code, 0);
 
 /* Conditions which the caller may or may not program check */
 asn_afx_tran_excp:
@@ -627,7 +627,7 @@ alet_asn_tran_spec_excp:
 #endif
 
 alet_prog_check:
-    regs->program_interrupt (regs, regs->dat.xcode);
+    CALL_PROGRAM_INTERRUPT_AND_RETURN(regs, regs->dat.xcode, 0);
 
 /* Conditions which the caller may or may not program check */
 alet_spec_excp:
@@ -1714,7 +1714,7 @@ tran_prog_check:
         }
     }
 #endif
-    regs->program_interrupt( regs, regs->dat.xcode );
+    CALL_PROGRAM_INTERRUPT_AND_RETURN( regs, regs->dat.xcode, 0 );
 
 /* Conditions which the caller may or may not program check */
 seg_tran_invalid:
@@ -2236,7 +2236,7 @@ RADR    pfra;                           /* Page Frame Real Address   */
             || (((regs->CR(0) & CR0_PAGE_SIZE) != CR0_PAGE_SZ_2K) && ((regs->CR(0) & CR0_PAGE_SIZE) != CR0_PAGE_SZ_4K))
             || (((regs->CR(0) & CR0_SEG_SIZE)  != CR0_SEG_SZ_64K) && ((regs->CR(0) & CR0_SEG_SIZE)  != CR0_SEG_SZ_1M))
         )
-            regs->program_interrupt( regs, PGM_TRANSLATION_SPECIFICATION_EXCEPTION );
+            CALL_PROGRAM_INTERRUPT( regs, PGM_TRANSLATION_SPECIFICATION_EXCEPTION );
 
         /* Add the vaddr's page table entry index to the Page Table
            Origin, ignoring any carry, to form the 24-bit real address
@@ -2297,7 +2297,7 @@ RADR    pfra;                           /* Page Frame Real Address   */
 
         /* Program check if translation format is invalid */
         if ((regs->CR(0) & CR0_TRAN_FMT) != CR0_TRAN_ESA390)
-            regs->program_interrupt( regs, PGM_TRANSLATION_SPECIFICATION_EXCEPTION );
+            CALL_PROGRAM_INTERRUPT( regs, PGM_TRANSLATION_SPECIFICATION_EXCEPTION );
 
         /* Add the vaddr's page table entry index to the Page Table
            Origin, ignoring any carry, to form the 31-bit real address
@@ -2623,7 +2623,7 @@ int     ix = TLBIX(addr);               /* TLB index                 */
 
 vabs_addr_excp:
 
-    regs->program_interrupt (regs, PGM_ADDRESSING_EXCEPTION);
+    CALL_PROGRAM_INTERRUPT_AND_RETURN(regs, PGM_ADDRESSING_EXCEPTION, NULL);
 
 vabs_prot_excp:
 
@@ -2658,17 +2658,15 @@ vabs_prot_excp:
 
 #endif /* defined( FEATURE_SUPPRESSION_ON_PROTECTION ) */
 
-        HOSTREGS->program_interrupt( HOSTREGS, PGM_PROTECTION_EXCEPTION );
+        CALL_PROGRAM_INTERRUPT_AND_RETURN( HOSTREGS, PGM_PROTECTION_EXCEPTION, NULL );
     }
     else
 #endif /* defined( _FEATURE_PROTECTION_INTERCEPTION_CONTROL ) */
-        regs->program_interrupt (regs, PGM_PROTECTION_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT_AND_RETURN(regs, PGM_PROTECTION_EXCEPTION, NULL);
 
 vabs_prog_check:
 
-    regs->program_interrupt (regs, regs->dat.xcode);
-
-    return NULL; /* prevent warning from compiler */
+    CALL_PROGRAM_INTERRUPT_AND_RETURN(regs, regs->dat.xcode, NULL);
 } /* end function ARCH_DEP(logical_to_main_l) */
 
 /*-------------------------------------------------------------------*/

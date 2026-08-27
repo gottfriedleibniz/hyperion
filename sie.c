@@ -910,7 +910,7 @@ int     i;                              /* (work)                    */
         if (lpsw_xcode)
         {
             PTT_SIE( "*SIE > pgmint", lpsw_xcode, 0, 0 );
-            GUESTREGS->program_interrupt( GUESTREGS, lpsw_xcode );
+            CALL_PROGRAM_INTERRUPT( GUESTREGS, lpsw_xcode );
         }
 
         /* Run SIE in guest's architecture mode */

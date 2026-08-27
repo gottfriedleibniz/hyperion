@@ -792,7 +792,7 @@ inline BYTE* ARCH_DEP( fetch_main_absolute )( RADR addr, REGS* regs )
 {
 #if defined( INLINE_STORE_FETCH_ADDR_CHECK )
     if (addr > (regs->mainlim - len))
-        regs->program_interrupt( regs, PGM_ADDRESSING_EXCEPTION );
+        CALL_PROGRAM_INTERRUPT( regs, PGM_ADDRESSING_EXCEPTION );
 #endif
 
     /* Translate SIE host virt to SIE host abs. Note: macro
@@ -1062,12 +1062,12 @@ inline void ARCH_DEP( FPC_check )( REGS* regs, U32 fpc )
             || (fpc & FPC_BRM_3BIT) == BRM_RESV5
             || (fpc & FPC_BRM_3BIT) == BRM_RESV6
         )
-            regs->program_interrupt( regs, PGM_SPECIFICATION_EXCEPTION );
+            CALL_PROGRAM_INTERRUPT( regs, PGM_SPECIFICATION_EXCEPTION );
     }
     else
     {
         if (fpc & FPC_RESERVED)
-            regs->program_interrupt( regs, PGM_SPECIFICATION_EXCEPTION );
+            CALL_PROGRAM_INTERRUPT( regs, PGM_SPECIFICATION_EXCEPTION );
     }
 }
 
@@ -1131,7 +1131,7 @@ inline void ARCH_DEP( store_doubleword_absolute )( U64 value,
 {
 #if defined( INLINE_STORE_FETCH_ADDR_CHECK )
     if (addr > regs->mainlim - 8)
-        regs->program_interrupt( regs, PGM_ADDRESSING_EXCEPTION );
+        CALL_PROGRAM_INTERRUPT( regs, PGM_ADDRESSING_EXCEPTION );
 #endif
 
     /* Translate SIE host virt to SIE host abs. Note: macro
@@ -1159,7 +1159,7 @@ inline void ARCH_DEP( store_fullword_absolute )( U32   value,
 {
 #if defined( INLINE_STORE_FETCH_ADDR_CHECK )
     if (addr > regs->mainlim - 4)
-        regs->program_interrupt( regs, PGM_ADDRESSING_EXCEPTION );
+        CALL_PROGRAM_INTERRUPT( regs, PGM_ADDRESSING_EXCEPTION );
 #endif
 
     /* Translate SIE host virt to SIE host abs. Note: macro

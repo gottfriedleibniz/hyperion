@@ -410,7 +410,38 @@ typedef char _CASSERT_PASTE( assertion_failed_ ## file, line )[ 2 * !!(cond) - 1
 typedef void (ATTR_REGPARM(2)*FUNC)();
 
 /* Program Interrupt function pointer */
-typedef void (ATTR_REGPARM(2) *pi_func) (REGS *regs, int pcode);
+typedef
+#if defined(__GNUC__) && __GNUC__ >= 4 && 0
+__attribute__((__noreturn__))
+#endif
+void (ATTR_REGPARM(2) *pi_func) (REGS *regs, int pcode);
+
+/* #EXPERIMENT */
+/*
+ * MSVC does not treat a 'noreturn' qualified function pointer as a distinct
+ * function pointer type. Instead, make the (non-)returning control flow
+ * explicit, providing the optimizer with additional information that should
+ * *hopefully* enable more aggressive tail-call optimization.
+ */
+#define DO_PROGRAM_INTERRUPT(R, P) ((R)->program_interrupt((R), (P)))
+#define DO_PROGRAM_INTERRUPT_AND_RETURN(R, P, ACTION) \
+  do {                                                \
+    DO_PROGRAM_INTERRUPT((R), (P));                   \
+    ACTION;                                           \
+  } while (0)
+
+#if defined(__GNUC__) && __GNUC__ >= 4
+  /* Rely on __attribute__((__noreturn__)) semantics */
+  #define CALL_PROGRAM_INTERRUPT(R, P)               DO_PROGRAM_INTERRUPT((R), (P))
+  #define CALL_PROGRAM_INTERRUPT_AND_RETURN(R, P, V) DO_PROGRAM_INTERRUPT_AND_RETURN((R), (P), return (V))
+#else
+  /*
+   * Rely on explicit control flow.
+   * Note, some places previously used: UNREACHABLE_CODE(return (V)))
+   */
+  #define CALL_PROGRAM_INTERRUPT(R, P)               DO_PROGRAM_INTERRUPT_AND_RETURN((R), (P), return)
+  #define CALL_PROGRAM_INTERRUPT_AND_RETURN(R, P, V) DO_PROGRAM_INTERRUPT_AND_RETURN((R), (P), return (V))
+#endif
 
 /* trace_br function */
 typedef U32  (*s390_trace_br_func) (int amode,  U32 ia, REGS *regs);

@@ -242,7 +242,7 @@ BYTE    xpkey1 = 0, xpkey2 = 0;         /* Expanded storage keys     */
            the specified key is not permitted by the PSW key mask */
         if ( PROBSTATE(&regs->psw)
             && ((regs->CR(3) << (akey >> 4)) & 0x80000000) == 0 )
-            regs->program_interrupt (regs, PGM_PRIVILEGED_OPERATION_EXCEPTION);
+            CALL_PROGRAM_INTERRUPT(regs, PGM_PRIVILEGED_OPERATION_EXCEPTION);
 
         /* If register 0 bit 20 is one, use R0 key for operand 1 */
         if (regs->GR_L(0) & GR0_MVPG_FIRST)
@@ -258,7 +258,7 @@ BYTE    xpkey1 = 0, xpkey2 = 0;         /* Expanded storage keys     */
     if ((regs->GR_L(0) & GR0_MVPG_RSRVD) != 0
         || (regs->GR_L(0) & (GR0_MVPG_FIRST | GR0_MVPG_SECOND))
                          == (GR0_MVPG_FIRST | GR0_MVPG_SECOND))
-        regs->program_interrupt (regs, PGM_SPECIFICATION_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_SPECIFICATION_EXCEPTION);
 
     /* Determine the logical addresses of each operand */
     vaddr1 = regs->GR(r1) & ADDRESS_MAXWRAP(regs);
@@ -286,7 +286,7 @@ BYTE    xpkey1 = 0, xpkey2 = 0;         /* Expanded storage keys     */
         raddr2 = APPLY_PREFIXING (raddr2, regs->PX);
 
         if (raddr2 > regs->mainlim)
-            regs->program_interrupt (regs, PGM_ADDRESSING_EXCEPTION);
+            CALL_PROGRAM_INTERRUPT(regs, PGM_ADDRESSING_EXCEPTION);
 
 #if defined(_FEATURE_SIE)
         if(SIE_MODE(regs)  && !regs->sie_pref)
@@ -342,7 +342,7 @@ BYTE    xpkey1 = 0, xpkey2 = 0;         /* Expanded storage keys     */
                                  1024 + ((vaddr2 & 0x000FF000) >> 9);
 #endif /*!defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)*/
                 if (xpkeya > regs->mainlim)
-                    regs->program_interrupt (regs, PGM_ADDRESSING_EXCEPTION);
+                    CALL_PROGRAM_INTERRUPT(regs, PGM_ADDRESSING_EXCEPTION);
                 FETCH_MAIN_BYTE( xpkey2, regs->mainstor + xpkeya );
 
 /*DEBUG logmsg("MVPG pte2 = " F_CREG ", xkey2 = %2.2X, xpblk2 = %5.5X, akey2 = %2.2X\n",
@@ -381,7 +381,7 @@ BYTE    xpkey1 = 0, xpkey2 = 0;         /* Expanded storage keys     */
         raddr1 = APPLY_PREFIXING (raddr1, regs->PX);
 
         if (raddr1 > regs->mainlim)
-            regs->program_interrupt (regs, PGM_ADDRESSING_EXCEPTION);
+            CALL_PROGRAM_INTERRUPT(regs, PGM_ADDRESSING_EXCEPTION);
 
 #if defined(_FEATURE_SIE)
         if(SIE_MODE(regs)  && !regs->sie_pref)
@@ -437,7 +437,7 @@ BYTE    xpkey1 = 0, xpkey2 = 0;         /* Expanded storage keys     */
                               1024 + ((vaddr1 & 0x000FF000) >> 9);
 #endif /*!defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)*/
                 if (xpkeya > regs->mainlim)
-                    regs->program_interrupt (regs, PGM_ADDRESSING_EXCEPTION);
+                    CALL_PROGRAM_INTERRUPT(regs, PGM_ADDRESSING_EXCEPTION);
                 FETCH_MAIN_BYTE( xpkey1, regs->mainstor + xpkeya );
 
 /*DEBUG  logmsg("MVPG pte1 = " F_CREG ", xkey1 = %2.2X, xpblk1 = %5.5X, akey1 = %2.2X\n",
@@ -464,7 +464,7 @@ BYTE    xpkey1 = 0, xpkey2 = 0;         /* Expanded storage keys     */
         {
             regs->TEA = vaddr1 | TEA_PROT_AP | regs->dat.stid;
             regs->excarid = (ACCESS_REGISTER_MODE(&regs->psw)) ? r1 : 0;
-            regs->program_interrupt (regs, PGM_PROTECTION_EXCEPTION);
+            CALL_PROGRAM_INTERRUPT(regs, PGM_PROTECTION_EXCEPTION);
         }
 
     } /* end if(!REAL_MODE) */
@@ -506,7 +506,7 @@ BYTE    xpkey1 = 0, xpkey2 = 0;         /* Expanded storage keys     */
             && (pte1 & PAGETAB_ESNK) == 0
             && !((regs->CR(0) & CR0_STORE_OVRD) && ((xpkey1 & STORKEY_KEY) == 0x90)))
         {
-            regs->program_interrupt (regs, PGM_PROTECTION_EXCEPTION);
+            CALL_PROGRAM_INTERRUPT(regs, PGM_PROTECTION_EXCEPTION);
         }
         sk1=NULL;
     }
@@ -527,7 +527,7 @@ BYTE    xpkey1 = 0, xpkey2 = 0;         /* Expanded storage keys     */
             && akey2 != (xpkey2 & STORKEY_KEY)
             && (pte2 & PAGETAB_ESNK) == 0)
         {
-            regs->program_interrupt (regs, PGM_PROTECTION_EXCEPTION);
+            CALL_PROGRAM_INTERRUPT(regs, PGM_PROTECTION_EXCEPTION);
         }
     }
     else
@@ -600,7 +600,7 @@ mvpg_progck:
         regs->TEA |= TEA_MVPG;
         regs->opndrid = (r1 << 4) | r2;
     }
-    regs->program_interrupt (regs, regs->dat.xcode);
+    CALL_PROGRAM_INTERRUPT(regs, regs->dat.xcode);
 
 } /* end DEF_INST(move_page) */
 #endif /*defined(FEATURE_MOVE_PAGE_FACILITY_2)*/

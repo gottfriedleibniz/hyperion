@@ -113,7 +113,7 @@ BYTE    *p;                             /* Mainstor pointer          */
 
     /* Program check if DUCT origin address is invalid */
     if (ducto > regs->mainlim)
-        regs->program_interrupt( regs, PGM_ADDRESSING_EXCEPTION );
+        CALL_PROGRAM_INTERRUPT_AND_RETURN( regs, PGM_ADDRESSING_EXCEPTION, 0 );
 
     /* Fetch DUCT words 0, 1, and 3 from absolute storage
        (note: the DUCT cannot cross a page boundary) */
@@ -135,7 +135,7 @@ BYTE    *p;                             /* Mainstor pointer          */
 
     /* Program check if ASTE origin address is invalid */
     if (ssasteo > regs->mainlim)
-        regs->program_interrupt( regs, PGM_ADDRESSING_EXCEPTION );
+        CALL_PROGRAM_INTERRUPT_AND_RETURN( regs, PGM_ADDRESSING_EXCEPTION, 0 );
 
     /* Fetch subspace ASTE words 0, 2, 3, and 5 from absolute
        storage (note: the ASTE cannot cross a page boundary) */
@@ -152,7 +152,7 @@ BYTE    *p;                             /* Mainstor pointer          */
     {
         regs->excarid = 0;
         if (xcode == NULL)
-            regs->program_interrupt( regs, PGM_ASTE_VALIDITY_EXCEPTION );
+            CALL_PROGRAM_INTERRUPT_AND_RETURN( regs, PGM_ASTE_VALIDITY_EXCEPTION, 0 );
         else
             *xcode = PGM_ASTE_VALIDITY_EXCEPTION;
         return 0;
@@ -164,7 +164,7 @@ BYTE    *p;                             /* Mainstor pointer          */
     {
         regs->excarid = 0;
         if (xcode == NULL)
-            regs->program_interrupt( regs, PGM_ASTE_SEQUENCE_EXCEPTION );
+            CALL_PROGRAM_INTERRUPT_AND_RETURN( regs, PGM_ASTE_SEQUENCE_EXCEPTION, 0 );
         else
             *xcode = PGM_ASTE_SEQUENCE_EXCEPTION;
         return 0;

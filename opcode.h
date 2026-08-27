@@ -642,78 +642,78 @@ do { \
 
 #define ODD_CHECK(_r, _regs) \
     if( (_r) & 1 ) \
-        (_regs)->program_interrupt( (_regs), PGM_SPECIFICATION_EXCEPTION)
+        CALL_PROGRAM_INTERRUPT( (_regs), PGM_SPECIFICATION_EXCEPTION)
 
 #define ODD2_CHECK(_r1, _r2, _regs) \
     if( ((_r1) & 1) || ((_r2) & 1) ) \
-        (_regs)->program_interrupt( (_regs), PGM_SPECIFICATION_EXCEPTION)
+        CALL_PROGRAM_INTERRUPT( (_regs), PGM_SPECIFICATION_EXCEPTION)
 
 #define HW_CHECK(_value, _regs) \
     if( (_value) & 1 ) \
-        (_regs)->program_interrupt( (_regs), PGM_SPECIFICATION_EXCEPTION)
+        CALL_PROGRAM_INTERRUPT( (_regs), PGM_SPECIFICATION_EXCEPTION)
 
 #define FW_CHECK(_value, _regs) \
     if( (_value) & 3 ) \
-        (_regs)->program_interrupt( (_regs), PGM_SPECIFICATION_EXCEPTION)
+        CALL_PROGRAM_INTERRUPT( (_regs), PGM_SPECIFICATION_EXCEPTION)
 
 #define DW_CHECK(_value, _regs) \
     if( (_value) & 7 ) \
-        (_regs)->program_interrupt( (_regs), PGM_SPECIFICATION_EXCEPTION)
+        CALL_PROGRAM_INTERRUPT( (_regs), PGM_SPECIFICATION_EXCEPTION)
 
 #define QW_CHECK(_value, _regs) \
     if( (_value) & 15 ) \
-        (_regs)->program_interrupt( (_regs), PGM_SPECIFICATION_EXCEPTION)
+        CALL_PROGRAM_INTERRUPT( (_regs), PGM_SPECIFICATION_EXCEPTION)
 
     /* Program check if m is not 0, 1, or 4 to 7 */
 #define HFPM_CHECK(_m, _regs) \
     if (((_m) == 2) || ((_m) == 3) || ((_m) & 8)) \
-        (_regs)->program_interrupt( (_regs), PGM_SPECIFICATION_EXCEPTION)
+        CALL_PROGRAM_INTERRUPT( (_regs), PGM_SPECIFICATION_EXCEPTION)
 
 #define PRIV_CHECK(_regs) \
     if( PROBSTATE(&(_regs)->psw) ) \
-        (_regs)->program_interrupt( (_regs), PGM_PRIVILEGED_OPERATION_EXCEPTION)
+        CALL_PROGRAM_INTERRUPT( (_regs), PGM_PRIVILEGED_OPERATION_EXCEPTION)
 
     /* Program check if r is not 0,1,4,5,8,9,12, or 13 (designating
        the lower-numbered register of a floating-point register pair) */
 #define BFPREGPAIR_CHECK(_r, _regs) \
     if( ((_r) & 2) ) \
-        (_regs)->program_interrupt( (_regs), PGM_SPECIFICATION_EXCEPTION)
+        CALL_PROGRAM_INTERRUPT( (_regs), PGM_SPECIFICATION_EXCEPTION)
 
     /* Program check if r1 and r2 are not both 0,1,4,5,8,9,12, or 13
        (lower-numbered register of a floating-point register pair) */
 #define BFPREGPAIR2_CHECK(_r1, _r2, _regs) \
     if( ((_r1) & 2) || ((_r2) & 2) ) \
-        (_regs)->program_interrupt( (_regs), PGM_SPECIFICATION_EXCEPTION)
+        CALL_PROGRAM_INTERRUPT( (_regs), PGM_SPECIFICATION_EXCEPTION)
 
     /* Program check if r is not 0,1,4,5,8,9,12, or 13 (designating
        the lower-numbered register of a floating-point register pair) */
 #define DFPREGPAIR_CHECK(_r, _regs) \
     if( ((_r) & 2) ) \
-        (_regs)->program_interrupt( (_regs), PGM_SPECIFICATION_EXCEPTION)
+        CALL_PROGRAM_INTERRUPT( (_regs), PGM_SPECIFICATION_EXCEPTION)
 
     /* Program check if r1 and r2 are not both 0,1,4,5,8,9,12, or 13
        (lower-numbered register of a floating-point register pair) */
 #define DFPREGPAIR2_CHECK(_r1, _r2, _regs) \
     if( ((_r1) & 2) || ((_r2) & 2) ) \
-        (_regs)->program_interrupt( (_regs), PGM_SPECIFICATION_EXCEPTION)
+        CALL_PROGRAM_INTERRUPT( (_regs), PGM_SPECIFICATION_EXCEPTION)
 
     /* Program check if r1, r2, r3 are not all 0,1,4,5,8,9,12, or 13
        (lower-numbered register of a floating-point register pair) */
 #define DFPREGPAIR3_CHECK(_r1, _r2, _r3, _regs) \
     if( ((_r1) & 2) || ((_r2) & 2) || ((_r3) & 2) ) \
-        (_regs)->program_interrupt( (_regs), PGM_SPECIFICATION_EXCEPTION)
+        CALL_PROGRAM_INTERRUPT( (_regs), PGM_SPECIFICATION_EXCEPTION)
 
 #define SSID_CHECK(_regs) \
     if((!((_regs)->GR_LHH(1) & 0x0001)) \
     || (_regs)->GR_LHH(1) > (0x0001|(FEATURE_LCSS_MAX-1))) \
-        (_regs)->program_interrupt( (_regs), PGM_OPERAND_EXCEPTION)
+        CALL_PROGRAM_INTERRUPT( (_regs), PGM_OPERAND_EXCEPTION)
 
 #if defined( _FEATURE_S370_S390_VECTOR_FACILITY )
 
 #ifndef _VFDEFS
 #define _VFDEFS
 #define VOP_CHECK( _regs )              if (!((_regs)->CR(0) & CR0_VOP) || !(_regs)->vf->online) \
-                                            (_regs)->program_interrupt( (_regs), PGM_VECTOR_OPERATION_EXCEPTION )
+                                            CALL_PROGRAM_INTERRUPT( (_regs), PGM_VECTOR_OPERATION_EXCEPTION )
 #define VR_INUSE( _vr, _regs )          ((_regs)->vf->vsr &   (VSR_VIU0 >> ((_vr) >> 1)))
 #define VR_CHANGED( _vr, _regs )        ((_regs)->vf->vsr &   (VSR_VCH0 >> ((_vr) >> 1)))
 #define SET_VR_INUSE( _vr, _regs )       (_regs)->vf->vsr |=  (VSR_VIU0 >> ((_vr) >> 1))
@@ -752,7 +752,7 @@ do { \
 #define FACILITY_CHECK(_faci, _regs) \
     do { \
         if(!FACILITY_ENABLED( _faci, _regs ) ) \
-          (_regs)->program_interrupt( (_regs), PGM_OPERATION_EXCEPTION); \
+          CALL_PROGRAM_INTERRUPT( (_regs), PGM_OPERATION_EXCEPTION); \
     } while (0)
 
 /*-------------------------------------------------------------------*/
@@ -1828,7 +1828,7 @@ do {                                                                  \
 #define _370_HFPREG_CHECK(_r, _regs)                                        \
                                                                             \
   if ((_r) & 9)                                                             \
-      (_regs)->program_interrupt( (_regs), PGM_SPECIFICATION_EXCEPTION )
+      CALL_PROGRAM_INTERRUPT( (_regs), PGM_SPECIFICATION_EXCEPTION )
 
 
 /* Program check if r1 and r2 are not 0, 2, 4, or 6 */
@@ -1838,14 +1838,14 @@ do {                                                                  \
       || ((_r1) & 9)                                                        \
       || ((_r2) & 9)                                                        \
   )                                                                         \
-      (_regs)->program_interrupt( (_regs), PGM_SPECIFICATION_EXCEPTION )
+      CALL_PROGRAM_INTERRUPT( (_regs), PGM_SPECIFICATION_EXCEPTION )
 
 
 /* Program check if r1 is not 0 or 4 */
 #define _370_HFPODD_CHECK(_r, _regs)                                        \
                                                                             \
   if ((_r) & 11)                                                            \
-      (_regs)->program_interrupt( (_regs), PGM_SPECIFICATION_EXCEPTION )
+      CALL_PROGRAM_INTERRUPT( (_regs), PGM_SPECIFICATION_EXCEPTION )
 
 
 /* Program check if r1 and r2 are not 0 or 4 */
@@ -1855,7 +1855,7 @@ do {                                                                  \
       || ((_r1) & 11)                                                       \
       || ((_r2) & 11)                                                       \
   )                                                                         \
-      (_regs)->program_interrupt( (_regs), PGM_SPECIFICATION_EXCEPTION )
+      CALL_PROGRAM_INTERRUPT( (_regs), PGM_SPECIFICATION_EXCEPTION )
 
 
 // Macros for 390 or z/Arch mode, -OR for 370 mode
@@ -1888,7 +1888,7 @@ do {                                                                  \
         )                                                                           \
         {                                                                           \
             (_regs)->dxc = DXC_DFP_INSTRUCTION;                                     \
-            (_regs)->program_interrupt( (_regs), PGM_DATA_EXCEPTION );              \
+            CALL_PROGRAM_INTERRUPT( (_regs), PGM_DATA_EXCEPTION );              \
         }
 
     /* Program check if BFP instruction is executed when AFP control is zero */
@@ -1900,7 +1900,7 @@ do {                                                                  \
         )                                                                           \
         {                                                                           \
             (_regs)->dxc = DXC_BFP_INSTRUCTION;                                     \
-            (_regs)->program_interrupt( (_regs), PGM_DATA_EXCEPTION );              \
+            CALL_PROGRAM_INTERRUPT( (_regs), PGM_DATA_EXCEPTION );              \
         }
 
     /* Program check if r1 is not 0, 2, 4, or 6 */
@@ -1924,7 +1924,7 @@ do {                                                                  \
                 if ((_r) & 9)                                                       \
                 {                                                                   \
                     (_regs)->dxc = DXC_AFP_REGISTER;                                \
-                    (_regs)->program_interrupt( (_regs), PGM_DATA_EXCEPTION );      \
+                    CALL_PROGRAM_INTERRUPT( (_regs), PGM_DATA_EXCEPTION );      \
                 }                                                                   \
             }                                                                       \
         }
@@ -1953,7 +1953,7 @@ do {                                                                  \
                 )                                                                   \
                 {                                                                   \
                     (_regs)->dxc = DXC_AFP_REGISTER;                                \
-                    (_regs)->program_interrupt( (_regs), PGM_DATA_EXCEPTION );      \
+                    CALL_PROGRAM_INTERRUPT( (_regs), PGM_DATA_EXCEPTION );      \
                 }                                                                   \
             }                                                                       \
         }
@@ -1973,7 +1973,7 @@ do {                                                                  \
         {                                                                           \
             if ((_r) & 2)                                                           \
             {                                                                       \
-                (_regs)->program_interrupt( (_regs), PGM_SPECIFICATION_EXCEPTION ); \
+                CALL_PROGRAM_INTERRUPT( (_regs), PGM_SPECIFICATION_EXCEPTION ); \
             }                                                                       \
             else if (0                                                              \
                 || !((_regs)->CR(0) & CR0_AFP)                                      \
@@ -1983,7 +1983,7 @@ do {                                                                  \
                 if ((_r) & 9)                                                       \
                 {                                                                   \
                     (_regs)->dxc = DXC_AFP_REGISTER;                                \
-                    (_regs)->program_interrupt( (_regs), PGM_DATA_EXCEPTION );      \
+                    CALL_PROGRAM_INTERRUPT( (_regs), PGM_DATA_EXCEPTION );      \
                 }                                                                   \
             }                                                                       \
         }
@@ -2006,7 +2006,7 @@ do {                                                                  \
                 || ((_r2) & 2)                                                      \
             )                                                                       \
             {                                                                       \
-                (_regs)->program_interrupt( (_regs), PGM_SPECIFICATION_EXCEPTION ); \
+                CALL_PROGRAM_INTERRUPT( (_regs), PGM_SPECIFICATION_EXCEPTION ); \
             }                                                                       \
             else if (0                                                              \
                 || !((_regs)->CR(0) & CR0_AFP)                                      \
@@ -2019,7 +2019,7 @@ do {                                                                  \
                 )                                                                   \
                 {                                                                   \
                     (_regs)->dxc = DXC_AFP_REGISTER;                                \
-                    (_regs)->program_interrupt( (_regs), PGM_DATA_EXCEPTION );      \
+                    CALL_PROGRAM_INTERRUPT( (_regs), PGM_DATA_EXCEPTION );      \
                 }                                                                   \
             }                                                                       \
         }
@@ -2032,7 +2032,7 @@ do {                                                                  \
         if (!((_regs)->CR(0) & CR0_AFP))                                            \
         {                                                                           \
             (_regs)->dxc = DXC_DFP_INSTRUCTION;                                     \
-            (_regs)->program_interrupt( (_regs), PGM_DATA_EXCEPTION );              \
+            CALL_PROGRAM_INTERRUPT( (_regs), PGM_DATA_EXCEPTION );              \
         }
 
     /* Program check if BFP instruction is executed when AFP control is zero */
@@ -2041,7 +2041,7 @@ do {                                                                  \
         if (!((_regs)->CR(0) & CR0_AFP))                                            \
         {                                                                           \
             (_regs)->dxc = DXC_BFP_INSTRUCTION;                                     \
-            (_regs)->program_interrupt( (_regs), PGM_DATA_EXCEPTION );              \
+            CALL_PROGRAM_INTERRUPT( (_regs), PGM_DATA_EXCEPTION );              \
         }
 
     /* Program check if r1 is not 0, 2, 4, or 6 */
@@ -2062,7 +2062,7 @@ do {                                                                  \
                 if ((_r) & 9)                                                       \
                 {                                                                   \
                     (_regs)->dxc = DXC_AFP_REGISTER;                                \
-                    (_regs)->program_interrupt( (_regs), PGM_DATA_EXCEPTION );      \
+                    CALL_PROGRAM_INTERRUPT( (_regs), PGM_DATA_EXCEPTION );      \
                 }                                                                   \
             }                                                                       \
         }
@@ -2088,7 +2088,7 @@ do {                                                                  \
                 )                                                                   \
                 {                                                                   \
                     (_regs)->dxc = DXC_AFP_REGISTER;                                \
-                    (_regs)->program_interrupt( (_regs), PGM_DATA_EXCEPTION );      \
+                    CALL_PROGRAM_INTERRUPT( (_regs), PGM_DATA_EXCEPTION );      \
                 }                                                                   \
             }                                                                       \
         }
@@ -2108,14 +2108,14 @@ do {                                                                  \
         {                                                                           \
             if ((_r) & 2)                                                           \
             {                                                                       \
-                (_regs)->program_interrupt( (_regs), PGM_SPECIFICATION_EXCEPTION ); \
+                CALL_PROGRAM_INTERRUPT( (_regs), PGM_SPECIFICATION_EXCEPTION ); \
             }                                                                       \
             else if (!((_regs)->CR(0) & CR0_AFP) )                                  \
             {                                                                       \
                 if ((_r) & 9)                                                       \
                 {                                                                   \
                     (_regs)->dxc = DXC_AFP_REGISTER;                                \
-                    (_regs)->program_interrupt( (_regs), PGM_DATA_EXCEPTION );      \
+                    CALL_PROGRAM_INTERRUPT( (_regs), PGM_DATA_EXCEPTION );      \
                 }                                                                   \
             }                                                                       \
         }
@@ -2138,7 +2138,7 @@ do {                                                                  \
                 || ((_r2) & 2)                                                      \
             )                                                                       \
             {                                                                       \
-                (_regs)->program_interrupt( (_regs), PGM_SPECIFICATION_EXCEPTION ); \
+                CALL_PROGRAM_INTERRUPT( (_regs), PGM_SPECIFICATION_EXCEPTION ); \
             }                                                                       \
             else if (!((_regs)->CR(0) & CR0_AFP) )                                  \
             {                                                                       \
@@ -2148,7 +2148,7 @@ do {                                                                  \
                 )                                                                   \
                 {                                                                   \
                     (_regs)->dxc = DXC_AFP_REGISTER;                                \
-                    (_regs)->program_interrupt( (_regs), PGM_DATA_EXCEPTION );      \
+                    CALL_PROGRAM_INTERRUPT( (_regs), PGM_DATA_EXCEPTION );      \
                 }                                                                   \
             }                                                                       \
         }
@@ -2196,7 +2196,7 @@ do {                                                                  \
         )                                                                      \
         {                                                                      \
             (_regs)->dxc = DXC_VECTOR_INSTRUCTION;                             \
-            (_regs)->program_interrupt( (_regs), PGM_DATA_EXCEPTION);          \
+            CALL_PROGRAM_INTERRUPT( (_regs), PGM_DATA_EXCEPTION);          \
         }
 
   #else /* !defined( _FEATURE_SIE ) */
@@ -2209,7 +2209,7 @@ do {                                                                  \
         )                                                                      \
         {                                                                      \
             (_regs)->dxc = DXC_VECTOR_INSTRUCTION;                             \
-            (_regs)->program_interrupt( (_regs), PGM_DATA_EXCEPTION);          \
+            CALL_PROGRAM_INTERRUPT( (_regs), PGM_DATA_EXCEPTION);          \
         }
 
   #endif /* !defined( _FEATURE_SIE ) */

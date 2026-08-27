@@ -1028,7 +1028,7 @@ int     len;                            /* Length for page crossing  */
         if (!exec)
             regs->instinvalid = 1;
 
-        regs->program_interrupt( regs, PGM_SPECIFICATION_EXCEPTION );
+        CALL_PROGRAM_INTERRUPT_AND_RETURN( regs, PGM_SPECIFICATION_EXCEPTION, NULL );
     }
 
 #if defined( FEATURE_PER )
@@ -1067,7 +1067,7 @@ int     len;                            /* Length for page crossing  */
                 ON_IC_PER_IFNUL( regs );
                 regs->psw.IA = addr;
                 regs->psw.zeroilc = 1;
-                regs->program_interrupt( regs, PGM_PER_EVENT );
+                CALL_PROGRAM_INTERRUPT_AND_RETURN( regs, PGM_PER_EVENT, NULL );
             }
 #endif /* defined( FEATURE_PER3 ) */
         }

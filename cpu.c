@@ -1456,7 +1456,7 @@ PSA    *psa;                            /* -> Prefixed storage area  */
     RELEASE_INTLOCK(regs);
 
     if ( rc )
-        regs->program_interrupt(regs, rc);
+        CALL_PROGRAM_INTERRUPT(regs, rc);
 
     longjmp (regs->progjmp, SIE_INTERCEPT_RESTART);
 } /* end function restart_interrupt */
@@ -1600,7 +1600,7 @@ DEVBLK *dev;                            /* dev presenting interrupt  */
         if ( rc )
         {
             RELEASE_INTLOCK(regs);
-            regs->program_interrupt (regs, rc);
+            CALL_PROGRAM_INTERRUPT(regs, rc);
         }
     }
 
@@ -1685,7 +1685,7 @@ RADR    fsta;                           /* Failing storage address   */
     RELEASE_INTLOCK(regs);
 
     if ( rc )
-        regs->program_interrupt (regs, rc);
+        CALL_PROGRAM_INTERRUPT(regs, rc);
 
     longjmp (regs->progjmp, SIE_INTERCEPT_MCK);
 } /* end function perform_mck_interrupt */
@@ -1697,7 +1697,7 @@ void (ATTR_REGPARM(1) ARCH_DEP(process_interrupt))(REGS *regs)
 {
     /* Process PER program interrupts */
     if( OPEN_IC_PER(regs) )
-        regs->program_interrupt (regs, PGM_PER_EVENT);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_PER_EVENT);
 
     /* Obtain the interrupt lock */
     OBTAIN_INTLOCK(regs);
