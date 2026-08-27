@@ -1107,8 +1107,7 @@ BYTE    ccwkey;                         /* Bits 0-3=key, 4=suspend   */
     }
 
     /* If CSW pending, drain interrupt and present the CSW */
-    if (IOPENDING(dev) &&
-        testio(regs, dev, inst[1]) == 1)
+    if (testio(regs, dev, inst[1]) == 1)
         regs->psw.cc = 1;
 
     /* Else, if RIO, resume the subchannel operation */

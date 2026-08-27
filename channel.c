@@ -4931,7 +4931,11 @@ execute_halt:
         else
         {
             /* Update the CCW address in the SCSW */
-            STORE_FW(dev->scsw.ccwaddr,ccwaddr);
+            OBTAIN_DEVLOCK( dev );
+            {
+                STORE_FW(dev->scsw.ccwaddr,ccwaddr);
+            }
+            RELEASE_DEVLOCK( dev );
 
             /* Exit if fetch_ccw detected channel program check */
             if (chanstat != 0)

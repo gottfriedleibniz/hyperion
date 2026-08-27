@@ -2005,8 +2005,8 @@ int     aswitch;
         oldregs = malloc_aligned(sizeof(REGS), 4096);
         if (oldregs)
         {
-            memcpy(oldregs, regs, sizeof(REGS));
             obtain_lock(&sysblk.cpulock[cpu]);
+            memcpy(oldregs, regs, sizeof(REGS));
         }
         else
         {
