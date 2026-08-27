@@ -1718,6 +1718,9 @@ int     rc;                             /* Return code               */
     /* Set the main storage reference and change bits */
     ARCH_DEP( or_storage_key )( px, (STORKEY_REF | STORKEY_CHANGE) );
 
+    /* Obtain the interrupt lock for load_psw and s390_load_psw */
+    OBTAIN_INTLOCK (regs);
+
     /* Use the I-byte to set the SVC interruption code */
     regs->psw.intcode = i;
 
@@ -1740,11 +1743,15 @@ int     rc;                             /* Return code               */
 
     /* Load new PSW from PSA+X'60' */
     if ( (rc = ARCH_DEP(load_psw) ( regs, psa->svcnew ) ) )
+    {
+        RELEASE_INTLOCK (regs);
         regs->program_interrupt (regs, rc);
+    }
 
     /* Perform serialization and checkpoint synchronization */
     PERFORM_SERIALIZATION (regs);
     PERFORM_CHKPT_SYNC (regs);
+    RELEASE_INTLOCK (regs);
 
     RETURN_INTCHECK(regs);
 
