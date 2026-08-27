@@ -510,8 +510,9 @@ U64              wCPU[ MAX_CPU_ENGS ];  /* Wait CPU time    (usecs)  */
                 if( clock_gettime(sysblk.cpuclockid[i], &cputime) == 0 )
                 {
                     uCPU[i] = timespec2usecs(&cputime);
-                    tCPU[i] = uCPU[i] + ETOD_high64_to_usecs(sysblk.regs[i]->waittime_accumulated
-                                              + sysblk.regs[i]->waittime ) ;
+                    tCPU[i] = uCPU[i] + ETOD_high64_to_usecs(
+                                atomic_load_U64( &sysblk.regs[i]->waittime_accumulated ) +
+                                atomic_load_U64( &sysblk.regs[i]->waittime ));
                 }
             }
         }

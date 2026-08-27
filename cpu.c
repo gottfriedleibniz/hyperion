@@ -1860,7 +1860,7 @@ cpustate_stopping:
     /* Test for wait state */
     if (WAITSTATE(&regs->psw))
     {
-        regs->waittod = host_tod();
+        atomic_store_U64( &regs->waittod, host_tod() );
 
         /* Test for disabled wait PSW and issue message */
         if (IS_IC_DISABLED_WAIT_PSW( regs ))
@@ -1906,8 +1906,7 @@ cpustate_stopping:
         sysblk.waiting_mask &= ~(regs->cpubit);
 
         /* Calculate the time we waited */
-        regs->waittime += host_tod() - regs->waittod;
-        regs->waittod = 0;
+        atomic_add_U64(&regs->waittime, host_tod() - atomic_exchange_U64( &regs->waittod, 0 ));
 
         /* If late state change to stopping, go reprocess */
         if (unlikely(regs->cpustate == CPUSTATE_STOPPING))
