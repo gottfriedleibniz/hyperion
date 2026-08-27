@@ -50,12 +50,8 @@ CPU_BITMAP      intmask = 0;            /* Interrupt CPU mask        */
     for (cpu = 0; cpu < sysblk.hicpu; cpu++)
     {
         /* Ignore this CPU if it is not started */
-        if (!IS_CPU_ONLINE(cpu)
-         || CPUSTATE_STOPPED == sysblk.regs[cpu]->cpustate)
+        if (!CHECK_CPU_REGS( regs, cpu ) || CPUSTATE_STOPPED == regs->cpustate)
             continue;
-
-        /* Point to the CPU register context */
-        regs = sysblk.regs[cpu];
 
         /*-------------------------------------------*
          * [1] Check for clock comparator interrupt  *
@@ -224,13 +220,11 @@ bool    txf_PPA;                        /* true == PPA assist needed */
             {
                 obtain_lock( &sysblk.cpulock[ i ]);
                 {
-                    if (!IS_CPU_ONLINE( i ))
+                    if (!CHECK_CPU_REGS( regs, i))
                     {
                         release_lock( &sysblk.cpulock[ i ]);
                         continue;
                     }
-
-                    regs = sysblk.regs[i];
 
                     /* 0% if CPU is STOPPED */
                     if (regs->cpustate == CPUSTATE_STOPPED)

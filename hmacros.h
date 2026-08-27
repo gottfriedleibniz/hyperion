@@ -412,10 +412,10 @@ typedef int CMPFUNC(const void*, const void*);
 #define CPUSTATE_STOPPING       2       /* CPU is stopping           */
 #define CPUSTATE_STOPPED        3       /* CPU is stopped            */
 
-#define SET_CPU_REGS(_cpu, _regs) \
-  (sysblk.regs[(_cpu)] = (_regs))
-#define IS_CPU_ONLINE(_cpu) \
-  (sysblk.regs[(_cpu)] != NULL)
+#define GET_CPU_REGS(_cpu)         sysblk.regs[(_cpu)]
+#define SET_CPU_REGS(_cpu, _regs) (sysblk.regs[(_cpu)] = (_regs))
+#define IS_CPU_ONLINE(_cpu)       (GET_CPU_REGS(_cpu) != NULL)
+#define CHECK_CPU_REGS(_rv, _cpu) ((_rv) = GET_CPU_REGS(_cpu), (_rv) != NULL)
 
 #define HOST(  _regs )  (_regs)->hostregs
 #define GUEST( _regs )  (_regs)->guestregs

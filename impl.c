@@ -565,8 +565,8 @@ static void* watchdog_thread( void* arg )
         {
             /* We're only interested in ONLINE and STARTED CPUs */
             if (0
-                || !IS_CPU_ONLINE( cpu )
-                || (regs = sysblk.regs[ cpu ])->cpustate != CPUSTATE_STARTED
+                || !CHECK_CPU_REGS( regs, cpu )
+                || regs->cpustate != CPUSTATE_STARTED
             )
             {
                 /* CPU not ONLINE or not STARTED */
