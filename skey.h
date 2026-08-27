@@ -21,8 +21,8 @@
 #if defined( OPTION_ATOMIC_SKEYS )
   #define OR_SKEY(  ptr, op )       ((void)atomic_or_U8( ptr, op ))
   #define AND_SKEY( ptr, op )       ((void)atomic_and_U8( ptr, op ))
-  #define LOAD_SKEY( ptr )          (*(ptr))
-  #define STORE_SKEY( ptr, value )  (*(ptr) = (value))
+  #define LOAD_SKEY( ptr )          atomic_load_U8( (ptr) )
+  #define STORE_SKEY( ptr, value )  atomic_store_U8( (ptr), (value) )
 #else
   #define OR_SKEY(  ptr, op )       (*(ptr) |= (op))
   #define AND_SKEY( ptr, op )       (*(ptr) &= (op))

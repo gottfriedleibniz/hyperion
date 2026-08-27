@@ -732,6 +732,9 @@ static const char *build_info[] = {
 #if defined( OPTION_NOASYNC_SF_CMDS )           // Bypass bug in cache logic
     "With    OPTION_NOASYNC_SF_CMDS",           // (see GitHub Issue #618!)
 #endif
+#if defined( OPTION_ATOMIC_SKEYS )             // Update skeys atomically
+    "With    OPTION_ATOMIC_SKEYS",
+#endif
 
 //---------------------------------------------------------------------
 
