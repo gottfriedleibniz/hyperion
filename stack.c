@@ -1207,6 +1207,7 @@ int     i;                              /* Array subscript           */
 /*-------------------------------------------------------------------*/
 int ARCH_DEP(program_return_unstack) (REGS *regs, RADR *lsedap, int *rc)
 {
+ALIGN_8
 QWORD   newpsw;                         /* New PSW                   */
 LSED    lsed;                           /* Linkage stack entry desc. */
 VADR    lsea;                           /* Linkage stack entry addr  */

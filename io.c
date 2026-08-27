@@ -185,6 +185,7 @@ DEF_INST( modify_subchannel )
 int     b2;                             /* Effective addr base       */
 VADR    effective_addr2;                /* Effective address         */
 DEVBLK* dev;                            /* -> device block           */
+CACHE_ALIGN
 PMCW    pmcw;                           /* Path management ctl word  */
 
     S( inst, regs, b2, effective_addr2 );
@@ -537,6 +538,7 @@ DEF_INST( start_subchannel )
 int     b2;                             /* Effective addr base       */
 VADR    effective_addr2;                /* Effective address         */
 DEVBLK* dev;                            /* -> device block           */
+CACHE_ALIGN
 ORB     orb;                            /* Operation request block   */
 
     S( inst, regs, b2, effective_addr2 );
@@ -749,6 +751,7 @@ DEF_INST( store_subchannel )
 int     b2;                             /* Effective addr base       */
 VADR    effective_addr2;                /* Effective address         */
 DEVBLK* dev;                            /* -> device block           */
+CACHE_ALIGN
 SCHIB   schib;                          /* Subchannel information blk*/
 
     S( inst, regs, b2, effective_addr2 );
@@ -931,6 +934,7 @@ DEF_INST( test_subchannel )
 int     b2;                             /* Effective addr base       */
 VADR    effective_addr2;                /* Effective address         */
 DEVBLK* dev;                            /* -> device block           */
+CACHE_ALIGN
 IRB     irb;                            /* Interruption response blk */
 int     cc;                             /* Condition Code            */
 

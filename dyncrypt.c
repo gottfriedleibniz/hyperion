@@ -851,8 +851,10 @@ static void ARCH_DEP(kimd_sha)(int r1, int r2, REGS *regs, int klmd)
 
   int crypted;
   int fc;
+  CACHE_ALIGN
   BYTE message_block[128];
   int message_blocklen = 0;
+  CACHE_ALIGN
   BYTE parameter_block[64];
   int parameter_blocklen = 0;
 
@@ -1027,7 +1029,9 @@ static void ARCH_DEP(kimd_ghash)(int r1, int r2, REGS *regs)
 {
   int crypted;
   int i;
+  ALIGN_16
   BYTE message_block[16];
+  ALIGN_32
   BYTE parameter_block[32];
 
   UNREFERENCED(r1);
@@ -1116,8 +1120,10 @@ static void ARCH_DEP(klmd_sha)(int r1, int r2, REGS *regs)
   int fc;
   int i;
   int mbllen = 0;
+  CACHE_ALIGN
   BYTE message_block[128];
   int message_blocklen = 0;
+  CACHE_ALIGN
   BYTE parameter_block[80];
   int parameter_blocklen = 0;
 
@@ -1335,8 +1341,10 @@ static void ARCH_DEP(km_dea)(int r1, int r2, REGS *regs)
   des_context des_ctx;
   des3_context des3_ctx;
   int keylen;
+  ALIGN_8
   BYTE message_block[8];
   int modifier_bit;
+  CACHE_ALIGN
   BYTE parameter_block[48];
   int parameter_blocklen;
   int r1_is_not_r2;
@@ -1499,8 +1507,10 @@ static void ARCH_DEP(km_aes)(int r1, int r2, REGS *regs)
   rijndael_ctx context;
   int crypted;
   int keylen;
+  ALIGN_16
   BYTE message_block[16];
   int modifier_bit;
+  CACHE_ALIGN
   BYTE parameter_block[64];
   int parameter_blocklen;
   int r1_is_not_r2;
@@ -1612,8 +1622,10 @@ static void ARCH_DEP(km_xts_aes)(int r1, int r2, REGS *regs)
   int crypted;
   int i;
   int keylen;
+  ALIGN_16
   BYTE message_block[16];
   int modifier_bit;
+  CACHE_ALIGN
   BYTE parameter_block[80];
   int parameter_blocklen;
   int r1_is_not_r2;
@@ -1739,7 +1751,9 @@ static void ARCH_DEP(kmac_dea)(int r1, int r2, REGS *regs)
   int crypted;
   int i;
   int keylen;
+  ALIGN_8
   BYTE message_block[8];
+  CACHE_ALIGN
   BYTE parameter_block[56];
   int parameter_blocklen;
   int tfc;
@@ -1912,7 +1926,9 @@ static void ARCH_DEP(kmac_aes)(int r1, int r2, REGS *regs)
   int crypted;
   int i;
   int keylen;
+  ALIGN_16
   BYTE message_block[16];
+  CACHE_ALIGN
   BYTE parameter_block[80];
   int parameter_blocklen;
   int tfc;
@@ -2024,9 +2040,12 @@ static void ARCH_DEP(kmc_dea)(int r1, int r2, REGS *regs)
   int crypted;
   int i;
   int keylen;
+  ALIGN_8
   BYTE message_block[8];
   int modifier_bit;
+  ALIGN_8
   BYTE ocv[8];
+  CACHE_ALIGN
   BYTE parameter_block[56];
   int parameter_blocklen;
   int r1_is_not_r2;
@@ -2258,9 +2277,12 @@ static void ARCH_DEP(kmc_aes)(int r1, int r2, REGS *regs)
   int crypted;
   int i;
   int keylen;
+  ALIGN_16
   BYTE message_block[16];
   int modifier_bit;
+  ALIGN_16
   BYTE ocv[16];
+  CACHE_ALIGN
   BYTE parameter_block[80];
   int parameter_blocklen;
   int r1_is_not_r2;
@@ -2400,7 +2422,9 @@ static void ARCH_DEP(kmc_prng)(int r1, int r2, REGS *regs)
   des_context context3;
   int i;
   int crypted;
+  ALIGN_8
   BYTE message_block[8];
+  ALIGN_32
   BYTE parameter_block[32];
   BYTE ocv[8];
   BYTE tcv[8];
@@ -2524,11 +2548,14 @@ static void ARCH_DEP(kmctr_dea)(int r1, int r2, int r3, REGS *regs)
   des_context context1;
   des_context context2;
   des_context context3;
+  ALIGN_8
   BYTE countervalue_block[8];
   int crypted;
   int i;
   int keylen;
+  ALIGN_8
   BYTE message_block[8];
+  CACHE_ALIGN
   BYTE parameter_block[48];
   int parameter_blocklen;
   int r1_is_not_r2;
@@ -2708,7 +2735,9 @@ static void ARCH_DEP(kmctr_aes)(int r1, int r2, int r3, REGS *regs)
   int crypted;
   int i;
   int keylen;
+  ALIGN_16
   BYTE message_block[16];
+  CACHE_ALIGN
   BYTE parameter_block[64];
   int parameter_blocklen;
   int r1_is_not_r2;
@@ -2830,9 +2859,12 @@ static void ARCH_DEP(kmf_dea)(int r1, int r2, REGS *regs)
   int i;
   int keylen;
   int lcfb;
+  ALIGN_8
   BYTE message_block[8];
   int modifier_bit;
+  ALIGN_8
   BYTE output_block[8];
+  CACHE_ALIGN
   BYTE parameter_block[56];
   int parameter_blocklen;
   int r1_is_not_r2;
@@ -3028,9 +3060,12 @@ static void ARCH_DEP(kmf_aes)(int r1, int r2, REGS *regs)
   int i;
   int keylen;
   int lcfb;
+  ALIGN_16
   BYTE message_block[16];
   int modifier_bit;
+  ALIGN_16
   BYTE output_block[16];
+  CACHE_ALIGN
   BYTE parameter_block[80];
   int parameter_blocklen;
   int r1_is_not_r2;
@@ -3165,7 +3200,9 @@ static void ARCH_DEP(kmo_dea)(int r1, int r2, REGS *regs)
   int crypted;
   int i;
   int keylen;
+  ALIGN_8
   BYTE message_block[8];
+  CACHE_ALIGN
   BYTE parameter_block[56];
   int parameter_blocklen;
   int r1_is_not_r2;
@@ -3342,7 +3379,9 @@ static void ARCH_DEP(kmo_aes)(int r1, int r2, REGS *regs)
   int crypted;
   int i;
   int keylen;
+  ALIGN_16
   BYTE message_block[16];
+  CACHE_ALIGN
   BYTE parameter_block[80];
   int parameter_blocklen;
   int r1_is_not_r2;
@@ -3460,6 +3499,7 @@ static void ARCH_DEP(pcc_cmac_dea)(REGS *regs)
   BYTE k[8];
   int keylen;
   BYTE mask[8] = { 0x80, 0xc0, 0xe0, 0xf0, 0xf8, 0xfc, 0xfe, 0xff };
+  CACHE_ALIGN
   BYTE parameter_block[72];
   int parameter_blocklen;
   BYTE r64[8] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1b };
@@ -3671,6 +3711,7 @@ static void ARCH_DEP(pcc_cmac_aes)(REGS *regs)
   BYTE k[16];
   int keylen;
   BYTE mask[8] = { 0x80, 0xc0, 0xe0, 0xf0, 0xf8, 0xfc, 0xfe, 0xff };
+  CACHE_ALIGN
   BYTE parameter_block[104];
   int parameter_blocklen;
   BYTE r128[16] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x87 };
@@ -3913,6 +3954,7 @@ static void ARCH_DEP(pckmo_dea)(REGS *regs)
 {
   int fc;
   int keylen;
+  CACHE_ALIGN
   BYTE parameter_block[64];
   int parameter_blocklen;
 
@@ -3951,6 +3993,7 @@ static void ARCH_DEP(pckmo_aes)(REGS *regs)
 {
   int fc;
   int keylen;
+  CACHE_ALIGN
   BYTE parameter_block[64];
   int parameter_blocklen;
 
@@ -5038,8 +5081,10 @@ DEF_INST(dyn_perform_random_number_operation)
   U64 randbytes;
   U64 randnum;
   U64 randaddr;
+  CACHE_ALIGN
   BYTE entropy_input[512];
 #define         RAND_CHUNK_SIZE     256
+  CACHE_ALIGN
   BYTE randbuf[ RAND_CHUNK_SIZE ] = {0};
   struct DRNG_parmblock {
     BYTE rsvd1[4];
@@ -5057,16 +5102,20 @@ DEF_INST(dyn_perform_random_number_operation)
   int r1;
   int r2;
   /* TRNG Query Raw to Conditioned Ratio -- hardcoded for now */
+  ALIGN_8
   BYTE trng_query_bits[8] = { 0x00, 0x00, 0x00, 0xc0, 0x00, 0x00, 0x00, 0x20 };
   /* FIPS-140 known answer test data -- hardcoded for now */
+  CACHE_ALIGN
   BYTE entropy[64] =              { 0x32, 0x95, 0x11, 0x7f, 0x02, 0x37, 0x12, 0x70, 0x10, 0x5a, 0x37, 0x83, 0xcf, 0xe0, 0xbf, 0x5a,
                                     0xc1, 0x40, 0x8e, 0x6c, 0xea, 0xc5, 0xae, 0xeb, 0xd6, 0xd8, 0x14, 0xbc, 0x82, 0x7d, 0xc0, 0x4d,
                                     0x21, 0xa1, 0xe4, 0x80, 0xe3, 0xd5, 0xf2, 0xe3, 0x78, 0x31, 0x9a, 0xde, 0x9b, 0xdd, 0xda, 0x4c,
                                     0x2e, 0x93, 0xb7, 0x4e, 0x34, 0x8d, 0x5e, 0xe3, 0x2e, 0xd4, 0x6a, 0x1a, 0xe6, 0x25, 0x66, 0xe0 };
+  CACHE_ALIGN
   BYTE generated[64] =            { 0xf1, 0xdf, 0xe8, 0x33, 0x08, 0x11, 0xec, 0xd1, 0x0a, 0xeb, 0x68, 0x72, 0x8f, 0xac, 0x57, 0xb0,
                                     0x5d, 0xc8, 0xb4, 0x11, 0x6d, 0xfc, 0xc0, 0x66, 0xc4, 0xfb, 0xb6, 0x54, 0xb3, 0x17, 0xfb, 0x0e,
                                     0x01, 0x12, 0x65, 0x74, 0x8f, 0x79, 0x29, 0xb0, 0x18, 0x03, 0x66, 0x62, 0x5d, 0xe0, 0x66, 0x5b,
                                     0x11, 0x6c, 0x87, 0x8b, 0x0f, 0x05, 0xba, 0xd8, 0x31, 0x94, 0x16, 0x25, 0x88, 0x24, 0xdf, 0xdc };
+  CACHE_ALIGN
   BYTE parmblock_seeded[240] =    { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                                     0x00, 0x41, 0xf5, 0x9e, 0xd5, 0x80, 0x25, 0xaa, 0x04, 0x0e, 0x42, 0x04, 0x3c, 0xa5, 0xd1, 0x21,
                                     0xb4, 0x94, 0x20, 0x25, 0xe6, 0x16, 0xb0, 0x95, 0xb7, 0xfb, 0x26, 0x6d, 0xdb, 0x63, 0x65, 0xb6,
@@ -5082,6 +5131,7 @@ DEF_INST(dyn_perform_random_number_operation)
                                     0x37, 0xaa, 0x9c, 0x0e, 0xa3, 0xfd, 0x06, 0xce, 0x26, 0x75, 0xf8, 0x95, 0x49, 0xb2, 0xa4, 0xcb,
                                     0xb0, 0xd8, 0x53, 0xc3, 0xc6, 0xa0, 0x09, 0xf7, 0x33, 0xc5, 0xb3, 0xd2, 0xb3, 0x29, 0xd8, 0x9c,
                                     0x60, 0xef, 0x29, 0xb9, 0x02, 0xf1, 0x39, 0x42, 0x49, 0xb1, 0x94, 0x18, 0xcd, 0xab, 0xf6, 0x28 };
+  CACHE_ALIGN
   BYTE parmblock_generated[240] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40,
                                     0x00, 0x8d, 0xe7, 0xc1, 0x0f, 0x77, 0x11, 0x9d, 0xc6, 0xf3, 0x2f, 0xfa, 0xe1, 0xe0, 0x4e, 0xa3,
                                     0xf1, 0x41, 0xc2, 0xfc, 0x62, 0xd8, 0xac, 0xd1, 0x91, 0x08, 0xd8, 0xb7, 0xaa, 0x6e, 0xe8, 0x09,
