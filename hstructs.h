@@ -261,12 +261,14 @@ struct REGS {                           /* Processor registers       */
                 exrl:1,                 /* 1=EXRL, 0=EX instruction  */
                 permode:1,              /* 1=PER active              */
                 instinvalid:1,          /* 1=Inst field is invalid   */
-                opinterv:1,             /* 1=Operator intervening    */
-                checkstop:1,            /* 1=CPU is checkstop-ed     */
                 hostint:1,              /* 1=Host generated interrupt*/
                 host:1,                 /* REGS are hostregs         */
                 guest:1,                /* REGS are guestregs        */
                 diagnose:1;             /* Diagnose instr executing  */
+        unsigned int:0;                 /* Move to next storage unit */
+        unsigned int                    /* CPU Intervening Flags     */
+                opinterv:1,             /* 1=Operator intervening    */
+                checkstop:1;            /* 1=CPU is checkstop-ed     */
         unsigned int:0;                 /* Move to next storage unit */
         unsigned int                    /* Flags (intlock serialized)*/
                 dummy:1,                /* 1=Dummy regs structure    */
