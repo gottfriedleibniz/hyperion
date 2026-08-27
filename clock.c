@@ -476,7 +476,7 @@ void ARCH_DEP( store_int_timer_locked )( REGS* regs )
     S32 vtimer=0;
 
     itimer = get_int_timer( regs );
-    STORE_FW( regs->psa->inttimer, itimer );
+    STORE_MAIN_FW( regs->psa->inttimer, itimer );
 
 #if defined( FEATURE_ECPSVM )
 
@@ -516,7 +516,7 @@ void ARCH_DEP( fetch_int_timer )( REGS* regs )
 {
     S32 itimer;
 
-    FETCH_FW( itimer, regs->psa->inttimer );
+    FETCH_MAIN_FW( itimer, regs->psa->inttimer );
 
     OBTAIN_INTLOCK( HOSTREGS ? regs : NULL );
     {

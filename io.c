@@ -890,10 +890,10 @@ DEVBLK *dev;                            /* dev presenting interrupt  */
                 }
 
                 /* If operand address is zero, store in PSA */
-                STORE_FW( psa->ioid,ioid );
-                STORE_FW( psa->ioparm,ioparm );
+                STORE_MAIN_FW( psa->ioid,ioid );
+                STORE_MAIN_FW( psa->ioparm,ioparm );
 #if defined( FEATURE_001_ZARCH_INSTALLED_FACILITY ) || defined( _FEATURE_IO_ASSIST )
-                STORE_FW( psa->iointid,iointid );
+                STORE_MAIN_FW( psa->iointid,iointid );
 #endif
                 /* Do SIE intercept if needed */
 #if defined( _FEATURE_IO_ASSIST )

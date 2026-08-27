@@ -547,20 +547,20 @@ int rc;
     /* Test the EC mode bit in the IPL PSW */
     if (regs->psa->iplpsw[1] & 0x08) {
         /* In EC mode, store device address at locations 184-187 */
-        STORE_FW(regs->psa->ioid, dev->devnum);
+        STORE_MAIN_FW(regs->psa->ioid, dev->devnum);
     } else {
         /* In BC mode, store device address at locations 2-3 */
-        STORE_HW(regs->psa->iplpsw + 2, dev->devnum);
+        STORE_MAIN_HW(regs->psa->iplpsw + 2, dev->devnum);
     }
 #endif /*FEATURE_S370_CHANNEL*/
 
 #ifdef FEATURE_CHANNEL_SUBSYSTEM
     /* Set LPUM */
     dev->pmcw.lpum = 0x80;
-    STORE_FW(regs->psa->ioid, (dev->ssid<<16)|dev->subchan);
+    STORE_MAIN_FW(regs->psa->ioid, (dev->ssid<<16)|dev->subchan);
 
     /* Store zeroes at locations 188-191 */
-    memset (regs->psa->ioparm, 0, 4);
+    MAINSTOR_MSET (regs->psa->ioparm, 0, 4);
 #endif /*FEATURE_CHANNEL_SUBSYSTEM*/
 
     /* Save IPL device number, cpu number and lcss */

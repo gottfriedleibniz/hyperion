@@ -320,8 +320,8 @@ BYTE   *sk;                             /* Storage key addresses     */
     main2 = MADDR( (addr + 1) & ADDRESS_MAXWRAP( regs ), arn, regs,
                     ACCTYPE_WRITE, regs->psw.pkey );
     *sk |= (STORKEY_REF | STORKEY_CHANGE);
-    STORE_BYTE( main1, value >> 8 );
-    STORE_BYTE( main2, value & 0xFF );
+    STORE_MAIN_BYTE( main1, value >> 8 );
+    STORE_MAIN_BYTE( main2, value & 0xFF );
 }
 
 /*-------------------------------------------------------------------*/
@@ -446,10 +446,10 @@ BYTE   *mn;                             /* Main storage addresses    */
 U16     value;
 
     mn = MADDR( addr, arn, regs, ACCTYPE_READ, regs->psw.pkey );
-    value = READ_BYTE( mn ) << 8;
+    value = READ_MAIN_BYTE( mn ) << 8;
     mn = MADDR( (addr + 1) & ADDRESS_MAXWRAP( regs ), arn, regs,
                  ACCTYPE_READ, regs->psw.pkey );
-    value |= READ_BYTE( mn );
+    value |= READ_MAIN_BYTE( mn );
     return value;
 }
 
@@ -553,7 +553,7 @@ inline void ARCH_DEP( vstore2_unaligned )( U16 value, VADR addr, int arn, REGS* 
     BYTE   *mn;                             /* Main storage addresses    */
 
     mn = MADDRL( addr, 2, arn, regs, ACCTYPE_WRITE, regs->psw.pkey );
-    STORE_HW( mn, value );
+    STORE_MAIN_HW_UL( mn, value );
     ITIMER_UPDATE( addr, 2-1, regs );
 }
 
@@ -565,7 +565,7 @@ inline void ARCH_DEP( vstore4_unaligned )( U32 value, VADR addr, int arn, REGS* 
     BYTE   *mn;                             /* Main storage addresses    */
 
     mn = MADDRL( addr, 4, arn, regs, ACCTYPE_WRITE, regs->psw.pkey );
-    STORE_FW( mn, value );
+    STORE_MAIN_FW_UL( mn, value );
     ITIMER_UPDATE( addr, 4-1, regs );
 }
 
@@ -577,7 +577,7 @@ inline void ARCH_DEP( vstore8_unaligned )( U64 value, VADR addr, int arn, REGS* 
     BYTE   *mn;                             /* Main storage addresses    */
 
     mn = MADDRL( addr, 8, arn, regs, ACCTYPE_WRITE, regs->psw.pkey );
-    STORE_DW( mn, value );
+    STORE_MAIN_DW_UL( mn, value );
     ITIMER_UPDATE( addr, 8-1, regs );
 }
 
@@ -589,7 +589,7 @@ inline void ARCH_DEP( vstore16_unaligned )( QW value, VADR addr, int arn, REGS* 
     BYTE   *mn;                             /* Main storage addresses    */
 
     mn = MADDRL( addr, 16, arn, regs, ACCTYPE_WRITE, regs->psw.pkey );
-    STORE_QW( mn, value );
+    STORE_MAIN_QW_UL( mn, value );
     ITIMER_UPDATE( addr, 16-1, regs );
 }
 
@@ -602,7 +602,7 @@ inline U16 ARCH_DEP( vfetch2_unaligned )( VADR addr, int arn, REGS* regs )
 
     ITIMER_SYNC( addr, 2-1, regs );
     mn = MADDRL( addr, 2, arn, regs, ACCTYPE_READ, regs->psw.pkey );
-    return READ_HW( mn  );
+    return READ_MAIN_HW_UL( mn  );
 }
 
 /*-------------------------------------------------------------------*/
@@ -614,7 +614,7 @@ inline U32 ARCH_DEP( vfetch4_unaligned )( VADR addr, int arn, REGS* regs )
 
     ITIMER_SYNC( addr, 4-1, regs );
     mn = MADDRL( addr, 4, arn, regs, ACCTYPE_READ, regs->psw.pkey );
-    return READ_FW( mn );
+    return READ_MAIN_FW_UL( mn );
 }
 
 /*-------------------------------------------------------------------*/
@@ -626,7 +626,7 @@ inline U64 ARCH_DEP( vfetch8_unaligned )( VADR addr, int arn, REGS* regs )
 
     ITIMER_SYNC( addr, 8-1, regs );
     mn = MADDRL( addr, 8, arn, regs, ACCTYPE_READ, regs->psw.pkey );
-    return READ_DW( mn );
+    return READ_MAIN_DW_UL( mn );
 }
 
 /*-------------------------------------------------------------------*/
@@ -638,7 +638,7 @@ inline QW ARCH_DEP( vfetch16_unaligned )( VADR addr, int arn, REGS* regs )
 
     ITIMER_SYNC( addr, 16-1, regs );
     mn = MADDRL( addr, 16, arn, regs, ACCTYPE_READ, regs->psw.pkey );
-    return READ_QW( mn );
+    return READ_MAIN_QW_UL( mn );
 }
 
 /*-------------------------------------------------------------------*/
@@ -702,7 +702,7 @@ inline void ARCH_DEP( vstoreb )( BYTE value, VADR addr, int arn, REGS* regs )
 BYTE   *main1;                          /* Mainstor address          */
 
     main1 = MADDR( addr, arn, regs, ACCTYPE_WRITE, regs->psw.pkey );
-    STORE_BYTE( main1, value );
+    STORE_MAIN_BYTE( main1, value );
     ITIMER_UPDATE( addr, 1-1, regs );
 }
 
@@ -716,7 +716,7 @@ inline void ARCH_DEP( vstore2 )( U16 value, VADR addr, int arn, REGS* regs )
     {
         BYTE* mn;
         mn = MADDRL( addr, 2, arn, regs, ACCTYPE_WRITE, regs->psw.pkey );
-        STORE_HW( mn, value );
+        STORE_MAIN_HW( mn, value );
         ITIMER_UPDATE( addr, 2-1, regs );
     }
     else if (((VADR_L)addr & PAGEFRAME_BYTEMASK) != PAGEFRAME_BYTEMASK)
@@ -735,7 +735,7 @@ inline void ARCH_DEP( vstore4 )( U32 value, VADR addr, int arn, REGS* regs )
     {
         BYTE *mn;
         mn = MADDRL( addr, 4, arn, regs, ACCTYPE_WRITE, regs->psw.pkey );
-        STORE_FW( mn, value );
+        STORE_MAIN_FW( mn, value );
         ITIMER_UPDATE( addr, 4-1, regs );
     }
     else if (((VADR_L)addr & PAGEFRAME_BYTEMASK) <= (PAGEFRAME_BYTEMASK-3))
@@ -761,7 +761,7 @@ inline void ARCH_DEP( vstore8 )( U64 value, VADR addr, int arn, REGS* regs )
             *mn = CSWAP64( value );
         else
 #endif
-            STORE_DW( mn, value );
+            STORE_MAIN_DW( mn, value );
         ITIMER_UPDATE( addr, 8-1, regs );
     }
     else
@@ -796,7 +796,7 @@ inline void ARCH_DEP( vstore16 )( QW value, VADR addr, int arn, REGS* regs )
             *mn = CSWAP128( value );
         else
 #endif
-            STORE_QW( mn, value );
+            STORE_MAIN_QW( mn, value );
         ITIMER_UPDATE( addr, 16-1, regs );
     }
     else
@@ -871,7 +871,7 @@ BYTE   *mn;                             /* Main storage address      */
 
     ITIMER_SYNC( addr, 1-1, regs );
     mn = MADDR( addr, arn, regs, ACCTYPE_READ, regs->psw.pkey );
-    return READ_BYTE( mn );
+    return READ_MAIN_BYTE( mn );
 }
 
 /*-------------------------------------------------------------------*/
@@ -884,7 +884,7 @@ inline U16 ARCH_DEP( vfetch2 )( VADR addr, int arn, REGS* regs )
         BYTE *mn;
         ITIMER_SYNC( addr, 2-1, regs );
         mn = MADDRL( addr, 2,arn, regs, ACCTYPE_READ, regs->psw.pkey );
-        return READ_HW( mn );
+        return READ_MAIN_HW( mn );
     }
     else if (((VADR_L)addr & PAGEFRAME_BYTEMASK) != PAGEFRAME_BYTEMASK )
         return ARCH_DEP( vfetch2_unaligned )( addr, arn, regs );
@@ -901,7 +901,7 @@ inline U32 ARCH_DEP( vfetch4 )( VADR addr, int arn, REGS* regs )
         BYTE *mn;
         ITIMER_SYNC( addr, 4-1, regs );
         mn = MADDRL( addr, 4,arn, regs, ACCTYPE_READ, regs->psw.pkey );
-        return READ_FW( mn );
+        return READ_MAIN_FW( mn );
     }
     else if (((VADR_L)addr & PAGEFRAME_BYTEMASK) <= (PAGEFRAME_BYTEMASK-3))
         return ARCH_DEP( vfetch4_unaligned )( addr, arn, regs );
@@ -923,7 +923,7 @@ inline U64 ARCH_DEP( vfetch8 )( VADR addr, int arn, REGS* regs )
         if (regs->cpubit == regs->sysblk->started_mask)
             return CSWAP64( *mn );
 #endif
-        return READ_DW( mn );
+        return READ_MAIN_DW( mn );
     }
     else
     {
@@ -951,7 +951,7 @@ inline QW ARCH_DEP( vfetch16 )( VADR addr, int arn, REGS* regs )
         if (regs->cpubit == regs->sysblk->started_mask)
             return CSWAP128( *mn );
 #endif
-        return READ_QW( mn );
+        return READ_MAIN_QW( mn );
     }
     else
     {
@@ -1244,7 +1244,7 @@ int     len1,     len2;                 /* Lengths to copy           */
     {
         source1 = MADDR( addr2, arn2, regs, ACCTYPE_READ,  key2 );
         dest1   = MADDR( addr1, arn1, regs, ACCTYPE_WRITE, key1 );
-        STORE_BYTE( dest1 , READ_BYTE( source1 ));
+        STORE_MAIN_BYTE( dest1 , READ_MAIN_BYTE( source1 ));
         ITIMER_UPDATE( addr1, len, regs );
         return;
     }
@@ -1397,7 +1397,7 @@ int     len1,     len2;                 /* Lengths to copy           */
     {
         source1 = MADDR( addr2, arn2, regs, ACCTYPE_READ,  key2 );
         dest1   = MADDR( addr1, arn1, regs, ACCTYPE_WRITE, key1 );
-        STORE_BYTE( dest1, READ_BYTE( source1 ));
+        STORE_MAIN_BYTE( dest1, READ_MAIN_BYTE( source1 ));
         ITIMER_UPDATE( addr1, len, regs );
         return;
     }
@@ -1537,7 +1537,7 @@ int     len1, len2, len3;               /* Work areas for lengths    */
     {
         main2 = MADDR( addr2, space2, regs, ACCTYPE_READ,  key2 );
         main1 = MADDR( addr1, space1, regs, ACCTYPE_WRITE, key1 );
-        STORE_BYTE( main1, READ_BYTE( main2 ))
+        STORE_MAIN_BYTE( main1, READ_MAIN_BYTE( main2 ))
         ITIMER_UPDATE( addr1, len-1, regs );
         return;
     }

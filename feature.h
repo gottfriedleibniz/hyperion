@@ -239,6 +239,8 @@
 #undef F_AREG
 #undef STORE_W
 #undef FETCH_W
+#undef STORE_MAIN_W
+#undef FETCH_MAIN_W
 #undef AIV
 #undef SIEBK
 #undef ZPB
@@ -373,6 +375,8 @@
 #define F_AREG                  "%8.8"PRIX32
 #define STORE_W                 STORE_FW
 #define FETCH_W                 FETCH_FW
+#define STORE_MAIN_W          STORE_MAIN_FW
+#define FETCH_MAIN_W          FETCH_MAIN_FW
 #define AIV                     AIV_L
 #define SIEBK                   SIE1BK
 #define ZPB                     ZPB1
@@ -483,6 +487,8 @@
 #define F_AREG                  "%8.8"PRIX32
 #define STORE_W                 STORE_FW
 #define FETCH_W                 FETCH_FW
+#define STORE_MAIN_W          STORE_MAIN_FW
+#define FETCH_MAIN_W          FETCH_MAIN_FW
 #define AIV                     AIV_L
 #define SIEBK                   SIE1BK
 #define ZPB                     ZPB1
@@ -614,6 +620,8 @@
 #define F_AREG                  "%8.8"PRIX32
 #define STORE_W                 STORE_DW
 #define FETCH_W                 FETCH_DW
+#define STORE_MAIN_W          STORE_MAIN_DW
+#define FETCH_MAIN_W          FETCH_MAIN_DW
 #define AIV                     AIV_G
 #define SIEBK                   SIE2BK
 #define ZPB                     ZPB2

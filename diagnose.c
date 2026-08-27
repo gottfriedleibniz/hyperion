@@ -785,6 +785,7 @@ U32   code;
           /*   r1    is not used                                   */
           /*-------------------------------------------------------*/
           {
+            ALIGN_8
             union { U64     psw64;
                     DBLWRD  d_psw;
                   } savedpsw;
@@ -797,7 +798,7 @@ U32   code;
 
             /* short psw should be at address zero */
             /* save and validate                     */
-            memcpy( savedpsw.d_psw, regs->psa->iplpsw, sizeof( savedpsw.d_psw ) );
+            MAINSTOR_MCOPY( savedpsw.d_psw, regs->psa->iplpsw, sizeof( savedpsw.d_psw ) );
 
             /* check that psw bits 0, 2-4 are zero, bit 12 is one, and bits 25-30 are zero.*/
             if ( ( ( CSWAP64(savedpsw.psw64) & 0xB808007E00000000ULL) != 0x0008000000000000ULL ) )
@@ -831,7 +832,7 @@ U32   code;
 
             /* short psw should be at address zero */
             /* restore                               */
-            memcpy( regs->psa->iplpsw, savedpsw.d_psw, sizeof( savedpsw.d_psw ) );
+            MAINSTOR_MCOPY( regs->psa->iplpsw, savedpsw.d_psw, sizeof( savedpsw.d_psw ) );
 
             if ( DIAG308_DEBUG )
                 logmsg(">>>> DIAG308_START_KERNEL: start 's390_common_load_finish'\n");

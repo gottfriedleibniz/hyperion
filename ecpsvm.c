@@ -2231,7 +2231,7 @@ DEF_INST(ecpsvm_dispatch_main)
         /* Load VMDSTAT */
         B_VMDSTAT=EVM_IC(vmb+VMDSTAT);
         /* Check if I/O Old PSW has translation on */
-        if(regs->mainstor[0x38] & 0x04)
+        if( READ_MAIN_BYTE( regs->mainstor + 0x38 ) & 0x04 )
         {
             DEBUG_CPASSISTX(DISP0,WRMSG(HHC90000, "D", "DISP0 : I/O Old as XLATE on"));
             /* Yes - I/O Interrupt while running a USER */
@@ -3499,7 +3499,7 @@ int ecpsvm_dossm(REGS *regs,int b2,VADR effective_addr2)
     */
     /* Get CR0 - set ref bit on  fetched CR0 (already done in prolog for MICBLOK) */
     cregs=MADDR(micblok.MICCREG,USE_REAL_ADDR,regs,ACCTYPE_READ,0);
-    FETCH_FW(creg0,cregs);
+    FETCH_MAIN_FW(creg0,cregs);
 
     /* Reject if V CR0 specifies SSM Suppression */
     if(creg0 & 0x40000000)
@@ -3739,7 +3739,7 @@ int     ecpsvm_doassistsvc(REGS *regs,int svccode)
     {
         /* Also set SVC interrupt code */
         /* and ILC                     */
-        STORE_FW((BYTE *)&psa->svcint,0x00020000 | svccode);
+        STORE_MAIN_FW((BYTE *)&psa->svcint,0x00020000 | svccode);
     }
     /* Now, update some stuff in the REAL PSW */
     SASSIST_LPSW(newr);
@@ -4010,11 +4010,11 @@ int ecpsvm_dostctl(REGS *regs,int r1,int r3,int b2,VADR effective_addr2)
     /* Load the CRs from the ECBLOK */
     if(B_VMPSTAT & VMV370R)
     {
-        FETCH_FW( F_ECBLOK, regs->mainstor+vmb+VMECEXT );
+        FETCH_MAIN_FW( F_ECBLOK, regs->mainstor+vmb+VMECEXT );
         for(i=0;i<16;i++)
         {
              ecb_p=MADDR(F_ECBLOK+(i*4),USE_REAL_ADDR,regs,ACCTYPE_READ,0);
-             FETCH_FW( crs[i], ecb_p );
+             FETCH_MAIN_FW( crs[i], ecb_p );
         }
     }
     else
@@ -4022,7 +4022,7 @@ int ecpsvm_dostctl(REGS *regs,int r1,int r3,int b2,VADR effective_addr2)
         F_ECBLOK=vmb+VMECEXT;  /* Update ECBLOK ADDRESS for VCR0 Update */
         ecb_p=MADDR(F_ECBLOK,USE_REAL_ADDR,regs,ACCTYPE_READ,0);
         /* Load OLD CR0 From VMBLOK */
-        FETCH_FW( crs[0], ecb_p );
+        FETCH_MAIN_FW( crs[0], ecb_p );
     }
 
     /* Determine the range of CRs to be stored */
@@ -4100,11 +4100,11 @@ int ecpsvm_dolctl(REGS *regs,int r1,int r3,int b2,VADR effective_addr2)
     }
     if(B_VMPSTAT & VMV370R)
     {
-        FETCH_FW( F_ECBLOK, regs->mainstor+vmb+VMECEXT );
+        FETCH_MAIN_FW( F_ECBLOK, regs->mainstor+vmb+VMECEXT );
     for(i=0;i<16;i++)
     {
         ecb_p=MADDR(F_ECBLOK+(i*4),USE_REAL_ADDR,regs,ACCTYPE_READ,0);
-        FETCH_FW( ocrs[i], ecb_p );
+        FETCH_MAIN_FW( ocrs[i], ecb_p );
     }
     }
     else
@@ -4112,7 +4112,7 @@ int ecpsvm_dolctl(REGS *regs,int r1,int r3,int b2,VADR effective_addr2)
         F_ECBLOK=vmb+VMECEXT;  /* Update ECBLOK ADDRESS for VCR0 Update */
     ecb_p=MADDR(F_ECBLOK,USE_REAL_ADDR,regs,ACCTYPE_READ,0);
         /* Load OLD CR0 From VMBLOK */
-    FETCH_FW( ocrs[0], ecb_p );
+    FETCH_MAIN_FW( ocrs[0], ecb_p );
     }
     for(i=0;i<16;i++)
     {
@@ -4240,7 +4240,7 @@ int ecpsvm_dolctl(REGS *regs,int r1,int r3,int b2,VADR effective_addr2)
             j-=16;
         }
         ecb_p=MADDR(F_ECBLOK+(j*4),USE_REAL_ADDR,regs,ACCTYPE_WRITE,0);
-        STORE_FW(ecb_p,ocrs[j]);
+        STORE_MAIN_FW(ecb_p,ocrs[j]);
     }
     DEBUG_SASSISTX(LCTL,MSGBUF(buf, "SASSIST LCTL %d,%d Done",r1,r3));
     DEBUG_SASSISTX(LCTL,WRMSG(HHC90000, "D", buf));
@@ -4424,8 +4424,8 @@ int ecpsvm_dolra(REGS *regs,int r1,int b2,VADR effective_addr2)
 
     /* Get virtual control regs 0 and 1 */
     cregs=MADDR(micblok.MICCREG,USE_REAL_ADDR,regs,ACCTYPE_READ,0);
-    FETCH_FW(cr0,cregs);
-    FETCH_FW(cr1,cregs+4);
+    FETCH_MAIN_FW(cr0,cregs);
+    FETCH_MAIN_FW(cr1,cregs+4);
 
     /* Separate out the segment table lengths and segment table origins in V-CR1 and MICRSEG */
     vmb = vpswa-0xA8;

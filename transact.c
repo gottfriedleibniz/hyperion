@@ -1486,13 +1486,13 @@ int        retry;           /* Actual retry code                     */
 
     if (pi_tdb)
     {
-        memcpy( pi_tdb, &regs->txf_tdb, sizeof( TDB ));
+        MAINSTOR_MCOPY( pi_tdb, &regs->txf_tdb, sizeof( TDB ));
         ARCH_DEP( or_storage_key )( MAIN_TO_ABS( pi_tdb ), (STORKEY_REF | STORKEY_CHANGE) );
     }
 
     if (tb_tdb)
     {
-        memcpy( tb_tdb, &regs->txf_tdb, sizeof( TDB ));
+        MAINSTOR_MCOPY( tb_tdb, &regs->txf_tdb, sizeof( TDB ));
         ARCH_DEP( or_storage_key )( MAIN_TO_ABS( tb_tdb ), (STORKEY_REF | STORKEY_CHANGE) );
     }
 

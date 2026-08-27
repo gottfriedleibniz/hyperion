@@ -458,7 +458,7 @@ static inline void set_alsi( DEVBLK* dev, BYTE bits )
 
         obtain_lock( &sysblk.mainlock );
         {
-            *alsi |= bits;
+            (void)OR_MAIN_BYTE(alsi, bits);
             ARCH_DEP( or_dev_4K_storage_key )( dev, dev->qdio.alsi, (STORKEY_REF | STORKEY_CHANGE) );
         }
         release_lock( &sysblk.mainlock );
@@ -480,10 +480,10 @@ static inline void set_dsci( DEVBLK* dev, BYTE bits )
 
         obtain_lock( &sysblk.mainlock );
         {
-            *dsci |= bits;
+            (void)OR_MAIN_BYTE(dsci, bits);
             ARCH_DEP( or_dev_4K_storage_key )( dev, dev->qdio.dsci, (STORKEY_REF | STORKEY_CHANGE) );
 
-            *alsi |= bits;
+            (void)OR_MAIN_BYTE(alsi, bits);
             ARCH_DEP( or_dev_4K_storage_key )( dev, dev->qdio.alsi, (STORKEY_REF | STORKEY_CHANGE) );
         }
         release_lock( &sysblk.mainlock );
@@ -3611,7 +3611,7 @@ static QRC write_buffered_packets( DEVBLK* dev, OSA_GRP *grp,
         }
 
         /* Determine if Layer 2 Ethernet frame or Layer 3 IP packet */
-        FETCH_BYTE( hdr_id, hdr );
+        FETCH_MAIN_BYTE( hdr_id, hdr );
         switch (hdr_id)
         {
         U16 length;
@@ -3621,7 +3621,7 @@ static QRC write_buffered_packets( DEVBLK* dev, OSA_GRP *grp,
             o2hdr = (OSA_HDR2*)hdr;
             hdrlen = sizeof(OSA_HDR2);
             pkt = hdr + hdrlen;
-            FETCH_HW( length, o2hdr->pktlen );
+            FETCH_MAIN_HW( length, o2hdr->pktlen );
             pktlen = length;
          /* eth = (ETHFRM*)pkt; */
             break;
@@ -3631,7 +3631,7 @@ static QRC write_buffered_packets( DEVBLK* dev, OSA_GRP *grp,
             o3hdr = (OSA_HDR3*)hdr;
             hdrlen = sizeof(OSA_HDR3);
             pkt = hdr + hdrlen;
-            FETCH_HW( length, o3hdr->length );
+            FETCH_MAIN_HW( length, o3hdr->length );
             pktlen = length;
             break;
         }
