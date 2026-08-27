@@ -674,7 +674,8 @@ extern              U64  thread_cputime_us(const REGS*);    /* Thread real CPU u
 
 #define TOD_CLOCK(_regs)            \
                                     \
-    ((tod_value.high & 0x00FFFFFFFFFFFFFFULL) + (_regs)->tod_epoch)
+    ((atomic_load_U64( &tod_value.high ) & 0x00FFFFFFFFFFFFFFULL) \
+    + atomic_load_S64( &(_regs)->tod_epoch))
 
 #define INTERVAL_TIMER(_regs)       \
                                     \
