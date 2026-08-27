@@ -1143,7 +1143,7 @@ static void *telnet_thread(void *vca)
     {
         ca->sfd = 0;
         ca->sfd=accept(ca->lfd,NULL,0);
-        if (ca->sfd < 1)
+        if (ca->sfd < 0)
             continue;
         if  (connect_client(&ca->sfd))
         {
