@@ -267,6 +267,7 @@ struct REGS {                           /* Processor registers       */
                 host:1,                 /* REGS are hostregs         */
                 guest:1,                /* REGS are guestregs        */
                 diagnose:1;             /* Diagnose instr executing  */
+        unsigned int:0;                 /* Move to next storage unit */
         unsigned int                    /* Flags (intlock serialized)*/
                 dummy:1,                /* 1=Dummy regs structure    */
                 configured:1,           /* 1=CPU is online           */
@@ -1571,7 +1572,7 @@ struct DEVBLK {                         /* Device configuration block*/
                 himdev:1,               /* 1=is a HIM device         */
                 debug:1,                /* 1=generic debug flag      */
                 reinit:1;               /* 1=devinit, not attach     */
-
+        unsigned int:0;                 /* Move to next storage unit */
         unsigned int                    /* Device state - serialized
                                             by dev->lock             */
                 busy:1,                 /* 1=Device is busy          */
@@ -1970,15 +1971,18 @@ struct DEVBLK {                         /* Device configuration block*/
         BYTE    ckdlcount;              /* Locate record count       */
         BYTE    ckdextcd;               /* extended code             */
         void   *cckd_ext;               /* -> CCKD_EXT, else NULL    */
-        /*
-         * #TODO: MSVC handles bit-field packing by aligning members to the
-         * boundary of their underlying type, inserting padding to ensure fields
-         * do not split across boundaries defined by the type size. Change to
-         * u_int when bumping HDL_VERS_DEVBLK.
-         */
         BYTE    cckd64:1;               /* 1=CCKD64/CFBA64           */
         BYTE    devcache:1;             /* 0 = device cache off
                                            1 = device cache on       */
+        /* 
+         * MSVC allocates bit-fields within storage units based on their
+         * underlying type, inserting padding when necessary to prevent a
+         * bit-field from crossing a boundary defined by that type.
+         *
+         * To match this behavior across compilers, use a zero-width field
+         * of the NEXT type to explicitly force the allocation boundary.
+         */
+        u_int   :0;                     /* Move to next storage unit */
         u_int   ckd3990:1;              /* 1=Control unit is 3990    */
         u_int   ckd3880:1;              /* 1=Control unit is 3880    */
         u_int   ckdxtdef:1;             /* 1=Define Extent processed */
@@ -2006,7 +2010,8 @@ struct DEVBLK {                         /* Device configuration block*/
         u_int   ckdUCnxt:1;             /* 1=CMDREJ next chained CCW     :AE: */
         u_int   ckdPostRSSD:1;          /* 1=Prev CCW was RSSD           :AE: */
         u_int   ckdPostSSM:1;           /* 1=Prev CCW was SSM            :AE: */
-        /* See #TODO above */
+        /* See comment above */
+        BYTE    :0;                     /* Force alignment to next byte */
         BYTE    ckdnvs:1;               /* 1=NVS defined             */
         BYTE    ckdraid:1;              /* 1=RAID device             */
         U16     ckdssdlen;              /* #of bytes of data prepared
