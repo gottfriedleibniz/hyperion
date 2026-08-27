@@ -320,6 +320,16 @@
   #define FLEXIBLE_ARRAY 0      // ("DEVBLK *memdev[0];" must be used instead)
 #endif
 
+#if defined(__has_attribute)
+  #if __has_attribute(disable_sanitizer_instrumentation)
+    #define DISABLE_SANITIZER_INSTRUMENTATION __attribute__((disable_sanitizer_instrumentation))
+  #else
+    #define DISABLE_SANITIZER_INSTRUMENTATION /* */
+  #endif
+#else
+    #define DISABLE_SANITIZER_INSTRUMENTATION /* */
+#endif
+
 #if defined( HAVE_ATTR_REGPARM )// (must follow "hercwind.h")
   #ifdef _MSVC_
     #define  ATTR_REGPARM(n)    __fastcall
