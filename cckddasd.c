@@ -2287,7 +2287,7 @@ BYTE            buf2[ 64*1024 ];        /* 64K Compress buffer       */
                )
         )
         {
-            cckdblk.stats_stresswrites++;
+            atomic_add_U64( &cckdblk.stats_stresswrites, 1 );
 
             comp = len < CCKD_STRESS_MINLEN ? CCKD_COMPRESS_NONE
                                             : CCKD_STRESS_COMP;
@@ -3627,8 +3627,8 @@ CCKD_L2ENT      l2;                     /* Level 2 entry             */
 
         cckd->reads[sfx]++;
         cckd->totreads++;
-        cckdblk.stats_reads++;
-        cckdblk.stats_readbytes += rc;
+        atomic_add_U64( &cckdblk.stats_reads, 1 );
+        atomic_add_U64( &cckdblk.stats_readbytes, (U64)rc );
         if (cckd->notnull == 0 && trk > 1) cckd->notnull = 1;
     }
     else
@@ -3719,8 +3719,8 @@ int             size;                   /* Size of new track         */
 
         cckd->writes[sfx]++;
         cckd->totwrites++;
-        cckdblk.stats_writes++;
-        cckdblk.stats_writebytes += rc;
+        atomic_add_U64( &cckdblk.stats_writes, 1 );
+        atomic_add_U64( &cckdblk.stats_writebytes, (U64)rc );
     }
     else
     {
