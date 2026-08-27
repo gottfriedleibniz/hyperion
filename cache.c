@@ -292,7 +292,7 @@ void *cache_getbuf(int ix, int i, int len)
     if (len > 0
      && cacheblk[ix].cache[i].buf != NULL
      && cacheblk[ix].cache[i].len < len) {
-        atomic_update64( &cacheblk[ix].size, -cacheblk[ix].cache[i].len );
+        atomic_add_S64( &cacheblk[ix].size, -cacheblk[ix].cache[i].len );
         free (cacheblk[ix].cache[i].buf);
         cacheblk[ix].cache[i].buf = NULL;
         cacheblk[ix].cache[i].len = 0;
@@ -307,10 +307,10 @@ void *cache_setbuf(int ix, int i, void *buf, int len)
     void *oldbuf;
     if (cache_check(ix,i)) return NULL;
     oldbuf = cacheblk[ix].cache[i].buf;
-    atomic_update64( &cacheblk[ix].size, -cacheblk[ix].cache[i].len );
+    atomic_add_S64( &cacheblk[ix].size, -cacheblk[ix].cache[i].len );
     cacheblk[ix].cache[i].buf = buf;
     cacheblk[ix].cache[i].len = len;
-    atomic_update64( &cacheblk[ix].size, len );
+    atomic_add_S64( &cacheblk[ix].size, len );
     return oldbuf;
 }
 
@@ -354,7 +354,7 @@ int cache_release(int ix, int i, int flag)
 
     if ((flag & CACHE_FREEBUF) && buf != NULL) {
         free (buf);
-        atomic_update64( &cacheblk[ix].size, -len );
+        atomic_add_S64( &cacheblk[ix].size, -len );
         buf = NULL;
         len = 0;
     }
@@ -583,5 +583,5 @@ static void cache_allocbuf(int ix, int i, int len)
         }
     }
     cacheblk[ix].cache[i].len = len;
-    atomic_update64( &cacheblk[ix].size, len );
+    atomic_add_S64( &cacheblk[ix].size, len );
 }

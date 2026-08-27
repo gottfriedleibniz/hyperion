@@ -7354,7 +7354,7 @@ BYTE   *dest;                           /* Pointer to target byte    */
     OBTAIN_MAINLOCK( regs );
     {
         /* AND byte with immediate operand, setting condition code */
-        regs->psw.cc = (H_ATOMIC_OP( dest, i2, and, And, & ) != 0);
+        regs->psw.cc = (atomic_and_U8( dest, i2 ) != 0);
     }
     RELEASE_MAINLOCK( regs );
 
@@ -7757,7 +7757,7 @@ BYTE   *dest;                           /* Pointer to target byte    */
     OBTAIN_MAINLOCK( regs );
     {
         /* XOR byte with immediate operand, setting condition code */
-        regs->psw.cc = (H_ATOMIC_OP( dest, i2, xor, Xor, ^ ) != 0);
+        regs->psw.cc = (atomic_xor_U8( dest, i2 ) != 0);
     }
     RELEASE_MAINLOCK( regs );
 
@@ -8158,7 +8158,7 @@ BYTE   *dest;                           /* Pointer to target byte    */
     OBTAIN_MAINLOCK( regs );
     {
         /* OR byte with immediate operand, setting condition code */
-        regs->psw.cc = (H_ATOMIC_OP( dest, i2, or, Or, | ) != 0);
+        regs->psw.cc = (atomic_or_U8( dest, i2 ) != 0);
     }
     RELEASE_MAINLOCK( regs );
 

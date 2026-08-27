@@ -14,7 +14,7 @@
 /*********************************************************************/
 /* This  code  was  written  originally  to  support the Interlocked */
 /* Access  Facility  2  (NI  OI  XI  NIY  OIY XIY instructions).  It */
-/* defines  the  macro  H_ATOMIC_OP to atomically fetch and update a */
+/* defines  atomic operations to atomically fetch and update a       */
 /* storage  location,  or  (if  the  operation  cannot  be performed */
 /* atomically)  to  perform the original logical operation.  For GCC */
 /* and  CLANG  the  underlying intrinsic function is overloaded, but */
@@ -35,15 +35,12 @@
 /* them  if  so.   If  not,  we  do not implement IAF2 (STFLE bit 52 */
 /* remains off) and fall back on the original code.                  */
 /*                                                                   */
-/* The macro that we export is                                       */
-/*    H_ATOMIC_OP(ptr, imm, op, Op, fallback)                        */
+/* The operations we export take the form:                           */
+/*    atomic_{OP}_{TYPE}(PTR, IMM)                                   */
+/*    OP       The actual logical operation to perform               */
+/*    TYPE     The underling pointer type                            */
 /*    ptr      Pointer to the [byte] to update                       */
 /*    imm      The immediate field from the instruction (i2)         */
-/*    op       The actual logical operation to perform (lowercase)   */
-/*             Use and/or/xor.  For gcc intrinsic.                   */
-/*    Op       The actual logical operation to perform (leading      */
-/*             uppercase.  Use And/Or/Xor.  For MSVC intrinsic.      */
-/*    fallback The C operator (& | ^).  Omit equal sign.             */
 /*                                                                   */
 /* Refer to general1.c instruction NI for an example.                */
 /*                                                                   */
@@ -82,9 +79,8 @@
 #define _JPH_HATOMIC_H
 
 #if defined( _MSVC_ )
-  #if (_MSC_VER < VS2015) || !defined(HAVE_STDATOMIC_H) || defined(__STDC_NO_ATOMICS__)
-    #undef  C11_ATOMICS_AVAILABLE
-  #else
+  #if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L \
+                                && !defined( __STDC_NO_ATOMICS__ )
     #define C11_ATOMICS_AVAILABLE
     #define C11_ATOMIC_BOOL_LOCK_FREE      ATOMIC_BOOL_LOCK_FREE
     #define C11_ATOMIC_CHAR_LOCK_FREE      ATOMIC_CHAR_LOCK_FREE
@@ -96,7 +92,17 @@
     #define C11_ATOMIC_LONG_LOCK_FREE      ATOMIC_LONG_LOCK_FREE
     #define C11_ATOMIC_LLONG_LOCK_FREE     ATOMIC_LLONG_LOCK_FREE
     #define C11_ATOMIC_POINTER_LOCK_FREE   ATOMIC_POINTER_LOCK_FREE
+  #else
+    #undef  C11_ATOMICS_AVAILABLE
   #endif
+#endif
+
+/*-------------------------------------------------------------------*/
+/* Hercules Atomic Configuration                                     */
+/*-------------------------------------------------------------------*/
+
+#if defined( C11_ATOMICS_AVAILABLE )
+  #include <stdatomic.h>
 #endif
 
 #define NEVER_ATOMIC        0
@@ -109,33 +115,30 @@
 #define IAF2_ATOMIC_INTRINSICS      3
 #define IAF2_SYNC_BUILTINS          4
 
+#if defined( C11_ATOMICS_AVAILABLE ) && \
+    (C11_ATOMIC_CHAR_LOCK_FREE == ALWAYS_ATOMIC || \
+    (C11_ATOMIC_CHAR_LOCK_FREE == SOMETIMES_ATOMIC && defined( _MSVC_ )))
+  #define HERC_ATOMICS    IAF2_C11_STANDARD_ATOMICS
+#elif defined( _MSVC_ )
+  #define HERC_ATOMICS    IAF2_MICROSOFT_INTRINSICS
+#elif defined( HAVE_ATOMIC_INTRINSICS )
+  #define HERC_ATOMICS    IAF2_ATOMIC_INTRINSICS
+#elif defined( HAVE_SYNC_BUILTINS )
+  #define HERC_ATOMICS    IAF2_SYNC_BUILTINS
+#else
+  #define HERC_ATOMICS    IAF2_ATOMICS_UNAVAILABLE
+
+  WARNING( "Missing atomic atomic support!" )
+#endif
+
+/*-------------------------------------------------------------------*/
+
+/*-------------------------------------------------------------------*/
+/* Interlocked Access Facility 2 Configuration                       */
+/*-------------------------------------------------------------------*/
+
 #if !defined( DISABLE_IAF2 )
-  #if defined( C11_ATOMICS_AVAILABLE )
-    #include <stdatomic.h>
-    #if C11_ATOMIC_CHAR_LOCK_FREE == ALWAYS_ATOMIC
-      #define CAN_IAF2      IAF2_C11_STANDARD_ATOMICS
-    #else
-      #if defined( _MSVC_ )
-        #define CAN_IAF2    IAF2_MICROSOFT_INTRINSICS
-      #elif defined( HAVE_ATOMIC_INTRINSICS )
-        #define CAN_IAF2    IAF2_ATOMIC_INTRINSICS
-      #elif defined( HAVE_SYNC_BUILTINS )
-        #define CAN_IAF2    IAF2_SYNC_BUILTINS
-      #else
-        #define CAN_IAF2    IAF2_ATOMICS_UNAVAILABLE
-      #endif
-    #endif
-  #else  /* !C11_ATOMICS_AVAILABLE */
-    #if defined( _MSVC_ )
-      #define CAN_IAF2      IAF2_MICROSOFT_INTRINSICS
-    #elif defined( HAVE_ATOMIC_INTRINSICS )
-      #define CAN_IAF2      IAF2_ATOMIC_INTRINSICS
-    #elif defined( HAVE_SYNC_BUILTINS )
-      #define CAN_IAF2      IAF2_SYNC_BUILTINS
-    #else
-      #define CAN_IAF2      IAF2_ATOMICS_UNAVAILABLE
-    #endif
-  #endif
+  #define CAN_IAF2          HERC_ATOMICS
 #else /* defined( DISABLE_IAF2 ) */
   #define CAN_IAF2          IAF2_ATOMICS_UNAVAILABLE
 #endif
@@ -182,5 +185,21 @@
 #else /* (none of the above) */
   #error LOGIC ERROR! in header file hatomic.h!
 #endif /* CAN_IAF2 ... */
+
+/*-------------------------------------------------------------------*/
+
+/*-------------------------------------------------------------------*/
+/* Atomic Operations                                                 */
+/*-------------------------------------------------------------------*/
+
+#define atomic_or_U8(ptr, imm)    H_ATOMIC_OP( (volatile U8*)(ptr), (imm),  or,  Or, | )
+#define atomic_and_U8(ptr, imm)   H_ATOMIC_OP( (volatile U8*)(ptr), (imm), and, And, & )
+#define atomic_xor_U8(ptr, imm)   H_ATOMIC_OP( (volatile U8*)(ptr), (imm), xor, Xor, ^ )
+
+#define atomic_add_U32(ptr, imm) ((void)H_ATOMIC_OP( (ptr), (imm), add, ExchangeAdd, + ))
+#define atomic_add_U64(ptr, imm) ((void)H_ATOMIC_OP( (ptr), (imm), add, ExchangeAdd, + ))
+#define atomic_add_S64(ptr, imm) atomic_add_U64(ptr, imm)
+
+/*-------------------------------------------------------------------*/
 
 #endif /* _JPH_HATOMIC_H */
