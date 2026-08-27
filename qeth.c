@@ -1661,7 +1661,10 @@ U16 offph;
                         }
 
                         if (was_enabled)
-                            VERIFY( qeth_enable_interface( dev, grp ) == 0);
+                        {
+                            rc = qeth_enable_interface( dev, grp );
+                            VERIFY( rc == 0 );
+                        }
 
                         if (rc != 0)
                         {
@@ -5727,8 +5730,14 @@ U32 num;                                /* Number of bytes to move   */
             }
 #else // Linux: always do 'qeth_select' on both file descriptors
             FD_SET( grp->ppfd[0], &readset );
-            FD_SET( grp->ttfd,    &readset );
-            fd = max( grp->ppfd[0], grp->ttfd );
+            fd = grp->ppfd[0];
+
+            /* Ensure TunTap descriptor is valid (i.e, created without error) */
+            if ( grp->ttfd >= 0 )
+            {
+                FD_SET( grp->ttfd, &readset );
+                fd = max( fd, grp->ttfd );
+            }
 #endif // (Windows or Linux)
 
             /* Wait (but only very briefly) for more work to arrive */
@@ -5787,7 +5796,7 @@ U32 num;                                /* Number of bytes to move   */
             }
 
             /* Check if any new packets have arrived */
-            if ((rc && FD_ISSET( grp->ttfd, &readset )) || grp->l3r.firstbhr)
+            if ((rc && grp->ttfd >= 0 && FD_ISSET( grp->ttfd, &readset )) || grp->l3r.firstbhr)
             {
                 /* Process packets if Queue is available */
                 if (likely( dev->qdio.i_qmask ))
