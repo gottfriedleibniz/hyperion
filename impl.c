@@ -1043,7 +1043,7 @@ int     rc;
     */
     if (argc == 2 && strcmp(argv[1], "--version") == 0)
     {
-        display_version(stdout, 0, NULL);
+        display_version(stdout, -1, NULL);
         return 0;
     }
 
@@ -1380,7 +1380,7 @@ int     rc;
         switch (rc)
         {
           case PROCESS_ARGS_ERROR:
-            display_version(stdout, 0, NULL);
+            display_version(stdout, -1, NULL);
 
             /* Show them our command line arguments */
             arghelp();
@@ -1416,9 +1416,9 @@ int     rc;
     */
 
     /* Always show version right away */
-    display_version(stdout, 0, NULL);
-    display_build_options ( stdout, 0 );
-    display_extpkg_vers   ( stdout, 0 );
+    display_version(stdout, -1, NULL);
+    display_build_options ( stdout, -1 );
+    display_extpkg_vers   ( stdout, -1 );
 
     /* We log these *after* the version number display. */
 
@@ -1928,7 +1928,7 @@ static int process_args( int argc, char* argv[] )
                 break;
 
             case 'V':
-                display_version(stdout, 0, NULL);
+                display_version(stdout, -1, NULL);
                 arg_error = PROCESS_ARGS_EXIT;
                 break;
 
@@ -1947,14 +1947,14 @@ static int process_args( int argc, char* argv[] )
                         || strcasecmp( optarg, "version" ) == 0
                     )
                     {
-                        display_version( stdout, 0, NULL );
+                        display_version( stdout, -1, NULL );
                         arg_error = PROCESS_ARGS_EXIT;
                     }
                     else if (0
                         || strcasecmp( optarg, "build"   ) == 0
                     )
                     {
-                        display_build_options( stdout, 0 );
+                        display_build_options( stdout, -1 );
                         arg_error = PROCESS_ARGS_EXIT;
                     }
                     else if (0
@@ -1963,9 +1963,9 @@ static int process_args( int argc, char* argv[] )
                         || strcasecmp( optarg, "full" ) == 0
                     )
                     {
-                        display_version      ( stdout, 0, NULL );
-                        display_build_options( stdout, 0 );
-                        display_extpkg_vers  ( stdout, 0 );
+                        display_version      ( stdout, -1, NULL );
+                        display_build_options( stdout, -1 );
+                        display_extpkg_vers  ( stdout, -1 );
                         arg_error = PROCESS_ARGS_EXIT;
                     }
                     else
@@ -1978,7 +1978,7 @@ static int process_args( int argc, char* argv[] )
                 else
                 {
                     /* Show them our command line arguments */
-                    display_version(stdout, 0, NULL);
+                    display_version(stdout, -1, NULL);
                     arghelp();
                     arg_error = PROCESS_ARGS_EXIT;
                 }

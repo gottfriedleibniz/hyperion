@@ -1094,9 +1094,9 @@ int rc = 0;
     }
     else
     {
-        display_version      ( stdout, 0, NULL );
-        display_build_options( stdout, 0 );
-        display_extpkg_vers  ( stdout, 0 );
+        display_version      ( stdout, -1, NULL );
+        display_build_options( stdout, -1 );
+        display_extpkg_vers  ( stdout, -1 );
     }
 
     return rc;
