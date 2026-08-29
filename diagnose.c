@@ -785,7 +785,6 @@ U32   code;
           /*   r1    is not used                                   */
           /*-------------------------------------------------------*/
           {
-            ALIGN_8
             union { U64     psw64;
                     DBLWRD  d_psw;
                   } savedpsw;
