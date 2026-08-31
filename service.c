@@ -268,7 +268,7 @@ static void gh534_fix( int msglen, BYTE* /*EBCDIC*/ e_msg )
             */
             if (*(p+1) == 'K')
             {
-                msglen -= (p + 2) - a_msg;
+                msglen -= 2;
                 memmove( a_msg, p + 2, msglen + 1 );
                 p = a_msg;
                 continue;
