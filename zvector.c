@@ -1562,6 +1562,10 @@ DEF_INST( vector_count_leading_zeros )
  *  .text:00000001006E8FB4 EA A3 88 1A           CSEL    W10, WZR, W8, GE
  *  .text:00000001006E8FB8 2A 39 00 39           STRB    W10, [X9,#0xE]
  */
+#if (defined( _M_ARM64 ) || defined( _M_ARM64EC )) \
+  && defined( _MSC_FULL_VER ) && _MSC_FULL_VER >= 195136231 && _MSC_FULL_VER < 195236629
+#pragma optimize( "t", off )
+#endif
 DEF_INST( vector_generate_element_masks )
 {
     int     v1, v2, m3, m4, m5;
@@ -1639,6 +1643,10 @@ DEF_INST( vector_generate_element_masks )
 
     ZVECTOR_END( regs );
 }
+#if (defined( _M_ARM64 ) || defined( _M_ARM64EC )) \
+  && defined( _MSC_FULL_VER ) && _MSC_FULL_VER >= 195136231 && _MSC_FULL_VER < 195236629
+#pragma optimize( "t", on )
+#endif
 #endif /* defined( FEATURE_198_VECTOR_ENH_FACILITY_3 ) */
 
 /*-------------------------------------------------------------------*/
