@@ -169,10 +169,12 @@ static void gh534_fix( int msglen, BYTE* /*EBCDIC*/ e_msg )
              o3008ContNext
            )
         {
+            BYTE* bslash_end;
+
             if (o3008ContNext) o3008ContNext = false;
 
             // Find end of string; BACKSLASH
-            BYTE* bslash_end = memchr( p, BACKSLASH, msglen );
+            bslash_end = memchr( p, BACKSLASH, msglen );
 
             // remove
             if ( bslash_end )
