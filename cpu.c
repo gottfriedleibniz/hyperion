@@ -635,6 +635,7 @@ DLL_EXPORT int ARCH_DEP( fix_program_interrupt_PSW )( REGS* regs )
 /* back to the run_cpu instruction execution loop to begin executing */
 /* instructions at the Program new PSW location.                     */
 /*-------------------------------------------------------------------*/
+CPU_INTERRUPT_IMPORT
 void (ATTR_REGPARM(2) ARCH_DEP( program_interrupt ))( REGS* regs, int pcode )
 {
 PSA    *psa;                            /* -> Prefixed storage area  */
