@@ -7481,6 +7481,7 @@ static BYTE hexebcdic[16] = { 0xF0,0xF1,0xF2,0xF3,0xF4,0xF5,0xF6,0xF7,
                 tle += sizeof( TLECNTNR );
 
                 /* For each type of CPU */
+                OBTAIN_INTLOCK( regs );
                 for (cputype = 0; cputype <= MAX_SCCB_PTYP; cputype++)
                 {
                     tlecpu = (TLECPU *)tle;
@@ -7519,6 +7520,7 @@ static BYTE hexebcdic[16] = { 0xF0,0xF1,0xF2,0xF3,0xF4,0xF5,0xF6,0xF7,
                         tle += sizeof(TLECPU);
                     }
                 }
+                RELEASE_INTLOCK( regs );
 
                 /* Save the length of this System Information Block */
                 STORE_HW( sysib1512->len, (U16)( tle - (BYTE*)sysib1512 ));
