@@ -4015,6 +4015,24 @@ int found_buff = 0;                     /* Found primed O/P buffer   */
 
                         sk = dev->qdio.o_sbalk[qn];
 
+                        /*
+                         * #RACE:
+                         * Line numbers omitted:
+                         *   Write of size 1 at 0x7f668e7b8f37 by thread T19:
+                         *     #0 process_output_queues $(BUILD_DIR)/../qeth.c // slsb->slsbe[bn] = SLSBE_OUTPUT_COMPLETED;
+                         *     #1 qeth_execute_ccw $(BUILD_DIR)/../qeth.c
+                         *     #2 z900_execute_ccw_chain $(BUILD_DIR)/../channel.c
+                         *     #3 call_execute_ccw_chain $(BUILD_DIR)/../channel.c
+                         *     #4 device_thread $(BUILD_DIR)/../channel.c
+                         *   
+                         *   Previous atomic write of size 1 at 0x7f668e7b8f37 by thread T5:
+                         *     #0 atomic_store_U8 $(BUILD_DIR)/../hatomic.h:
+                         *     #1 z900_vstoreb $(BUILD_DIR)/../vstore.h // STORE_MAIN_BYTE( main1, value ); (atomic wrapper for *main1 = value;)
+                         *     #2 z900_set_queue_buffer_state $(BUILD_DIR)/../qdio.c // ARCH_DEP(wstoreb)(state, (VADR)(slsba+bidx), USE_REAL_ADDR, regs);
+                         *     #3 z900_execute_opcode_eb________xx $(BUILD_DIR)/../opcode.c
+                         *     #4 z900_run_cpu $(BUILD_DIR)/../cpu.c
+                         *     #5 cpu_thread $(BUILD_DIR)/../cpu.c
+                         */
                         if ((qrc = write_buffered_packets( dev, grp, sbal, sk )) >= 0)
                             slsb->slsbe[bn] = SLSBE_OUTPUT_COMPLETED;
                     }
