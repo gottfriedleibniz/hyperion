@@ -426,14 +426,19 @@ typedef int CMPFUNC(const void*, const void*);
 
 #define GET_CPU_REGS(_cpu)         sysblk.regs[(_cpu)]
 #define SET_CPU_REGS(_cpu, _regs) (sysblk.regs[(_cpu)] = (_regs))
-#define IS_CPU_ONLINE(_cpu)       (GET_CPU_REGS(_cpu) != NULL)
-#define CHECK_CPU_REGS(_rv, _cpu) ((_rv) = GET_CPU_REGS(_cpu), (_rv) != NULL)
 
-#define HOST(  _regs )  (_regs)->hostregs
-#define GUEST( _regs )  (_regs)->guestregs
+#define HOST(_regs)               (_regs)->hostregs
+#define SET_HOST_REGS(_regs, _v)  (_regs)->hostregs = (_v)
 
+#define GUEST(_regs)              (_regs)->guestregs
+#define SET_GUEST_REGS(_regs, _v) (_regs)->guestregs = (_v)
+
+/* Helpers */
 #define HOSTREGS        HOST(  regs )   // 'regs' presumed
 #define GUESTREGS       GUEST( regs )   // 'regs' presumed
+
+#define IS_CPU_ONLINE(_cpu)       (GET_CPU_REGS(_cpu) != NULL)
+#define CHECK_CPU_REGS(_rv, _cpu) ((_rv) = GET_CPU_REGS(_cpu), (_rv) != NULL)
 
 /*-------------------------------------------------------------------*/
 /*                  Instruction Counter Updates                      */

@@ -1943,9 +1943,9 @@ int     aswitch;
             memcpy (regs, oldregs, sizeof(REGS));
             free_aligned(oldregs);
             regs->blkloc = CSWAP64((U64)((uintptr_t)regs));
-            HOSTREGS = regs;
+            SET_HOST_REGS(regs, regs);
             if (GUESTREGS)
-                HOST(GUESTREGS) = regs;
+                SET_HOST_REGS(GUESTREGS, regs);
             SET_CPU_REGS(cpu, regs);
             release_lock(&sysblk.cpulock[cpu]);
             if (regs->insttrace && sysblk.traceFILE)
@@ -2496,7 +2496,7 @@ int i;
         /* regs points to host regs */
         regs->cpustate = CPUSTATE_STOPPING;
         ON_IC_INTERRUPT(regs);
-        HOSTREGS = regs;
+        SET_HOST_REGS(regs, regs);
         regs->host = 1;
         SET_CPU_REGS(cpu, regs);
         sysblk.config_mask |= regs->cpubit;
@@ -2507,9 +2507,9 @@ int i;
         /* regs     points to guest regs.
            hostregs points to host  regs.
         */
-        GUEST(hostregs) = regs;
-        HOSTREGS = hostregs;
-        GUESTREGS = regs;
+        SET_GUEST_REGS(hostregs, regs);
+        SET_HOST_REGS(regs, hostregs);
+        SET_GUEST_REGS(regs, regs);
         regs->guest = 1;
         regs->sie_mode = 1;
         regs->opinterv = 0;
@@ -2572,8 +2572,8 @@ static void *cpu_uninit (int cpu, REGS *regs)
          * pointer to NULL;
          */
         if (GUESTREGS)
-            GUESTREGS = (regs == GUESTREGS) ?
-                NULL : cpu_uninit( cpu, GUESTREGS );
+            SET_GUEST_REGS(regs, (regs == GUESTREGS) ?
+                NULL : cpu_uninit( cpu, GUESTREGS ));
     }
 
     destroy_condition(&regs->intcond);

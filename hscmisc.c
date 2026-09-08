@@ -2449,8 +2449,8 @@ DLL_EXPORT REGS* copy_regs( REGS* regs )
 
     newregs->tlbID      = 1;
     newregs->ghostregs  = 1;      /* indicate these aren't real regs */
-    HOST(  newregs )    = newregs;
-    GUEST( newregs )    = NULL;
+    SET_HOST_REGS( newregs, newregs );
+    SET_GUEST_REGS( newregs, NULL );
     newregs->sie_active = 0;
 
     /* Copy host regs if in SIE mode (newregs is SIE guest regs) */
@@ -2464,11 +2464,11 @@ DLL_EXPORT REGS* copy_regs( REGS* regs )
         hostregs->tlbID     = 1;
         hostregs->ghostregs = 1;  /* indicate these aren't real regs */
 
-        HOST(  hostregs )   = hostregs;
-        GUEST( hostregs )   = newregs;
+        SET_HOST_REGS( hostregs, hostregs );
+        SET_GUEST_REGS( hostregs, newregs );
 
-        HOST(  newregs  )   = hostregs;
-        GUEST( newregs  )   = newregs;
+        SET_HOST_REGS( newregs, hostregs );
+        SET_GUEST_REGS( newregs, newregs );
     }
 
     return newregs;

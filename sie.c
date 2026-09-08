@@ -405,13 +405,15 @@ int     i;                              /* (work)                    */
     /* Initialize guestregs if first time */
     if (!GUESTREGS)
     {
+        REGS* newregs;
         PTT_SIE( "SIE calloc g", 0, 0, 0 );
-        if (!(GUESTREGS = calloc_aligned( sizeof( REGS ), 4096 )))
+        if (!(newregs = (REGS*)calloc_aligned( sizeof( REGS ), 4096 )))
         {
             // "Processor %s%02X: error in function %s: %s"
             WRMSG( HHC00813, "E", PTYPSTR( regs->cpuad ), regs->cpuad, "calloc()", strerror( errno ));
             return;
         }
+        SET_GUEST_REGS( regs, newregs );
         cpu_init( regs->cpuad, GUESTREGS, regs );
         TXF_ALLOCMAP( GUESTREGS );
     }
