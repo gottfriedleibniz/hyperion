@@ -3076,13 +3076,6 @@ static QRC copy_storage_fragments( DEVBLK* dev, OSA_GRP *grp,
                 return SBALE_ERROR( QRC_EPKSBLEN, dev,sbal,sbalk,*sb);
             }
 
-            /* Request interrupt if needed */
-            if (sbal->sbale[*sb].flags[3] & SBALE_FLAG3_PCI_REQ)
-            {
-                SET_DSCI(dev,DSCI_IOCOMP);
-                grp->oqPCI = TRUE;
-            }
-
             /* Retrieve the next storage block entry */
             if (*sb >= (QMAXSTBK-1))
                 return SBALE_ERROR( QRC_ENOSPC, dev,sbal,sbalk,*sb);
@@ -3553,6 +3546,16 @@ static QRC write_buffered_packets( DEVBLK* dev, OSA_GRP *grp,
 
 
     sb = 0;                             /* Start w/Storage Block 0   */
+
+    /*
+     * Request interrupt if needed. Note, only SBALE[0] should be formatted to
+     * parse block-control indicators such as PCI_REQ
+     */
+    if (sbal->sbale[0].flags[3] & SBALE_FLAG3_PCI_REQ)
+    {
+        SET_DSCI(dev,DSCI_IOCOMP);
+        grp->oqPCI = TRUE;
+    }
 
     do
     {
