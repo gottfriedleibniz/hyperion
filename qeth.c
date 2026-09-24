@@ -3836,7 +3836,7 @@ int did_read = 0;                       /* Indicates some data read  */
 
             do
             {
-                if(slsb->slsbe[bn] == SLSBE_INPUT_EMPTY)
+                if(READ_MAIN_BYTE( slsb->slsbe + bn ) == SLSBE_INPUT_EMPTY)
                 {
                 QDIO_SL *sl = (QDIO_SL*)(dev->mainstor + dev->qdio.i_sla[qn]);
                 U64 sbala;              /* Storage Block Address List*/
@@ -3874,7 +3874,7 @@ int did_read = 0;                       /* Indicates some data read  */
                             if (grp->debugmask & DBGQETHQUEUES)
                                 DBGTRC(dev, "Input Queue(%d) Buffer(%d)", qn, bn);
 
-                            slsb->slsbe[bn] = SLSBE_INPUT_COMPLETED;
+                            STORE_MAIN_BYTE( slsb->slsbe + bn, SLSBE_INPUT_COMPLETED );
                             ARCH_DEP( or_dev_4K_storage_key )( dev, dev->qdio.i_slsbla[qn], (STORKEY_REF | STORKEY_CHANGE) );
                             SET_DSCI(dev,DSCI_IOCOMP);
                             grp->iqPCI = TRUE;
@@ -3895,7 +3895,7 @@ int did_read = 0;                       /* Indicates some data read  */
                        and read_L3_packets may also return an error */
                     if (qrc < 0)
                     {
-                        slsb->slsbe[bn] = SLSBE_ERROR;
+                        STORE_MAIN_BYTE( slsb->slsbe + bn, SLSBE_ERROR );
                         ARCH_DEP( or_dev_4K_storage_key )( dev, dev->qdio.i_slsbla[qn], (STORKEY_REF | STORKEY_CHANGE) );
                         SET_ALSI(dev,ALSI_ERROR);
                         grp->iqPCI = TRUE;
@@ -3988,7 +3988,7 @@ int found_buff = 0;                     /* Found primed O/P buffer   */
 
             do
             {
-                if(slsb->slsbe[bn] == SLSBE_OUTPUT_PRIMED)
+                if(READ_MAIN_BYTE( slsb->slsbe + bn ) == SLSBE_OUTPUT_PRIMED)
                 {
                 QDIO_SL *sl = (QDIO_SL*)(dev->mainstor + dev->qdio.o_sla[qn]);
                 U64 sbala;              /* Storage Block Address List*/
@@ -4016,7 +4016,7 @@ int found_buff = 0;                     /* Found primed O/P buffer   */
                         sk = dev->qdio.o_sbalk[qn];
 
                         if ((qrc = write_buffered_packets( dev, grp, sbal, sk )) >= 0)
-                            slsb->slsbe[bn] = SLSBE_OUTPUT_COMPLETED;
+                            STORE_MAIN_BYTE( slsb->slsbe + bn, SLSBE_OUTPUT_COMPLETED );
                     }
 
                     /* Packets written or an error has occurred */
@@ -4025,7 +4025,7 @@ int found_buff = 0;                     /* Found primed O/P buffer   */
                     /* Handle errors */
                     if (qrc < 0)
                     {
-                        slsb->slsbe[bn] = SLSBE_ERROR;
+                        STORE_MAIN_BYTE( slsb->slsbe + bn, SLSBE_ERROR );
                         SET_ALSI(dev,ALSI_ERROR);
                         grp->oqPCI = TRUE;
                         PTT_QETH_TRACE( "*proutq ERR", qn,bn,qrc );
