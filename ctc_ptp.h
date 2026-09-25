@@ -85,6 +85,7 @@ struct  _PTPBLK
     int         fd;                        // TUN/TAP fd
     TID         tid;                       // Read Thread ID
     pid_t       pid;                       // Read Thread pid
+    BYTE        bCloseInProgress;          // Close in progress
 
     LOCK        ReadBufferLock;            // Read buffer LOCK
     PPTPHDR     pReadBuffer;               // Read buffer
@@ -101,7 +102,6 @@ struct  _PTPBLK
     u_int       uDebugMask;                // Debug mask
     u_int       fIPv4Spec:1;               // IPv4 specified
     u_int       fIPv6Spec:1;               // IPv6 specified
-    u_int       fCloseInProgress:1;        // Close in progress
     u_int       fActive4:1;                // IPv4 connection active
     u_int       fActive6:1;                // IPv6 connection active
     u_int       fActiveLL6:1;              // IPv6 link local connection active
