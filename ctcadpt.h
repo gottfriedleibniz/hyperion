@@ -329,23 +329,11 @@ struct  _CTCBLK
 #define CTC_READ_SUBCHANN    0            // 0 - Read subchannel
 #define CTC_WRITE_SUBCHANN   1            // 1 - Write subchannel
 
-    U16         iMaxFrameBufferSize;      // Device Buffer Size
-    BYTE        bFrameBuffer[CTC_DEF_FRAME_BUFFER_SIZE]; // (this really SHOULD be dynamically allocated!)
-    U16         iFrameOffset;             // Curr Offset into Buffer
-    U16         sMTU;                     // Max MTU
-
-    LOCK        Lock;                     // Data LOCK
-    LOCK        EventLock;                // Condition LOCK
-    COND        Event;                    // Condition signal
-
     u_int       fDebug:1;                 // Debugging
     u_int       fOldFormat:1;             // Old Config Format
     u_int       fCreated:1;               // Interface Created
     u_int       fStarted:1;               // Startup Received
-    u_int       fDataPending:1;           // Data is pending for read device
     u_int       fPreconfigured:1;         // TUN device pre-configured
-    u_int       fReadWaiting:1;           // CTCI_Read waiting
-    u_int       fHaltOrClear:1;           // HSCH or CSCH issued
 
     int         iKernBuff;                // Kernel buffer in K bytes.
     int         iIOBuff;                  // I/O buffer in K bytes.
@@ -356,6 +344,21 @@ struct  _CTCBLK
     char        szTUNCharDevName[256];    // TUN/TAP special char device filename (/dev/net/tun)
     char        szTUNIfName[IFNAMSIZ];    // Network Interface Name (e.g. tun0)
     char        szMACAddress[32];         // MAC Address
+
+    LOCK        EventLock;                // Condition LOCK
+    COND        Event;                    // Condition signal
+    u_int       fReadWaiting:1;           // CTCI_Read waiting
+    u_int       fHaltOrClear:1;           // HSCH or CSCH issued
+
+    LOCK        Lock;                     // Data LOCK. This lock is used to
+                                          // serialize data being added to or
+                                          // removed from bFrameBuffer.
+
+    BYTE        fDataPending;             // Data is Pending
+    U16         sMTU;                     // Max MTU
+    U16         iFrameOffset;             // Curr Offset into Buffer
+    U16         iMaxFrameBufferSize;      // Device Buffer Size
+    BYTE        bFrameBuffer[CTC_DEF_FRAME_BUFFER_SIZE]; // (this really SHOULD be dynamically allocated!)
 
     int         internal;                 // Did Hercules create this device?
 };
@@ -682,6 +685,10 @@ struct  _LCSDEV
 #define LCS_READ_SUBCHANN    0          // 0 - Read subchannel
 #define LCS_WRITE_SUBCHANN   1          // 1 - Write subchannel
 
+    u_int       fDevCreated:1;          // DEVBLK(s) Created
+    u_int       fDevStarted:1;          // Device Started
+    u_int       fRouteAdded:1;          // Routing Added
+
     U16         sAddr;                  // Device Base Address
     BYTE        bMode;                  // (see below #defines)
     BYTE        bPort;                  // Relative Adapter No.
@@ -690,17 +697,6 @@ struct  _LCSDEV
 
     U32         lIPAddress;             // IP Address (binary)
                                         // (network byte order)
-
-    LOCK        DevEventLock;           // Condition LOCK
-    COND        DevEvent;               // Condition signal
-
-    u_int       fDevCreated:1;          // DEVBLK(s) Created
-    u_int       fDevStarted:1;          // Device Started
-    u_int       fRouteAdded:1;          // Routing Added
-    u_int       fReplyPending:1;        // Cmd Reply is Pending
-    u_int       fDataPending:1;         // Data is Pending
-    u_int       fReadWaiting:1;         // LCS_Read waiting
-    u_int       fHaltOrClear:1;         // HSCH or CSCH issued
 
     U16         hwOctlSize;             // SNA
     LCSOCTL     Octl;                   // SNA Outbound Control
@@ -713,7 +709,6 @@ struct  _LCSDEV
     U16         hwSeqNumBaf;            // SNA LCSBAF2 sequence number
     u_int       fChanProgActive:1;      // SNA Channel Program Active
     u_int       fAttnRequired:1;        // SNA Attention Required
-    u_int       fPendingIctl:1;         // SNA Pending has LCSICTL structure
     u_int       fReceiveFrames:1;       // SNA Receive Frames from Network
     u_int       fTuntapError:1;         // SNA TUNTAP_Write error
     int         iTuntapErrno;           // SNA TUNTAP_Write error number
@@ -731,10 +726,18 @@ struct  _LCSDEV
 
     LOCK        InOutLock;              // SNA Inbound Outbound LOCK
 
+    LOCK        DevEventLock;           // Condition LOCK
+    COND        DevEvent;               // Condition signal
+    u_int       fReadWaiting:1;         // LCS_Read waiting
+    u_int       fHaltOrClear:1;         // HSCH or CSCH issued
+
     LOCK        DevDataLock;            // Data LOCK. This lock is used to
                                         // serialize data being added to or
                                         // removed from bFrameBuffer.
 
+    u_int       fDataPending:1;         // Data is Pending
+    u_int       fReplyPending:1;        // Cmd Reply is Pending
+    u_int       fPendingIctl:1;         // SNA Pending has LCSICTL structure
     U16         iFrameOffset;           // Curr Offset into Buffer
     U16         iMaxFrameBufferSize;    // Device Buffer Size
     BYTE        bFrameBuffer[CTC_DEF_FRAME_BUFFER_SIZE]; // (this really SHOULD be dynamically allocated!)
