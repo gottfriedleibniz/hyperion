@@ -245,6 +245,50 @@ auth_addr_excp:
 #endif /* defined( FEATURE_DUAL_ADDRESS_SPACE ) */
 
 
+#if defined( OPTION_TINKER_TAILOR_SOLDIER_SPY )
+/*-------------------------------------------------------------------*/
+/* Convert logical address to absolute address and check protection  */
+/*-------------------------------------------------------------------*/
+inline BYTE* ARCH_DEP( tlb_update_acctype )( VADR addr, REGS *regs, int acctype )
+{
+int     ix = TLBIX( addr );              /* TLB index                 */
+BYTE*   storkey = regs->tlb.storkey[ix]; /* Storage key               */
+BYTE    protect = regs->tlb.protect[ix]; /* Protected segment         */
+
+    /* Technically the PER SA logic could be duplicated in this function! */
+#if defined( FEATURE_PER )
+    if (EN_IC_PER_SA( regs )) return NULL;
+#endif
+    /* Check protection and set reference and change bits. Note, at this stage
+     * we already know the access key is zero or matches the storage key */
+    if (0
+        || (protect && (acctype & ( ACC_WRITE | ACC_CHECK )))
+#if defined( _FEATURE_SIE )
+        || ((SIE_MODE( regs ) && HOSTREGS->dat.protect))
+#endif
+    )
+        return NULL;
+
+    /* Save ptr to storage key for this translated logical address */
+    regs->dat.storkey = storkey;
+    regs->dat.protect = protect;
+
+    /* Update relevant page table entry bits (?) */
+
+    /* Set the reference and change bits in the storage key */
+    if (acctype & ACC_WRITE)
+        ARCH_DEP( or_storage_key_by_ptr )( storkey, (STORKEY_REF | STORKEY_CHANGE) );
+
+    /* Update accelerated lookup TLB fields */
+    regs->tlb.acc[ix] = (addr >= PSA_SIZE || regs->dat.pvtaddr)
+                        ? (ACC_READ | ACC_CHECK | acctype)
+                        :  ACC_READ;
+
+    return MAINADDR( regs->tlb.main[ix], addr );
+}
+#endif
+
+
 /*-------------------------------------------------------------------*/
 /*                           maddr_l                                 */
 /*                PRIMARY DAT TLB LOOKUP FUNCTION                    */
@@ -357,7 +401,21 @@ inline BYTE* ARCH_DEP( maddr_l )
                             regs->dat.storkey = regs->tlb.storkey[ tlbix ];
 
                         maddr = MAINADDR( regs->tlb.main[tlbix], addr );
+#if defined( OPTION_COUNT_TLB_HITS )
+                        atomic_update64(&sysblk.acc_hitcount, 1); /* Assuming maddr is non-null */
+#endif
                     }
+#if defined( OPTION_TINKER_TAILOR_SOLDIER_SPY )
+                    /* EXPERIMENT: hot-path the promotion of read-only entry to read/write */
+                    else if ( regs->tlb.acc[ tlbix ] && (acctype & (ACC_WRITE | ACC_CHECK)) )
+                    {
+                        /* update access type to previously translated value */
+                        maddr = ARCH_DEP( tlb_update_acctype )( addr, regs, acctype );
+  #if defined( OPTION_COUNT_TLB_HITS )
+                        atomic_update64(&sysblk.acc_upgradecount, 1);
+  #endif
+                    }
+#endif
                 }
             }
         }

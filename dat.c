@@ -61,6 +61,10 @@ extern inline void ARCH_DEP( purge_alb_all )( REGS* regs );
 extern inline bool ARCH_DEP( authorize_asn )( U16 ax, U32 aste[], int atemask, REGS* regs );
 #endif
 
+#if defined( OPTION_TINKER_TAILOR_SOLDIER_SPY )
+extern inline BYTE* ARCH_DEP( tlb_update_acctype )( VADR addr, REGS *regs, int acctype );
+#endif
+
 extern inline BYTE* ARCH_DEP( maddr_l )( VADR addr, size_t len, const int arn, REGS* regs, const int acctype, const BYTE akey );
 
 /*-------------------------------------------------------------------*/
@@ -973,10 +977,16 @@ U32     ptl;                            /* Page table length         */
         if (regs->tlb.protect[tlbix])
             regs->dat.protect = regs->tlb.protect[tlbix];
 #endif
+#if defined( OPTION_COUNT_TLB_HITS )
+        atomic_update64(&sysblk.hitcount, 1);
+#endif
     }
     else
     {
         /* S/370 segment table lookup */
+#if defined( OPTION_COUNT_TLB_HITS )
+        atomic_update64(&sysblk.misscount, 1);
+#endif
 
         /* Calculate the real address of the segment table entry */
         sto = regs->dat.asd & STD_370_STO;
@@ -1124,10 +1134,16 @@ U32     ptl;                            /* Page table length         */
         pte = regs->tlb.TLB_PTE(tlbix);
         if (regs->tlb.protect[tlbix])
             regs->dat.protect = regs->tlb.protect[tlbix];
+#if defined( OPTION_COUNT_TLB_HITS )
+        atomic_update64(&sysblk.hitcount, 1);
+#endif
     }
     else
     {
         /* [3.11.3.3] Segment table lookup */
+#if defined( OPTION_COUNT_TLB_HITS )
+        atomic_update64(&sysblk.misscount, 1);
+#endif
 
         /* Calculate the real address of the segment table entry */
         sto = regs->dat.asd & STD_STO;
@@ -1257,9 +1273,16 @@ U16     sx, px;                         /* Segment and page index,
         pte = regs->tlb.TLB_PTE(tlbix);
         if (regs->tlb.protect[tlbix])
             regs->dat.protect = regs->tlb.protect[tlbix];
+#if defined( OPTION_COUNT_TLB_HITS )
+        atomic_update64(&sysblk.hitcount, 1);
+#endif
     }
     else
     {
+#if defined( OPTION_COUNT_TLB_HITS )
+        atomic_update64(&sysblk.misscount, 1);
+#endif
+
         /* If ASCE indicates a real-space then real addr = virtual addr */
         if (regs->dat.asd & ASCE_R)
         {

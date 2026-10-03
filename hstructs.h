@@ -829,6 +829,14 @@ atomic_update64( &sysblk.txf_stats[ contran ? 1 : 0 ].txf_ ## ctr, +1 )
         LOCK    todlock;                /* TOD clock update lock     */
         TID     todtid;                 /* Thread-id for TOD update  */
         REGS   *regs[ MAX_CPU_ENGS + 1];/* Registers for each CPU    */
+#if defined( OPTION_COUNT_TLB_HITS )
+        S64    hitcount;
+        S64    misscount;
+        S64    acc_hitcount;
+#if defined( OPTION_TINKER_TAILOR_SOLDIER_SPY )
+        S64    acc_upgradecount;
+#endif
+#endif
 
         /* Active Facility List */
         BYTE    facility_list[ NUM_GEN_ARCHS ][ STFL_HERC_DW_SIZE * sizeof( DW ) ];

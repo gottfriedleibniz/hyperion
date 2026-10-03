@@ -487,6 +487,16 @@ int tlb_cmd(int argc, char *argv[], char *cmdline)
         WRMSG(HHC02284, "I", buf);
     }
 
+#if defined( OPTION_COUNT_TLB_HITS )
+    #define HHC02258 "%s%"PRId64
+    WRMSG( HHC02258, "I", "Hits........... ....", sysblk.hitcount);
+    WRMSG( HHC02258, "I", "Misses......... ....", sysblk.misscount);
+    WRMSG( HHC02258, "I", "Acc Hits....... ....", sysblk.acc_hitcount);
+#if defined( OPTION_TINKER_TAILOR_SOLDIER_SPY )
+    WRMSG( HHC02258, "I", "Acc Upgrades... ....", sysblk.acc_upgradecount);
+#endif
+#endif
+
     release_lock (&sysblk.cpulock[sysblk.pcpu]);
 
     return 0;

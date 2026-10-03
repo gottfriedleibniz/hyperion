@@ -54,6 +54,9 @@
                                         // thread in X'75' SEND
                                         // (see GitHub Issue #863!)
 
+#define OPTION_COUNT_TLB_HITS
+#define OPTION_TINKER_TAILOR_SOLDIER_SPY
+
 /*-------------------------------------------------------------------*/
 /*              Normal default OPTIONs and FEATUREs                  */
 /*-------------------------------------------------------------------*/
