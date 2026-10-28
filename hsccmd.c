@@ -3786,10 +3786,15 @@ int mainsize_cmd( int argc, char* argv[], char* cmdline )
 
     /* Set lock request ("UNLOCKED" forced when mainsize = 0) */
     if (!mainsize_numpages) lock_mainstor = false;
-    sysblk.lock_mainstor =  lock_mainstor;
 
-    /* Update main storage size */
-    rc = configure_storage( mainsize_numpages );
+    OBTAIN_INTLOCK( NULL );
+    {
+        sysblk.lock_mainstor =  lock_mainstor;
+
+        /* Update main storage size */
+        rc = configure_storage( mainsize_numpages );
+    }
+    RELEASE_INTLOCK( NULL );
 
     if (rc >= 0)
     {
@@ -3928,12 +3933,18 @@ u_int   locktype = 0;
             return -1;
         }
     }
-    if (!xpndsize)
-        sysblk.lock_xpndstor = 0;
-    else if (lockreq)
-        sysblk.lock_xpndstor = locktype;
 
-    rc = configure_xstorage( xpndsize );
+    OBTAIN_INTLOCK(NULL);
+    {
+        if (!xpndsize)
+            sysblk.lock_xpndstor = 0;
+        else if (lockreq)
+            sysblk.lock_xpndstor = locktype;
+
+        rc = configure_xstorage( xpndsize );
+    }
+    RELEASE_INTLOCK(NULL);
+
     if (rc >= 0)
     {
         if (MLVL( VERBOSE ))
