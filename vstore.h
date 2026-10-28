@@ -749,7 +749,6 @@ inline void ARCH_DEP( vstore4 )( U32 value, VADR addr, int arn, REGS* regs )
 /*-------------------------------------------------------------------*/
 inline void ARCH_DEP( vstore8 )( U64 value, VADR addr, int arn, REGS* regs )
 {
-#if defined( OPTION_SINGLE_CPU_DW ) && defined( ASSIST_STORE_DW )
     /* Check alignment. If aligned then we are guaranteed
        not to cross a page boundary */
     if (likely(IS_ALIGNED_POW2(addr, U64)))
@@ -757,14 +756,15 @@ inline void ARCH_DEP( vstore8 )( U64 value, VADR addr, int arn, REGS* regs )
         /* Most common case : Aligned */
         U64 *mn;
         mn = (U64*)MADDRL( addr, 8, arn, regs, ACCTYPE_WRITE, regs->psw.pkey );
+#if defined( OPTION_SINGLE_CPU_DW ) && defined( ASSIST_STORE_DW )
         if (regs->cpubit == regs->sysblk->started_mask)
             *mn = CSWAP64( value );
         else
+#endif
             STORE_DW( mn, value );
         ITIMER_UPDATE( addr, 8-1, regs );
     }
     else
-#endif
     {
         /* We're not aligned. So we have to check whether we are
            crossing a page boundary. This cannot be the same
@@ -784,7 +784,6 @@ inline void ARCH_DEP( vstore8 )( U64 value, VADR addr, int arn, REGS* regs )
 /*-------------------------------------------------------------------*/
 inline void ARCH_DEP( vstore16 )( QW value, VADR addr, int arn, REGS* regs )
 {
-#if defined( OPTION_SINGLE_CPU_DW ) && defined( ASSIST_STORE_DW )
     /* Check alignment. If aligned then we are guaranteed
        not to cross a page boundary */
     if (likely(IS_ALIGNED_POW2(addr, QW)))
@@ -792,14 +791,15 @@ inline void ARCH_DEP( vstore16 )( QW value, VADR addr, int arn, REGS* regs )
         /* Most common case : Aligned */
         QW *mn;
         mn = (QW*)MADDRL( addr, 16, arn, regs, ACCTYPE_WRITE, regs->psw.pkey );
+#if defined( OPTION_SINGLE_CPU_DW ) && defined( ASSIST_STORE_DW )
         if (regs->cpubit == regs->sysblk->started_mask)
             *mn = CSWAP128( value );
         else
+#endif
             STORE_QW( mn, value );
         ITIMER_UPDATE( addr, 16-1, regs );
     }
     else
-#endif
     {
         /* We're not aligned. So we have to check whether we are
            crossing a page boundary. This cannot be the same
@@ -913,19 +913,19 @@ inline U32 ARCH_DEP( vfetch4 )( VADR addr, int arn, REGS* regs )
 /*-------------------------------------------------------------------*/
 inline U64 ARCH_DEP( vfetch8 )( VADR addr, int arn, REGS* regs )
 {
-#if defined( OPTION_SINGLE_CPU_DW ) && defined( ASSIST_STORE_DW )
     if (likely(IS_ALIGNED_POW2(addr, U64)))
     {
         /* doubleword aligned fetch */
         U64 *mn;
         ITIMER_SYNC( addr, 8-1, regs );
         mn = (U64*)MADDRL( addr, 8, arn, regs, ACCTYPE_READ, regs->psw.pkey );
+#if defined( OPTION_SINGLE_CPU_DW ) && defined( ASSIST_STORE_DW )
         if (regs->cpubit == regs->sysblk->started_mask)
             return CSWAP64( *mn );
+#endif
         return fetch_dw( mn );
     }
     else
-#endif
     {
         if (likely(((VADR_L)addr & PAGEFRAME_BYTEMASK) <= (PAGEFRAME_BYTEMASK-7)))
         {
@@ -941,19 +941,19 @@ inline U64 ARCH_DEP( vfetch8 )( VADR addr, int arn, REGS* regs )
 /*-------------------------------------------------------------------*/
 inline QW ARCH_DEP( vfetch16 )( VADR addr, int arn, REGS* regs )
 {
-#if defined( OPTION_SINGLE_CPU_DW ) && defined( ASSIST_STORE_DW )
     if (likely(IS_ALIGNED_POW2(addr, QW)))
     {
         /* quadword aligned fetch */
         QW *mn;
         ITIMER_SYNC( addr, 16-1, regs );
         mn = (QW*)MADDRL( addr, 16, arn, regs, ACCTYPE_READ, regs->psw.pkey );
+#if defined( OPTION_SINGLE_CPU_DW ) && defined( ASSIST_STORE_DW )
         if (regs->cpubit == regs->sysblk->started_mask)
             return CSWAP128( *mn );
+#endif
         return fetch_qw( mn );
     }
     else
-#endif
     {
         if (likely(((VADR_L)addr & PAGEFRAME_BYTEMASK) <= (PAGEFRAME_BYTEMASK-15)))
         {
