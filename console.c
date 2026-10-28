@@ -3387,9 +3387,9 @@ struct sockaddr_in    *server;          /* Server address structure  */
 static void* console_connection_handler( void* arg )
 {
 int           rc = 0;                   /* Return code               */
-int           lsock;                    /* Console listening socket  */
-int           lsock2 = 0;               /* SYSG listening socket     */
-int           lsock_ws = 0;             /* WebSocket listening socket*/
+int           lsock = -1;               /* Console listening socket  */
+int           lsock2 = -1;              /* SYSG listening socket     */
+int           lsock_ws = -1;            /* WebSocket listening socket*/
 int           csock;                    /* Socket for conversation   */
 bool          sysg = false;             /* SYSG port connection      */
 bool          ws_conn = false;          /* WebSocket port connection */
@@ -3426,7 +3426,6 @@ int prev_rlen3270;
        and create starting listening socket */
     curr_cnslport = strdup( sysblk.cnslport );
     lsock = get_listening_socket( "CNSLPORT", "", sysblk.cnslport );
-    if (lsock < 0) lsock = 0;
 
     if (sysblk.sysgport)
     {
@@ -3434,7 +3433,6 @@ int prev_rlen3270;
            and create starting listening socket */
         curr_sysgport = strdup( sysblk.sysgport );
         lsock2 = get_listening_socket( "SYSGPORT", "SYSG ", sysblk.sysgport );
-        if (lsock2 < 0) lsock2 = 0;
     }
 
     if (sysblk.wscnslport)
@@ -3444,7 +3442,6 @@ int prev_rlen3270;
         curr_wscnslport = strdup( sysblk.wscnslport );
         lsock_ws = get_listening_socket( "WSCNSLPORT", "WebSocket ",
                                          sysblk.wscnslport );
-        if (lsock_ws < 0) lsock_ws = 0;
     }
 
     /* Handle connection requests and attention interrupts */
@@ -3456,11 +3453,10 @@ int prev_rlen3270;
             /* Close the current listening socket, save
                the new CNSLPORT value and obtain a fresh
                listening socket. */
-            if (lsock) close_socket( lsock );
+            if (lsock >= 0) close_socket( lsock );
             free( curr_cnslport );
             curr_cnslport = strdup( sysblk.cnslport );
             lsock = get_listening_socket( "CNSLPORT", "", sysblk.cnslport );
-            if (lsock < 0) lsock = 0;
         }
 
         /* Did they set a new SYSGPORT value? */
@@ -3472,19 +3468,18 @@ int prev_rlen3270;
             /* Close the current listening socket, save
                the new SYSGPORT value and obtain a fresh
                listening socket. */
-            if (lsock2) close_socket( lsock2 );
+            if (lsock2 >= 0) close_socket( lsock2 );
             free( curr_sysgport );
             curr_sysgport  = strdup( sysblk.sysgport );
             lsock2 = get_listening_socket( "SYSGPORT", "SYSG ", sysblk.sysgport );
-            if (lsock2 < 0) lsock2 = 0;
         }
 
         /* Did they enable, change or disable WSCNSLPORT? */
         if (sysblk.wscnslport == NULL && curr_wscnslport != NULL)
         {
             /* User disabled the WebSocket listener via 'wscnslport NO' */
-            if (lsock_ws) close_socket( lsock_ws );
-            lsock_ws = 0;
+            if (lsock_ws >= 0) close_socket( lsock_ws );
+            lsock_ws = -1;
             free( curr_wscnslport );
             curr_wscnslport = NULL;
         }
@@ -3492,12 +3487,11 @@ int prev_rlen3270;
             && (curr_wscnslport == NULL
                 || strcmp( curr_wscnslport, sysblk.wscnslport ) != 0))
         {
-            if (lsock_ws) close_socket( lsock_ws );
+            if (lsock_ws >= 0) close_socket( lsock_ws );
             free( curr_wscnslport );
             curr_wscnslport = strdup( sysblk.wscnslport );
             lsock_ws = get_listening_socket( "WSCNSLPORT", "WebSocket ",
                                              sysblk.wscnslport );
-            if (lsock_ws < 0) lsock_ws = 0;
         }
 
         /* Initialize scan flags */
@@ -3511,21 +3505,21 @@ int prev_rlen3270;
             FD_ZERO( &readset );
             maxfd = -1;
 
-            if (lsock)
+            if (lsock >= 0)
             {
                 FD_SET( lsock, &readset );  // (normal local 3270 devices)
                 maxfd = lsock;              // (normal local 3270 devices)
             }
 
             /* If SYSGPORT defined and SYSG not connected yet... */
-            if (lsock2 && sysblk.sysgdev && !sysblk.sysgdev->connected)
+            if (lsock2 >= 0 && sysblk.sysgdev && !sysblk.sysgdev->connected)
             {
                 FD_SET( lsock2, &readset );     // (add SYSG port too)
                 maxfd = MAX( lsock, lsock2 );   // (then adjust maxfd)
             }
 
             /* If WSCNSLPORT defined, also watch the WebSocket port */
-            if (lsock_ws)
+            if (lsock_ws >= 0)
             {
                 FD_SET( lsock_ws, &readset );
                 if (lsock_ws > maxfd)
@@ -3692,21 +3686,21 @@ int prev_rlen3270;
 
         /* Accept incoming client connections */
         if (0
-            || (lsock_ws && FD_ISSET( lsock_ws, &readset ))
-            || (lsock2   && FD_ISSET( lsock2,   &readset ))
-            || (lsock    && FD_ISSET( lsock,    &readset ))
+            || (lsock_ws >= 0 && FD_ISSET( lsock_ws, &readset ))
+            || (lsock2 >= 0   && FD_ISSET( lsock2,   &readset ))
+            || (lsock >= 0    && FD_ISSET( lsock,    &readset ))
         )
         {
             /* Accept a connection and create conversation socket */
             ws_conn = false;
             sysg    = false;
 
-            if (lsock_ws && FD_ISSET( lsock_ws, &readset ))
+            if (lsock_ws >= 0 && FD_ISSET( lsock_ws, &readset ))
             {
                 csock = accept( lsock_ws, NULL, NULL );
                 ws_conn = true;
             }
-            else if (lsock2 && FD_ISSET( lsock2, &readset ))
+            else if (lsock2 >= 0 && FD_ISSET( lsock2, &readset ))
             {
                 csock = accept( lsock2, NULL, NULL );
                 sysg = true;
@@ -4038,9 +4032,9 @@ int prev_rlen3270;
     } /* end close all connected consoles */
 
     /* Close the listening sockets */
-    if (lsock)    close_socket( lsock  );
-    if (lsock2)   close_socket( lsock2   );
-    if (lsock_ws) close_socket( lsock_ws );
+    if (lsock >= 0)    close_socket( lsock  );
+    if (lsock2 >= 0)   close_socket( lsock2   );
+    if (lsock_ws >= 0) close_socket( lsock_ws );
 
     // "Thread id "TIDPAT", prio %2d, name %s ended"
     LOG_THREAD_END( CON_CONN_THREAD_NAME  );
