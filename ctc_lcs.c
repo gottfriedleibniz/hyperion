@@ -3947,7 +3947,7 @@ static char*  ReadOAT( char* pszOATName, FILE* fp, char* pszBuff )
             c = fgetc( fp );
 
             // Check for I/O error
-            if (ferror( fp ))
+            if (c == EOF && ferror( fp ))
             {
                 // "CTC: error in file %s: reading line %d: %s"
                 WRMSG( HHC00962, "E", pszOATName, iLine, strerror( errno ) );
