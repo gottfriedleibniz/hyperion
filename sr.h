@@ -612,8 +612,8 @@ BYTE  buf[8];
 
     TRACE("SR: sr_write_hdr:    key=0x%8.8x, len=0x%8.8x\n", key, len);
 
-    store_fw (buf, key);
-    store_fw (buf+4, len);
+    STORE_FW (buf, key);
+    STORE_FW (buf+4, len);
 
     if (SR_WRITE(buf, 1, 8, file) != 8)
     {
@@ -701,9 +701,9 @@ BYTE    buf[8];
     switch (len)
     {
         case 1: buf[0]     =  (BYTE)val;  break;
-        case 2: store_hw (buf, (U16)val); break;
-        case 4: store_fw (buf, (U32)val); break;
-        case 8: store_dw (buf, (U64)val); break;
+        case 2: STORE_HW (buf, (U16)val); break;
+        case 4: STORE_FW (buf, (U32)val); break;
+        case 8: STORE_DW (buf, (U64)val); break;
     }
 
     if ((U32)SR_WRITE(buf, 1, len, file) != len)
@@ -728,8 +728,8 @@ BYTE  buf[8];
         return -1;
     }
 
-    *key = fetch_fw (buf);
-    *len = fetch_fw (buf+4);
+    FETCH_FW(*key, buf);
+    FETCH_FW(*len, buf+4);
 
     TRACE("SR: sr_read_hdr:   key=0x%8.8x, len=0x%8.8x\n", *key, *len);
 
@@ -839,9 +839,9 @@ U64     value;
     switch (suslen)
     {
         case 1:  value = buf[0];         break;
-        case 2:  value = fetch_hw (buf); break;
-        case 4:  value = fetch_fw (buf); break;
-        case 8:  value = fetch_dw (buf); break;
+        case 2:  FETCH_HW(value, buf); break;
+        case 4:  FETCH_FW(value, buf); break;
+        case 8:  FETCH_DW(value, buf); break;
         default: value = 0;              break; /* To ward off gcc -Wall */
     }
 

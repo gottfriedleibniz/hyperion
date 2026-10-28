@@ -173,7 +173,7 @@ U32 crypto_fetch32( const void* ptr )
 }
 void crypto_store32( void* ptr, U32 value )
 {
-    store_fw( ptr, value );
+    STORE_FW( ptr, value );
 }
 U32 crypto_cswap32( U32 value )
 {
@@ -454,8 +454,8 @@ void des_set_key(des_context *ctx, CHAR8 key)
 {
     DESContext *sched = ctx->sched;
     word32 kL, kR;
-    kL = fetch_fw(key);
-    kR = fetch_fw(key+4);
+    FETCH_FW(kL, key);
+    FETCH_FW(kR, key+4);
     des_key_setup(kL, kR, &sched[0]);
 }
 
@@ -463,34 +463,34 @@ void des_encrypt(des_context *ctx, CHAR8 input, CHAR8 output)
 {
     DESContext *sched = ctx->sched;
     word32 out[2], xL, xR;
-    xL = fetch_fw(input);
-    xR = fetch_fw(input+4);
+    FETCH_FW(xL, input);
+    FETCH_FW(xR, input+4);
     des_encipher(out, xL, xR, sched);
-    store_fw(output, out[0]);
-    store_fw(output+4, out[1]);
+    STORE_FW(output, out[0]);
+    STORE_FW(output+4, out[1]);
 }
 
 void des_decrypt(des_context *ctx, CHAR8 input, CHAR8 output)
 {
     DESContext *sched = ctx->sched;
     word32 out[2], xL, xR;
-    xL = fetch_fw(input);
-    xR = fetch_fw(input+4);
+    FETCH_FW(xL, input);
+    FETCH_FW(xR, input+4);
     des_decipher(out, xL, xR, sched);
-    store_fw(output, out[0]);
-    store_fw(output+4, out[1]);
+    STORE_FW(output, out[0]);
+    STORE_FW(output+4, out[1]);
 }
 
 void des3_set_2keys(des3_context *ctx, CHAR8 k1, CHAR8 k2)
 {
     DESContext *sched = ctx->sched;
     word32 kL, kR;
-    kL = fetch_fw(k1);
-    kR = fetch_fw(k1+4);
+    FETCH_FW(kL, k1);
+    FETCH_FW(kR, k1+4);
     des_key_setup(kL, kR, &sched[0]);
     des_key_setup(kL, kR, &sched[2]);
-    kL = fetch_fw(k2);
-    kR = fetch_fw(k2+4);
+    FETCH_FW(kL, k2);
+    FETCH_FW(kR, k2+4);
     des_key_setup(kL, kR, &sched[1]);
 }
 
@@ -498,14 +498,14 @@ void des3_set_3keys(des3_context *ctx, CHAR8 k1, CHAR8 k2, CHAR8 k3)
 {
     DESContext *sched = ctx->sched;
     word32 kL, kR;
-    kL = fetch_fw(k1);
-    kR = fetch_fw(k1+4);
+    FETCH_FW(kL, k1);
+    FETCH_FW(kR, k1+4);
     des_key_setup(kL, kR, &sched[0]);
-    kL = fetch_fw(k2);
-    kR = fetch_fw(k2+4);
+    FETCH_FW(kL, k2);
+    FETCH_FW(kR, k2+4);
     des_key_setup(kL, kR, &sched[1]);
-    kL = fetch_fw(k3);
-    kR = fetch_fw(k3+4);
+    FETCH_FW(kL, k3);
+    FETCH_FW(kR, k3+4);
     des_key_setup(kL, kR, &sched[2]);
 }
 
@@ -513,30 +513,30 @@ void des3_encrypt(des3_context *ctx, CHAR8 input, CHAR8 output)
 {
     DESContext *sched = ctx->sched;
     word32 out[2], xL, xR;
-    xL = fetch_fw(input);
-    xR = fetch_fw(input+4);
+    FETCH_FW(xL, input);
+    FETCH_FW(xR, input+4);
     des_encipher(out, xL, xR, sched);
     xL = out[0]; xR = out[1];
     des_decipher(out, xL, xR, sched+1);
     xL = out[0]; xR = out[1];
     des_encipher(out, xL, xR, sched+2);
-    store_fw(output, out[0]);
-    store_fw(output+4, out[1]);
+    STORE_FW(output, out[0]);
+    STORE_FW(output+4, out[1]);
 }
 
 void des3_decrypt(des3_context *ctx, CHAR8 input, CHAR8 output)
 {
     DESContext *sched = ctx->sched;
     word32 out[2], xL, xR;
-    xL = fetch_fw(input);
-    xR = fetch_fw(input+4);
+    FETCH_FW(xL, input);
+    FETCH_FW(xR, input+4);
     des_decipher(out, xL, xR, sched+2);
     xL = out[0]; xR = out[1];
     des_encipher(out, xL, xR, sched+1);
     xL = out[0]; xR = out[1];
     des_decipher(out, xL, xR, sched);
-    store_fw(output, out[0]);
-    store_fw(output+4, out[1]);
+    STORE_FW(output, out[0]);
+    STORE_FW(output+4, out[1]);
 }
 
 #if defined( _FEATURE_076_MSA_EXTENSION_FACILITY_3 )

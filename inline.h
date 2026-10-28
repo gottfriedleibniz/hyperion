@@ -1142,7 +1142,7 @@ inline void ARCH_DEP( store_doubleword_absolute )( U64 value,
     ARCH_DEP( or_storage_key )( addr, (STORKEY_REF | STORKEY_CHANGE) );
 
     /* Store the doubleword into absolute storage */
-    store_dw( regs->mainstor + addr, value );
+    STORE_DW( regs->mainstor + addr, value );
 
 } /* end function store_doubleword_absolute */
 
@@ -1170,7 +1170,7 @@ inline void ARCH_DEP( store_fullword_absolute )( U32   value,
     ARCH_DEP( or_storage_key )( addr, (STORKEY_REF | STORKEY_CHANGE) );
 
     /* Store the fullword into absolute storage */
-    store_fw( regs->mainstor + addr, value );
+    STORE_FW( regs->mainstor + addr, value );
 
 } /* end function store_fullword_absolute */
 
