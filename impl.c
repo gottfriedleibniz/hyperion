@@ -888,7 +888,8 @@ static void is_PCLMULQDQ_available()
 
 #else // !defined( _MSVC_ ), i.e. Linux
 
-#if defined( _GCC_SSE2_ ) && defined( HAVE_SIGNAL_HANDLING ) && defined( FEATURE_HW_CLMUL )
+#if defined( HAVE_SIGNAL_HANDLING ) && defined( FEATURE_HW_CLMUL ) \
+    && (defined( _GCC_SSE2_ ) || defined( __aarch64__ ))
 
 static struct sigaction  sa_CRASH   = {0};
 static struct sigaction  sa_SIGILL  = {0};
@@ -926,15 +927,20 @@ static void is_PCLMULQDQ_available()
            'acc' variable never being referenced! (causing the 'have'
            flag to incorrectly be always set to true!)
         */
-        QW  mm1, mm2, acc;
-        U64 m1 = 1, m2 = 2;
+        volatile QW acc;
+        volatile U64 m1 = 1, m2 = 2;
 
+#if defined( _GCC_SSE2_ )
+        QW  mm1, mm2;
         mm1.v = _mm_setzero_si128();
         mm1.D.L.D = m1;
         mm2.v = _mm_setzero_si128();
         mm2.D.L.D = m2;
 
         acc.v = _mm_clmulepi64_si128 ( mm1.v, mm2.v, 0);
+#else
+        acc.v = vreinterpretq_s32_p128(vmull_p64((poly64_t)m1, (poly64_t)m2));
+#endif
         sysblk.have_PCLMULQDQ = true;
     }
     else // (only executed if we crashed)
@@ -954,7 +960,8 @@ static void is_PCLMULQDQ_available()
   #pragma GCC pop_options
 #endif
 
-#else // !defined( _GCC_SSE2_ ) || !defined( HAVE_SIGNAL_HANDLING ) || !defined( FEATURE_HW_CLMUL )
+#else // !( defined( HAVE_SIGNAL_HANDLING ) && defined( FEATURE_HW_CLMUL )
+     //    && (defined( _GCC_SSE2_ ) || defined( __aarch64__ )) )
 
 /* No way to know without SSE2 and signal handling, so play it safe! */
 static void is_PCLMULQDQ_available()
@@ -976,7 +983,7 @@ static void check_host_instruction_availability()
     // "WARNING: Host does not support the '%s' instruction"
 
 /* ARM64 processor? */
-#if defined( _M_ARM64 ) || defined( _M_ARM64EC )
+#if defined( __aarch64__ ) || defined( _M_ARM64 ) || defined( _M_ARM64EC )
     if (!sysblk.have_PCLMULQDQ) WRMSG( HHC00026, "W", "PCLMUL" );
 
 /* INTEL X64 processor? */
