@@ -389,6 +389,7 @@ BYTE    temp[8];                        /* Copied value              */
     STORE_DW( temp, value );
     memcpy( main1, temp,       len );
     memcpy( main2, temp+len, 8-len );
+    ITIMER_UPDATE( addr, 8-1, regs );
 }
 /*-------------------------------------------------------------------*/
 /* Store a sixteen-byte integer into virtual storage operand         */
@@ -423,6 +424,7 @@ BYTE    temp[16];                        /* Copied value              */
     STORE_QW( temp, value );
     memcpy( main1, temp, len );
     memcpy( main2, temp + len, 16-len );
+    ITIMER_UPDATE( addr, 16-1, regs );
 }
 /*-------------------------------------------------------------------*/
 /* Fetch a two-byte integer operand from virtual storage             */
@@ -542,6 +544,103 @@ BYTE    temp[32];                       /* Copy destination          */
     memcpy( temp+len, mn, 16 );
     return fetch_qw( temp );
 }
+
+/*-------------------------------------------------------------------*/
+/* Store a two-byte integer into unaligned virtual storage           */
+/*-------------------------------------------------------------------*/
+inline void ARCH_DEP( vstore2_unaligned )( U16 value, VADR addr, int arn, REGS* regs )
+{
+    BYTE   *mn;                             /* Main storage addresses    */
+
+    mn = MADDRL( addr, 2, arn, regs, ACCTYPE_WRITE, regs->psw.pkey );
+    STORE_HW( mn, value );
+    ITIMER_UPDATE( addr, 2-1, regs );
+}
+
+/*-------------------------------------------------------------------*/
+/* Store a four-byte integer into unaligned virtual storage          */
+/*-------------------------------------------------------------------*/
+inline void ARCH_DEP( vstore4_unaligned )( U32 value, VADR addr, int arn, REGS* regs )
+{
+    BYTE   *mn;                             /* Main storage addresses    */
+
+    mn = MADDRL( addr, 4, arn, regs, ACCTYPE_WRITE, regs->psw.pkey );
+    STORE_FW( mn, value );
+    ITIMER_UPDATE( addr, 4-1, regs );
+}
+
+/*-------------------------------------------------------------------*/
+/* Store a eight-byte integer into unaligned virtual storage         */
+/*-------------------------------------------------------------------*/
+inline void ARCH_DEP( vstore8_unaligned )( U64 value, VADR addr, int arn, REGS* regs )
+{
+    BYTE   *mn;                             /* Main storage addresses    */
+
+    mn = MADDRL( addr, 8, arn, regs, ACCTYPE_WRITE, regs->psw.pkey );
+    STORE_DW( mn, value );
+    ITIMER_UPDATE( addr, 8-1, regs );
+}
+
+/*-------------------------------------------------------------------*/
+/* Store a sixteen-byte integer into unaligned virtual storage       */
+/*-------------------------------------------------------------------*/
+inline void ARCH_DEP( vstore16_unaligned )( QW value, VADR addr, int arn, REGS* regs )
+{
+    BYTE   *mn;                             /* Main storage addresses    */
+
+    mn = MADDRL( addr, 16, arn, regs, ACCTYPE_WRITE, regs->psw.pkey );
+    STORE_QW( mn, value );
+    ITIMER_UPDATE( addr, 16-1, regs );
+}
+
+/*-------------------------------------------------------------------*/
+/* Fetch a two-byte integer from unaligned virtual storage           */
+/*-------------------------------------------------------------------*/
+inline U16 ARCH_DEP( vfetch2_unaligned )( VADR addr, int arn, REGS* regs )
+{
+    BYTE *mn;                            /* Main storage addresses    */
+
+    ITIMER_SYNC( addr, 2-1, regs );
+    mn = MADDRL( addr, 2, arn, regs, ACCTYPE_READ, regs->psw.pkey );
+    return fetch_hw( mn );
+}
+
+/*-------------------------------------------------------------------*/
+/* Fetch a four-byte integer from unaligned virtual storage          */
+/*-------------------------------------------------------------------*/
+inline U32 ARCH_DEP( vfetch4_unaligned )( VADR addr, int arn, REGS* regs )
+{
+    BYTE *mn;                            /* Main storage addresses    */
+
+    ITIMER_SYNC( addr, 4-1, regs );
+    mn = MADDRL( addr, 4, arn, regs, ACCTYPE_READ, regs->psw.pkey );
+    return fetch_fw( mn );
+}
+
+/*-------------------------------------------------------------------*/
+/* Fetch a eight-byte integer from unaligned virtual storage         */
+/*-------------------------------------------------------------------*/
+inline U64 ARCH_DEP( vfetch8_unaligned )( VADR addr, int arn, REGS* regs )
+{
+    BYTE *mn;                            /* Main storage addresses    */
+
+    ITIMER_SYNC( addr, 8-1, regs );
+    mn = MADDRL( addr, 8, arn, regs, ACCTYPE_READ, regs->psw.pkey );
+    return fetch_dw( mn );
+}
+
+/*-------------------------------------------------------------------*/
+/* Fetch a sixteen-byte operand from unaligned virtual storage       */
+/*-------------------------------------------------------------------*/
+inline QW ARCH_DEP( vfetch16_unaligned )( VADR addr, int arn, REGS* regs )
+{
+    BYTE *mn;                            /* Main storage addresses    */
+
+    ITIMER_SYNC( addr, 16-1, regs );
+    mn = MADDRL( addr, 16, arn, regs, ACCTYPE_READ, regs->psw.pkey );
+    return fetch_qw( mn );
+}
+
 /*-------------------------------------------------------------------*/
 /* Store 1 to 256 characters into virtual storage operand            */
 /*                                                                   */
@@ -613,14 +712,15 @@ BYTE   *main1;                          /* Mainstor address          */
 inline void ARCH_DEP( vstore2 )( U16 value, VADR addr, int arn, REGS* regs )
 {
     /* Most common case : Aligned & not crossing page boundary */
-    if (likely(IS_ALIGNED_POW2(addr, U16))
-        || ((VADR_L)addr & PAGEFRAME_BYTEMASK) != PAGEFRAME_BYTEMASK)
+    if (likely(IS_ALIGNED_POW2(addr, U16)))
     {
         BYTE* mn;
         mn = MADDRL( addr, 2, arn, regs, ACCTYPE_WRITE, regs->psw.pkey );
         STORE_HW( mn, value );
         ITIMER_UPDATE( addr, 2-1, regs );
     }
+    else if (((VADR_L)addr & PAGEFRAME_BYTEMASK) != PAGEFRAME_BYTEMASK)
+        ARCH_DEP( vstore2_unaligned )( value, addr, arn, regs );
     else
         ARCH_DEP( vstore2_full )( value, addr, arn, regs );
 }
@@ -631,14 +731,15 @@ inline void ARCH_DEP( vstore2 )( U16 value, VADR addr, int arn, REGS* regs )
 inline void ARCH_DEP( vstore4 )( U32 value, VADR addr, int arn, REGS* regs )
 {
     /* Most common case : Aligned & not crossing page boundary */
-    if (likely(IS_ALIGNED_POW2(addr, U32))
-        || (((VADR_L)addr & PAGEFRAME_BYTEMASK) <= (PAGEFRAME_BYTEMASK-3)))
+    if (likely(IS_ALIGNED_POW2(addr, U32)))
     {
         BYTE *mn;
         mn = MADDRL( addr, 4, arn, regs, ACCTYPE_WRITE, regs->psw.pkey );
         STORE_FW( mn, value );
         ITIMER_UPDATE( addr, 4-1, regs );
     }
+    else if (((VADR_L)addr & PAGEFRAME_BYTEMASK) <= (PAGEFRAME_BYTEMASK-3))
+        ARCH_DEP( vstore4_unaligned )( value, addr, arn, regs );
     else
         ARCH_DEP( vstore4_full )( value, addr, arn, regs );
 }
@@ -660,6 +761,7 @@ inline void ARCH_DEP( vstore8 )( U64 value, VADR addr, int arn, REGS* regs )
             *mn = CSWAP64( value );
         else
             STORE_DW( mn, value );
+        ITIMER_UPDATE( addr, 8-1, regs );
     }
     else
 #endif
@@ -670,18 +772,11 @@ inline void ARCH_DEP( vstore8 )( U64 value, VADR addr, int arn, REGS* regs )
            pointer may break on those architectures mandating
            strict alignment */
         if (likely(((VADR_L)addr & PAGEFRAME_BYTEMASK) <= (PAGEFRAME_BYTEMASK-7)))
-        {
-            /* Non aligned but not crossing page boundary */
-            BYTE *mn;
-            mn = MADDRL( addr, 8, arn, regs, ACCTYPE_WRITE, regs->psw.pkey );
-            /* invoking STORE_DW ensures endianness correctness */
-            STORE_DW( mn, value );
-        }
+            ARCH_DEP( vstore8_unaligned )( value, addr, arn, regs );
         else
             /* Crossing page boundary */
             ARCH_DEP( vstore8_full )( value, addr, arn, regs );
     }
-    ITIMER_UPDATE( addr, 8-1, regs );
 }
 
 /*-------------------------------------------------------------------*/
@@ -701,6 +796,7 @@ inline void ARCH_DEP( vstore16 )( QW value, VADR addr, int arn, REGS* regs )
             *mn = CSWAP128( value );
         else
             STORE_QW( mn, value );
+        ITIMER_UPDATE( addr, 16-1, regs );
     }
     else
 #endif
@@ -711,18 +807,11 @@ inline void ARCH_DEP( vstore16 )( QW value, VADR addr, int arn, REGS* regs )
            pointer may break on those architectures mandating
            strict alignment */
         if (likely(((VADR_L)addr & PAGEFRAME_BYTEMASK) <= (PAGEFRAME_BYTEMASK-15)))
-        {
-            /* Non aligned but not crossing page boundary */
-            BYTE *mn;
-            mn = MADDRL( addr, 16, arn, regs, ACCTYPE_WRITE, regs->psw.pkey );
-            /* invoking STORE_DW ensures endianness correctness */
-            STORE_QW( mn, value );
-        }
+            ARCH_DEP( vstore16_unaligned )( value, addr, arn, regs );
         else
             /* Crossing page boundary */
             ARCH_DEP( vstore16_full )( value, addr, arn, regs );
     }
-    ITIMER_UPDATE( addr, 16-1, regs );
 }
 /*-------------------------------------------------------------------*/
 /* Fetch a 1 to 256 character operand from virtual storage           */
@@ -790,14 +879,15 @@ BYTE   *mn;                             /* Main storage address      */
 /*-------------------------------------------------------------------*/
 inline U16 ARCH_DEP( vfetch2 )( VADR addr, int arn, REGS* regs )
 {
-    if (likely(IS_ALIGNED_POW2(addr, U16))
-        || (((VADR_L)addr & PAGEFRAME_BYTEMASK) != PAGEFRAME_BYTEMASK ))
+    if (likely(IS_ALIGNED_POW2(addr, U16)))
     {
         BYTE *mn;
         ITIMER_SYNC( addr, 2-1, regs );
         mn = MADDRL( addr, 2,arn, regs, ACCTYPE_READ, regs->psw.pkey );
         return fetch_hw( mn );
     }
+    else if (((VADR_L)addr & PAGEFRAME_BYTEMASK) != PAGEFRAME_BYTEMASK )
+        return ARCH_DEP( vfetch2_unaligned )( addr, arn, regs );
     return ARCH_DEP( vfetch2_full )( addr, arn, regs );
 }
 
@@ -806,14 +896,15 @@ inline U16 ARCH_DEP( vfetch2 )( VADR addr, int arn, REGS* regs )
 /*-------------------------------------------------------------------*/
 inline U32 ARCH_DEP( vfetch4 )( VADR addr, int arn, REGS* regs )
 {
-    if ((likely(IS_ALIGNED_POW2(addr, U32))
-        || (((VADR_L)addr & PAGEFRAME_BYTEMASK) <= (PAGEFRAME_BYTEMASK-3) )))
+    if (likely(IS_ALIGNED_POW2(addr, U32)))
     {
         BYTE *mn;
         ITIMER_SYNC( addr, 4-1, regs );
         mn = MADDRL( addr, 4,arn, regs, ACCTYPE_READ, regs->psw.pkey );
         return fetch_fw( mn );
     }
+    else if (((VADR_L)addr & PAGEFRAME_BYTEMASK) <= (PAGEFRAME_BYTEMASK-3))
+        return ARCH_DEP( vfetch4_unaligned )( addr, arn, regs );
     return ARCH_DEP( vfetch4_full )( addr, arn, regs );
 }
 
@@ -839,10 +930,7 @@ inline U64 ARCH_DEP( vfetch8 )( VADR addr, int arn, REGS* regs )
         if (likely(((VADR_L)addr & PAGEFRAME_BYTEMASK) <= (PAGEFRAME_BYTEMASK-7)))
         {
             /* unaligned, non-crossing doubleword fetch */
-            BYTE *mn;
-            ITIMER_SYNC( addr, 8-1, regs );
-            mn = MADDRL( addr, 8, arn, regs, ACCTYPE_READ, regs->psw.pkey );
-            return fetch_dw( mn );
+            return ARCH_DEP( vfetch8_unaligned )( addr, arn, regs );
         }
     }
     /* page crossing doubleword fetch */
@@ -870,10 +958,7 @@ inline QW ARCH_DEP( vfetch16 )( VADR addr, int arn, REGS* regs )
         if (likely(((VADR_L)addr & PAGEFRAME_BYTEMASK) <= (PAGEFRAME_BYTEMASK-15)))
         {
             /* unaligned, non-crossing doubleword fetch */
-            BYTE *mn;
-            ITIMER_SYNC( addr, 16-1, regs );
-            mn = MADDRL( addr, 16, arn, regs, ACCTYPE_READ, regs->psw.pkey );
-            return fetch_qw( mn );
+            return ARCH_DEP( vfetch16_unaligned )( addr, arn, regs );
         }
     }
     /* page crossing quadword fetch */

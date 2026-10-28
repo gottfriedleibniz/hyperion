@@ -89,6 +89,16 @@ extern inline U32 ARCH_DEP( vfetch4_full  )( VADR addr, int arn, REGS* regs );
 extern inline U64 ARCH_DEP( vfetch8_full  )( VADR addr, int arn, REGS* regs );
 extern inline QW  ARCH_DEP( vfetch16_full )( VADR addr, int arn, REGS* regs );
 
+extern inline void ARCH_DEP( vstore2_unaligned  )( U16 value, VADR addr, int arn, REGS* regs );
+extern inline void ARCH_DEP( vstore4_unaligned  )( U32 value, VADR addr, int arn, REGS* regs );
+extern inline void ARCH_DEP( vstore8_unaligned  )( U64 value, VADR addr, int arn, REGS* regs );
+extern inline void ARCH_DEP( vstore16_unaligned )( QW  value, VADR addr, int arn, REGS* regs );
+
+extern inline U16 ARCH_DEP( vfetch2_unaligned  )( VADR addr, int arn, REGS* regs );
+extern inline U32 ARCH_DEP( vfetch4_unaligned  )( VADR addr, int arn, REGS* regs );
+extern inline U64 ARCH_DEP( vfetch8_unaligned  )( VADR addr, int arn, REGS* regs );
+extern inline QW  ARCH_DEP( vfetch16_unaligned )( VADR addr, int arn, REGS* regs );
+
 extern inline void ARCH_DEP( vstoreb  )( BYTE value, VADR addr, int arn, REGS* regs );
 extern inline void ARCH_DEP( vstore2  )( U16  value, VADR addr, int arn, REGS* regs );
 extern inline void ARCH_DEP( vstore4  )( U32  value, VADR addr, int arn, REGS* regs );
