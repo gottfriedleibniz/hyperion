@@ -1660,6 +1660,16 @@ DLL_EXPORT void w32_init_hostinfo( HOST_INFO* pHostInfo )
     }
 
     {   /* CPUID information */
+#if defined( _M_ARM64 ) || defined( _M_ARM64EC )
+        /* #WoA: Match FEATURE_HW_CLMUL rationale */
+        pHostInfo->fp_unit = 1;
+        pHostInfo->vector_unit = 1;
+#if (defined( _MSC_VER ) && _MSC_VER >= 1920) || defined( __ARM_FEATURE_CRYPTO )
+        pHostInfo->cpu_aes_extns = 1;
+#else
+        pHostInfo->cpu_aes_extns = 0;
+#endif
+#else
         int CPUInfo[4] = {-1, -1, -1, -1 };
 
         __cpuid(CPUInfo, 1);
@@ -1669,6 +1679,7 @@ DLL_EXPORT void w32_init_hostinfo( HOST_INFO* pHostInfo )
             pHostInfo->fp_unit = 1;
         if ( CPUInfo[3] & 0x03800000 ) /* bit 23 = MMX, 24 = SSE, 25 == SSE2 */
             pHostInfo->vector_unit = 1;
+#endif
     }
 
     pgnsi = (PGNSI) GetProcAddress( GetModuleHandle(TEXT("kernel32.dll")), "GetNativeSystemInfo");
@@ -2053,6 +2064,17 @@ DLL_EXPORT void w32_init_hostinfo( HOST_INFO* pHostInfo )
                         else
                             prod_id = "Standard x64 Edition";
                     }
+#if defined(PROCESSOR_ARCHITECTURE_ARM64)
+                    else if ( si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_ARM64 )
+                    {
+                        if ( vi.wSuiteMask & VER_SUITE_DATACENTER )
+                            prod_id = "Datacenter arm64 Edition";
+                        else if ( vi.wSuiteMask & VER_SUITE_ENTERPRISE )
+                            prod_id = "Enterprise arm64 Edition";
+                        else
+                            prod_id = "Standard arm64 Edition";
+                    }
+#endif
                     else
                     {
                         if ( vi.wSuiteMask & VER_SUITE_COMPUTE_SERVER )
@@ -2092,7 +2114,11 @@ DLL_EXPORT void w32_init_hostinfo( HOST_INFO* pHostInfo )
             }
             if ( vi.dwMajorVersion >= 6 )
             {
-                if ( si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64 )
+                if ( si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64
+#if defined (PROCESSOR_ARCHITECTURE_ARM64)
+                  || si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_ARM64
+#endif
+                )
                 {
                     prod_proc = " 64-bit";
                     pHostInfo->cpu_64bits = 1;
@@ -2308,6 +2334,9 @@ DLL_EXPORT void w32_init_hostinfo( HOST_INFO* pHostInfo )
 
         case PROCESSOR_ARCHITECTURE_AMD64:
             {
+#if defined( _M_ARM64 ) || defined( _M_ARM64EC ) // Avoid compiling __cpuid
+                STRLCPY( pHostInfo->machine, "AMD64" );
+#else
                 int CPUInfo[4] = {-1, -1, -1, -1 };
                 char CPUString[0x20];
                 char CPUBrand[0x40];
@@ -2342,6 +2371,7 @@ DLL_EXPORT void w32_init_hostinfo( HOST_INFO* pHostInfo )
                 memcpy(CPUBrand+32, CPUInfo, sizeof(CPUInfo));
 
                 memcpy(pHostInfo->cpu_brand, CPUBrand, sizeof(pHostInfo->cpu_brand));
+#endif
 
             }
             break;
@@ -2352,6 +2382,14 @@ DLL_EXPORT void w32_init_hostinfo( HOST_INFO* pHostInfo )
         case PROCESSOR_ARCHITECTURE_IA32_ON_WIN64: STRLCPY( pHostInfo->machine, "IA32_ON_WIN64" ); break;
         case PROCESSOR_ARCHITECTURE_ALPHA:         STRLCPY( pHostInfo->machine, "ALPHA"         ); break;
         case PROCESSOR_ARCHITECTURE_MIPS:          STRLCPY( pHostInfo->machine, "MIPS"          ); break;
+#if defined(PROCESSOR_ARCHITECTURE_ARM64)
+        case PROCESSOR_ARCHITECTURE_ARM64:
+            {
+                // #TODO: cpu_brand (e.g., from Registry or WMI)
+                STRLCPY(pHostInfo->machine, "ARM64");
+            }
+            break;
+#endif
         default:                                   STRLCPY( pHostInfo->machine, "???"           ); break;
     }
 

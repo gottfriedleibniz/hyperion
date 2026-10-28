@@ -276,6 +276,8 @@ typedef union {
 
 #if defined( FEATURE_V128_SSE )
         __m128i V;      // intrinsic type vector
+#elif defined( FEATURE_V128_NEON )
+        int32x4_t V;
 #endif
 
 }  U128  ;
@@ -1365,7 +1367,27 @@ static inline U64 gf_mul_32( U32 m1, U32 m2)
     }
     else
 
+#elif defined( FEATURE_V128_NEON ) && defined( FEATURE_HW_CLMUL )
+
+    if (sysblk.have_PCLMULQDQ)
+    {
+        /* NOTE: MSVC's vmull_p64 accepts __n64 instead of poly64_t, so
+        ** poly64x1_t is used as an equivalent type. */
+        uint64x2_t acc;
+#if defined( _MSVC_ )
+        poly64x1_t mm1 = vcreate_p64((U64)m1);
+        poly64x1_t mm2 = vcreate_p64((U64)m2);
+        acc = vreinterpretq_u64_p128(vmull_p64(mm1, mm2));
+#else
+        acc = vreinterpretq_u64_p128(vmull_p64((poly64_t)m1, (poly64_t)m2));
+#endif
+
+        return vgetq_lane_u64(acc, 0);
+    }
+    else
+
 #endif  //  !(defined( FEATURE_V128_SSE ) && defined( FEATURE_HW_CLMUL )), or
+        //  !(defined( FEATURE_V128_NEON ) && defined( FEATURE_HW_CLMUL )), or
         // "PCLMULQDQ" instruction unavailable
     {
         int     i;                    /* loop index                      */
@@ -1439,7 +1461,26 @@ static inline void gf_mul_64( U64 m1, U64 m2, U64* accu128h, U64* accu128l)
     }
     else
 
+#elif defined( FEATURE_V128_NEON ) && defined( FEATURE_HW_CLMUL )
+
+    if (sysblk.have_PCLMULQDQ)
+    {
+        uint64x2_t acc;
+#if defined( _MSVC_ )
+        poly64x1_t mm1 = vcreate_p64(m1);
+        poly64x1_t mm2 = vcreate_p64(m2);
+        acc = vreinterpretq_u64_p128(vmull_p64(mm1, mm2));
+#else
+        acc = vreinterpretq_u64_p128(vmull_p64((poly64_t)m1, (poly64_t)m2));
+#endif
+
+        *accu128l = vgetq_lane_u64(acc, 0);
+        *accu128h = vgetq_lane_u64(acc, 1);
+    }
+    else
+
 #endif  //  !(defined( FEATURE_V128_SSE ) && defined( FEATURE_HW_CLMUL )), or
+        //  !(defined( FEATURE_V128_NEON ) && defined( FEATURE_HW_CLMUL )), or
         // "PCLMULQDQ" instruction unavailable
     {
         /* portable C: GF 64-bit multiply */
