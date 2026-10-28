@@ -26,6 +26,8 @@
 PCRE_DIR = winbuild\pcre
 !ELSEIF "$(CPU)" == "AMD64" && EXIST(winbuild\pcre\x64)
 PCRE_DIR = winbuild\pcre\x64
+!ELSEIF "$(CPU)" == "ARM64" && EXIST(winbuild\pcre\ARM64)
+PCRE_DIR = winbuild\pcre\ARM64
 !ELSEIF "$(CPU)" == "IA64" && EXIST(winbuild\pcre\ia64)
 PCRE_DIR = winbuild\pcre\ia64
 !ELSEIF EXIST(winbuild\pcre)
@@ -44,6 +46,10 @@ PCRE_DIR = winbuild\pcre
 !ELSEIF "$(CPU)" == "AMD64"
 !IF EXIST($(PCRE_DIR)\x64)
 PCRE_DIR = $(PCRE_DIR)\x64
+!ENDIF
+!ELSEIF "$(CPU)" == "ARM64"
+!IF EXIST($(PCRE_DIR)\ARM64)
+PCRE_DIR = $(PCRE_DIR)\ARM64
 !ENDIF
 !ELSEIF "$(CPU)" == "IA64"
 !IF EXIST($(PCRE_DIR)\ia64)
@@ -69,6 +75,8 @@ PCRE_INCDIR   = $(PCRE_DIR)
 PCRE_LIBDIR   = $(PCRE_DIR)\lib
 !IF "$(CPU)" == "AMD64" && EXIST($(PCRE_LIBDIR)\x64)
 PCRE_LIBDIR   = $(PCRE_LIBDIR)\x64
+!ELSEIF "$(CPU)" == "ARM64" && EXIST($(PCRE_LIBDIR)\ARM64)
+PCRE_LIBDIR   = $(PCRE_LIBDIR)\ARM64
 !ELSEIF "$(CPU)" == "IA64" && EXIST($(PCRE_LIBDIR)\ia64)
 PCRE_LIBDIR   = $(PCRE_LIBDIR)\ia64
 !ENDIF

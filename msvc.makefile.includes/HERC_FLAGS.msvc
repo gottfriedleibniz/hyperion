@@ -101,7 +101,7 @@ ldebug = $(ldebug) /base:0x100400000
 ldebug = $(ldebug) /base:0x000400000
 !ENDIF
 
-!IF "$(CPU)" == "AMD64"
+!IF "$(CPU)" == "AMD64" && "$(ABI)" == ""
 !IF $(vsversion) >= $(vers_vs2015)
 # Optimize for Intel CPU architecture
 cflags = $(cflags) /favor:INTEL64

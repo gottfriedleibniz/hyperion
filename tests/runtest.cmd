@@ -163,7 +163,7 @@
   set "noexit="
   set "ftype="
   set "vars=platform=Windows"
-  set "bitness="
+  set "arch="
   set "build="
   set "repeat="
   set "maxruns="
@@ -176,7 +176,7 @@
   set "deftdir=..\hyperion\tests"
   set "deftname=*"
   set "defftype=tst"
-  set "defbitness=64"
+  set "defarch=64"
   set "defbuild=retail"
   set "defrepeat="
   set "defmaxruns=100"
@@ -723,8 +723,10 @@ setlocal
     goto :parse_positional_opts
   )
 
-  if /i "%optname%" == "32" goto :parse_3264_opt
-  if /i "%optname%" == "64" goto :parse_3264_opt
+  if /i "%optname%" == "32" goto :parse_arch_opt
+  if /i "%optname%" == "64" goto :parse_arch_opt
+  if /i "%optname%" == "arm64"   goto :parse_arch_opt
+  if /i "%optname%" == "arm64ec" goto :parse_arch_opt
 
   if /i "%optname%" == "b"  goto :parse_b_opt
   if /i "%optname%" == "d"  goto :parse_d_opt
@@ -751,9 +753,9 @@ setlocal
 
   goto :parse_unknown_opt
 
-:parse_3264_opt
+:parse_arch_opt
 
-  set "bitness=%optname%"
+  set "arch=%optname%"
   goto :parse_options_loop
 
 :parse_b_opt
@@ -885,7 +887,7 @@ setlocal
   %TRACE% build    = %build%
   %TRACE% ttof     = %ttof%
   %TRACE% vars     = %vars%
-  %TRACE% bitness  = %bitness%
+  %TRACE% arch     = %arch%
   %TRACE%.
   %TRACE% repeat   = %repeat%
   %TRACE% maxruns  = %maxruns%
@@ -904,7 +906,7 @@ setlocal
   if not defined tdir    set "tdir=%deftdir%"
   if not defined tname   set "tname=%deftname%"
   if not defined ftype   set "ftype=%defftype%"
-  if not defined bitness set "bitness=%defbitness%"
+  if not defined arch    set "arch=%arch%"
   if not defined build   set "build=%defbuild%"
   if not defined repeat  set "repeat=%defrepeat%"
   if not defined maxruns set "maxruns=%defmaxruns%"
@@ -946,14 +948,17 @@ setlocal
 
   @REM  Validate which herc binaries to use (64-bit or 32-bit)
 
-  if "%bitness%" == "64" (
+  if "%arch%" == "64" (
     set "hdir=msvc.%dbg%AMD64.bin"
     set "vars=%vars% ptrsize=8"
-  ) else if "%bitness%" == "32" (
+  ) else if "%arch%" == "32" (
     set "hdir=msvc.%dbg%dllmod.bin"
     set "vars=%vars% ptrsize=4"
+  ) else if not "%arch%" == "" (
+    set "hdir=msvc.%dbg%%arch%.bin"
+    set "vars=%vars% ptrsize=8"
   ) else (
-    echo ERROR: Which binaries to use must be either '64' or'32' 1>&2
+    echo ERROR: Which binaries to use must be either '64', '32', or 'armec' 1>&2
     set /a "rc=1"
   )
 
@@ -961,7 +966,7 @@ setlocal
     call :isdir "%tdir%\..\%hdir%"
     if not defined isdir (
       if defined dbg set "xxx=debug "
-      echo ERROR: %bitness%-bit %xxx%directory "%tdir%\..\%hdir%" does not exist. 1>&2
+      echo ERROR: %arch% %xxx%directory "%tdir%\..\%hdir%" does not exist. 1>&2
       set /a "rc=1"
     ) else (
       call :isfile "%tdir%\..\%hdir%\hercules.exe"
@@ -1032,7 +1037,7 @@ setlocal
   %TRACE% build    = %build%
   %TRACE% ttof     = %ttof%
   %TRACE% vars     = %vars%
-  %TRACE% bitness  = %bitness%
+  %TRACE% arch     = %arch%
   %TRACE%.
   %TRACE% repeat   = %repeat%
   %TRACE% maxruns  = %maxruns%
