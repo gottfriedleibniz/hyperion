@@ -213,6 +213,7 @@ DLL_EXPORT void hthreads_internal_init()
             ht->ht_name       =  strdup( "main" );
             ht->ht_cr_locat   =  ht_cr_locat;
             ht->ht_ob_lock    =  NULL;
+            ht->ht_ob_where   =  NULL;
             ht->ht_footprint  =  false;
 
             InsertListHead( &threadlist, &ht->ht_link );
@@ -457,31 +458,21 @@ static HTHREAD* hthread_find_HTHREAD_locked( TID tid, LIST_ENTRY* anchor )
 }
 
 /*-------------------------------------------------------------------*/
-/* Internal thread function to find an HTHREAD entry in our list     */
-/*-------------------------------------------------------------------*/
-static HTHREAD* hthread_find_HTHREAD( TID tid )
-{
-    HTHREAD* ht;
-    LockThreadsList();
-    {
-        ht = hthread_find_HTHREAD_locked( tid, NULL );
-    }
-    UnlockThreadsList();
-    return ht;
-}
-
-/*-------------------------------------------------------------------*/
 /* Remember that a thread is waiting to obtain a given lock          */
 /*-------------------------------------------------------------------*/
 static void hthread_obtaining_lock( LOCK* plk, const char* loc )
 {
     HTHREAD* ht;
-    if (!(ht = hthread_find_HTHREAD( hthread_self() )))
-        return;
-    ht->ht_ob_lock = plk;
-    free( ht->ht_ob_where );
-    ht->ht_ob_where = strdup( loc );
-    gettimeofday( &ht->ht_ob_time, NULL );
+    LockThreadsList();
+    if ((ht = hthread_find_HTHREAD_locked( hthread_self(), NULL )))
+    {
+        free( ht->ht_ob_where );
+
+        ht->ht_ob_lock = plk;
+        ht->ht_ob_where = loc ? strdup( loc ) : NULL;
+        gettimeofday( &ht->ht_ob_time, NULL );
+    }
+    UnlockThreadsList();
 }
 
 /*-------------------------------------------------------------------*/
@@ -490,9 +481,12 @@ static void hthread_obtaining_lock( LOCK* plk, const char* loc )
 static void hthread_lock_obtained()
 {
     HTHREAD* ht;
-    if (!(ht = hthread_find_HTHREAD( hthread_self() )))
-        return;
-    ht->ht_ob_lock = NULL;
+    LockThreadsList();
+    if ((ht = hthread_find_HTHREAD_locked( hthread_self(), NULL )))
+    {
+        ht->ht_ob_lock = NULL;
+    }
+    UnlockThreadsList();
 }
 
 /*-------------------------------------------------------------------*/
@@ -1088,6 +1082,7 @@ DLL_EXPORT int  hthread_create_thread( TID* ptid, ATTR* pat,
             ht->ht_name     =  strdup( name );
             ht->ht_tid      =  *ptid;
             ht->ht_ob_lock  =  NULL;
+            ht->ht_ob_where =  NULL;
 
             InsertListHead( &threadlist, &ht->ht_link );
             threadcount++;
@@ -1533,6 +1528,7 @@ static int hthreads_copy_threads_list( HTHREAD** ppHTHREAD, LIST_ENTRY* anchor )
             ht = CONTAINING_RECORD( ple, HTHREAD, ht_link );
             memcpy( &hta[i], ht, sizeof( HTHREAD ));
             hta[i].ht_name = strdup( ht->ht_name );
+            hta[i].ht_ob_where = ht->ht_ob_where ? strdup( ht->ht_ob_where ) : NULL;
             hta[i].ht_footprint = false;
         }
 
@@ -1667,7 +1663,10 @@ DLL_EXPORT int threads_cmd( int argc, char* argv[], char* cmdline )
 
                 /* Free our copy of the threads list */
                 for (i=0; i < k; i++)
+                {
                     free( ht[i].ht_name );
+                    free( ht[i].ht_ob_where );
+                }
                 free( ht );
             }
             else
@@ -1837,7 +1836,10 @@ DLL_EXPORT int hthread_report_deadlocks( const char* sev )
 
     /* Free our private array copies of both lists */
     for (i=0; i < ht_count; i++)
+    {
         free( ht[i].ht_name );
+        free( ht[i].ht_ob_where );
+    }
     free( ht );
     for (i=0; i < ilk_count; i++)
         free( ilk[i].il_name );
