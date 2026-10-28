@@ -1087,7 +1087,7 @@ inline U64 ARCH_DEP( fetch_doubleword_absolute )( RADR addr, REGS* regs )
     // to access DAT-related values.  In most `well-behaved' OS's,
     // other CPUs should not be interfering with these values
 
-    return fetch_dw( FETCH_MAIN_ABSOLUTE( addr, regs, 8 ));
+    return READ_MAIN_DW( FETCH_MAIN_ABSOLUTE( addr, regs, 8 ));
 }
 
 
@@ -1101,7 +1101,7 @@ inline U64 ARCH_DEP( fetch_doubleword_absolute )( RADR addr, REGS* regs )
 /*-------------------------------------------------------------------*/
 inline U32 ARCH_DEP( fetch_fullword_absolute )( RADR addr, REGS* regs )
 {
-    return fetch_fw( FETCH_MAIN_ABSOLUTE( addr, regs, 4 ));
+    return READ_MAIN_FW( FETCH_MAIN_ABSOLUTE( addr, regs, 4 ));
 }
 
 
@@ -1116,7 +1116,7 @@ inline U32 ARCH_DEP( fetch_fullword_absolute )( RADR addr, REGS* regs )
 inline U16 ARCH_DEP(fetch_halfword_absolute) (RADR addr,
                                 REGS *regs)
 {
-    return fetch_hw( FETCH_MAIN_ABSOLUTE( addr, regs, 2 ));
+    return READ_MAIN_HW( FETCH_MAIN_ABSOLUTE( addr, regs, 2 ));
 }
 
 
@@ -1142,7 +1142,7 @@ inline void ARCH_DEP( store_doubleword_absolute )( U64 value,
     ARCH_DEP( or_storage_key )( addr, (STORKEY_REF | STORKEY_CHANGE) );
 
     /* Store the doubleword into absolute storage */
-    store_dw( regs->mainstor + addr, value );
+    STORE_MAIN_DW( regs->mainstor + addr, value );
 
 } /* end function store_doubleword_absolute */
 
@@ -1170,7 +1170,7 @@ inline void ARCH_DEP( store_fullword_absolute )( U32   value,
     ARCH_DEP( or_storage_key )( addr, (STORKEY_REF | STORKEY_CHANGE) );
 
     /* Store the fullword into absolute storage */
-    store_fw( regs->mainstor + addr, value );
+    STORE_MAIN_FW( regs->mainstor + addr, value );
 
 } /* end function store_fullword_absolute */
 

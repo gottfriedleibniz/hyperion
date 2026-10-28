@@ -542,7 +542,7 @@ U16 evd_len;
 
         /* Set length in event header */
         evd_len = sizeof(SCCB_EVD_HDR) + sizeof(SCCB_HWL_BK);
-        STORE_HW(evd_hdr->totlen, evd_len);
+        STORE_MAIN_HW(evd_hdr->totlen, evd_len);
 
         /* Set type in event header */
         evd_hdr->type = SCCB_EVD_TYPE_HWL;
@@ -550,9 +550,9 @@ U16 evd_len;
         /* Update SCCB length field if variable request */
         if (sccb->type & SCCB_TYPE_VARIABLE)
         {
-            FETCH_HW(evd_len, evd_hdr->totlen);
+            FETCH_MAIN_HW(evd_len, evd_hdr->totlen);
             sccb_len = evd_len + sizeof(SCCB_HEADER);
-            STORE_HW(sccb->length, sccb_len);
+            STORE_MAIN_HW(sccb->length, sccb_len);
             sccb->type &= ~SCCB_TYPE_VARIABLE;
         }
 
@@ -609,7 +609,7 @@ U16 evd_len;
 
         /* Set length in event header */
         evd_len = sizeof(SCCB_EVD_HDR) + sizeof(SCCB_HWL_BK);
-        STORE_HW(evd_hdr->totlen, evd_len);
+        STORE_MAIN_HW(evd_hdr->totlen, evd_len);
 
         /* Set type in event header */
         evd_hdr->type = SCCB_EVD_TYPE_HWL;
@@ -617,9 +617,9 @@ U16 evd_len;
         /* Update SCCB length field if variable request */
         if (sccb->type & SCCB_TYPE_VARIABLE)
         {
-            FETCH_HW(evd_len, evd_hdr->totlen);
+            FETCH_MAIN_HW(evd_len, evd_hdr->totlen);
             sccb_len = evd_len + sizeof(SCCB_HEADER);
-            STORE_HW(sccb->length, sccb_len);
+            STORE_MAIN_HW(sccb->length, sccb_len);
             sccb->type &= ~SCCB_TYPE_VARIABLE;
         }
 
@@ -693,26 +693,26 @@ int scp_len;
 
     psa = (PSA*)sysblk.mainstor;
 
-    STORE_DW(psa->iplccw2,BOOT_PARM_ADDR);
+    STORE_MAIN_DW(psa->iplccw2,BOOT_PARM_ADDR);
 
     sb_bk = (SCSI_BOOT_BK*)(sysblk.mainstor + BOOT_PARM_ADDR);
-    memset(sb_bk,0x00,0x1000);
+    MAINSTOR_MSET(sb_bk,0x00,0x1000);
 
     sb_bk->ldind = ldind ? SCSI_BOOT_LDIND_DUMP : SCSI_BOOT_LDIND_LOAD;
 
-    STORE_HW(sb_bk->devno,dev->devnum);
-    STORE_DW(sb_bk->wwpn,scsi_lddev_wwpn[ldind]);
-    STORE_DW(sb_bk->lun,scsi_lddev_lun[ldind]);
-    STORE_FW(sb_bk->prog,scsi_lddev_prog[ldind]);
-    STORE_DW(sb_bk->brlba,scsi_lddev_brlba[ldind]);
+    STORE_MAIN_HW(sb_bk->devno,dev->devnum);
+    STORE_MAIN_DW(sb_bk->wwpn,scsi_lddev_wwpn[ldind]);
+    STORE_MAIN_DW(sb_bk->lun,scsi_lddev_lun[ldind]);
+    STORE_MAIN_FW(sb_bk->prog,scsi_lddev_prog[ldind]);
+    STORE_MAIN_DW(sb_bk->brlba,scsi_lddev_brlba[ldind]);
 
     if(scsi_lddev_scpdata[ldind])
     {
         scp_len = strlen((char*)scsi_lddev_scpdata[ldind]);
         if(scp_len > 256)
             scp_len = 256; // Sanity check
-        STORE_FW(sb_bk->scp_len,scp_len);
-        memcpy((BYTE*)(sb_bk+1), scsi_lddev_scpdata[ldind], scp_len);
+        STORE_MAIN_FW(sb_bk->scp_len,scp_len);
+        MAINSTOR_MCOPY((BYTE*)(sb_bk+1), scsi_lddev_scpdata[ldind], scp_len);
     }
     else
         scp_len = 0;
@@ -720,9 +720,9 @@ int scp_len;
     scp_len += 7;
     scp_len &= ~7;
 
-    STORE_FW(sb_bk->xml_off,sizeof(SCSI_BOOT_BK) + scp_len);
+    STORE_MAIN_FW(sb_bk->xml_off,sizeof(SCSI_BOOT_BK) + scp_len);
 
-    STORE_FW(sb_bk->scp_off,sizeof(SCSI_BOOT_BK) + scp_len - 8); // ZZ:???
+    STORE_MAIN_FW(sb_bk->scp_off,sizeof(SCSI_BOOT_BK) + scp_len - 8); // ZZ:???
 
     xml = (BYTE*)(sb_bk+1) + scp_len;
 

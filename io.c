@@ -185,6 +185,7 @@ DEF_INST( modify_subchannel )
 int     b2;                             /* Effective addr base       */
 VADR    effective_addr2;                /* Effective address         */
 DEVBLK* dev;                            /* -> device block           */
+CACHE_ALIGN
 PMCW    pmcw;                           /* Path management ctl word  */
 
     S( inst, regs, b2, effective_addr2 );
@@ -538,6 +539,7 @@ DEF_INST( start_subchannel )
 int     b2;                             /* Effective addr base       */
 VADR    effective_addr2;                /* Effective address         */
 DEVBLK* dev;                            /* -> device block           */
+CACHE_ALIGN
 ORB     orb;                            /* Operation request block   */
 
     S( inst, regs, b2, effective_addr2 );
@@ -751,6 +753,7 @@ DEF_INST( store_subchannel )
 int     b2;                             /* Effective addr base       */
 VADR    effective_addr2;                /* Effective address         */
 DEVBLK* dev;                            /* -> device block           */
+CACHE_ALIGN
 SCHIB   schib;                          /* Subchannel information blk*/
 
     S( inst, regs, b2, effective_addr2 );
@@ -910,10 +913,10 @@ DEVBLK *dev;                            /* dev presenting interrupt  */
                 }
 
                 /* If operand address is zero, store in PSA */
-                STORE_FW( psa->ioid,ioid );
-                STORE_FW( psa->ioparm,ioparm );
+                STORE_MAIN_FW( psa->ioid,ioid );
+                STORE_MAIN_FW( psa->ioparm,ioparm );
 #if defined( FEATURE_001_ZARCH_INSTALLED_FACILITY ) || defined( _FEATURE_IO_ASSIST )
-                STORE_FW( psa->iointid,iointid );
+                STORE_MAIN_FW( psa->iointid,iointid );
 #endif
                 /* Do SIE intercept if needed */
 #if defined( _FEATURE_IO_ASSIST )
@@ -954,6 +957,7 @@ DEF_INST( test_subchannel )
 int     b2;                             /* Effective addr base       */
 VADR    effective_addr2;                /* Effective address         */
 DEVBLK* dev;                            /* -> device block           */
+CACHE_ALIGN
 IRB     irb;                            /* Interruption response blk */
 int     cc;                             /* Condition Code            */
 
@@ -1359,7 +1363,7 @@ int     i;
 
     /* If the addressed channelset is connected to another
        CPU then return with cc1 */
-    for (i = 0; i < sysblk.maxcpu; i++)
+    for (i = 0; i < SYS_GET_MAXCPU(); i++)
     {
         if (IS_CPU_ONLINE(i)
          && sysblk.regs[i]->chanset == effective_addr2)
@@ -1420,7 +1424,7 @@ int     i;
 
     /* If the addressed channelset is connected to another
        CPU then return with cc0 */
-    for(i = 0; i < sysblk.maxcpu; i++)
+    for(i = 0; i < SYS_GET_MAXCPU(); i++)
     {
         if (IS_CPU_ONLINE(i)
          && sysblk.regs[i]->chanset == effective_addr2)

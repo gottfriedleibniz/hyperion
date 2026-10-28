@@ -115,6 +115,31 @@
 #define IC_RESTART          1 /* 0x00000002 */
 #define IC_PSW_WAIT         0 /* 0x00000001 */
 
+/* Interrupt Mask Register (IMR) Operations */
+#define REGS_GET_IMR(r)       ((r)->ints_mask)
+#define REGS_SET_IMR(r, m)    ((r)->ints_mask = (m))
+#define REGS_CLR_IMR(r, m)    ((r)->ints_mask &= ~(m))
+#define REGS_AND_IMR(r, m)    ((r)->ints_mask &= (m))
+#define REGS_BIT_IMR(r, m)    ((r)->ints_mask |= (m))
+#define REGS_TST_IMR(r, m)    (((r)->ints_mask) & (m))
+
+/* Interrupt State Register (ISR) Operations */
+#define REGS_GET_ISR(r)       ((r)->ints_state)
+#define REGS_SET_ISR(r, m)    ((r)->ints_state = (m))
+#define REGS_CLR_ISR(r, m)    ((r)->ints_state &= ~(m))
+#define REGS_AND_ISR(r, m)    ((r)->ints_state &= (m))
+#define REGS_BIT_ISR(r, m)    ((r)->ints_state |= (m))
+#define REGS_TST_ISR(r, m)    (((r)->ints_state) & (m))
+
+#define SYS_GET_ISR()         (sysblk.ints_state)
+#define SYS_CLR_ISR(m)        (sysblk.ints_state &= ~(m))
+#define SYS_BIT_ISR(m)        (sysblk.ints_state |= (m))
+#define SYS_TST_ISR(m)        (sysblk.ints_state & (m))
+
+/* Interrupt Pending Register (IPR) Operations */
+#define REGS_GET_IPR(r)       (REGS_GET_ISR(r) & REGS_GET_IMR(r))
+#define REGS_TST_IPR(r, m)    (REGS_GET_IPR(r) & (m))
+
 /* Initial values */
 #define IC_INITIAL_STATE   BIT(IC_PSW_WAIT)
 #define IC_INITIAL_MASK  ( BIT(IC_INTERRUPT) \
@@ -122,8 +147,8 @@
                          | BIT(IC_STORSTAT) \
                          )
 
-#define SET_IC_INITIAL_MASK(_regs)  (_regs)->ints_mask = IC_INITIAL_MASK
-#define SET_IC_INITIAL_STATE(_regs) (_regs)->ints_state = IC_INITIAL_STATE
+#define SET_IC_INITIAL_MASK(_regs)  REGS_SET_IMR( (_regs), IC_INITIAL_MASK )
+#define SET_IC_INITIAL_STATE(_regs) REGS_SET_ISR( (_regs), IC_INITIAL_STATE )
 
 /* I/O interrupt subclasses */
 #define IC_IOPENDING     ( BIT(IC_IO) )
@@ -223,7 +248,7 @@
      : ( ((_regs)->psw.sysmask & 0xFE) ? BIT(IC_IO) : 0 ) \
    ) \
  | ( MACHMASK(&(_regs)->psw) ? ((_regs)->CR(14) & IC_MCKPENDING) : 0 ) \
- | ( PER_MODE((_regs)) ? ((_regs)->ints_mask & IC_PER_MASK) : 0 ) \
+ | ( PER_MODE((_regs)) ? REGS_TST_IMR( (_regs), IC_PER_MASK ) : 0 ) \
  | ( ((_regs)->psw.sysmask & PSW_EXTMASK) ? (IC_CR0_TO_INTMASK((_regs))) : 0 ) \
  | ( WAITSTATE(&(_regs)->psw) ? BIT(IC_PSW_WAIT) : 0 ) \
  )
@@ -232,7 +257,7 @@
  ( ( IC_INITIAL_MASK ) \
  | ( ((_regs)->psw.sysmask & PSW_IOMASK) ? BIT(IC_IO) : 0 ) \
  | ( MACHMASK(&(_regs)->psw) ? ((_regs)->CR(14) & IC_MCKPENDING) : 0 ) \
- | ( PER_MODE((_regs)) ? ((_regs)->ints_mask & IC_PER_MASK) : 0 ) \
+ | ( PER_MODE((_regs)) ? REGS_TST_IMR( (_regs), IC_PER_MASK ) : 0 ) \
  | ( ((_regs)->psw.sysmask & PSW_EXTMASK) ? (IC_CR0_TO_INTMASK((_regs))) : 0 ) \
  | ( WAITSTATE(&(_regs)->psw) ? BIT(IC_PSW_WAIT) : 0 ) \
  )
@@ -241,7 +266,7 @@
  ( ( IC_INITIAL_MASK ) \
  | ( ((_regs)->psw.sysmask & 0xFE) ? BIT(IC_IO) : 0 ) \
  | ( MACHMASK(&(_regs)->psw) ? ((_regs)->CR(14) & IC_MCKPENDING) : 0 ) \
- | ( PER_MODE((_regs)) ? ((_regs)->ints_mask & IC_PER_MASK) : 0 ) \
+ | ( PER_MODE((_regs)) ? REGS_TST_IMR( (_regs), IC_PER_MASK ) : 0 ) \
  | ( ((_regs)->psw.sysmask & PSW_EXTMASK) ? (IC_CR0_TO_INTMASK((_regs))) : 0 ) \
  | ( WAITSTATE(&(_regs)->psw) ? BIT(IC_PSW_WAIT) : 0 ) \
  )
@@ -249,14 +274,14 @@
 /* Note: if PER mode, invalidate the AIA to force instfetch to be called */
 #define SET_IC_ECMODE_MASK(_regs) \
  do { \
-   (_regs)->ints_mask = IC_ECMODE_MASK((_regs)); \
+   REGS_SET_IMR( (_regs), IC_ECMODE_MASK((_regs)) ); \
    if ( ( (_regs)->permode = PER_MODE((_regs)) ) ) \
     INVALIDATE_AIA((_regs)); \
  } while (0)
 
 #define SET_IC_BCMODE_MASK(_regs) \
  do { \
-   (_regs)->ints_mask = IC_BCMODE_MASK((_regs)); \
+   REGS_SET_IMR( (_regs), IC_BCMODE_MASK((_regs)) ); \
    if ( ( (_regs)->permode = PER_MODE((_regs)) ) ) \
     INVALIDATE_AIA((_regs)); \
  } while (0)
@@ -265,7 +290,7 @@
 #ifdef FEATURE_BCMODE
  #define SET_IC_MASK(_regs) \
   do { \
-    (_regs)->ints_mask = IC_MASK((_regs)); \
+    REGS_SET_IMR( (_regs), IC_MASK((_regs)) ); \
     if ( ( (_regs)->permode = PER_MODE((_regs)) ) ) \
      INVALIDATE_AIA((_regs)); \
   } while (0)
@@ -287,7 +312,7 @@
    CPU_BITMAP mask = sysblk.started_mask; \
    for (i = 0; mask; i++) { \
      if (mask & 1) \
-       sysblk.regs[i]->ints_state |= BIT(IC_INTERRUPT); \
+       REGS_BIT_ISR( sysblk.regs[i], BIT(IC_INTERRUPT) ); \
      mask >>= 1; \
    } \
  } while (0)
@@ -299,9 +324,13 @@
 */
 #define SET_IC_PER(_regs) \
  do { \
-  (_regs)->ints_state &= (~IC_PER_MASK); \
-  (_regs)->ints_state |= (((_regs)->CR(9) >> IC_CR9_SHIFT) & IC_PER_MASK); \
-  (_regs)->ints_mask  &= (~IC_PER_MASK | (_regs)->ints_state); \
+  /* Store new state bits in a local variable */ \
+  U32 new_bits = (((_regs)->CR(9) >> IC_CR9_SHIFT) & IC_PER_MASK); \
+  /* Update ISR */                               \
+  REGS_CLR_ISR(_regs, IC_PER_MASK);              \
+  REGS_BIT_ISR(_regs, new_bits);                 \
+  /* Update IMR */                               \
+  REGS_AND_IMR(_regs, ~IC_PER_MASK | new_bits);  \
  } while (0)
 
   /* * * * * * * * * * * * * *
@@ -310,17 +339,17 @@
 
 #define ON_IC_INTERRUPT(_regs) \
  do { \
-   (_regs)->ints_state |=  BIT(IC_INTERRUPT); \
+   REGS_BIT_ISR( (_regs), BIT(IC_INTERRUPT) ); \
  } while (0)
 
 #define ON_IC_RESTART(_regs) \
  do { \
-   (_regs)->ints_state |= BIT(IC_INTERRUPT) | BIT(IC_RESTART); \
+   REGS_BIT_ISR( (_regs), BIT(IC_INTERRUPT) | BIT(IC_RESTART) ); \
  } while (0)
 
 #define ON_IC_STORSTAT(_regs) \
  do { \
-   (_regs)->ints_state |= BIT(IC_INTERRUPT) | BIT(IC_STORSTAT); \
+   REGS_BIT_ISR( (_regs), BIT(IC_INTERRUPT) | BIT(IC_STORSTAT) ); \
  } while (0)
 
 #define ON_IC_IOPENDING \
@@ -329,19 +358,19 @@
    CPU_BITMAP mask = sysblk.started_mask; \
    CPU_BITMAP wake; \
    int i; \
-   if ( !(sysblk.ints_state & BIT(IC_IO)) ) \
+   if (!(SYS_TST_ISR( BIT(IC_IO) ))) \
    { \
-     sysblk.ints_state |= BIT(IC_IO); \
+     SYS_BIT_ISR( BIT(IC_IO) ); \
      wake = mask; \
      for (i = 0; mask; mask >>= 1, ++i) \
      { \
        if (mask & 1) \
        { \
          regs = sysblk.regs[i]; \
-         if ( regs->ints_mask & BIT(IC_IO) ) \
-           regs->ints_state |= BIT(IC_INTERRUPT) | BIT(IC_IO); \
+         if (REGS_TST_IMR( regs, BIT(IC_IO) )) \
+           REGS_BIT_ISR( regs, BIT(IC_INTERRUPT) | BIT(IC_IO) ); \
          else \
-           regs->ints_state |= BIT(IC_IO), \
+           REGS_BIT_ISR( regs, BIT(IC_IO) ), \
            wake ^= regs->cpubit; \
        } \
      } \
@@ -352,15 +381,15 @@
 #define ON_IC_CHANRPT \
  do { \
    int i; CPU_BITMAP mask; \
-   if ( !(sysblk.ints_state & BIT(IC_CHANRPT)) ) { \
-     sysblk.ints_state |=  BIT(IC_CHANRPT); \
+   if (!(SYS_TST_ISR( BIT(IC_CHANRPT) ))) { \
+     SYS_BIT_ISR( BIT(IC_CHANRPT) ); \
      mask = sysblk.started_mask; \
      for (i = 0; mask; i++) { \
        if (mask & 1) { \
-         if ( sysblk.regs[i]->ints_mask & BIT(IC_CHANRPT) ) \
-           sysblk.regs[i]->ints_state |= BIT(IC_INTERRUPT) | BIT(IC_CHANRPT); \
+         if (REGS_TST_IMR( sysblk.regs[i], BIT(IC_CHANRPT) )) \
+           REGS_BIT_ISR( sysblk.regs[i], BIT(IC_INTERRUPT) | BIT(IC_CHANRPT) ); \
          else \
-           sysblk.regs[i]->ints_state |= BIT(IC_CHANRPT); \
+           REGS_BIT_ISR( sysblk.regs[i], BIT(IC_CHANRPT) ); \
        } \
        mask >>= 1; \
      } \
@@ -370,15 +399,15 @@
 #define ON_IC_INTKEY \
  do { \
    int i; CPU_BITMAP mask; \
-   if ( !(sysblk.ints_state & BIT(IC_INTKEY)) ) { \
-     sysblk.ints_state |= BIT(IC_INTKEY); \
+   if (!(SYS_TST_ISR( BIT(IC_INTKEY) ))) { \
+     SYS_BIT_ISR( BIT(IC_INTKEY) ); \
      mask = sysblk.started_mask; \
      for (i = 0; mask; i++) { \
        if (mask & 1) { \
-         if ( sysblk.regs[i]->ints_mask & BIT(IC_INTKEY) ) \
-           sysblk.regs[i]->ints_state |= BIT(IC_INTERRUPT) | BIT(IC_INTKEY); \
+         if (REGS_TST_IMR( sysblk.regs[i], BIT(IC_INTKEY) )) \
+           REGS_BIT_ISR( sysblk.regs[i], BIT(IC_INTERRUPT) | BIT(IC_INTKEY) ); \
          else \
-           sysblk.regs[i]->ints_state |=  BIT(IC_INTKEY); \
+           REGS_BIT_ISR( sysblk.regs[i],  BIT(IC_INTKEY) ); \
        } \
        mask >>= 1; \
      } \
@@ -388,15 +417,15 @@
 #define ON_IC_SERVSIG \
  do { \
    int i; CPU_BITMAP mask; \
-   if ( !(sysblk.ints_state & BIT(IC_SERVSIG)) ) { \
-     sysblk.ints_state |= BIT(IC_SERVSIG); \
+   if (!(SYS_TST_ISR( BIT(IC_SERVSIG) ))) { \
+     SYS_BIT_ISR( BIT(IC_SERVSIG) ); \
      mask = sysblk.started_mask; \
      for (i = 0; mask; i++) { \
        if (mask & 1) { \
-         if ( sysblk.regs[i]->ints_mask & BIT(IC_SERVSIG) ) \
-           sysblk.regs[i]->ints_state |= BIT(IC_INTERRUPT) | BIT(IC_SERVSIG); \
+         if (REGS_TST_IMR( sysblk.regs[i], BIT(IC_SERVSIG) )) \
+           REGS_BIT_ISR( sysblk.regs[i], BIT(IC_INTERRUPT) | BIT(IC_SERVSIG) ); \
          else \
-           sysblk.regs[i]->ints_state |= BIT(IC_SERVSIG); \
+           REGS_BIT_ISR( sysblk.regs[i], BIT(IC_SERVSIG) ); \
          } \
        mask >>= 1; \
      } \
@@ -405,58 +434,58 @@
 
 #define ON_IC_ITIMER(_regs) \
  do { \
-   if ( (_regs)->ints_mask & BIT(IC_ITIMER) ) \
-     (_regs)->ints_state |= BIT(IC_INTERRUPT) | BIT(IC_ITIMER); \
+   if (REGS_TST_IMR( (_regs), BIT(IC_ITIMER) )) \
+     REGS_BIT_ISR( (_regs), BIT(IC_INTERRUPT) | BIT(IC_ITIMER) ); \
    else \
-     (_regs)->ints_state |= BIT(IC_ITIMER); \
+     REGS_BIT_ISR( (_regs), BIT(IC_ITIMER) ); \
  } while (0)
 
 #define ON_IC_PTIMER(_regs) \
  do { \
-   if ( (_regs)->ints_mask & BIT(IC_PTIMER) ) \
-     (_regs)->ints_state |= BIT(IC_INTERRUPT) | BIT(IC_PTIMER); \
+   if (REGS_TST_IMR( (_regs), BIT(IC_PTIMER) )) \
+     REGS_BIT_ISR( (_regs), BIT(IC_INTERRUPT) | BIT(IC_PTIMER) ); \
    else \
-     (_regs)->ints_state |= BIT(IC_PTIMER); \
+     REGS_BIT_ISR( (_regs), BIT(IC_PTIMER) ); \
  } while (0)
 
 #define ON_IC_ECPSVTIMER(_regs) \
  do { \
-   if ( (_regs)->ints_mask & BIT(IC_ECPSVTIMER) ) \
-     (_regs)->ints_state |= BIT(IC_INTERRUPT) | BIT(IC_ECPSVTIMER); \
+   if (REGS_TST_IMR( (_regs), BIT(IC_ECPSVTIMER) )) \
+     REGS_BIT_ISR( (_regs), BIT(IC_INTERRUPT) | BIT(IC_ECPSVTIMER) ); \
    else \
-     (_regs)->ints_state |= BIT(IC_ECPSVTIMER); \
+     REGS_BIT_ISR( (_regs), BIT(IC_ECPSVTIMER) ); \
  } while (0)
 
 #define ON_IC_CLKC(_regs) \
  do { \
-   if ( (_regs)->ints_mask & BIT(IC_CLKC) ) \
-     (_regs)->ints_state |= BIT(IC_INTERRUPT) | BIT(IC_CLKC); \
+   if (REGS_TST_IMR( (_regs), BIT(IC_CLKC) )) \
+     REGS_BIT_ISR( (_regs), BIT(IC_INTERRUPT) | BIT(IC_CLKC) ); \
    else \
-     (_regs)->ints_state |= BIT(IC_CLKC); \
+     REGS_BIT_ISR( (_regs), BIT(IC_CLKC) ); \
  } while (0)
 
 #define ON_IC_EXTCALL(_regs) \
  do { \
-   if ( (_regs)->ints_mask & BIT(IC_EXTCALL) ) \
-     (_regs)->ints_state |= BIT(IC_INTERRUPT) | BIT(IC_EXTCALL); \
+   if (REGS_TST_IMR( (_regs), BIT(IC_EXTCALL) )) \
+     REGS_BIT_ISR( (_regs), BIT(IC_INTERRUPT) | BIT(IC_EXTCALL) ); \
    else \
-     (_regs)->ints_state |= BIT(IC_EXTCALL); \
+     REGS_BIT_ISR( (_regs), BIT(IC_EXTCALL) ); \
  } while (0)
 
 #define ON_IC_MALFALT(_regs) \
  do { \
-   if ( (_regs)->ints_mask & BIT(IC_MALFALT) ) \
-     (_regs)->ints_state |= BIT(IC_INTERRUPT) | BIT(IC_MALFALT); \
+   if (REGS_TST_IMR( (_regs), BIT(IC_MALFALT) )) \
+     REGS_BIT_ISR( (_regs), BIT(IC_INTERRUPT) | BIT(IC_MALFALT) ); \
    else \
-     (_regs)->ints_state |= BIT(IC_MALFALT); \
+     REGS_BIT_ISR( (_regs), BIT(IC_MALFALT) ); \
  } while (0)
 
 #define ON_IC_EMERSIG(_regs) \
  do { \
-   if ( (_regs)->ints_mask & BIT(IC_EMERSIG) ) \
-     (_regs)->ints_state |= BIT(IC_INTERRUPT) | BIT(IC_EMERSIG); \
+   if (REGS_TST_IMR( (_regs), BIT(IC_EMERSIG) )) \
+     REGS_BIT_ISR( (_regs), BIT(IC_INTERRUPT) | BIT(IC_EMERSIG) ); \
    else \
-     (_regs)->ints_state |= BIT(IC_EMERSIG); \
+     REGS_BIT_ISR( (_regs), BIT(IC_EMERSIG) ); \
  } while (0)
 
     /*
@@ -467,47 +496,47 @@
 
 #define ON_IC_PER_SB(_regs) \
  do { \
-   (_regs)->ints_mask |= BIT(IC_PER_SB); \
+   REGS_BIT_IMR( (_regs), BIT(IC_PER_SB) ); \
  } while (0)
 
 #define ON_IC_PER_IF(_regs) \
  do { \
-   (_regs)->ints_mask |= BIT(IC_PER_IF); \
+   REGS_BIT_IMR( (_regs), BIT(IC_PER_IF) ); \
  } while (0)
 
 #define ON_IC_PER_SA(_regs) \
  do { \
-     (_regs)->ints_mask |= BIT(IC_PER_SA); \
+     REGS_BIT_IMR( (_regs), BIT(IC_PER_SA) ); \
  } while (0)
 
 #define ON_IC_PER_GRA(_regs) \
  do { \
-     (_regs)->ints_mask |= BIT(IC_PER_GRA); \
+     REGS_BIT_IMR( (_regs), BIT(IC_PER_GRA) ); \
  } while (0)
 
 #define ON_IC_PER_SKEY(_regs) \
  do { \
-     (_regs)->ints_mask |= BIT(IC_PER_SKEY); \
+     REGS_BIT_IMR( (_regs), BIT(IC_PER_SKEY) ); \
  } while (0)
 
 #define ON_IC_PER_STURA(_regs) \
  do { \
-     (_regs)->ints_mask |= BIT(IC_PER_STURA); \
+     REGS_BIT_IMR( (_regs), BIT(IC_PER_STURA) ); \
  } while (0)
 
 #define ON_IC_PER_ZEROADDR(_regs) \
  do { \
-     (_regs)->ints_mask |= BIT(IC_PER_ZEROADDR); \
+     REGS_BIT_IMR( (_regs), BIT(IC_PER_ZEROADDR) ); \
  } while (0)
 
 #define ON_IC_PER_TEND(_regs) \
  do { \
-     (_regs)->ints_mask |= BIT(IC_PER_TEND); \
+     REGS_BIT_IMR( (_regs), BIT(IC_PER_TEND) ); \
  } while (0)
 
 #define ON_IC_PER_IFNUL(_regs) \
  do { \
-   (_regs)->ints_mask |= BIT(IC_PER_IFNUL); \
+   REGS_BIT_IMR( (_regs), BIT(IC_PER_IFNUL) ); \
  } while (0)
 
 
@@ -517,28 +546,28 @@
 
 #define OFF_IC_INTERRUPT(_regs) \
  do { \
-   (_regs)->ints_state &= ~BIT(IC_INTERRUPT); \
+   REGS_CLR_ISR( (_regs), BIT(IC_INTERRUPT) ); \
  } while (0)
 
 #define OFF_IC_RESTART(_regs) \
  do { \
-   (_regs)->ints_state &= ~BIT(IC_RESTART); \
+   REGS_CLR_ISR( (_regs), BIT(IC_RESTART) ); \
  } while (0)
 
 #define OFF_IC_STORSTAT(_regs) \
  do { \
-   (_regs)->ints_state &= ~BIT(IC_STORSTAT); \
+   REGS_CLR_ISR( (_regs), BIT(IC_STORSTAT) ); \
  } while (0)
 
 #define OFF_IC_IOPENDING \
  do { \
    int i; CPU_BITMAP mask; \
-   if ( sysblk.ints_state & BIT(IC_IO) ) { \
-     sysblk.ints_state &= ~BIT(IC_IO); \
+   if (SYS_TST_ISR( BIT(IC_IO) )) { \
+     SYS_CLR_ISR( BIT(IC_IO) ); \
      mask = sysblk.started_mask; \
      for (i = 0; mask; i++) { \
        if (mask & 1) \
-         sysblk.regs[i]->ints_state &= ~BIT(IC_IO); \
+         REGS_CLR_ISR( sysblk.regs[i], BIT(IC_IO) ); \
        mask >>= 1; \
      } \
    } \
@@ -547,12 +576,12 @@
 #define OFF_IC_CHANRPT \
  do { \
    int i; CPU_BITMAP mask; \
-   if ( sysblk.ints_state & BIT(IC_CHANRPT) ) { \
-     sysblk.ints_state &= ~BIT(IC_CHANRPT); \
+   if (SYS_TST_ISR( BIT(IC_CHANRPT) )) { \
+     SYS_CLR_ISR( BIT(IC_CHANRPT) ); \
      mask = sysblk.started_mask; \
      for (i = 0; mask; i++) { \
        if (mask & 1) \
-         sysblk.regs[i]->ints_state &= ~BIT(IC_CHANRPT); \
+         REGS_CLR_ISR( sysblk.regs[i], BIT(IC_CHANRPT) ); \
        mask >>= 1; \
      } \
    } \
@@ -561,12 +590,12 @@
 #define OFF_IC_INTKEY \
  do { \
    int i; CPU_BITMAP mask; \
-   if ( sysblk.ints_state & BIT(IC_INTKEY) ) { \
-     sysblk.ints_state &= ~BIT(IC_INTKEY); \
+   if (SYS_TST_ISR( BIT(IC_INTKEY) )) { \
+     SYS_CLR_ISR( BIT(IC_INTKEY) ); \
      mask = sysblk.started_mask; \
      for (i = 0; mask; i++) { \
        if (mask & 1) \
-         sysblk.regs[i]->ints_state &= ~BIT(IC_INTKEY); \
+         REGS_CLR_ISR( sysblk.regs[i], BIT(IC_INTKEY) ); \
        mask >>= 1; \
      } \
    } \
@@ -575,12 +604,12 @@
 #define OFF_IC_SERVSIG \
  do { \
    int i; CPU_BITMAP mask; \
-   if ( sysblk.ints_state & BIT(IC_SERVSIG) ) { \
-     sysblk.ints_state &= ~BIT(IC_SERVSIG); \
+   if (SYS_TST_ISR( BIT(IC_SERVSIG) )) { \
+     SYS_CLR_ISR( BIT(IC_SERVSIG) ); \
      mask = sysblk.started_mask; \
      for (i = 0; mask; i++) { \
        if (mask & 1) \
-         sysblk.regs[i]->ints_state &= ~BIT(IC_SERVSIG); \
+         REGS_CLR_ISR( sysblk.regs[i], BIT(IC_SERVSIG) ); \
        mask >>= 1; \
      } \
    } \
@@ -588,87 +617,87 @@
 
 #define OFF_IC_ITIMER(_regs) \
  do { \
-   (_regs)->ints_state &= ~BIT(IC_ITIMER); \
+   REGS_CLR_ISR( (_regs), BIT(IC_ITIMER) ); \
  } while (0)
 
 #define OFF_IC_PTIMER(_regs) \
  do { \
-   (_regs)->ints_state &= ~BIT(IC_PTIMER); \
+   REGS_CLR_ISR( (_regs), BIT(IC_PTIMER) ); \
  } while (0)
 
 #define OFF_IC_ECPSVTIMER(_regs) \
  do { \
-   (_regs)->ints_state &= ~BIT(IC_ECPSVTIMER); \
+   REGS_CLR_ISR( (_regs), BIT(IC_ECPSVTIMER) ); \
  } while (0)
 
 #define OFF_IC_CLKC(_regs) \
  do { \
-   (_regs)->ints_state &= ~BIT(IC_CLKC); \
+   REGS_CLR_ISR( (_regs),  BIT(IC_CLKC) ); \
  } while (0)
 
 #define OFF_IC_EXTCALL(_regs) \
  do { \
-   (_regs)->ints_state &= ~BIT(IC_EXTCALL); \
+   REGS_CLR_ISR( (_regs),  BIT(IC_EXTCALL) ); \
  } while (0)
 
 #define OFF_IC_MALFALT(_regs) \
  do { \
-   (_regs)->ints_state &= ~BIT(IC_MALFALT); \
+   REGS_CLR_ISR( (_regs), BIT(IC_MALFALT) ); \
  } while (0)
 
 #define OFF_IC_EMERSIG(_regs) \
  do { \
-   (_regs)->ints_state &= ~BIT(IC_EMERSIG); \
+   REGS_CLR_ISR( (_regs), BIT(IC_EMERSIG) ); \
  } while (0)
 
 #define OFF_IC_PER(_regs) \
  do { \
-   (_regs)->ints_mask &= ~IC_PER_MASK; \
+   REGS_CLR_IMR( (_regs), IC_PER_MASK ); \
  } while (0)
 
 #define OFF_IC_PER_SB(_regs) \
  do { \
-   (_regs)->ints_mask &= ~BIT(IC_PER_SB); \
+   REGS_CLR_IMR( (_regs), BIT(IC_PER_SB) ); \
  } while (0)
 
 #define OFF_IC_PER_IF(_regs) \
  do { \
-   (_regs)->ints_mask &= ~BIT(IC_PER_IF); \
+   REGS_CLR_IMR( (_regs), BIT(IC_PER_IF) ); \
  } while (0)
 
 #define OFF_IC_PER_SA(_regs) \
  do { \
-   (_regs)->ints_mask &= ~BIT(IC_PER_SA); \
+   REGS_CLR_IMR( (_regs), BIT(IC_PER_SA) ); \
  } while (0)
 
 #define OFF_IC_PER_GRA(_regs) \
  do { \
-   (_regs)->ints_mask &= ~BIT(IC_PER_GRA); \
+   REGS_CLR_IMR( (_regs), BIT(IC_PER_GRA) ); \
  } while (0)
 
 #define OFF_IC_PER_SKEY(_regs) \
  do { \
-   (_regs)->ints_mask &= ~BIT(IC_PER_SKEY); \
+   REGS_CLR_IMR( (_regs), BIT(IC_PER_SKEY) ); \
  } while (0)
 
 #define OFF_IC_PER_STURA(_regs) \
  do { \
-   (_regs)->ints_mask &= ~BIT(IC_PER_STURA); \
+   REGS_CLR_IMR( (_regs), BIT(IC_PER_STURA) ); \
  } while (0)
 
 #define OFF_IC_PER_ZEROADDR(_regs) \
  do { \
-   (_regs)->ints_mask &= ~BIT(IC_PER_ZEROADDR); \
+   REGS_CLR_IMR( (_regs), BIT(IC_PER_ZEROADDR) ); \
  } while (0)
 
 #define OFF_IC_PER_TEND(_regs) \
  do { \
-   (_regs)->ints_mask &= ~BIT(IC_PER_TEND); \
+   REGS_CLR_IMR( (_regs), BIT(IC_PER_TEND) ); \
  } while (0)
 
 #define OFF_IC_PER_IFNUL(_regs) \
  do { \
-   (_regs)->ints_mask &= ~BIT(IC_PER_IFNUL); \
+   REGS_CLR_IMR( (_regs), BIT(IC_PER_IFNUL) ); \
  } while (0)
 
 
@@ -676,31 +705,31 @@
    * Test interrupt state    *
    * * * * * * * * * * * * * */
 
-#define IS_IC_INTERRUPT(_regs)     ( (_regs)->ints_state & BIT(IC_INTERRUPT) )
-#define IS_IC_RESTART(_regs)       ( (_regs)->ints_state & BIT(IC_RESTART)   )
-#define IS_IC_STORSTAT(_regs)      ( (_regs)->ints_state & BIT(IC_STORSTAT)  )
-#define IS_IC_IOPENDING            ( sysblk.ints_state   & BIT(IC_IO)        )
-#define IS_IC_MCKPENDING(_regs)    ( (_regs)->ints_state &     IC_MCKPENDING )
-#define IS_IC_CHANRPT              ( sysblk.ints_state   & BIT(IC_CHANRPT)   )
-#define IS_IC_INTKEY               ( sysblk.ints_state   & BIT(IC_INTKEY)    )
-#define IS_IC_SERVSIG              ( sysblk.ints_state   & BIT(IC_SERVSIG)   )
-#define IS_IC_ITIMER(_regs)        ( (_regs)->ints_state & BIT(IC_ITIMER)    )
-#define IS_IC_PTIMER(_regs)        ( (_regs)->ints_state & BIT(IC_PTIMER)    )
-#define IS_IC_ECPSVTIMER(_regs)    ( (_regs)->ints_state & BIT(IC_ECPSVTIMER))
-#define IS_IC_CLKC(_regs)          ( (_regs)->ints_state & BIT(IC_CLKC)      )
-#define IS_IC_EXTCALL(_regs)       ( (_regs)->ints_state & BIT(IC_EXTCALL)   )
-#define IS_IC_MALFALT(_regs)       ( (_regs)->ints_state & BIT(IC_MALFALT)   )
-#define IS_IC_EMERSIG(_regs)       ( (_regs)->ints_state & BIT(IC_EMERSIG)   )
-#define IS_IC_PER(_regs)           ( (_regs)->ints_mask  &     IC_PER_MASK   )
-#define IS_IC_PER_SB(_regs)        ( (_regs)->ints_mask  & BIT(IC_PER_SB)    )
-#define IS_IC_PER_IF(_regs)        ( (_regs)->ints_mask  & BIT(IC_PER_IF)    )
-#define IS_IC_PER_SA(_regs)        ( (_regs)->ints_mask  & BIT(IC_PER_SA)    )
-#define IS_IC_PER_GRA(_regs)       ( (_regs)->ints_mask  & BIT(IC_PER_GRA)   )
-#define IS_IC_PER_SKEY(_regs)      ( (_regs)->ints_mask  & BIT(IC_PER_SKEY)  )
-#define IS_IC_PER_STURA(_regs)     ( (_regs)->ints_mask  & BIT(IC_PER_STURA) )
-#define IS_IC_PER_ZEROADDR(_regs)  ( (_regs)->ints_mask  & BIT(IC_PER_ZEROADDR) )
-#define IS_IC_PER_TEND(_regs)      ( (_regs)->ints_mask  & BIT(IC_PER_TEND) )
-#define IS_IC_PER_IFNUL(_regs)     ( (_regs)->ints_mask  & BIT(IC_PER_IFNUL) )
+#define IS_IC_INTERRUPT(_regs)     (REGS_TST_ISR((_regs),  BIT(IC_INTERRUPT) ))
+#define IS_IC_RESTART(_regs)       (REGS_TST_ISR((_regs),  BIT(IC_RESTART)   ))
+#define IS_IC_STORSTAT(_regs)      (REGS_TST_ISR((_regs),  BIT(IC_STORSTAT)  ))
+#define IS_IC_IOPENDING            (SYS_TST_ISR(           BIT(IC_IO) ))
+#define IS_IC_MCKPENDING(_regs)    (REGS_TST_ISR((_regs),      IC_MCKPENDING ))
+#define IS_IC_CHANRPT              (SYS_TST_ISR(           BIT(IC_CHANRPT) ))
+#define IS_IC_INTKEY               (SYS_TST_ISR(           BIT(IC_INTKEY)  ))
+#define IS_IC_SERVSIG              (SYS_TST_ISR(           BIT(IC_SERVSIG) ))
+#define IS_IC_ITIMER(_regs)        (REGS_TST_ISR( (_regs), BIT(IC_ITIMER)  ))
+#define IS_IC_PTIMER(_regs)        (REGS_TST_ISR( (_regs), BIT(IC_PTIMER)  ))
+#define IS_IC_ECPSVTIMER(_regs)    (REGS_TST_ISR( (_regs), BIT(IC_ECPSVTIMER)))
+#define IS_IC_CLKC(_regs)          (REGS_TST_ISR( (_regs), BIT(IC_CLKC)    ))
+#define IS_IC_EXTCALL(_regs)       (REGS_TST_ISR( (_regs), BIT(IC_EXTCALL) ))
+#define IS_IC_MALFALT(_regs)       (REGS_TST_ISR( (_regs), BIT(IC_MALFALT) ))
+#define IS_IC_EMERSIG(_regs)       (REGS_TST_ISR( (_regs), BIT(IC_EMERSIG) ))
+#define IS_IC_PER(_regs)           (REGS_TST_IMR( (_regs),     IC_PER_MASK ))
+#define IS_IC_PER_SB(_regs)        (REGS_TST_IMR( (_regs), BIT(IC_PER_SB) ))
+#define IS_IC_PER_IF(_regs)        (REGS_TST_IMR( (_regs), BIT(IC_PER_IF) ))
+#define IS_IC_PER_SA(_regs)        (REGS_TST_IMR( (_regs), BIT(IC_PER_SA) ))
+#define IS_IC_PER_GRA(_regs)       (REGS_TST_IMR( (_regs), BIT(IC_PER_GRA) ))
+#define IS_IC_PER_SKEY(_regs)      (REGS_TST_IMR( (_regs), BIT(IC_PER_SKEY) ))
+#define IS_IC_PER_STURA(_regs)     (REGS_TST_IMR( (_regs), BIT(IC_PER_STURA) ))
+#define IS_IC_PER_ZEROADDR(_regs)  (REGS_TST_IMR( (_regs), BIT(IC_PER_ZEROADDR) ))
+#define IS_IC_PER_TEND(_regs)      (REGS_TST_IMR( (_regs), BIT(IC_PER_TEND) ))
+#define IS_IC_PER_IFNUL(_regs)     (REGS_TST_IMR( (_regs), BIT(IC_PER_IFNUL) ))
 
 
   /* * * * * * * * * * * * * *
@@ -708,7 +737,7 @@
    * * * * * * * * * * * * * */
 
 #define IS_IC_DISABLED_WAIT_PSW(_regs) \
-                                ( ((_regs)->ints_mask & IC_OPEN_MASK) == 0 )
+                                ((REGS_TST_IMR( (_regs), IC_OPEN_MASK )) == 0)
 
 
   /* * * * * * * * * * * * * *
@@ -716,15 +745,15 @@
    * * * * * * * * * * * * * */
 
 #define EN_IC_PER(_regs)           unlikely( (_regs)->permode )
-#define EN_IC_PER_SB(_regs)        ( EN_IC_PER(_regs) && ((_regs)->ints_state & BIT(IC_PER_SB))    )
-#define EN_IC_PER_IF(_regs)        ( EN_IC_PER(_regs) && ((_regs)->ints_state & BIT(IC_PER_IF))    )
-#define EN_IC_PER_SA(_regs)        ( EN_IC_PER(_regs) && ((_regs)->ints_state & BIT(IC_PER_SA))    )
-#define EN_IC_PER_GRA(_regs)       ( EN_IC_PER(_regs) && ((_regs)->ints_state & BIT(IC_PER_GRA))   )
-#define EN_IC_PER_SKEY(_regs)      ( EN_IC_PER(_regs) && ((_regs)->ints_state & BIT(IC_PER_SKEY))  )
-#define EN_IC_PER_STURA(_regs)     ( EN_IC_PER(_regs) && ((_regs)->ints_state & BIT(IC_PER_STURA)) )
-#define EN_IC_PER_ZEROADDR(_regs)  ( EN_IC_PER(_regs) && ((_regs)->ints_state & BIT(IC_PER_ZEROADDR)) )
-#define EN_IC_PER_TEND(_regs)      ( EN_IC_PER(_regs) && ((_regs)->ints_state & BIT(IC_PER_TEND)) )
-#define EN_IC_PER_IFNUL(_regs)     ( EN_IC_PER(_regs) && ((_regs)->ints_state & BIT(IC_PER_IFNUL)) )
+#define EN_IC_PER_SB(_regs)        ( EN_IC_PER(_regs) && (REGS_TST_ISR( (_regs), BIT(IC_PER_SB) ))    )
+#define EN_IC_PER_IF(_regs)        ( EN_IC_PER(_regs) && (REGS_TST_ISR( (_regs), BIT(IC_PER_IF) ))    )
+#define EN_IC_PER_SA(_regs)        ( EN_IC_PER(_regs) && (REGS_TST_ISR( (_regs), BIT(IC_PER_SA) ))    )
+#define EN_IC_PER_GRA(_regs)       ( EN_IC_PER(_regs) && (REGS_TST_ISR( (_regs), BIT(IC_PER_GRA) ))   )
+#define EN_IC_PER_SKEY(_regs)      ( EN_IC_PER(_regs) && (REGS_TST_ISR( (_regs), BIT(IC_PER_SKEY) ))  )
+#define EN_IC_PER_STURA(_regs)     ( EN_IC_PER(_regs) && (REGS_TST_ISR( (_regs), BIT(IC_PER_STURA) )) )
+#define EN_IC_PER_ZEROADDR(_regs)  ( EN_IC_PER(_regs) && (REGS_TST_ISR( (_regs), BIT(IC_PER_ZEROADDR) )) )
+#define EN_IC_PER_TEND(_regs)      ( EN_IC_PER(_regs) && (REGS_TST_ISR( (_regs), BIT(IC_PER_TEND) ))  )
+#define EN_IC_PER_IFNUL(_regs)     ( EN_IC_PER(_regs) && (REGS_TST_ISR( (_regs), BIT(IC_PER_IFNUL) )) )
 
 
   /* * * * * * * * * * * * * * * * * * * * * * * * *
@@ -732,76 +761,76 @@
    * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #define OPEN_IC_MCKPENDING(_regs) \
-                        ( (_regs)->ints_state & (_regs)->ints_mask & IC_MCKPENDING )
+                        (REGS_TST_IPR( (_regs), IC_MCKPENDING ))
 
 #define OPEN_IC_IOPENDING(_regs) \
-                        ( (_regs)->ints_state & (_regs)->ints_mask & IC_IOPENDING )
+                        (REGS_TST_IPR( (_regs), IC_IOPENDING ))
 
 #define OPEN_IC_CHANRPT(_regs) \
-                        ( (_regs)->ints_state & (_regs)->ints_mask & BIT(IC_CHANRPT) )
+                        (REGS_TST_IPR( (_regs), BIT(IC_CHANRPT) ))
 
 #define OPEN_IC_EXTPENDING(_regs) \
-                        ( (_regs)->ints_state & (_regs)->ints_mask & IC_EXTPENDING )
+                        (REGS_TST_IPR( (_regs), IC_EXTPENDING ))
 
 #define OPEN_IC_ITIMER(_regs) \
-                        ( (_regs)->ints_state & (_regs)->ints_mask & BIT(IC_ITIMER) )
+                        (REGS_TST_IPR( (_regs), BIT(IC_ITIMER) ))
 
 #define OPEN_IC_PTIMER(_regs) \
-                        ( (_regs)->ints_state & (_regs)->ints_mask & BIT(IC_PTIMER) )
+                        (REGS_TST_IPR( (_regs), BIT(IC_PTIMER) ))
 
 #define OPEN_IC_ECPSVTIMER(_regs) \
-                        ( (_regs)->ints_state & (_regs)->ints_mask & BIT(IC_ECPSVTIMER) )
+                        (REGS_TST_IPR( (_regs), BIT(IC_ECPSVTIMER) ))
 
 #define OPEN_IC_CLKC(_regs) \
-                        ( (_regs)->ints_state & (_regs)->ints_mask & BIT(IC_CLKC) )
+                        (REGS_TST_IPR( (_regs), BIT(IC_CLKC) ))
 
 #define OPEN_IC_INTKEY(_regs) \
-                        ( (_regs)->ints_state & (_regs)->ints_mask & BIT(IC_INTKEY) )
+                        (REGS_TST_IPR( (_regs), BIT(IC_INTKEY) ))
 
 #define OPEN_IC_SERVSIG(_regs) \
-                        ( (_regs)->ints_state & (_regs)->ints_mask & BIT(IC_SERVSIG) )
+                        (REGS_TST_IPR( (_regs), BIT(IC_SERVSIG) ))
 
 #define OPEN_IC_EXTCALL(_regs) \
-                        ( (_regs)->ints_state & (_regs)->ints_mask & BIT(IC_EXTCALL) )
+                        (REGS_TST_IPR( (_regs), BIT(IC_EXTCALL) ))
 
 #define OPEN_IC_MALFALT(_regs) \
-                        ( (_regs)->ints_state & (_regs)->ints_mask & BIT(IC_MALFALT) )
+                        (REGS_TST_IPR( (_regs), BIT(IC_MALFALT) ))
 
 #define OPEN_IC_EMERSIG(_regs) \
-                        ( (_regs)->ints_state & (_regs)->ints_mask & BIT(IC_EMERSIG) )
+                        (REGS_TST_IPR( (_regs), BIT(IC_EMERSIG) ))
 
 #define OPEN_IC_PER(_regs) \
-                        ( (_regs)->ints_state & (_regs)->ints_mask & IC_PER_MASK )
+                        (REGS_TST_IPR( (_regs), IC_PER_MASK ))
 #define OPEN_IC_PER_SB(_regs) \
-                        ( (_regs)->ints_state & (_regs)->ints_mask & BIT(IC_PER_SB) )
+                        (REGS_TST_IPR( (_regs), BIT(IC_PER_SB) ))
 #define OPEN_IC_PER_IF(_regs) \
-                        ( (_regs)->ints_state & (_regs)->ints_mask & BIT(IC_PER_IF) )
+                        (REGS_TST_IPR( (_regs), BIT(IC_PER_IF) ))
 #define OPEN_IC_PER_SA(_regs) \
-                        ( (_regs)->ints_state & (_regs)->ints_mask & BIT(IC_PER_SA) )
+                        (REGS_TST_IPR( (_regs), BIT(IC_PER_SA) ))
 #define OPEN_IC_PER_GRA(_regs) \
-                        ( (_regs)->ints_state & (_regs)->ints_mask & BIT(IC_PER_GRA) )
+                        (REGS_TST_IPR( (_regs), BIT(IC_PER_GRA) ))
 #define OPEN_IC_PER_SKEY(_regs) \
-                        ( (_regs)->ints_state & (_regs)->ints_mask & BIT(IC_PER_SKEY) )
+                        (REGS_TST_IPR( (_regs), BIT(IC_PER_SKEY) ))
 #define OPEN_IC_PER_STURA(_regs) \
-                        ( (_regs)->ints_state & (_regs)->ints_mask & BIT(IC_PER_STURA) )
+                        (REGS_TST_IPR( (_regs), BIT(IC_PER_STURA) ))
 #define OPEN_IC_PER_ZEROADDR(_regs) \
-                        ( (_regs)->ints_state & (_regs)->ints_mask & BIT(IC_PER_ZEROADDR) )
+                        (REGS_TST_IPR( (_regs), BIT(IC_PER_ZEROADDR) ))
 #define OPEN_IC_PER_TEND(_regs) \
-                        ( (_regs)->ints_state & (_regs)->ints_mask & BIT(IC_PER_TEND) )
+                        (REGS_TST_IPR( (_regs), BIT(IC_PER_TEND) ))
 #define OPEN_IC_PER_IFNUL(_regs) \
-                        ( (_regs)->ints_state & (_regs)->ints_mask & BIT(IC_PER_IFNUL) )
+                        (REGS_TST_IPR( (_regs), BIT(IC_PER_IFNUL) ))
 
   /* * * * * * * * * * * * * * * * * * * * * * * * *
    * Check for general enabled pending interrupt   *
    * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #define IC_INTERRUPT_CPU(_regs) \
-   ( (_regs)->ints_state & (_regs)->ints_mask )
+   (REGS_GET_IPR( _regs ))
 
 #define INTERRUPT_PENDING(_regs) IC_INTERRUPT_CPU((_regs))
 
 #define SIE_IC_INTERRUPT_CPU(_regs) \
-   (((_regs)->ints_state|(HOST(_regs)->ints_state&IC_SIE_INT)) & (_regs)->ints_mask)
+   ((REGS_GET_ISR(_regs) | (REGS_GET_ISR(HOST(_regs)) & IC_SIE_INT)) & REGS_GET_IMR(_regs))
 
 #define SIE_INTERRUPT_PENDING(_regs) SIE_IC_INTERRUPT_CPU((_regs))
 

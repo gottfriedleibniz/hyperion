@@ -767,7 +767,7 @@ static int addrecs( RECS* recs, const BYTE* bfr, int sz )
     {
         case 'V': // (variable)
 
-            store_hw( recd, (U16) sz );
+            STORE_HW( recd, (U16) sz );
 
             if (0
                 || (rc = append_data( recs->blocks, recd,  2 )) != 0
@@ -1034,7 +1034,7 @@ static TAPE_BLOCKS* dump_structured_file( OPTIONS* opts,
     /* Read the structured record's length */
     while ((num = fread( &rlbfr, 1, sizeof( rlbfr ), ifile )) == sizeof( rlbfr ))
     {
-        rsz = fetch_hw( &rlbfr );
+        FETCH_HW( rsz, &rlbfr );
 
         /* Now that we know how big the record is,
            read the actual structure record itself. */
@@ -1287,13 +1287,13 @@ static struct FST_BLOCK* build_fst_block( const char* fn, const char* ft,
 
     fstb->fst.flag1 = FSTCNTRY;   // current year is >= 2000!
 
-    store_fw( fstb->fst.lrecl,    (U32) lrecl        );
-    store_fw( fstb->fst.aic,      (U32) reccount     );
+    STORE_FW( fstb->fst.lrecl,    (U32) lrecl        );
+    STORE_FW( fstb->fst.aic,      (U32) reccount     );
 
-    store_hw( fstb->fst.reccount, (U16) reccount     );
-    store_hw( fstb->fst.wp,       (U16) reccount + 1 );
-    store_hw( fstb->fst.rp,       (U16)     1        );
-    store_hw( fstb->fst.dbc,      (U16) blk_count    );
+    STORE_HW( fstb->fst.reccount, (U16) reccount     );
+    STORE_HW( fstb->fst.wp,       (U16) reccount + 1 );
+    STORE_HW( fstb->fst.rp,       (U16)     1        );
+    STORE_HW( fstb->fst.dbc,      (U16) blk_count    );
 
     if (recfm == 'V')
         filesz += (reccount * sizeof( HWORD ));
@@ -1304,8 +1304,8 @@ static struct FST_BLOCK* build_fst_block( const char* fn, const char* ft,
         lastsz = ROUND_UP( lastsz, CMS_BLOCKSIZE );
     lastsz /= CMS_BLOCKSIZE;
 
-    store_fw( fstb->fst.numblk, (U32) numfull );
-    store_fw( fstb->fst.lastsz, (U32) lastsz  );
+    STORE_FW( fstb->fst.numblk, (U32) numfull );
+    STORE_FW( fstb->fst.lastsz, (U32) lastsz  );
 
     return  fstb;
 }
@@ -1366,11 +1366,11 @@ static struct CMS_BLOCK* build_cms_block( const char* fn, const char* ft,
 
     cmsb->cms.recfm = host_to_guest( recfm );
 
-    store_fw( cmsb->cms.lrecl,    (U32) lrecl        );
-    store_hw( cmsb->cms.reccount, (U16) reccount     );
-    store_hw( cmsb->cms.wp,       (U16) reccount + 1 );
-    store_hw( cmsb->cms.rp,       (U16)     1        );
-    store_hw( cmsb->cms.dbc,      (U16) blk_count    );
+    STORE_FW( cmsb->cms.lrecl,    (U32) lrecl        );
+    STORE_HW( cmsb->cms.reccount, (U16) reccount     );
+    STORE_HW( cmsb->cms.wp,       (U16) reccount + 1 );
+    STORE_HW( cmsb->cms.rp,       (U16)     1        );
+    STORE_HW( cmsb->cms.dbc,      (U16) blk_count    );
 
     return  cmsb;
 }
@@ -1465,14 +1465,14 @@ static const char* format_fst_info( const FST* fst, char* str, size_t strsz )
 
     format_fst_datetime( fst, dt, sizeof( dt ));
 
-    recl = fetch_fw( fst->lrecl );
+    FETCH_FW( recl, fst->lrecl );
 
-    if (!(recs = fetch_fw( fst->aic )))
-        recs = fetch_hw( fst->reccount );
+    if (!(recs = READ_FW( fst->aic )))
+        FETCH_HW( recs, fst->reccount );
 
-    blks  = fetch_fw( fst->numblk );
+    FETCH_FW( blks, fst->numblk );
     blks *= (PLC2_BLOCKSIZE / CMS_BLOCKSIZE);
-    blks += fetch_fw( fst->lastsz );
+    blks += READ_FW( fst->lastsz );
 
     snprintf( str, strsz, "%-8s %-8s %-2s %c %-5u %s recs %4u blks %u",
         fn , ft, fm, recfm, recl, dt, recs, blks );
@@ -1501,9 +1501,9 @@ static const char* format_cms_info( const CMS* cms, char* str, size_t strsz )
 
     format_cms_datetime( cms, dt, sizeof( dt ));
 
-    recl = fetch_fw( cms->lrecl );
-    recs = fetch_hw( cms->reccount );
-    blks = fetch_hw( cms->dbc );
+    FETCH_FW( recl, cms->lrecl );
+    FETCH_HW( recs, cms->reccount );
+    FETCH_HW( blks, cms->dbc );
 
     snprintf( str, strsz, "%-8s %-8s %-2s %c %-5u %s recs %4u blks %u",
         fn , ft, fm, recfm, recl, dt, recs, blks );
@@ -2368,7 +2368,7 @@ static int load_file
                 recsize[1] = rec[1];
             }
             *rszsplit = false;
-            rsz = fetch_hw( recsize );
+            FETCH_HW( rsz, recsize );
             ASSERT( rsz > 0 && rsz <= *recl );
 
             if ((rc = write_siz( ofile, recsize, ctl->filefmt, ctl->hostfile )) == 0)
@@ -2533,8 +2533,8 @@ static int doload_cms( OPTIONS* opts )
 
                     recfm = (char) guest_to_host( cms.recfm );
 
-                    recl = fetch_fw( cms.lrecl    );
-                    recs = fetch_hw( cms.reccount );
+                    FETCH_FW( recl, cms.lrecl    );
+                    FETCH_HW( recs, cms.reccount );
 
                     /* Find corresponding CTLTAB entry */
                     if (!(ctl = find_ctltab_entry( fn, ft, recfm )))
@@ -2721,10 +2721,10 @@ static int doload( OPTIONS* opts )
 
                 recfm = (char) guest_to_host( fst.recfm );
 
-                recl = fetch_fw( fst.lrecl );
+                FETCH_FW( recl, fst.lrecl );
 
-                if (!(recs = fetch_fw( fst.aic )))
-                    recs = fetch_hw( fst.reccount );
+                if (!(recs = READ_FW( fst.aic )))
+                    FETCH_HW( recs, fst.reccount );
 
                 /* Find corresponding CTLTAB entry */
                 if (!(ctl = find_ctltab_entry( fn, ft, recfm )))

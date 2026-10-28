@@ -439,9 +439,9 @@ CASSERT( sizeof( SHRD_HDR ) == sizeof( DBLWRD ), shared_h );
         shdr->cmd  =                  (_cmd);                        \
         shdr->code =                  (_code);                       \
                                                                      \
-        store_hw( &shdr->devnum, (U16)(_devnum) );                   \
-        store_hw( &shdr->len,    (U16)(_len)    );                   \
-        store_hw( &shdr->id,     (U16)(_id)     );                   \
+        STORE_HW( &shdr->devnum, (U16)(_devnum) );                   \
+        STORE_HW( &shdr->len,    (U16)(_len)    );                   \
+        STORE_HW( &shdr->id,     (U16)(_id)     );                   \
     }                                                                \
     while (0)
 
@@ -456,9 +456,9 @@ CASSERT( sizeof( SHRD_HDR ) == sizeof( DBLWRD ), shared_h );
         (_cmd)    = shdr->cmd;                                       \
         (_code)   = shdr->code;                                      \
                                                                      \
-        (_devnum) = (U16) fetch_hw( &shdr->devnum );                 \
-        (_len)    = (int) fetch_hw( &shdr->len    );                 \
-        (_id)     = (int) fetch_hw( &shdr->id     );                 \
+        (_devnum) = (U16) READ_HW( &shdr->devnum );                  \
+        (_len)    = (int) READ_HW( &shdr->len    );                  \
+        (_id)     = (int) READ_HW( &shdr->id     );                  \
     }                                                                \
     while (0)
 

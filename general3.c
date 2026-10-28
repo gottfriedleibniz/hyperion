@@ -79,7 +79,7 @@ int     rc;                             /* Return code               */
         } /* end switch(opcode) */
 
         /* Regular store if operand is not on a fullword boundary */
-        if ((effective_addr1 & 0x03) != 0) {
+        if (NOT_ALIGNED_POW2( effective_addr1, FW )) {
             ARCH_DEP(vstore4) (result, effective_addr1, b1, regs);
             break;
         }
@@ -152,7 +152,7 @@ int     rc;                             /* Return code               */
         } /* end switch(opcode) */
 
         /* Regular store if operand is not on a doubleword boundary */
-        if ((effective_addr1 & 0x07) != 0) {
+        if (NOT_ALIGNED_POW2( effective_addr1, DW )) {
             ARCH_DEP(vstore8) (result, effective_addr1, b1, regs);
             break;
         }
@@ -4762,7 +4762,7 @@ DEF_INST( compare_and_load )
     PERFORM_SERIALIZATION( regs );
 
     /* if not equal, let other CPUs run */
-    if(regs->psw.cc && sysblk.cpus > 1)
+    if(regs->psw.cc && SYS_GET_CPUS() > 1)
         {
             sched_yield();
         }
@@ -4816,7 +4816,7 @@ DEF_INST( compare_and_load_long )
     PERFORM_SERIALIZATION( regs );
 
     /* if not equal, let other CPUs run */
-    if(regs->psw.cc && sysblk.cpus > 1)
+    if(regs->psw.cc && SYS_GET_CPUS() > 1)
         {
             sched_yield();
         }
@@ -4871,7 +4871,7 @@ DEF_INST( compare_and_load_long_fullword )
     PERFORM_SERIALIZATION( regs );
 
     /* if not equal, let other CPUs run */
-    if(regs->psw.cc && sysblk.cpus > 1)
+    if(regs->psw.cc && SYS_GET_CPUS() > 1)
         {
             sched_yield();
         }
@@ -4941,6 +4941,7 @@ DEF_INST( perform_functions_with_concurrent_results )
     case 0: // pfcr-qaf,   0, "PFCR Query-Available-Functions"
         {
             // 'query' function is always available
+            ALIGN_16
             U8 result[16] = { 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                               0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 

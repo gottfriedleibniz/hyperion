@@ -458,7 +458,7 @@ static inline void set_alsi( DEVBLK* dev, BYTE bits )
 
         obtain_lock( &sysblk.mainlock );
         {
-            *alsi |= bits;
+            (void)OR_MAIN_BYTE(alsi, bits);
             ARCH_DEP( or_dev_4K_storage_key )( dev, dev->qdio.alsi, (STORKEY_REF | STORKEY_CHANGE) );
         }
         release_lock( &sysblk.mainlock );
@@ -480,10 +480,10 @@ static inline void set_dsci( DEVBLK* dev, BYTE bits )
 
         obtain_lock( &sysblk.mainlock );
         {
-            *dsci |= bits;
+            (void)OR_MAIN_BYTE(dsci, bits);
             ARCH_DEP( or_dev_4K_storage_key )( dev, dev->qdio.dsci, (STORKEY_REF | STORKEY_CHANGE) );
 
-            *alsi |= bits;
+            (void)OR_MAIN_BYTE(alsi, bits);
             ARCH_DEP( or_dev_4K_storage_key )( dev, dev->qdio.alsi, (STORKEY_REF | STORKEY_CHANGE) );
         }
         release_lock( &sysblk.mainlock );
@@ -3022,7 +3022,7 @@ static QRC copy_fragment_to_storage( DEVBLK* dev, QDIO_SBAL *sbal,
 
         /* Continue copying data to Storage Block */
         len = min( *sbrem, (U32)rem );
-        memcpy( dst, src, len );
+        MAINSTOR_MCOPY( dst, src, len );
 
         dst    += len;
         src    += len;
@@ -3130,7 +3130,7 @@ static QRC copy_storage_fragments( DEVBLK* dev, OSA_GRP *grp,
 
         /* Copying packet/frame to device from this storage block */
         len = min( (U32)dev->bufres, sblen );
-        memcpy( dst, sbsrc, len );
+        MAINSTOR_MCOPY( dst, sbsrc, len );
 
         dst         += len;
         dev->buflen += len;
@@ -3617,7 +3617,7 @@ static QRC write_buffered_packets( DEVBLK* dev, OSA_GRP *grp,
         }
 
         /* Determine if Layer 2 Ethernet frame or Layer 3 IP packet */
-        hdr_id = hdr[0];
+        FETCH_MAIN_BYTE( hdr_id, hdr );
         switch (hdr_id)
         {
         U16 length;
@@ -3627,7 +3627,7 @@ static QRC write_buffered_packets( DEVBLK* dev, OSA_GRP *grp,
             o2hdr = (OSA_HDR2*)hdr;
             hdrlen = sizeof(OSA_HDR2);
             pkt = hdr + hdrlen;
-            FETCH_HW( length, o2hdr->pktlen );
+            FETCH_MAIN_HW( length, o2hdr->pktlen );
             pktlen = length;
          /* eth = (ETHFRM*)pkt; */
             break;
@@ -3637,7 +3637,7 @@ static QRC write_buffered_packets( DEVBLK* dev, OSA_GRP *grp,
             o3hdr = (OSA_HDR3*)hdr;
             hdrlen = sizeof(OSA_HDR3);
             pkt = hdr + hdrlen;
-            FETCH_HW( length, o3hdr->length );
+            FETCH_MAIN_HW( length, o3hdr->length );
             pktlen = length;
             break;
         }
@@ -3842,7 +3842,7 @@ int did_read = 0;                       /* Indicates some data read  */
 
             do
             {
-                if(slsb->slsbe[bn] == SLSBE_INPUT_EMPTY)
+                if(READ_MAIN_BYTE( slsb->slsbe + bn ) == SLSBE_INPUT_EMPTY)
                 {
                 QDIO_SL *sl = (QDIO_SL*)(dev->mainstor + dev->qdio.i_sla[qn]);
                 U64 sbala;              /* Storage Block Address List*/
@@ -3880,7 +3880,7 @@ int did_read = 0;                       /* Indicates some data read  */
                             if (grp->debugmask & DBGQETHQUEUES)
                                 DBGTRC(dev, "Input Queue(%d) Buffer(%d)", qn, bn);
 
-                            slsb->slsbe[bn] = SLSBE_INPUT_COMPLETED;
+                            STORE_MAIN_BYTE( slsb->slsbe + bn, SLSBE_INPUT_COMPLETED );
                             ARCH_DEP( or_dev_4K_storage_key )( dev, dev->qdio.i_slsbla[qn], (STORKEY_REF | STORKEY_CHANGE) );
                             SET_DSCI(dev,DSCI_IOCOMP);
                             grp->iqPCI = TRUE;
@@ -3901,7 +3901,7 @@ int did_read = 0;                       /* Indicates some data read  */
                        and read_L3_packets may also return an error */
                     if (qrc < 0)
                     {
-                        slsb->slsbe[bn] = SLSBE_ERROR;
+                        STORE_MAIN_BYTE( slsb->slsbe + bn, SLSBE_ERROR );
                         ARCH_DEP( or_dev_4K_storage_key )( dev, dev->qdio.i_slsbla[qn], (STORKEY_REF | STORKEY_CHANGE) );
                         SET_ALSI(dev,ALSI_ERROR);
                         grp->iqPCI = TRUE;
@@ -3994,7 +3994,7 @@ int found_buff = 0;                     /* Found primed O/P buffer   */
 
             do
             {
-                if(slsb->slsbe[bn] == SLSBE_OUTPUT_PRIMED)
+                if(READ_MAIN_BYTE( slsb->slsbe + bn ) == SLSBE_OUTPUT_PRIMED)
                 {
                 QDIO_SL *sl = (QDIO_SL*)(dev->mainstor + dev->qdio.o_sla[qn]);
                 U64 sbala;              /* Storage Block Address List*/
@@ -4022,7 +4022,7 @@ int found_buff = 0;                     /* Found primed O/P buffer   */
                         sk = dev->qdio.o_sbalk[qn];
 
                         if ((qrc = write_buffered_packets( dev, grp, sbal, sk )) >= 0)
-                            slsb->slsbe[bn] = SLSBE_OUTPUT_COMPLETED;
+                            STORE_MAIN_BYTE( slsb->slsbe + bn, SLSBE_OUTPUT_COMPLETED );
                     }
 
                     /* Packets written or an error has occurred */
@@ -4031,7 +4031,7 @@ int found_buff = 0;                     /* Found primed O/P buffer   */
                     /* Handle errors */
                     if (qrc < 0)
                     {
-                        slsb->slsbe[bn] = SLSBE_ERROR;
+                        STORE_MAIN_BYTE( slsb->slsbe + bn, SLSBE_ERROR );
                         SET_ALSI(dev,ALSI_ERROR);
                         grp->oqPCI = TRUE;
                         PTT_QETH_TRACE( "*proutq ERR", qn,bn,qrc );

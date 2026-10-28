@@ -4826,7 +4826,7 @@ int facility_enable_disable( int argc, char* argv[] )
     /* Refresh each online CPU's facility list with updated list */
     {
         int  cpu;
-        for (cpu=0; cpu < sysblk.maxcpu; cpu++)
+        for (cpu=0; cpu < SYS_GET_MAXCPU(); cpu++)
             if (IS_CPU_ONLINE( cpu ))
                 init_cpu_facilities( sysblk.regs[ cpu ] );
     }

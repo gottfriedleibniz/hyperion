@@ -170,14 +170,14 @@
 /*-------------------------------------------------------------------*/
 /* Copy 8 bytes at a time concurrently   (from left to right)        */
 /*-------------------------------------------------------------------*/
-inline void concpy( REGS* regs, void* d, void* s, int n )
+inline void concpy( void* d, const void* s, int n )
 {
     BYTE* u8d = (BYTE*)d;
-    BYTE* u8s = (BYTE*)s;
+    const BYTE* u8s = (BYTE*)s;
     ptrdiff_t d1;
 
     /* Copy until ready or 8 byte integral boundary */
-    while (n && ((uintptr_t) u8d & 7))
+    while (n && NOT_ALIGNED_POW2( u8d, U64 ))
     {
         *u8d++ = *u8s++;
         n--;
@@ -192,7 +192,6 @@ inline void concpy( REGS* regs, void* d, void* s, int n )
     /* Copy full words in right condition, on enough length and src - dst distance */
     if (1
         && n
-        && regs->cpubit == regs->sysblk->started_mask
         && abs((int)(u8d - u8s)) > 3
     )
     {
@@ -205,10 +204,6 @@ inline void concpy( REGS* regs, void* d, void* s, int n )
         }
     }
     else // copy double words
-
-#else // x64 builds
-
-    UNREFERENCED( regs );
 
 #endif // end code for 32-bit builds
 
@@ -241,14 +236,14 @@ inline void concpy( REGS* regs, void* d, void* s, int n )
 /*-------------------------------------------------------------------*/
 /* Copy 8 bytes at a time concurrently   (from right to left)        */
 /*-------------------------------------------------------------------*/
-inline void concpy_rl( REGS* regs, void* d, void* s, int n )
+inline void concpy_rl( void* d, const void* s, int n )
 {
     BYTE* u8d = (BYTE*)d + n;
-    BYTE* u8s = (BYTE*)s + n;
+    const BYTE* u8s = (BYTE*)s + n;
     ptrdiff_t d1;
 
     /* Copy until ready or 8 byte integral boundary */
-    while (n && ((uintptr_t) u8d & 7))
+    while (n && NOT_ALIGNED_POW2( u8d, U64 ))
     {
         *--u8d = *--u8s;
         n--;
@@ -263,7 +258,6 @@ inline void concpy_rl( REGS* regs, void* d, void* s, int n )
     /* Copy full words in right condition, on enough length and (src - dst) distance */
     if (1
         && n
-        && regs->cpubit == regs->sysblk->started_mask
         && abs( u8d - u8s ) > 3
     )
     {
@@ -276,10 +270,6 @@ inline void concpy_rl( REGS* regs, void* d, void* s, int n )
         }
     }
     else // copy double words...
-
-#else // x64 builds
-
-    UNREFERENCED( regs );
 
 #endif // end code for 32-bit builds
 
@@ -330,8 +320,8 @@ BYTE   *sk;                             /* Storage key addresses     */
     main2 = MADDR( (addr + 1) & ADDRESS_MAXWRAP( regs ), arn, regs,
                     ACCTYPE_WRITE, regs->psw.pkey );
     OR_SKEY( sk, (STORKEY_REF | STORKEY_CHANGE) );
-    *main1 = value >> 8;
-    *main2 = value & 0xFF;
+    STORE_MAIN_BYTE( main1, value >> 8 );
+    STORE_MAIN_BYTE( main2, value & 0xFF );
 }
 
 /*-------------------------------------------------------------------*/
@@ -352,6 +342,7 @@ inline void ARCH_DEP( vstore4_full )( U32 value, VADR addr, int arn, REGS* regs 
 BYTE   *main1, *main2;                  /* Mainstor addresses        */
 BYTE   *sk;                             /* Storage key addresses     */
 int     len;                            /* Length to end of page     */
+ALIGN_4
 BYTE    temp[4];                        /* Copied value              */
 
     len = PAGEFRAME_PAGESIZE - (addr & PAGEFRAME_BYTEMASK);
@@ -361,8 +352,8 @@ BYTE    temp[4];                        /* Copied value              */
                     ACCTYPE_WRITE, regs->psw.pkey );
     OR_SKEY( sk, (STORKEY_REF | STORKEY_CHANGE) );
     STORE_FW( temp, value );
-    memcpy( main1, temp,       len );
-    memcpy( main2, temp+len, 4-len );
+    MAINSTOR_MCOPY( main1, temp,       len );
+    MAINSTOR_MCOPY( main2, temp+len, 4-len );
 }
 
 /*-------------------------------------------------------------------*/
@@ -386,6 +377,7 @@ inline void ARCH_DEP( vstore8_full )( U64 value, VADR addr, int arn, REGS* regs 
 BYTE   *main1, *main2;                  /* Mainstor addresses        */
 BYTE   *sk;                             /* Storage key addresses     */
 int     len;                            /* Length to end of page     */
+ALIGN_8
 BYTE    temp[8];                        /* Copied value              */
 
     len = PAGEFRAME_PAGESIZE - (addr & PAGEFRAME_BYTEMASK);
@@ -395,8 +387,9 @@ BYTE    temp[8];                        /* Copied value              */
                     ACCTYPE_WRITE, regs->psw.pkey );
     OR_SKEY( sk, (STORKEY_REF | STORKEY_CHANGE) );
     STORE_DW( temp, value );
-    memcpy( main1, temp,       len );
-    memcpy( main2, temp+len, 8-len );
+    MAINSTOR_MCOPY( main1, temp,       len );
+    MAINSTOR_MCOPY( main2, temp+len, 8-len );
+    ITIMER_UPDATE( addr, 8-1, regs );
 }
 /*-------------------------------------------------------------------*/
 /* Store a sixteen-byte integer into virtual storage operand         */
@@ -419,6 +412,7 @@ inline void ARCH_DEP( vstore16_full )( QW value, VADR addr, int arn, REGS* regs 
 BYTE   *main1, * main2;                  /* Mainstor addresses        */
 BYTE   *sk;                             /* Storage key addresses     */
 int     len;                            /* Length to end of page     */
+ALIGN_16
 BYTE    temp[16];                        /* Copied value              */
 
     len = PAGEFRAME_PAGESIZE - (addr & PAGEFRAME_BYTEMASK);
@@ -428,8 +422,9 @@ BYTE    temp[16];                        /* Copied value              */
                     ACCTYPE_WRITE, regs->psw.pkey);
     OR_SKEY( sk, (STORKEY_REF | STORKEY_CHANGE) );
     STORE_QW( temp, value );
-    memcpy( main1, temp, len );
-    memcpy( main2, temp + len, 16-len );
+    MAINSTOR_MCOPY( main1, temp, len );
+    MAINSTOR_MCOPY( main2, temp + len, 16-len );
+    ITIMER_UPDATE( addr, 16-1, regs );
 }
 /*-------------------------------------------------------------------*/
 /* Fetch a two-byte integer operand from virtual storage             */
@@ -451,10 +446,10 @@ BYTE   *mn;                             /* Main storage addresses    */
 U16     value;
 
     mn = MADDR( addr, arn, regs, ACCTYPE_READ, regs->psw.pkey );
-    value = *mn << 8;
+    value = READ_MAIN_BYTE( mn ) << 8;
     mn = MADDR( (addr + 1) & ADDRESS_MAXWRAP( regs ), arn, regs,
                  ACCTYPE_READ, regs->psw.pkey );
-    value |= *mn;
+    value |= READ_MAIN_BYTE( mn );
     return value;
 }
 
@@ -476,6 +471,7 @@ inline U32 ARCH_DEP( vfetch4_full )( VADR addr, int arn, REGS* regs )
 {
 BYTE   *mn;                             /* Main storage addresses    */
 int     len;                            /* Length to end of page     */
+ALIGN_8
 BYTE    temp[8];                        /* Copy destination          */
 
     len = PAGEFRAME_PAGESIZE - (addr & PAGEFRAME_BYTEMASK);
@@ -484,7 +480,7 @@ BYTE    temp[8];                        /* Copy destination          */
     mn = MADDRL( (addr + len) & ADDRESS_MAXWRAP( regs ), 4 - len, arn, regs,
                   ACCTYPE_READ, regs->psw.pkey );
     memcpy( temp+len, mn, 4 - len);
-    return fetch_fw( temp );
+    return READ_FW( temp );
 }
 
 /*-------------------------------------------------------------------*/
@@ -505,6 +501,7 @@ inline U64 ARCH_DEP( vfetch8_full )( VADR addr, int arn, REGS* regs )
 {
 BYTE   *mn;                             /* Main storage addresses    */
 int     len;                            /* Length to end of page     */
+ALIGN_16
 BYTE    temp[16];                       /* Copy destination          */
 
     /* Get absolute address of first byte of operand */
@@ -514,7 +511,7 @@ BYTE    temp[16];                       /* Copy destination          */
     mn = MADDRL( (addr + len) & ADDRESS_MAXWRAP( regs ), 8 - len, arn, regs,
                  ACCTYPE_READ, regs->psw.pkey );
     memcpy( temp+len, mn, 8 );
-    return fetch_dw( temp );
+    return READ_DW( temp );
 }
 
 /*-------------------------------------------------------------------*/
@@ -535,6 +532,7 @@ inline QW ARCH_DEP( vfetch16_full )( VADR addr, int arn, REGS* regs )
 {
 BYTE   *mn;                             /* Main storage addresses    */
 int     len;                            /* Length to end of page     */
+ALIGN_16
 BYTE    temp[32];                       /* Copy destination          */
 
     /* Get absolute address of first byte of operand */
@@ -544,8 +542,105 @@ BYTE    temp[32];                       /* Copy destination          */
     mn = MADDRL( (addr + len) & ADDRESS_MAXWRAP( regs ), 16 - len, arn, regs,
                  ACCTYPE_READ, regs->psw.pkey );
     memcpy( temp+len, mn, 16 );
-    return fetch_qw( temp );
+    return READ_QW( temp );
 }
+
+/*-------------------------------------------------------------------*/
+/* Store a two-byte integer into unaligned virtual storage           */
+/*-------------------------------------------------------------------*/
+inline void ARCH_DEP( vstore2_unaligned )( U16 value, VADR addr, int arn, REGS* regs )
+{
+    BYTE   *mn;                             /* Main storage addresses    */
+
+    mn = MADDRL( addr, 2, arn, regs, ACCTYPE_WRITE, regs->psw.pkey );
+    STORE_MAIN_HW_UL( mn, value );
+    ITIMER_UPDATE( addr, 2-1, regs );
+}
+
+/*-------------------------------------------------------------------*/
+/* Store a four-byte integer into unaligned virtual storage          */
+/*-------------------------------------------------------------------*/
+inline void ARCH_DEP( vstore4_unaligned )( U32 value, VADR addr, int arn, REGS* regs )
+{
+    BYTE   *mn;                             /* Main storage addresses    */
+
+    mn = MADDRL( addr, 4, arn, regs, ACCTYPE_WRITE, regs->psw.pkey );
+    STORE_MAIN_FW_UL( mn, value );
+    ITIMER_UPDATE( addr, 4-1, regs );
+}
+
+/*-------------------------------------------------------------------*/
+/* Store a eight-byte integer into unaligned virtual storage         */
+/*-------------------------------------------------------------------*/
+inline void ARCH_DEP( vstore8_unaligned )( U64 value, VADR addr, int arn, REGS* regs )
+{
+    BYTE   *mn;                             /* Main storage addresses    */
+
+    mn = MADDRL( addr, 8, arn, regs, ACCTYPE_WRITE, regs->psw.pkey );
+    STORE_MAIN_DW_UL( mn, value );
+    ITIMER_UPDATE( addr, 8-1, regs );
+}
+
+/*-------------------------------------------------------------------*/
+/* Store a sixteen-byte integer into unaligned virtual storage       */
+/*-------------------------------------------------------------------*/
+inline void ARCH_DEP( vstore16_unaligned )( QW value, VADR addr, int arn, REGS* regs )
+{
+    BYTE   *mn;                             /* Main storage addresses    */
+
+    mn = MADDRL( addr, 16, arn, regs, ACCTYPE_WRITE, regs->psw.pkey );
+    STORE_MAIN_QW_UL( mn, value );
+    ITIMER_UPDATE( addr, 16-1, regs );
+}
+
+/*-------------------------------------------------------------------*/
+/* Fetch a two-byte integer from unaligned virtual storage           */
+/*-------------------------------------------------------------------*/
+inline U16 ARCH_DEP( vfetch2_unaligned )( VADR addr, int arn, REGS* regs )
+{
+    BYTE *mn;                            /* Main storage addresses    */
+
+    ITIMER_SYNC( addr, 2-1, regs );
+    mn = MADDRL( addr, 2, arn, regs, ACCTYPE_READ, regs->psw.pkey );
+    return READ_MAIN_HW_UL( mn  );
+}
+
+/*-------------------------------------------------------------------*/
+/* Fetch a four-byte integer from unaligned virtual storage          */
+/*-------------------------------------------------------------------*/
+inline U32 ARCH_DEP( vfetch4_unaligned )( VADR addr, int arn, REGS* regs )
+{
+    BYTE *mn;                            /* Main storage addresses    */
+
+    ITIMER_SYNC( addr, 4-1, regs );
+    mn = MADDRL( addr, 4, arn, regs, ACCTYPE_READ, regs->psw.pkey );
+    return READ_MAIN_FW_UL( mn );
+}
+
+/*-------------------------------------------------------------------*/
+/* Fetch a eight-byte integer from unaligned virtual storage         */
+/*-------------------------------------------------------------------*/
+inline U64 ARCH_DEP( vfetch8_unaligned )( VADR addr, int arn, REGS* regs )
+{
+    BYTE *mn;                            /* Main storage addresses    */
+
+    ITIMER_SYNC( addr, 8-1, regs );
+    mn = MADDRL( addr, 8, arn, regs, ACCTYPE_READ, regs->psw.pkey );
+    return READ_MAIN_DW_UL( mn );
+}
+
+/*-------------------------------------------------------------------*/
+/* Fetch a sixteen-byte operand from unaligned virtual storage       */
+/*-------------------------------------------------------------------*/
+inline QW ARCH_DEP( vfetch16_unaligned )( VADR addr, int arn, REGS* regs )
+{
+    BYTE *mn;                            /* Main storage addresses    */
+
+    ITIMER_SYNC( addr, 16-1, regs );
+    mn = MADDRL( addr, 16, arn, regs, ACCTYPE_READ, regs->psw.pkey );
+    return READ_MAIN_QW_UL( mn );
+}
+
 /*-------------------------------------------------------------------*/
 /* Store 1 to 256 characters into virtual storage operand            */
 /*                                                                   */
@@ -570,7 +665,7 @@ int     len2;                           /* Length to end of page     */
 
     if (NOCROSSPAGE( addr,len ))
     {
-        memcpy( MADDRL( addr, len+1, arn, regs, ACCTYPE_WRITE, regs->psw.pkey ),
+        MAINSTOR_MCOPY( MADDRL( addr, len+1, arn, regs, ACCTYPE_WRITE, regs->psw.pkey ),
                src, len + 1);
         ITIMER_UPDATE( addr, len, regs );
     }
@@ -584,8 +679,8 @@ int     len2;                           /* Length to end of page     */
                         len+1-len2, arn,
                         regs, ACCTYPE_WRITE, regs->psw.pkey );
         OR_SKEY( sk, (STORKEY_REF | STORKEY_CHANGE) );
-        memcpy( main1, src, len2 );
-        memcpy( main2, (BYTE*)src + len2, len + 1 - len2 );
+        MAINSTOR_MCOPY( main1, src, len2 );
+        MAINSTOR_MCOPY( main2, (BYTE*)src + len2, len + 1 - len2 );
     }
 }
 
@@ -607,7 +702,7 @@ inline void ARCH_DEP( vstoreb )( BYTE value, VADR addr, int arn, REGS* regs )
 BYTE   *main1;                          /* Mainstor address          */
 
     main1 = MADDR( addr, arn, regs, ACCTYPE_WRITE, regs->psw.pkey );
-    *main1 = value;
+    STORE_MAIN_BYTE( main1, value );
     ITIMER_UPDATE( addr, 1-1, regs );
 }
 
@@ -617,14 +712,15 @@ BYTE   *main1;                          /* Mainstor address          */
 inline void ARCH_DEP( vstore2 )( U16 value, VADR addr, int arn, REGS* regs )
 {
     /* Most common case : Aligned & not crossing page boundary */
-    if (likely(!((VADR_L)addr & 1)
-        || ((VADR_L)addr & PAGEFRAME_BYTEMASK) != PAGEFRAME_BYTEMASK))
+    if (likely(IS_ALIGNED_POW2(addr, U16)))
     {
         BYTE* mn;
         mn = MADDRL( addr, 2, arn, regs, ACCTYPE_WRITE, regs->psw.pkey );
-        STORE_HW( mn, value );
+        STORE_MAIN_HW( mn, value );
         ITIMER_UPDATE( addr, 2-1, regs );
     }
+    else if (((VADR_L)addr & PAGEFRAME_BYTEMASK) != PAGEFRAME_BYTEMASK)
+        ARCH_DEP( vstore2_unaligned )( value, addr, arn, regs );
     else
         ARCH_DEP( vstore2_full )( value, addr, arn, regs );
 }
@@ -635,14 +731,15 @@ inline void ARCH_DEP( vstore2 )( U16 value, VADR addr, int arn, REGS* regs )
 inline void ARCH_DEP( vstore4 )( U32 value, VADR addr, int arn, REGS* regs )
 {
     /* Most common case : Aligned & not crossing page boundary */
-    if (likely(!((VADR_L)addr & 0x03))
-        || (((VADR_L)addr & PAGEFRAME_BYTEMASK) <= (PAGEFRAME_BYTEMASK-3)))
+    if (likely(IS_ALIGNED_POW2(addr, U32)))
     {
         BYTE *mn;
         mn = MADDRL( addr, 4, arn, regs, ACCTYPE_WRITE, regs->psw.pkey );
-        STORE_FW( mn, value );
+        STORE_MAIN_FW( mn, value );
         ITIMER_UPDATE( addr, 4-1, regs );
     }
+    else if (((VADR_L)addr & PAGEFRAME_BYTEMASK) <= (PAGEFRAME_BYTEMASK-3))
+        ARCH_DEP( vstore4_unaligned )( value, addr, arn, regs );
     else
         ARCH_DEP( vstore4_full )( value, addr, arn, regs );
 }
@@ -652,21 +749,22 @@ inline void ARCH_DEP( vstore4 )( U32 value, VADR addr, int arn, REGS* regs )
 /*-------------------------------------------------------------------*/
 inline void ARCH_DEP( vstore8 )( U64 value, VADR addr, int arn, REGS* regs )
 {
-#if defined( OPTION_SINGLE_CPU_DW ) && defined( ASSIST_STORE_DW )
     /* Check alignment. If aligned then we are guaranteed
        not to cross a page boundary */
-    if (likely(!((VADR_L)addr & 0x07)))
+    if (likely(IS_ALIGNED_POW2(addr, U64)))
     {
         /* Most common case : Aligned */
         U64 *mn;
         mn = (U64*)MADDRL( addr, 8, arn, regs, ACCTYPE_WRITE, regs->psw.pkey );
+#if defined( OPTION_SINGLE_CPU_DW ) && defined( ASSIST_STORE_DW )
         if (regs->cpubit == regs->sysblk->started_mask)
             *mn = CSWAP64( value );
         else
-            STORE_DW( mn, value );
+#endif
+            STORE_MAIN_DW( mn, value );
+        ITIMER_UPDATE( addr, 8-1, regs );
     }
     else
-#endif
     {
         /* We're not aligned. So we have to check whether we are
            crossing a page boundary. This cannot be the same
@@ -674,18 +772,11 @@ inline void ARCH_DEP( vstore8 )( U64 value, VADR addr, int arn, REGS* regs )
            pointer may break on those architectures mandating
            strict alignment */
         if (likely(((VADR_L)addr & PAGEFRAME_BYTEMASK) <= (PAGEFRAME_BYTEMASK-7)))
-        {
-            /* Non aligned but not crossing page boundary */
-            BYTE *mn;
-            mn = MADDRL( addr, 8, arn, regs, ACCTYPE_WRITE, regs->psw.pkey );
-            /* invoking STORE_DW ensures endianness correctness */
-            STORE_DW( mn, value );
-        }
+            ARCH_DEP( vstore8_unaligned )( value, addr, arn, regs );
         else
             /* Crossing page boundary */
             ARCH_DEP( vstore8_full )( value, addr, arn, regs );
     }
-    ITIMER_UPDATE( addr, 8-1, regs );
 }
 
 /*-------------------------------------------------------------------*/
@@ -693,21 +784,22 @@ inline void ARCH_DEP( vstore8 )( U64 value, VADR addr, int arn, REGS* regs )
 /*-------------------------------------------------------------------*/
 inline void ARCH_DEP( vstore16 )( QW value, VADR addr, int arn, REGS* regs )
 {
-#if defined( OPTION_SINGLE_CPU_DW ) && defined( ASSIST_STORE_DW )
     /* Check alignment. If aligned then we are guaranteed
        not to cross a page boundary */
-    if (likely(!((VADR_L)addr & 0x0F)))
+    if (likely(IS_ALIGNED_POW2(addr, QW)))
     {
         /* Most common case : Aligned */
         QW *mn;
         mn = (QW*)MADDRL( addr, 16, arn, regs, ACCTYPE_WRITE, regs->psw.pkey );
+#if defined( OPTION_SINGLE_CPU_DW ) && defined( ASSIST_STORE_DW )
         if (regs->cpubit == regs->sysblk->started_mask)
             *mn = CSWAP128( value );
         else
-            STORE_QW( mn, value );
+#endif
+            STORE_MAIN_QW( mn, value );
+        ITIMER_UPDATE( addr, 16-1, regs );
     }
     else
-#endif
     {
         /* We're not aligned. So we have to check whether we are
            crossing a page boundary. This cannot be the same
@@ -715,18 +807,11 @@ inline void ARCH_DEP( vstore16 )( QW value, VADR addr, int arn, REGS* regs )
            pointer may break on those architectures mandating
            strict alignment */
         if (likely(((VADR_L)addr & PAGEFRAME_BYTEMASK) <= (PAGEFRAME_BYTEMASK-15)))
-        {
-            /* Non aligned but not crossing page boundary */
-            BYTE *mn;
-            mn = MADDRL( addr, 16, arn, regs, ACCTYPE_WRITE, regs->psw.pkey );
-            /* invoking STORE_DW ensures endianness correctness */
-            STORE_QW( mn, value );
-        }
+            ARCH_DEP( vstore16_unaligned )( value, addr, arn, regs );
         else
             /* Crossing page boundary */
             ARCH_DEP( vstore16_full )( value, addr, arn, regs );
     }
-    ITIMER_UPDATE( addr, 16-1, regs );
 }
 /*-------------------------------------------------------------------*/
 /* Fetch a 1 to 256 character operand from virtual storage           */
@@ -753,7 +838,7 @@ int     len2;                           /* Length to copy on page    */
     {
         ITIMER_SYNC( addr, len, regs );
         main1 = MADDRL( addr, len + 1, arn, regs, ACCTYPE_READ, regs->psw.pkey );
-        memcpy( dest, main1, len + 1 );
+        MAINSTOR_MCOPY( dest, main1, len + 1 );
     }
     else
     {
@@ -761,8 +846,8 @@ int     len2;                           /* Length to copy on page    */
         main1 = MADDRL( addr, len2, arn, regs, ACCTYPE_READ, regs->psw.pkey );
         main2 = MADDRL( (addr + len2) & ADDRESS_MAXWRAP( regs ), len + 1 - len2,
                         arn, regs, ACCTYPE_READ, regs->psw.pkey );
-        memcpy(        dest,        main1,           len2 );
-        memcpy( (BYTE*)dest + len2, main2, len + 1 - len2 );
+        MAINSTOR_MCOPY(        dest,        main1,           len2 );
+        MAINSTOR_MCOPY( (BYTE*)dest + len2, main2, len + 1 - len2 );
     }
 }
 
@@ -786,7 +871,7 @@ BYTE   *mn;                             /* Main storage address      */
 
     ITIMER_SYNC( addr, 1-1, regs );
     mn = MADDR( addr, arn, regs, ACCTYPE_READ, regs->psw.pkey );
-    return *mn;
+    return READ_MAIN_BYTE( mn );
 }
 
 /*-------------------------------------------------------------------*/
@@ -794,14 +879,15 @@ BYTE   *mn;                             /* Main storage address      */
 /*-------------------------------------------------------------------*/
 inline U16 ARCH_DEP( vfetch2 )( VADR addr, int arn, REGS* regs )
 {
-    if (likely(!((VADR_L)addr & 0x01))
-        || (((VADR_L)addr & PAGEFRAME_BYTEMASK) != PAGEFRAME_BYTEMASK ))
+    if (likely(IS_ALIGNED_POW2(addr, U16)))
     {
         BYTE *mn;
         ITIMER_SYNC( addr, 2-1, regs );
         mn = MADDRL( addr, 2,arn, regs, ACCTYPE_READ, regs->psw.pkey );
-        return fetch_hw( mn );
+        return READ_MAIN_HW( mn );
     }
+    else if (((VADR_L)addr & PAGEFRAME_BYTEMASK) != PAGEFRAME_BYTEMASK )
+        return ARCH_DEP( vfetch2_unaligned )( addr, arn, regs );
     return ARCH_DEP( vfetch2_full )( addr, arn, regs );
 }
 
@@ -810,14 +896,15 @@ inline U16 ARCH_DEP( vfetch2 )( VADR addr, int arn, REGS* regs )
 /*-------------------------------------------------------------------*/
 inline U32 ARCH_DEP( vfetch4 )( VADR addr, int arn, REGS* regs )
 {
-    if ((likely(!((VADR_L)addr & 0x03))
-        || (((VADR_L)addr & PAGEFRAME_BYTEMASK) <= (PAGEFRAME_BYTEMASK-3) )))
+    if (likely(IS_ALIGNED_POW2(addr, U32)))
     {
         BYTE *mn;
         ITIMER_SYNC( addr, 4-1, regs );
         mn = MADDRL( addr, 4,arn, regs, ACCTYPE_READ, regs->psw.pkey );
-        return fetch_fw( mn );
+        return READ_MAIN_FW( mn );
     }
+    else if (((VADR_L)addr & PAGEFRAME_BYTEMASK) <= (PAGEFRAME_BYTEMASK-3))
+        return ARCH_DEP( vfetch4_unaligned )( addr, arn, regs );
     return ARCH_DEP( vfetch4_full )( addr, arn, regs );
 }
 
@@ -826,27 +913,24 @@ inline U32 ARCH_DEP( vfetch4 )( VADR addr, int arn, REGS* regs )
 /*-------------------------------------------------------------------*/
 inline U64 ARCH_DEP( vfetch8 )( VADR addr, int arn, REGS* regs )
 {
-#if defined( OPTION_SINGLE_CPU_DW ) && defined( ASSIST_STORE_DW )
-    if(likely(!((VADR_L)addr & 0x07)))
+    if (likely(IS_ALIGNED_POW2(addr, U64)))
     {
         /* doubleword aligned fetch */
         U64 *mn;
         ITIMER_SYNC( addr, 8-1, regs );
         mn = (U64*)MADDRL( addr, 8, arn, regs, ACCTYPE_READ, regs->psw.pkey );
+#if defined( OPTION_SINGLE_CPU_DW ) && defined( ASSIST_STORE_DW )
         if (regs->cpubit == regs->sysblk->started_mask)
             return CSWAP64( *mn );
-        return fetch_dw( mn );
+#endif
+        return READ_MAIN_DW( mn );
     }
     else
-#endif
     {
         if (likely(((VADR_L)addr & PAGEFRAME_BYTEMASK) <= (PAGEFRAME_BYTEMASK-7)))
         {
             /* unaligned, non-crossing doubleword fetch */
-            BYTE *mn;
-            ITIMER_SYNC( addr, 8-1, regs );
-            mn = MADDRL( addr, 8, arn, regs, ACCTYPE_READ, regs->psw.pkey );
-            return fetch_dw( mn );
+            return ARCH_DEP( vfetch8_unaligned )( addr, arn, regs );
         }
     }
     /* page crossing doubleword fetch */
@@ -857,27 +941,24 @@ inline U64 ARCH_DEP( vfetch8 )( VADR addr, int arn, REGS* regs )
 /*-------------------------------------------------------------------*/
 inline QW ARCH_DEP( vfetch16 )( VADR addr, int arn, REGS* regs )
 {
-#if defined( OPTION_SINGLE_CPU_DW ) && defined( ASSIST_STORE_DW )
-    if(likely(!((VADR_L)addr & 0x0F)))
+    if (likely(IS_ALIGNED_POW2(addr, QW)))
     {
         /* quadword aligned fetch */
         QW *mn;
         ITIMER_SYNC( addr, 16-1, regs );
         mn = (QW*)MADDRL( addr, 16, arn, regs, ACCTYPE_READ, regs->psw.pkey );
+#if defined( OPTION_SINGLE_CPU_DW ) && defined( ASSIST_STORE_DW )
         if (regs->cpubit == regs->sysblk->started_mask)
             return CSWAP128( *mn );
-        return fetch_qw( mn );
+#endif
+        return READ_MAIN_QW( mn );
     }
     else
-#endif
     {
         if (likely(((VADR_L)addr & PAGEFRAME_BYTEMASK) <= (PAGEFRAME_BYTEMASK-15)))
         {
             /* unaligned, non-crossing doubleword fetch */
-            BYTE *mn;
-            ITIMER_SYNC( addr, 16-1, regs );
-            mn = MADDRL( addr, 16, arn, regs, ACCTYPE_READ, regs->psw.pkey );
-            return fetch_qw( mn );
+            return ARCH_DEP( vfetch16_unaligned )( addr, arn, regs );
         }
     }
     /* page crossing quadword fetch */
@@ -1037,7 +1118,7 @@ int     len;                            /* Length for page crossing  */
     {
         /* Copy first part of instruction (note: dest is 8 bytes) */
         dest = exec ? regs->exinst : regs->inst;
-        memcpy( dest, ip, 4 );
+        MAINSTOR_MCOPY( dest, ip, 4 );
 
         /* Copy second part of instruction */
         len = pagesz - offset;
@@ -1045,7 +1126,7 @@ int     len;                            /* Length for page crossing  */
         ip = MADDR( addr, USE_INST_SPACE, regs, ACCTYPE_INSTFETCH, regs->psw.pkey );
         if (!exec)
             regs->ip = ip - len;
-        memcpy( dest + len, ip, 4 );
+        MAINSTOR_MCOPY( dest + len, ip, 4 );
     }
     else /* boundary NOT crossed */
     {
@@ -1163,7 +1244,7 @@ int     len1,     len2;                 /* Lengths to copy           */
     {
         source1 = MADDR( addr2, arn2, regs, ACCTYPE_READ,  key2 );
         dest1   = MADDR( addr1, arn1, regs, ACCTYPE_WRITE, key1 );
-        *dest1 = *source1;
+        STORE_MAIN_BYTE( dest1 , READ_MAIN_BYTE( source1 ));
         ITIMER_UPDATE( addr1, len, regs );
         return;
     }
@@ -1189,7 +1270,7 @@ int     len1,     len2;                 /* Lengths to copy           */
         if (NOCROSSPAGE( addr2, len ))
         {
             /* (1) - No boundaries are crossed */
-            concpy( regs, dest1, source1, len + 1 );
+            concpy( dest1, source1, len + 1 );
         }
         else
         {
@@ -1198,8 +1279,8 @@ int     len1,     len2;                 /* Lengths to copy           */
             source2 = MADDRL( (addr2 + len1) & ADDRESS_MAXWRAP( regs ),
                    len + 1 - len1, arn2, regs, ACCTYPE_READ, key2 );
 
-            concpy( regs, dest1,        source1,       len1     );
-            concpy( regs, dest1 + len1, source2, len - len1 + 1 );
+            concpy( dest1,        source1,       len1     );
+            concpy( dest1 + len1, source2, len - len1 + 1 );
         }
         OR_SKEY( sk1, (STORKEY_REF | STORKEY_CHANGE) );
     }
@@ -1214,8 +1295,8 @@ int     len1,     len2;                 /* Lengths to copy           */
         if (NOCROSSPAGE( addr2, len ))
         {
              /* (3) - Source operand crosses a boundary */
-             concpy( regs, dest1, source1,              len1     );
-             concpy( regs, dest2, source1 + len1, len - len1 + 1 );
+             concpy( dest1, source1,              len1     );
+             concpy( dest2, source1 + len1, len - len1 + 1 );
         }
         else
         {
@@ -1227,22 +1308,22 @@ int     len1,     len2;                 /* Lengths to copy           */
             if (len1 == len2)
             {
                 /* (4a) - Both operands cross at the same time */
-                concpy( regs, dest1, source1,       len1     );
-                concpy( regs, dest2, source2, len - len1 + 1 );
+                concpy( dest1, source1,       len1     );
+                concpy( dest2, source2, len - len1 + 1 );
             }
             else if (len1 < len2)
             {
                 /* (4b) - Destination operand crosses first */
-                concpy( regs, dest1,               source1,               len1     );
-                concpy( regs, dest2,               source1 + len1, len2 - len1     );
-                concpy( regs, dest2 + len2 - len1, source2,        len  - len2 + 1 );
+                concpy( dest1,               source1,               len1     );
+                concpy( dest2,               source1 + len1, len2 - len1     );
+                concpy( dest2 + len2 - len1, source2,        len  - len2 + 1 );
             }
             else
             {
                 /* (4c) - Source operand crosses first */
-                concpy( regs, dest1,        source1,                      len2     );
-                concpy( regs, dest1 + len2, source2,               len1 - len2     );
-                concpy( regs, dest2,        source2 + len1 - len2, len -  len1 + 1 );
+                concpy( dest1,        source1,                      len2     );
+                concpy( dest1 + len2, source2,               len1 - len2     );
+                concpy( dest2,        source2 + len1 - len2, len -  len1 + 1 );
             }
         }
         OR_SKEY( sk1, (STORKEY_REF | STORKEY_CHANGE) );
@@ -1316,7 +1397,7 @@ int     len1,     len2;                 /* Lengths to copy           */
     {
         source1 = MADDR( addr2, arn2, regs, ACCTYPE_READ,  key2 );
         dest1   = MADDR( addr1, arn1, regs, ACCTYPE_WRITE, key1 );
-        *dest1  = *source1;
+        STORE_MAIN_BYTE( dest1, READ_MAIN_BYTE( source1 ));
         ITIMER_UPDATE( addr1, len, regs );
         return;
     }
@@ -1342,7 +1423,7 @@ int     len1,     len2;                 /* Lengths to copy           */
         if (NOCROSSPAGE( addr2, len ))
         {
             /* (1) - No boundaries are crossed */
-            concpy_rl( regs, dest1, source1, len + 1 );
+            concpy_rl( dest1, source1, len + 1 );
         }
         else
         {
@@ -1351,8 +1432,8 @@ int     len1,     len2;                 /* Lengths to copy           */
             source2 = MADDRL( (addr2 + len1) & ADDRESS_MAXWRAP( regs ),
                    len + 1 - len1, arn2, regs, ACCTYPE_READ, key2 );
 
-            concpy_rl( regs, dest1 + len1, source2, len - len1 + 1 );
-            concpy_rl( regs, dest1,        source1,       len1     );
+            concpy_rl( dest1 + len1, source2, len - len1 + 1 );
+            concpy_rl( dest1,        source1,       len1     );
         }
         OR_SKEY( sk1, (STORKEY_REF | STORKEY_CHANGE) );
     }
@@ -1367,8 +1448,8 @@ int     len1,     len2;                 /* Lengths to copy           */
         if (NOCROSSPAGE( addr2, len ))
         {
              /* (3) - Source operand crosses a boundary */
-             concpy_rl( regs, dest2, source1 + len1, len - len1 + 1 );
-             concpy_rl( regs, dest1, source1,              len1     );
+             concpy_rl( dest2, source1 + len1, len - len1 + 1 );
+             concpy_rl( dest1, source1,              len1     );
         }
         else
         {
@@ -1380,22 +1461,22 @@ int     len1,     len2;                 /* Lengths to copy           */
             if (len1 == len2)
             {
                 /* (4a) - Both operands cross at the same time */
-                concpy_rl( regs, dest2, source2, len - len1 + 1 );
-                concpy_rl( regs, dest1, source1,       len1     );
+                concpy_rl( dest2, source2, len - len1 + 1 );
+                concpy_rl( dest1, source1,       len1     );
             }
             else if (len1 < len2)
             {
                 /* (4b) - Destination operand crosses first */
-                concpy_rl( regs, dest2 + len2 - len1, source2,        len  - len2 + 1 );
-                concpy_rl( regs, dest2,               source1 + len1, len2 - len1     );
-                concpy_rl( regs, dest1,               source1,               len1     );
+                concpy_rl( dest2 + len2 - len1, source2,        len  - len2 + 1 );
+                concpy_rl( dest2,               source1 + len1, len2 - len1     );
+                concpy_rl( dest1,               source1,               len1     );
             }
             else
             {
                 /* (4c) - Source operand crosses first */
-                concpy_rl( regs, dest2,        source2 + len1 - len2, len -  len1 + 1 );
-                concpy_rl( regs, dest1 + len2, source2,               len1 - len2     );
-                concpy_rl( regs, dest1,        source1,                      len2     );
+                concpy_rl( dest2,        source2 + len1 - len2, len -  len1 + 1 );
+                concpy_rl( dest1 + len2, source2,               len1 - len2     );
+                concpy_rl( dest1,        source1,                      len2     );
             }
         }
         OR_SKEY( sk1, (STORKEY_REF | STORKEY_CHANGE) );
@@ -1456,7 +1537,7 @@ int     len1, len2, len3;               /* Work areas for lengths    */
     {
         main2 = MADDR( addr2, space2, regs, ACCTYPE_READ,  key2 );
         main1 = MADDR( addr1, space1, regs, ACCTYPE_WRITE, key1 );
-        *main1 = *main2;
+        STORE_MAIN_BYTE( main1, READ_MAIN_BYTE( main2 ))
         ITIMER_UPDATE( addr1, len-1, regs );
         return;
     }
@@ -1475,7 +1556,7 @@ int     len1, len2, len3;               /* Work areas for lengths    */
         len3 = len1 < len2 ? len1 : len2;
 
         /* Copy bytes from source to destination */
-        concpy( regs, main1, main2, len3 );
+        concpy( main1, main2, len3 );
 
         /* Calculate virtual addresses for next chunk */
         addr1 = (addr1 + len3) & ADDRESS_MAXWRAP( regs );

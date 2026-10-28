@@ -1464,7 +1464,7 @@ int trace_cmd( int argc, char* argv[], char* cmdline )
                 {
                     sysblk.insttrace = on;
 
-                    for (cpu=0; cpu < sysblk.maxcpu; cpu++)
+                    for (cpu=0; cpu < SYS_GET_MAXCPU(); cpu++)
                     {
                         if (IS_CPU_ONLINE( cpu ))
                             sysblk.regs[ cpu ]->insttrace = on;
@@ -1564,7 +1564,7 @@ int trace_cmd( int argc, char* argv[], char* cmdline )
                only if some are being traced but not others, or vice-
                versa).
             */
-            for (cpu=0; cpu < sysblk.maxcpu; cpu++)
+            for (cpu=0; cpu < SYS_GET_MAXCPU(); cpu++)
             {
                 if (IS_CPU_ONLINE( cpu ))
                 {
@@ -1582,7 +1582,7 @@ int trace_cmd( int argc, char* argv[], char* cmdline )
             {
                 ASSERT( sysblk.insttrace ); // sanity check
 
-                for (cpu=0; cpu < sysblk.maxcpu; cpu++)
+                for (cpu=0; cpu < SYS_GET_MAXCPU(); cpu++)
                 {
                     if (IS_CPU_ONLINE( cpu ))
                     {
@@ -2092,7 +2092,7 @@ int ipending_cmd(int argc, char *argv[], char *cmdline)
 
     first = last = -1;
 
-    for (i = 0; i < sysblk.maxcpu; i++)
+    for (i = 0; i < SYS_GET_MAXCPU(); i++)
     {
         if (!IS_CPU_ONLINE(i))
         {

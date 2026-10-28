@@ -144,6 +144,7 @@ U64 op2,
 int ARCH_DEP(plo_clx) (int r1, int r3, VADR effective_addr2, int b2,
                               VADR effective_addr4, int b4, REGS *regs)
 {
+ALIGN_16
 BYTE op1c[16],
      op2[16],
      op4[16];
@@ -311,6 +312,7 @@ U64 op2;
 int ARCH_DEP(plo_csx) (int r1, int r3, VADR effective_addr2, int b2,
                               VADR effective_addr4, int b4, REGS *regs)
 {
+ALIGN_16
 BYTE op1c[16],
      op1r[16],
      op2[16];
@@ -537,6 +539,7 @@ U64 op2,
 int ARCH_DEP(plo_dcsx) (int r1, int r3, VADR effective_addr2, int b2,
                               VADR effective_addr4, int b4, REGS *regs)
 {
+ALIGN_16
 BYTE op1c[16],
      op1r[16],
      op2[16],
@@ -757,6 +760,7 @@ U64 op2;
 int ARCH_DEP(plo_csstx) (int r1, int r3, VADR effective_addr2, int b2,
                               VADR effective_addr4, int b4, REGS *regs)
 {
+ALIGN_16
 BYTE op1c[16],
      op1r[16],
      op2[16],
@@ -1084,6 +1088,7 @@ VADR op4addr,
 int ARCH_DEP(plo_csdstx) (int r1, int r3, VADR effective_addr2, int b2,
                               VADR effective_addr4, int b4, REGS *regs)
 {
+ALIGN_16
 BYTE op1c[16],
      op1r[16],
      op2[16],
@@ -1523,6 +1528,7 @@ VADR op4addr,
 int ARCH_DEP(plo_cststx) (int r1, int r3, VADR effective_addr2, int b2,
                               VADR effective_addr4, int b4, REGS *regs)
 {
+ALIGN_16
 BYTE op1c[16],
      op1r[16],
      op2[16],

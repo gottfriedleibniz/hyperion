@@ -380,7 +380,7 @@ int     i;                              /* Array subscript           */
     aste_main = FETCH_MAIN_ABSOLUTE(aste_addr, regs, numwords * 4);
     for (i = 0; i < numwords; i++)
     {
-        aste[i] = fetch_fw(aste_main);
+        FETCH_MAIN_FW(aste[i], aste_main);
         aste_main += 4;
     }
     /* Clear remaining words if fewer than 16 words were loaded */
@@ -535,7 +535,7 @@ int     i;                              /* Array subscript           */
     mn = FETCH_MAIN_ABSOLUTE(alo, regs, 16);
     for (i = 0; i < 4; i++)
     {
-        ale[i] = fetch_fw (mn);
+        FETCH_MAIN_FW(ale[i], mn);
         mn += 4;
     }
 
@@ -563,7 +563,7 @@ int     i;                              /* Array subscript           */
        observed by other CPUs.  ASTE cannot cross a page boundary */
     for (i = 0; i < 16; i++)
     {
-        aste[i] = fetch_fw(mn);
+        FETCH_MAIN_FW(aste[i], mn);
         mn += 4;
     }
 

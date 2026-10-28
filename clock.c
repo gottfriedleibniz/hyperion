@@ -327,6 +327,7 @@ void ARCH_DEP( query_utc_information )( REGS* regs )
         protocol (STP) facility that also controls TOD-clock steering.
         When STP is not installed, all fields in the UIB are zero."
     */
+    CACHE_ALIGN
     static const BYTE uib[256] = {0};
     ARCH_DEP( vstorec )( &uib, sizeof( uib )-1, regs->GR(1) & ADDRESS_MAXWRAP( regs ), 1, regs );
 }
@@ -335,6 +336,7 @@ void ARCH_DEP( query_utc_information )( REGS* regs )
 
 void ARCH_DEP(query_steering_information) (REGS *regs)
 {
+CACHE_ALIGN
 PTFFQSI qsi;
 
     obtain_lock( &sysblk.todlock );
@@ -383,6 +385,7 @@ static void build_qto_locked( PTFFQTO* qto, REGS* regs )
 
 void ARCH_DEP(query_tod_offset) (REGS *regs)
 {
+CACHE_ALIGN
 PTFFQTO qto;
 
     obtain_lock( &sysblk.todlock );
@@ -405,6 +408,7 @@ void ARCH_DEP( query_tod_offset_user )( REGS* regs )
     */
     struct
     {
+        CACHE_ALIGN
         PTFFQTO  qto;
         DBLWRD   tod_user_specified_epoch_difference;
     }
@@ -435,6 +439,7 @@ void ARCH_DEP( query_tod_offset_user_extended )( REGS* regs )
 
 void ARCH_DEP(query_available_functions) (REGS *regs)
 {
+    ALIGN_16
     BYTE qaf[16] = {0};
 
     BIT_ARRAY_SET( qaf, PTFF_GPR0_FC_QAF  );
@@ -471,7 +476,7 @@ void ARCH_DEP( store_int_timer_locked )( REGS* regs )
     S32 vtimer=0;
 
     itimer = get_int_timer( regs );
-    STORE_FW( regs->psa->inttimer, itimer );
+    STORE_MAIN_FW( regs->psa->inttimer, itimer );
 
 #if defined( FEATURE_ECPSVM )
 
@@ -511,7 +516,7 @@ void ARCH_DEP( fetch_int_timer )( REGS* regs )
 {
     S32 itimer;
 
-    FETCH_FW( itimer, regs->psa->inttimer );
+    FETCH_MAIN_FW( itimer, regs->psa->inttimer );
 
     OBTAIN_INTLOCK( HOSTREGS ? regs : NULL );
     {
@@ -768,7 +773,7 @@ int cpu;
        as we simulate 1 shared TOD clock, and do not support
        the TOD clock sync check.
     */
-    for (cpu = 0; cpu < sysblk.maxcpu; cpu++)
+    for (cpu = 0; cpu < SYS_GET_MAXCPU(); cpu++)
     {
         obtain_lock( &sysblk.cpulock[ cpu ]);
         {
@@ -988,9 +993,9 @@ TOD etod_clock( REGS* regs, ETOD* ETOD, ETOD_format format )
             register U64    lmask;
 
             /* Set CPU address masks */
-            if (sysblk.maxcpu <= 64)
+            if (SYS_GET_MAXCPU() <= 64)
                 amask = 0x3F, lmask = 0xFFFFFFFFFFC00000ULL;
-            else if (sysblk.maxcpu <= 128)
+            else if (SYS_GET_MAXCPU() <= 128)
                 amask = 0x7F, lmask = 0xFFFFFFFFFF800000ULL;
             else /* sysblk.maxcpu <= 256) */
                 amask = 0xFF, lmask = 0xFFFFFFFFFF000000ULL;

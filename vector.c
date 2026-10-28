@@ -517,6 +517,7 @@ DEF_INST(v_and_to_vmr)
 {
 int     r2;
 U32     n, n1, n2;
+ALIGN_16
 BYTE    workvmr[VECTOR_SECTION_SIZE/8];
 
     VS(inst, regs, r2);
@@ -549,6 +550,7 @@ DEF_INST(v_or_to_vmr)
 {
 int     r2;
 U32     n, n1, n2;
+ALIGN_16
 BYTE    workvmr[VECTOR_SECTION_SIZE/8];
 
     VS(inst, regs, r2);
@@ -581,6 +583,7 @@ DEF_INST(v_exclusive_or_to_vmr)
 {
 int     r2;
 U32     n, n1, n2;
+ALIGN_16
 BYTE    workvmr[VECTOR_SECTION_SIZE/8];
 
     VS(inst, regs, r2);

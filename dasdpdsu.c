@@ -174,10 +174,10 @@ CIFBLK         *cif;                    /* CKD image file descriptor */
 
         for (i=0, trks = 0; i < noext; i++)
         {
-            bcyl = fetch_hw( extent[i].xtbcyl );
-            btrk = fetch_hw( extent[i].xtbtrk );
-            ecyl = fetch_hw( extent[i].xtecyl );
-            etrk = fetch_hw( extent[i].xtetrk );
+            FETCH_HW( bcyl, extent[i].xtbcyl );
+            FETCH_HW( btrk, extent[i].xtbtrk );
+            FETCH_HW( ecyl, extent[i].xtecyl );
+            FETCH_HW( etrk, extent[i].xtetrk );
 
             trks += (((ecyl * cif->heads) + etrk) - ((bcyl * cif->heads) + btrk)) + 1;
         }
@@ -291,7 +291,7 @@ char            pathname[MAX_PATH];     /* ofname in host format     */
     }
 
     /* Point to the start of the member */
-    trk = fetch_hw( ttr );
+    FETCH_HW( trk, ttr );
     rec = ttr[2];
 
     // "Member %s TTR %04X%02X"
@@ -384,7 +384,7 @@ char            memname[9];             /* Member name (ASCIIZ)      */
 
     /* Load number of bytes in directory block */
     dirptr = dirblk;
-    dirrem = fetch_hw( dirptr );
+    FETCH_HW( dirrem, dirptr );
     if (dirrem < 2 || dirrem > 256)
     {
         // "Directory block byte count is invalid"
