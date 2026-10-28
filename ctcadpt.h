@@ -321,6 +321,7 @@ struct  _CTCBLK
     int         fd;                       // TUN/TAP fd
     TID         tid;                      // Read Thread ID
     pid_t       pid;                      // Read Thread pid
+    BYTE        bCloseInProgress;         // Close in progress
 
     DEVBLK*     pDEVBLK[2];               // 0 - Read subchannel
                                           // 1 - Write subchannel
@@ -342,7 +343,6 @@ struct  _CTCBLK
     u_int       fCreated:1;               // Interface Created
     u_int       fStarted:1;               // Startup Received
     u_int       fDataPending:1;           // Data is pending for read device
-    u_int       fCloseInProgress:1;       // Close in progress
     u_int       fPreconfigured:1;         // TUN device pre-configured
     u_int       fReadWaiting:1;           // CTCI_Read waiting
     u_int       fHaltOrClear:1;           // HSCH or CSCH issued
@@ -761,6 +761,11 @@ struct  _LCSDEV
 
 struct  _LCSPORT
 {
+    int         fd;                       // TUN/TAP fd
+    TID         tid;                      // Read Thread ID
+    pid_t       pid;                      // Read Thread pid
+    BYTE        bCloseInProgress;         // Close in progress
+
     BYTE        bPort;                    // Relative Adapter No
     BYTE        nMCastCount;              // Active MACTAB entries
     MAC         MAC_Address;              // MAC Address of Adapter
@@ -778,16 +783,12 @@ struct  _LCSPORT
     u_int       fUsed:1;                  // Port is used
     u_int       fLocalMAC:1;              // MAC is specified in OAT
     u_int       fPortCreated:1;           // Interface Created
-    u_int       fPortStarted:1;           // Startup Received
+    u_int       fPortStarted:1;           // Startup Received (#TODO: Validate this bit-field)
     u_int       fRouteAdded:1;            // Routing Added
-    u_int       fCloseInProgress:1;       // Close in progress
     u_int       fPreconfigured:1;         // TAP device pre-configured
     u_int       fDoCkSumOffload:1;        // Do manual CSUM Offload
     u_int       fDoMCastAssist:1;         // Do manual MCAST Assist
 
-    int         fd;                       // TUN/TAP fd
-    TID         tid;                      // Read Thread ID
-    pid_t       pid;                      // Read Thread pid
     int         icDevices;                // Device count
     char        szNetIfName[IFNAMSIZ];    // Network Interface Name (e.g. tap0)
     char        szMACAddress[32];         // MAC Address
@@ -843,7 +844,6 @@ struct  _LCSBLK
     char*       pszIPAddress;             // IP Address
 
     u_int       fDebug:1;
-    u_int       fCloseInProgress:1;       // Close in progress
 #if defined( OPTION_W32_CTCI )
     u_int       fNoMultiWrite:1;          // CTCI-WIN v3.3+ WinPCap v4.1+
 #endif
@@ -868,6 +868,7 @@ struct  _LCSBLK
 
     TID         AttnTid;                  // Attention Thread ID
     pid_t       AttnPid;                  // Attention Thread pid
+    BYTE        bCloseInProgress;         // Close in progress
 
     PLCSDEV     pDevices;                 // -> Device chain
     LCSPORT     Port[LCS_MAX_PORTS];      // Port Blocks

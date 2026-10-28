@@ -1052,13 +1052,13 @@ int  LCS_Close( DEVBLK* pDEVBLK )
         // the "LCS_PortThread"s TUNTAP_Read of the adapter. Thus
         // we must simply wait for LCS_PortThread to eventually
         // notice that we're doing a close (via our setting of the
-        // fCloseInProgress flag). Its TUNTAP_Read will eventually
+        // bCloseInProgress flag). Its TUNTAP_Read will eventually
         // timeout after a few seconds (currently 5, which is dif-
         // ferent than the DEF_NET_READ_TIMEOUT_SECS timeout value
         // CTCI_Read function uses) and will then do the close of
         // the adapter for us (TUNTAP_Close) so we don't have to.
         // All we need to do is ask it to exit (via our setting of
-        // the fCloseInProgress flag) and then wait for it to exit
+        // the bCloseInProgress flag) and then wait for it to exit
         // (which, as stated, could take up to a max of 5 seconds).
 
         // All of this is simply because it's poor form to close a
@@ -1083,7 +1083,7 @@ int  LCS_Close( DEVBLK* pDEVBLK )
                 PTT_DEBUG( "CLOSING started=NO", 000, pDEVBLK->devnum, pLCSPORT->bPort );
                 pLCSPORT->fPortStarted = 0;
                 PTT_DEBUG( "SET  closeInProg  ", 000, pDEVBLK->devnum, pLCSPORT->bPort );
-                pLCSPORT->fCloseInProgress = 1;
+                pLCSPORT->bCloseInProgress = 1;
                 PTT_DEBUG(             "SIG  PortEvent    ", 000, pDEVBLK->devnum, pLCSPORT->bPort );
                 signal_condition( &pLCSPORT->PortEvent );
             }
@@ -1160,7 +1160,7 @@ int  LCS_Close( DEVBLK* pDEVBLK )
             PTT_DEBUG( "GOT  AttnEventLock", 000, 000, 000 );
             {
                 PTT_DEBUG( "SET  closeInProg  ", 000, 000, 000 );
-                pLCSBLK->fCloseInProgress = 1;
+                pLCSBLK->bCloseInProgress = 1;
                 PTT_DEBUG( "SIG  AttnEvent", 000, 000, 000 );
                 signal_condition( &pLCSBLK->AttnEvent );
             }
@@ -2162,7 +2162,7 @@ static void LCS_EnqueueReplyFrame( PLCSDEV pLCSDEV, PLCSCMDHDR pReply, size_t iS
 
     while (1
         &&  pLCSPORT->fd != -1
-        && !pLCSPORT->fCloseInProgress
+        && !pLCSPORT->bCloseInProgress
         && LCS_DoEnqueueReplyFrame( pLCSDEV, pReply, iSize ) < 0
     )
     {
@@ -2334,11 +2334,11 @@ static void*  LCS_PortThread( void* arg)
                 PTT_DEBUG( "PORTHRD if started", pLCSPORT->fPortStarted, pDEVBLK->devnum, pLCSPORT->bPort );
                 if (0
                     || (pLCSPORT->fd < 0)
-                    || pLCSPORT->fCloseInProgress
+                    || pLCSPORT->bCloseInProgress
                     || pLCSPORT->fPortStarted
                 )
                 {
-                    if ((pLCSPORT->fd < 0) || pLCSPORT->fCloseInProgress)
+                    if ((pLCSPORT->fd < 0) || pLCSPORT->bCloseInProgress)
                         PTT_DEBUG( "PORTHRD is closing", pLCSPORT->fPortStarted, pDEVBLK->devnum, pLCSPORT->bPort );
                     else
                         PTT_DEBUG( "PORTHRD is started", pLCSPORT->fPortStarted, pDEVBLK->devnum, pLCSPORT->bPort );
@@ -2370,7 +2370,7 @@ static void*  LCS_PortThread( void* arg)
 
         // Exit when told...
 
-        if ( pLCSPORT->fd < 0 || pLCSPORT->fCloseInProgress )
+        if ( pLCSPORT->fd < 0 || pLCSPORT->bCloseInProgress )
             break;
 
         // Read an IP packet from the TAP device
@@ -2384,7 +2384,7 @@ static void*  LCS_PortThread( void* arg)
         // Check for other error condition
         if (iLength < 0)
         {
-            if (pLCSPORT->fd < 0 || pLCSPORT->fCloseInProgress)
+            if (pLCSPORT->fd < 0 || pLCSPORT->bCloseInProgress)
                 break;
             // "CTC: lcs interface %s read error from port %2.2X: %s"
             WRMSG( HHC00944, "E", pLCSPORT->szNetIfName, pLCSPORT->bPort, strerror( errno ) );
@@ -2761,7 +2761,7 @@ static void LCS_EnqueueEthFrame( PLCSPORT pLCSPORT, PLCSDEV pLCSDEV, BYTE* pData
 
     while (1
         &&  pLCSPORT->fd != -1
-        && !pLCSPORT->fCloseInProgress
+        && !pLCSPORT->bCloseInProgress
         && LCS_DoEnqueueEthFrame( pLCSPORT, pLCSDEV, pData, iSize ) < 0
     )
     {
@@ -4041,7 +4041,7 @@ static void*  LCS_AttnThread( void* arg)
         {
             for( ; ; )
             {
-                if ( pLCSBLK->fCloseInProgress )
+                if ( pLCSBLK->bCloseInProgress )
                 {
                     PTT_DEBUG( "ATTNTHRD Closing...", 000, 000, 000 );
                     break;
@@ -4068,7 +4068,7 @@ static void*  LCS_AttnThread( void* arg)
         release_lock( &pLCSBLK->AttnEventLock );
 
         /* Exit when told... */
-        if ( pLCSBLK->fCloseInProgress )
+        if ( pLCSBLK->bCloseInProgress )
         {
             PTT_DEBUG( "ATTNTHRD Closing...", 000, 000, 000 );
             break;
