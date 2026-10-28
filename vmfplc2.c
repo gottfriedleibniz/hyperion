@@ -1467,12 +1467,12 @@ static const char* format_fst_info( const FST* fst, char* str, size_t strsz )
 
     FETCH_FW( recl, fst->lrecl );
 
-    if (!(recs = fetch_fw( fst->aic )))
+    if (!(recs = READ_FW( fst->aic )))
         FETCH_HW( recs, fst->reccount );
 
     FETCH_FW( blks, fst->numblk );
     blks *= (PLC2_BLOCKSIZE / CMS_BLOCKSIZE);
-    blks += fetch_fw( fst->lastsz );
+    blks += READ_FW( fst->lastsz );
 
     snprintf( str, strsz, "%-8s %-8s %-2s %c %-5u %s recs %4u blks %u",
         fn , ft, fm, recfm, recl, dt, recs, blks );
@@ -2723,7 +2723,7 @@ static int doload( OPTIONS* opts )
 
                 FETCH_FW( recl, fst.lrecl );
 
-                if (!(recs = fetch_fw( fst.aic )))
+                if (!(recs = READ_FW( fst.aic )))
                     FETCH_HW( recs, fst.reccount );
 
                 /* Find corresponding CTLTAB entry */

@@ -169,7 +169,7 @@ static const int kmctr_pblens[32] =
 /*----------------------------------------------------------------------------*/
 U32 crypto_fetch32( const void* ptr )
 {
-    return fetch_fw( ptr );
+    return READ_FW( ptr );
 }
 void crypto_store32( void* ptr, U32 value )
 {

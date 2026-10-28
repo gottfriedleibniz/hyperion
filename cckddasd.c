@@ -3779,7 +3779,7 @@ int cckd_trklen( DEVBLK* dev, BYTE* buf )
 
         // "%1d:%04X CCKD file[%d] %s: trklen error for BCCHH = %2.2x%4.4x%4.4x"
         WRMSG( HHC00306, "E", LCSS_DEVNUM, cckd->sfn, cckd_sf_name( dev, cckd->sfn ),
-               trkhdr->bin, fetch_hw( trkhdr->cyl ), fetch_hw( trkhdr->head ));
+               trkhdr->bin, READ_HW( trkhdr->cyl ), READ_HW( trkhdr->head ));
 
         size = -1;
     }
@@ -4054,7 +4054,7 @@ CKD_RECHDR      rn;                     /* Record-n (r0, r1 ... rn)  */
     if (0
         || rn.rec  != 0
         || rn.klen != 0
-        || fetch_hw( rn.dlen ) != CKD_R0_DLEN
+        || READ_HW( rn.dlen ) != CKD_R0_DLEN
     )
     {
         CCKD_TRACE( "validation failed: bad r0%s", "" );

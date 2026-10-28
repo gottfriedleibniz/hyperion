@@ -1087,7 +1087,7 @@ inline U64 ARCH_DEP( fetch_doubleword_absolute )( RADR addr, REGS* regs )
     // to access DAT-related values.  In most `well-behaved' OS's,
     // other CPUs should not be interfering with these values
 
-    return fetch_dw( FETCH_MAIN_ABSOLUTE( addr, regs, 8 ));
+    return READ_DW( FETCH_MAIN_ABSOLUTE( addr, regs, 8 ));
 }
 
 
@@ -1101,7 +1101,7 @@ inline U64 ARCH_DEP( fetch_doubleword_absolute )( RADR addr, REGS* regs )
 /*-------------------------------------------------------------------*/
 inline U32 ARCH_DEP( fetch_fullword_absolute )( RADR addr, REGS* regs )
 {
-    return fetch_fw( FETCH_MAIN_ABSOLUTE( addr, regs, 4 ));
+    return READ_FW( FETCH_MAIN_ABSOLUTE( addr, regs, 4 ));
 }
 
 
@@ -1116,7 +1116,7 @@ inline U32 ARCH_DEP( fetch_fullword_absolute )( RADR addr, REGS* regs )
 inline U16 ARCH_DEP(fetch_halfword_absolute) (RADR addr,
                                 REGS *regs)
 {
-    return fetch_hw( FETCH_MAIN_ABSOLUTE( addr, regs, 2 ));
+    return READ_HW( FETCH_MAIN_ABSOLUTE( addr, regs, 2 ));
 }
 
 
