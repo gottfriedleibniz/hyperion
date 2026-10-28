@@ -170,10 +170,10 @@
 /*-------------------------------------------------------------------*/
 /* Copy 8 bytes at a time concurrently   (from left to right)        */
 /*-------------------------------------------------------------------*/
-inline void concpy( REGS* regs, void* d, void* s, int n )
+inline void concpy( void* d, const void* s, int n )
 {
     BYTE* u8d = (BYTE*)d;
-    BYTE* u8s = (BYTE*)s;
+    const BYTE* u8s = (BYTE*)s;
     ptrdiff_t d1;
 
     /* Copy until ready or 8 byte integral boundary */
@@ -192,7 +192,6 @@ inline void concpy( REGS* regs, void* d, void* s, int n )
     /* Copy full words in right condition, on enough length and src - dst distance */
     if (1
         && n
-        && regs->cpubit == regs->sysblk->started_mask
         && abs((int)(u8d - u8s)) > 3
     )
     {
@@ -205,10 +204,6 @@ inline void concpy( REGS* regs, void* d, void* s, int n )
         }
     }
     else // copy double words
-
-#else // x64 builds
-
-    UNREFERENCED( regs );
 
 #endif // end code for 32-bit builds
 
@@ -241,10 +236,10 @@ inline void concpy( REGS* regs, void* d, void* s, int n )
 /*-------------------------------------------------------------------*/
 /* Copy 8 bytes at a time concurrently   (from right to left)        */
 /*-------------------------------------------------------------------*/
-inline void concpy_rl( REGS* regs, void* d, void* s, int n )
+inline void concpy_rl( void* d, const void* s, int n )
 {
     BYTE* u8d = (BYTE*)d + n;
-    BYTE* u8s = (BYTE*)s + n;
+    const BYTE* u8s = (BYTE*)s + n;
     ptrdiff_t d1;
 
     /* Copy until ready or 8 byte integral boundary */
@@ -263,7 +258,6 @@ inline void concpy_rl( REGS* regs, void* d, void* s, int n )
     /* Copy full words in right condition, on enough length and (src - dst) distance */
     if (1
         && n
-        && regs->cpubit == regs->sysblk->started_mask
         && abs( u8d - u8s ) > 3
     )
     {
@@ -276,10 +270,6 @@ inline void concpy_rl( REGS* regs, void* d, void* s, int n )
         }
     }
     else // copy double words...
-
-#else // x64 builds
-
-    UNREFERENCED( regs );
 
 #endif // end code for 32-bit builds
 
@@ -1195,7 +1185,7 @@ int     len1,     len2;                 /* Lengths to copy           */
         if (NOCROSSPAGE( addr2, len ))
         {
             /* (1) - No boundaries are crossed */
-            concpy( regs, dest1, source1, len + 1 );
+            concpy( dest1, source1, len + 1 );
         }
         else
         {
@@ -1204,8 +1194,8 @@ int     len1,     len2;                 /* Lengths to copy           */
             source2 = MADDRL( (addr2 + len1) & ADDRESS_MAXWRAP( regs ),
                    len + 1 - len1, arn2, regs, ACCTYPE_READ, key2 );
 
-            concpy( regs, dest1,        source1,       len1     );
-            concpy( regs, dest1 + len1, source2, len - len1 + 1 );
+            concpy( dest1,        source1,       len1     );
+            concpy( dest1 + len1, source2, len - len1 + 1 );
         }
         *sk1 |= (STORKEY_REF | STORKEY_CHANGE);
     }
@@ -1220,8 +1210,8 @@ int     len1,     len2;                 /* Lengths to copy           */
         if (NOCROSSPAGE( addr2, len ))
         {
              /* (3) - Source operand crosses a boundary */
-             concpy( regs, dest1, source1,              len1     );
-             concpy( regs, dest2, source1 + len1, len - len1 + 1 );
+             concpy( dest1, source1,              len1     );
+             concpy( dest2, source1 + len1, len - len1 + 1 );
         }
         else
         {
@@ -1233,22 +1223,22 @@ int     len1,     len2;                 /* Lengths to copy           */
             if (len1 == len2)
             {
                 /* (4a) - Both operands cross at the same time */
-                concpy( regs, dest1, source1,       len1     );
-                concpy( regs, dest2, source2, len - len1 + 1 );
+                concpy( dest1, source1,       len1     );
+                concpy( dest2, source2, len - len1 + 1 );
             }
             else if (len1 < len2)
             {
                 /* (4b) - Destination operand crosses first */
-                concpy( regs, dest1,               source1,               len1     );
-                concpy( regs, dest2,               source1 + len1, len2 - len1     );
-                concpy( regs, dest2 + len2 - len1, source2,        len  - len2 + 1 );
+                concpy( dest1,               source1,               len1     );
+                concpy( dest2,               source1 + len1, len2 - len1     );
+                concpy( dest2 + len2 - len1, source2,        len  - len2 + 1 );
             }
             else
             {
                 /* (4c) - Source operand crosses first */
-                concpy( regs, dest1,        source1,                      len2     );
-                concpy( regs, dest1 + len2, source2,               len1 - len2     );
-                concpy( regs, dest2,        source2 + len1 - len2, len -  len1 + 1 );
+                concpy( dest1,        source1,                      len2     );
+                concpy( dest1 + len2, source2,               len1 - len2     );
+                concpy( dest2,        source2 + len1 - len2, len -  len1 + 1 );
             }
         }
         *sk1 |= (STORKEY_REF | STORKEY_CHANGE);
@@ -1348,7 +1338,7 @@ int     len1,     len2;                 /* Lengths to copy           */
         if (NOCROSSPAGE( addr2, len ))
         {
             /* (1) - No boundaries are crossed */
-            concpy_rl( regs, dest1, source1, len + 1 );
+            concpy_rl( dest1, source1, len + 1 );
         }
         else
         {
@@ -1357,8 +1347,8 @@ int     len1,     len2;                 /* Lengths to copy           */
             source2 = MADDRL( (addr2 + len1) & ADDRESS_MAXWRAP( regs ),
                    len + 1 - len1, arn2, regs, ACCTYPE_READ, key2 );
 
-            concpy_rl( regs, dest1 + len1, source2, len - len1 + 1 );
-            concpy_rl( regs, dest1,        source1,       len1     );
+            concpy_rl( dest1 + len1, source2, len - len1 + 1 );
+            concpy_rl( dest1,        source1,       len1     );
         }
         *sk1 |= (STORKEY_REF | STORKEY_CHANGE);
     }
@@ -1373,8 +1363,8 @@ int     len1,     len2;                 /* Lengths to copy           */
         if (NOCROSSPAGE( addr2, len ))
         {
              /* (3) - Source operand crosses a boundary */
-             concpy_rl( regs, dest2, source1 + len1, len - len1 + 1 );
-             concpy_rl( regs, dest1, source1,              len1     );
+             concpy_rl( dest2, source1 + len1, len - len1 + 1 );
+             concpy_rl( dest1, source1,              len1     );
         }
         else
         {
@@ -1386,22 +1376,22 @@ int     len1,     len2;                 /* Lengths to copy           */
             if (len1 == len2)
             {
                 /* (4a) - Both operands cross at the same time */
-                concpy_rl( regs, dest2, source2, len - len1 + 1 );
-                concpy_rl( regs, dest1, source1,       len1     );
+                concpy_rl( dest2, source2, len - len1 + 1 );
+                concpy_rl( dest1, source1,       len1     );
             }
             else if (len1 < len2)
             {
                 /* (4b) - Destination operand crosses first */
-                concpy_rl( regs, dest2 + len2 - len1, source2,        len  - len2 + 1 );
-                concpy_rl( regs, dest2,               source1 + len1, len2 - len1     );
-                concpy_rl( regs, dest1,               source1,               len1     );
+                concpy_rl( dest2 + len2 - len1, source2,        len  - len2 + 1 );
+                concpy_rl( dest2,               source1 + len1, len2 - len1     );
+                concpy_rl( dest1,               source1,               len1     );
             }
             else
             {
                 /* (4c) - Source operand crosses first */
-                concpy_rl( regs, dest2,        source2 + len1 - len2, len -  len1 + 1 );
-                concpy_rl( regs, dest1 + len2, source2,               len1 - len2     );
-                concpy_rl( regs, dest1,        source1,                      len2     );
+                concpy_rl( dest2,        source2 + len1 - len2, len -  len1 + 1 );
+                concpy_rl( dest1 + len2, source2,               len1 - len2     );
+                concpy_rl( dest1,        source1,                      len2     );
             }
         }
         *sk1 |= (STORKEY_REF | STORKEY_CHANGE);
@@ -1481,7 +1471,7 @@ int     len1, len2, len3;               /* Work areas for lengths    */
         len3 = len1 < len2 ? len1 : len2;
 
         /* Copy bytes from source to destination */
-        concpy( regs, main1, main2, len3 );
+        concpy( main1, main2, len3 );
 
         /* Calculate virtual addresses for next chunk */
         addr1 = (addr1 + len3) & ADDRESS_MAXWRAP( regs );
