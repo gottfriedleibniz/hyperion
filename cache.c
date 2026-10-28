@@ -46,7 +46,7 @@ int cache_nbr (int ix)
 int cache_busy (int ix)
 {
     if (cache_check_ix(ix)) return -1;
-    return cacheblk[ix].busy;
+    return atomic_load_S32( &cacheblk[ix].busy );
 }
 
 int cache_empty (int ix)
@@ -82,7 +82,7 @@ S64 cache_misses (int ix)
 int cache_busy_percent (int ix)
 {
     if (cache_check_ix(ix)) return -1;
-    return (cacheblk[ix].busy * 100) / cacheblk[ix].nbr;
+    return (atomic_load_S32( &cacheblk[ix].busy ) * 100) / cacheblk[ix].nbr;
 }
 
 int cache_empty_percent (int ix)
@@ -180,7 +180,7 @@ int cache_unlock(int ix)
 {
     if (cache_check_ix(ix)) return -1;
     release_lock(&cacheblk[ix].lock);
-    if (cacheblk[ix].empty == cacheblk[ix].nbr)
+    if (atomic_load_S32( &cacheblk[ix].empty ) == cacheblk[ix].nbr)
         cache_destroy(ix);
     return 0;
 }
@@ -227,16 +227,16 @@ U64 cache_setkey(int ix, int i, U64 key)
     oldkey = cacheblk[ix].cache[i].key;
     cacheblk[ix].cache[i].key = key;
     if (empty && !cache_isempty(ix, i))
-        cacheblk[ix].empty--;
+        atomic_add_S32( &cacheblk[ix].empty, -1 );
     else if (!empty && cache_isempty(ix, i))
-        cacheblk[ix].empty++;
+        atomic_add_S32( &cacheblk[ix].empty, +1 );
     return oldkey;
 }
 
 U32 cache_getflag(int ix, int i)
 {
     if (cache_check(ix,i)) return (U32)-1;
-    return cacheblk[ix].cache[i].flag;
+    return atomic_load_U32( &cacheblk[ix].cache[i].flag );
 }
 
 U32 cache_setflag(int ix, int i, U32 andbits, U32 orbits)
@@ -249,17 +249,14 @@ U32 cache_setflag(int ix, int i, U32 andbits, U32 orbits)
 
     empty = cache_isempty(ix, i);
     busy = cache_isbusy(ix, i);
-    oldflags = cacheblk[ix].cache[i].flag;
-
-    cacheblk[ix].cache[i].flag &= andbits;
-    cacheblk[ix].cache[i].flag |= orbits;
+    oldflags = atomic_mask_or_U32( &cacheblk[ix].cache[i].flag, andbits, orbits );
 
     if (!cache_isbusy(ix, i) && cacheblk[ix].waiters > 0)
         signal_condition(&cacheblk[ix].waitcond);
     if (busy && !cache_isbusy(ix, i))
-        cacheblk[ix].busy--;
+        atomic_add_S32( &cacheblk[ix].busy, -1 );
     else if (!busy && cache_isbusy(ix, i))
-        cacheblk[ix].busy++;
+        atomic_add_S32( &cacheblk[ix].busy, +1 );
     if (empty && !cache_isempty(ix, i))
         cacheblk[ix].empty--;
     else if (!empty && cache_isempty(ix, i))
@@ -558,13 +555,14 @@ static int cache_check(int ix, int i)
 
 static int cache_isbusy(int ix, int i)
 {
-    return ((cacheblk[ix].cache[i].flag & CACHE_BUSY) != 0);
+    U32 flag = atomic_load_U32( &cacheblk[ix].cache[i].flag );
+    return ((flag & CACHE_BUSY) != 0);
 }
 
 static int cache_isempty(int ix, int i)
 {
     return (cacheblk[ix].cache[i].key  == 0
-         && cacheblk[ix].cache[i].flag == 0
+         && atomic_load_U32( &cacheblk[ix].cache[i].flag ) == 0
          && cacheblk[ix].cache[i].age  == 0);
 }
 
