@@ -118,9 +118,9 @@ BYTE    *p;                             /* Mainstor pointer          */
     /* Fetch DUCT words 0, 1, and 3 from absolute storage
        (note: the DUCT cannot cross a page boundary) */
     p = FETCH_MAIN_ABSOLUTE( ducto, regs, 16 );
-    duct0 = fetch_fw( p +  0 );
-    duct1 = fetch_fw( p +  4 );
-    duct3 = fetch_fw( p + 12 );
+    FETCH_FW( duct0, p +  0 );
+    FETCH_FW( duct1, p +  4 );
+    FETCH_FW( duct3, p + 12 );
 
     /* Return the original STD unchanged if the dispatchable unit is
        not subspace active or if the ASTE obtained by ASN translation
@@ -140,12 +140,12 @@ BYTE    *p;                             /* Mainstor pointer          */
     /* Fetch subspace ASTE words 0, 2, 3, and 5 from absolute
        storage (note: the ASTE cannot cross a page boundary) */
     p = FETCH_MAIN_ABSOLUTE( ssasteo, regs, 24 );
-    ssaste[0] = fetch_fw( p +  0 );
-    ssaste[2] = fetch_fw( p +  8 );
+    FETCH_FW( ssaste[0], p +  0 );
+    FETCH_FW( ssaste[2], p +  8 );
 #if defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)
-    ssaste[3] = fetch_fw( p + 12 );
+    FETCH_FW( ssaste[3], p + 12 );
 #endif
-    ssaste[5] = fetch_fw( p + 20 );
+    FETCH_FW( ssaste[5], p + 20 );
 
     /* ASTE validity exception if subspace ASTE invalid bit is one */
     if (ssaste[0] & ASTE0_INVALID)
@@ -538,9 +538,9 @@ CREG    inst_cr;                        /* Instruction CR            */
     /* Fetch DUCT words 0, 1, and 3 from absolute storage
        (note: the DUCT cannot cross a page boundary) */
     mn = FETCH_MAIN_ABSOLUTE( ducto, regs, 16 );
-    duct0 = fetch_fw( mn +  0 );
-    duct1 = fetch_fw( mn +  4 );
-    duct3 = fetch_fw( mn + 12 );
+    FETCH_FW( duct0, mn +  0 );
+    FETCH_FW( duct1, mn +  4 );
+    FETCH_FW( duct3, mn + 12 );
 
     /* Special operation exception if the current primary ASTE origin
        is not the same as the base ASTE for the dispatchable unit */
@@ -569,8 +569,8 @@ CREG    inst_cr;                        /* Instruction CR            */
         /* Fetch destination ASTE words 2 and 3 from absolute storage
            (note: the ASTE cannot cross a page boundary) */
         mn = FETCH_MAIN_ABSOLUTE( abs, regs, 16 );
-        daste[2] = fetch_fw( mn +  8 );
-        daste[3] = fetch_fw( mn + 12 );
+        FETCH_FW( daste[2], mn +  8 );
+        FETCH_FW( daste[3], mn + 12 );
 
         break;
 
@@ -593,10 +593,10 @@ CREG    inst_cr;                        /* Instruction CR            */
         /* Fetch subspace ASTE words 0, 2, 3, and 5 from absolute
            storage (note: the ASTE cannot cross a page boundary) */
         mn = FETCH_MAIN_ABSOLUTE( abs, regs, 24 );
-        daste[0] = fetch_fw( mn +  0 );
-        daste[2] = fetch_fw( mn +  8 );
-        daste[3] = fetch_fw( mn + 12 );
-        daste[5] = fetch_fw( mn + 20 );
+        FETCH_FW( daste[0], mn +  0 );
+        FETCH_FW( daste[2], mn +  8 );
+        FETCH_FW( daste[3], mn + 12 );
+        FETCH_FW( daste[5], mn + 20 );
 
         /* ASTE validity exception if ASTE invalid bit is one */
         if (daste[0] & ASTE0_INVALID)
@@ -2219,14 +2219,14 @@ U16     updated = 0;                    /* Updated control regs      */
     /* Copy from operand beginning */
     for (i=0; i < m; i++, p1++)
     {
-        regs->CR_L( (r1 + i) & 0xF ) = fetch_fw( p1 );
+        FETCH_FW( regs->CR_L( (r1 + i) & 0xF ), p1 );
         updated |= BIT( (r1 + i) & 0xF );
     }
 
     /* Copy from next page */
     for (; i < n; i++, p2++)
     {
-        regs->CR_L( (r1 + i) & 0xF ) = fetch_fw( p2 );
+        FETCH_FW( regs->CR_L( (r1 + i) & 0xF ), p2 );
         updated |= BIT( (r1 + i) & 0xF );
     }
 
@@ -3247,8 +3247,8 @@ CREG    savecr12 = 0;                   /* CR12 save                 */
            observed by other CPUs */
         abs = APPLY_PREFIXING( lsto, regs->PX );
         mn = FETCH_MAIN_ABSOLUTE( abs, regs, 2 * 4 );
-        lste[0] = fetch_fw( mn + 0 );
-        lste[1] = fetch_fw( mn + 4 );
+        FETCH_FW( lste[0], mn + 0 );
+        FETCH_FW( lste[1], mn + 4 );
 
         /* Program check if the LSX invalid bit is set */
         if (lste[0] & LSTE0_INVALID)
@@ -3300,7 +3300,7 @@ CREG    savecr12 = 0;                   /* CR12 save                 */
     mn = FETCH_MAIN_ABSOLUTE( abs, regs, numwords * 4 );
     for (i=0; i < numwords; i++)
     {
-        ete[i] = fetch_fw( mn );
+        FETCH_FW( ete[i], mn );
         mn += 4;
     }
 
@@ -3384,7 +3384,7 @@ CREG    savecr12 = 0;                   /* CR12 save                 */
             mn = FETCH_MAIN_ABSOLUTE( abs, regs, 64 );
             for (i=0; i < 16; i++)
             {
-                aste[i] = fetch_fw( mn );
+                FETCH_FW( aste[i], mn );
                 mn += 4;
             }
 
@@ -6759,11 +6759,11 @@ U32    *p1, *p2 = NULL;                 /* Mainstor pointers         */
 
     /* Store at operand beginning */
     for (i=0; i < m; i++)
-        store_fw( p1++, regs->CR_L( (r1 + i) & 0xF ));
+        STORE_FW( p1++, regs->CR_L( (r1 + i) & 0xF ));
 
     /* Store on next page */
     for (; i < n; i++)
-        store_fw( p2++, regs->CR_L( (r1 + i) & 0xF ));
+        STORE_FW( p2++, regs->CR_L( (r1 + i) & 0xF ));
 
     ITIMER_UPDATE( effective_addr2, (n*4)-1, regs );
 
