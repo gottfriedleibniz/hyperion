@@ -726,7 +726,6 @@ setlocal
   if /i "%optname%" == "32" goto :parse_arch_opt
   if /i "%optname%" == "64" goto :parse_arch_opt
   if /i "%optname%" == "arm64"   goto :parse_arch_opt
-  if /i "%optname%" == "arm64ec" goto :parse_arch_opt
 
   if /i "%optname%" == "b"  goto :parse_b_opt
   if /i "%optname%" == "d"  goto :parse_d_opt
@@ -958,7 +957,7 @@ setlocal
     set "hdir=msvc.%dbg%%arch%.bin"
     set "vars=%vars% ptrsize=8"
   ) else (
-    echo ERROR: Which binaries to use must be either '64', '32', or 'armec' 1>&2
+    echo ERROR: Which binaries to use must be either '64', '32', or 'arm' 1>&2
     set /a "rc=1"
   )
 
