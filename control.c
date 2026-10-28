@@ -3747,10 +3747,17 @@ int     rc;                             /* return code from load_psw */
     PERFORM_SERIALIZATION( regs );
     PERFORM_CHKPT_SYNC( regs );
 
+    OBTAIN_INTLOCK( regs );
     INVALIDATE_AIA( regs );
 
     /* Create a working copy of the CPU registers... */
     memcpy( &newregs, regs, sysblk.regs_copy_len );
+
+    /* Save the primary ASN (CR4) and primary STD (CR1) */
+    oldpasn = regs->CR_LHL( 4 );
+    oldpstd = regs->CR( 1 );
+
+    RELEASE_INTLOCK( regs );
 
     /* Now INVALIDATE ALL TLB ENTRIES in our working copy.. */
     memset( &newregs.tlb.vaddr, 0, TLBN * sizeof(DW) );
@@ -3763,10 +3770,6 @@ int     rc;                             /* return code from load_psw */
     /* Set the breaking event address register in the copy */
     SET_BEAR_REG( &newregs, newregs.ip - (likely( !newregs.execflag ) ? 2 :
                                         newregs.exrl ? 6 : 4) );
-
-    /* Save the primary ASN (CR4) and primary STD (CR1) */
-    oldpasn = regs->CR_LHL( 4 );
-    oldpstd = regs->CR( 1 );
 
     /* Perform the unstacking process */
     etype = ARCH_DEP( program_return_unstack )( &newregs, &alsed, &rc );
@@ -3923,11 +3926,13 @@ int     rc;                             /* return code from load_psw */
     } /* end if (LSED_UET_PC) */
 
     /* Update the updated CPU registers from the working copy */
+    OBTAIN_INTLOCK( regs );
     memcpy( &regs->psw,      &newregs.psw,       sizeof( newregs.psw       ));
     memcpy(  regs->gr,        newregs.gr,        sizeof( newregs.gr        ));
     memcpy(  regs->cr_struct, newregs.cr_struct, sizeof( newregs.cr_struct ));
     memcpy(  regs->ar,        newregs.ar,        sizeof( newregs.ar        ));
     regs->bear = newregs.bear;
+    RELEASE_INTLOCK( regs );
 
     /* Set the main storage reference and change bits */
     ARCH_DEP( or_storage_key )( alsed, (STORKEY_REF | STORKEY_CHANGE) );
