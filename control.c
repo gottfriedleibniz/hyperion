@@ -2230,6 +2230,9 @@ U16     updated = 0;                    /* Updated control regs      */
         updated |= BIT( (r1 + i) & 0xF );
     }
 
+    /* Obtain the interrupt lock for *all* interrupt mask/state handling */
+    OBTAIN_INTLOCK( regs );
+
     /* Actions based on updated control regs */
     SET_IC_MASK( regs );
 
@@ -2242,20 +2245,20 @@ U16     updated = 0;                    /* Updated control regs      */
 #else
     if (updated & (BIT( 1 ) | BIT( 7 ) | BIT( 13 )))
         SET_AEA_COMMON( regs );
+
     if (updated & BIT( regs->AEA_AR( USE_INST_SPACE )))
         INVALIDATE_AIA( regs );
 #endif
     if (updated & BIT( 9 ))
     {
-        OBTAIN_INTLOCK( regs );
-        {
-            SET_IC_PER( regs );
-        }
-        RELEASE_INTLOCK( regs );
+        SET_IC_PER( regs );
 
+        RELEASE_INTLOCK( regs );
         if (EN_IC_PER_SA( regs ))
             ARCH_DEP( invalidate_tlb )( regs, ~(ACC_WRITE | ACC_CHECK) );
     }
+    else
+        RELEASE_INTLOCK( regs );
 
     RETURN_INTCHECK( regs );
 
@@ -2305,10 +2308,16 @@ int     amode64;
         /* Set the breaking event address register */
         SET_BEAR_REG( regs, regs->ip - 4 );
 
+        /* Obtain the interrupt lock for load_psw and s390_load_psw */
+        OBTAIN_INTLOCK( regs );
+
         /* Load updated PSW (ESA/390 Format in ESAME mode) */
 #if !defined( FEATURE_001_ZARCH_INSTALLED_FACILITY )
         if ((rc = ARCH_DEP( load_psw )( regs, dword )))
+        {
+            RELEASE_INTLOCK( regs );
             ARCH_DEP( program_interrupt )( regs, rc );
+        }
 #else
         /* Make the PSW valid for ESA/390 mode
            after first saving our amode64 flag */
@@ -2346,6 +2355,8 @@ int     amode64;
             if (!regs->psw.amode)
             {
                 regs->psw.zeroilc = 1;
+
+                RELEASE_INTLOCK( regs );
                 ARCH_DEP( program_interrupt )( regs, PGM_SPECIFICATION_EXCEPTION );
             }
         }
@@ -2356,7 +2367,10 @@ int     amode64;
 
         /* Check for Load PSW success/failure */
         if (rc)
+        {
+            RELEASE_INTLOCK( regs );
             ARCH_DEP( program_interrupt )( regs, rc );
+        }
 
         /* Clear the high word of the instruction address since
            the 's390_load_psw' function didn't do that for us */
@@ -2364,6 +2378,7 @@ int     amode64;
 
 #endif /* defined( FEATURE_001_ZARCH_INSTALLED_FACILITY ) */
 
+        RELEASE_INTLOCK( regs );
     }
     PERFORM_CHKPT_SYNC( regs );
     PERFORM_SERIALIZATION( regs );
