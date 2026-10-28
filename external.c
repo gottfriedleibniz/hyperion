@@ -194,7 +194,7 @@ U16     servcode;      /* Service Signal or Block I/O Interrupt code */
         /* Find first CPU which generated a malfunction alert */
         for (cpuad = 0; regs->malfcpu[cpuad] == 0; cpuad++)
         {
-            if (cpuad >= sysblk.maxcpu)
+            if (cpuad >= SYS_GET_MAXCPU())
             {
                 OFF_IC_MALFALT(regs);
                 return;
@@ -214,7 +214,7 @@ U16     servcode;      /* Service Signal or Block I/O Interrupt code */
         /* Reset emergency signal pending flag if there are
            no other CPUs which generated emergency signal */
         OFF_IC_MALFALT(regs);
-        while (++cpuad < sysblk.maxcpu)
+        while (++cpuad < SYS_GET_MAXCPU())
         {
             if (regs->malfcpu[cpuad])
             {
@@ -233,7 +233,7 @@ U16     servcode;      /* Service Signal or Block I/O Interrupt code */
         /* Find first CPU which generated an emergency signal */
         for (cpuad = 0; regs->emercpu[cpuad] == 0; cpuad++)
         {
-            if (cpuad >= sysblk.maxcpu)
+            if (cpuad >= SYS_GET_MAXCPU())
             {
                 OFF_IC_EMERSIG(regs);
                 return;
@@ -253,7 +253,7 @@ U16     servcode;      /* Service Signal or Block I/O Interrupt code */
         /* Reset emergency signal pending flag if there are
            no other CPUs which generated emergency signal */
         OFF_IC_EMERSIG(regs);
-        while (++cpuad < sysblk.maxcpu)
+        while (++cpuad < SYS_GET_MAXCPU())
         {
             if (regs->emercpu[cpuad])
             {

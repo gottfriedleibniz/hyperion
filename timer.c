@@ -38,7 +38,7 @@ REGS           *regs;                   /* -> CPU register context   */
 CPU_BITMAP      intmask = 0;            /* Interrupt CPU mask        */
 
     /* If no CPUs are available, just return (device server mode) */
-    if (!sysblk.hicpu)
+    if (!SYS_GET_HICPU())
       return;
 
     /* Access the different register contexts with the intlock held */
@@ -47,7 +47,7 @@ CPU_BITMAP      intmask = 0;            /* Interrupt CPU mask        */
     /* Check for [1] clock comparator, [2] cpu timer, and
      * [3] interval timer interrupts for each CPU.
      */
-    for (cpu = 0; cpu < sysblk.hicpu; cpu++)
+    for (cpu = 0; cpu < SYS_GET_HICPU(); cpu++)
     {
         /* Ignore this CPU if it is not started */
         if (!CHECK_CPU_REGS( regs, cpu ) || CPUSTATE_STOPPED == regs->cpustate)
@@ -216,7 +216,7 @@ bool    txf_PPA;                        /* true == PPA assist needed */
             total_sios = sysblk.shrdcount;
             sysblk.shrdcount = 0;
 #endif
-            for (i=0; i < sysblk.hicpu; i++)
+            for (i=0; i < SYS_GET_HICPU(); i++)
             {
                 obtain_lock( &sysblk.cpulock[ i ]);
                 {

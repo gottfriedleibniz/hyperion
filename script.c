@@ -1190,7 +1190,7 @@ int runtest( SCRCTL *pCtl, char *cmdline, char *args )
         ** incremented past the number of configured CPUs is
         ** the test then considered to be complete.
         */
-        if (sysblk.scrtest > sysblk.cpus)
+        if (sysblk.scrtest > SYS_GET_CPUS())
         {
             rc = 0;
             break;

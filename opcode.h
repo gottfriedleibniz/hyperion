@@ -2242,13 +2242,13 @@ do {                                                                  \
    /* Do it for the current CPU first */                                \
    ARCH_DEP( invalidate_tlbe )( (_regs), abs );                         \
                                                                         \
-   if (sysblk.cpus > 1)                                                 \
+   if (SYS_GET_CPUS() > 1)                                              \
    {                                                                    \
      int cpu;        /* CPU being examined */                           \
      REGS* cregs;    /* register context for CPU being examined */      \
                                                                         \
      /* Do invalidate for all of the other online CPUs too */           \
-     for (cpu=0; cpu < sysblk.hicpu; cpu++)                             \
+     for (cpu=0; cpu < SYS_GET_HICPU(); cpu++)                          \
      {                                                                  \
        /* Skip our own CPU and CPUs which aren't online */              \
        if (IS_CPU_ONLINE( cpu ) && cpu != (_regs)->cpuad)               \

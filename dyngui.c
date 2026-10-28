@@ -138,7 +138,7 @@ REGS* CopyREGS( int cpu )               // (same logic as in panel.c)
 {
     REGS* regs;
 
-    if (cpu < 0 || cpu >= sysblk.maxcpu)
+    if (cpu < 0 || cpu >= SYS_GET_MAXCPU())
         cpu = 0;
 
     obtain_lock( &sysblk.cpulock[cpu] );
@@ -690,7 +690,7 @@ void  UpdateStatus ()
         if (gui_wants_aggregates)
         {
             int cpu, cpupct = 0, started = 0;
-            for (cpupct=0, cpu=0; cpu < sysblk.maxcpu; cpu++)
+            for (cpupct=0, cpu=0; cpu < SYS_GET_MAXCPU(); cpu++)
             {
                 if (1
                     && IS_CPU_ONLINE( cpu )
@@ -722,7 +722,7 @@ void  UpdateStatus ()
     {
         int  i, cpupct;
 
-        for (i = 0; i < sysblk.hicpu; i++)
+        for (i = 0; i < SYS_GET_HICPU(); i++)
         {
             if (0
                 || !IS_CPU_ONLINE(i)

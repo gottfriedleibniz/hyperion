@@ -1906,7 +1906,7 @@ void txf_abort_all( U16 cpuad, int why, const char* location )
     why |= TXF_WHY_DELAYED_ABORT;
 
     for (cpu=0, regs = sysblk.regs[ 0 ];
-        cpu < sysblk.maxcpu; regs = sysblk.regs[ ++cpu ])
+        cpu < SYS_GET_MAXCPU(); regs = sysblk.regs[ ++cpu ])
     {
         /* Skip ourselves or any CPU that isn't online */
         if (0

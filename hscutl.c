@@ -3191,7 +3191,7 @@ DLL_EXPORT bool tf_autostop()
         sysblk.insttrace = false;
 
         /* Stop instruction tracing for all CPUs */
-        for (cpu=0; cpu < sysblk.maxcpu; cpu++)
+        for (cpu=0; cpu < SYS_GET_MAXCPU(); cpu++)
         {
             if (IS_CPU_ONLINE( cpu ))
             {
