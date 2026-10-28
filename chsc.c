@@ -149,13 +149,13 @@ int sch, f_sch, l_sch, num_sch, max_sch;
 CHSC_REQ4 *chsc_req4 = (CHSC_REQ4 *)(chsc_req);
 CHSC_RSP4 *chsc_rsp4 = (CHSC_RSP4 *)(chsc_rsp+1);
 
-    FETCH_HW(work,chsc_req4->f_sch); f_sch = work;
-    FETCH_HW(work,chsc_req4->l_sch); l_sch = work;
-    FETCH_HW(lcss,chsc_req4->ssidfmt);
+    FETCH_MAIN_HW(work,chsc_req4->f_sch); f_sch = work;
+    FETCH_MAIN_HW(work,chsc_req4->l_sch); l_sch = work;
+    FETCH_MAIN_HW(lcss,chsc_req4->ssidfmt);
     lcss &= CHSC_REQ4_SSID;
     lcss >>= 4;
 
-    FETCH_HW(req_len, chsc_req4->length);
+    FETCH_MAIN_HW(req_len, chsc_req4->length);
 
     if (!(max_rsp = chsc_max_rsp(req_len, sizeof(CHSC_RSP4))) || l_sch < f_sch)
         return chsc_req_errreq(chsc_rsp, 0);
@@ -183,15 +183,15 @@ CHSC_RSP4 *chsc_rsp4 = (CHSC_RSP4 *)(chsc_rsp+1);
                     chsc_rsp4->flags1 |= ((dev->pmcw.flag25 & PMCW25_TYPE) >> 2);
                     chsc_rsp4->path_mask = dev->pmcw.pim;
                     chsc_rsp4->unit_addr = dev->devnum & 0xff;
-                    STORE_HW(chsc_rsp4->devno,dev->devnum);
-                    STORE_HW(chsc_rsp4->sch, sch);
-                    memcpy(chsc_rsp4->chpid, dev->pmcw.chpid, 8);
+                    STORE_MAIN_HW(chsc_rsp4->devno,dev->devnum);
+                    STORE_MAIN_HW(chsc_rsp4->sch, sch);
+                    MAINSTOR_MCOPY(chsc_rsp4->chpid, dev->pmcw.chpid, 8);
                     if(dev->fla[0])
                         chsc_rsp4->fla_valid_mask = dev->pmcw.pim;
                     for(n = 0; n < 8; n++)
                         if(dev->pmcw.pim & (0x80 >> n))
                         {
-                            STORE_HW(chsc_rsp4->fla[n], dev->fla[n]);
+                            STORE_MAIN_HW(chsc_rsp4->fla[n], dev->fla[n]);
                         }
                 }
             }
@@ -251,15 +251,15 @@ CHSC_RSP6 *chsc_rsp6 = (CHSC_RSP6 *)(chsc_rsp+1);
                         chsc_rsp6->flags1 |= CHSC_RSP6_F1_DEV_VALID;
                     chsc_rsp6->flags1 |= ((dev->pmcw.flag25 & PMCW25_TYPE) >> 2);
                     chsc_rsp6->path_mask = dev->pmcw.pim;
-                    STORE_HW(chsc_rsp6->devnum,dev->devnum);
-                    STORE_HW(chsc_rsp6->sch, sch);
+                    STORE_MAIN_HW(chsc_rsp6->devnum,dev->devnum);
+                    STORE_MAIN_HW(chsc_rsp6->sch, sch);
                     MAINSTOR_MCOPY(chsc_rsp6->chpid, dev->pmcw.chpid, 8);
                     for(n = 0; n < 8; n++)
                     {
                         if(dev->pmcw.pim & (0x80 >> n))
                         {
                             cun = ((dev->devnum & 0x00F0) << 4) | dev->pmcw.chpid[n];
-                            STORE_HW(chsc_rsp6->cun[n], cun);
+                            STORE_MAIN_HW(chsc_rsp6->cun[n], cun);
                         }
                     }
                 }
@@ -439,11 +439,11 @@ CHSC_REQ31* chsc_req31 = (CHSC_REQ31*) (chsc_req);
 //      if(FACILITY_ENABLED_DEV(MCSS))
         {
             /* Enable Multiple Subchannel-Sets Facility */
-            STORE_HW( chsc_rsp->rsp, CHSC_REQ_OK );
+            STORE_MAIN_HW( chsc_rsp->rsp, CHSC_REQ_OK );
         }
 
     default: /* Unknown Facility */
-        STORE_HW( chsc_rsp->rsp, CHSC_REQ_FACILITY );
+        STORE_MAIN_HW( chsc_rsp->rsp, CHSC_REQ_FACILITY );
         break;
     }
 
@@ -554,8 +554,8 @@ CHSC_RSP2F1 *chsc_rsp2f1 = (CHSC_RSP2F1 *)(chsc_rsp+1);
                     chsc_rsp2f1->chp_type  = dev->chptype[0];
 //                  chsc_rsp2f1->lsn       = 0;
 //                  chsc_rsp2f1->chpp      = 0;
-//                  STORE_HW(chsc_rsp2f1->mdc,0x0000);
-//                  STORE_HW(chsc_rsp2f1->flags2,0x0000);
+//                  STORE_MAIN_HW(chsc_rsp2f1->mdc,0x0000);
+//                  STORE_MAIN_HW(chsc_rsp2f1->flags2,0x0000);
                     break;
                 }
         }
@@ -672,10 +672,10 @@ CHSC_RSP *chsc_rsp;                             /* Response structure*/
             PTT_ERR("*CHSC",regs->GR_L(r1),regs->GR_L(r2),regs->psw.IA_L);
             if( HDC3(debug_chsc_unknown_request, chsc_rsp, chsc_req, regs) )
                 break;
-            STORE_HW(chsc_rsp->length,sizeof(CHSC_RSP));
-            STORE_HW(chsc_rsp->rsp,CHSC_REQ_INVALID);
+            STORE_MAIN_HW(chsc_rsp->length,sizeof(CHSC_RSP));
+            STORE_MAIN_HW(chsc_rsp->rsp,CHSC_REQ_INVALID);
             /* No reason code */
-            STORE_FW(chsc_rsp->info,0);
+            STORE_MAIN_FW(chsc_rsp->info,0);
             /* Return cc0 even for unsupported requests?? */
             regs->psw.cc = 0;
             break;

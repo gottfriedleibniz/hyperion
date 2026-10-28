@@ -655,7 +655,7 @@ int     i;                              /* (work)                    */
         /* If a facility list designator was provided
            then it defines the SIE guest facility bits.
         */
-        memcpy( GUESTREGS->facility_list, &regs->mainstor[ fld ], STFL_HERC_BY_SIZE );
+        MAINSTOR_MCOPY( GUESTREGS->facility_list, &regs->mainstor[ fld ], STFL_HERC_BY_SIZE );
 
 #else /* !defined( OPTION_SIE2BK_FLD_COPY) */
 
@@ -664,7 +664,7 @@ int     i;                              /* (work)                    */
            guest facility bits which shouldn't be on.
         */
         for (i=0; i < (int) STFL_IBM_BY_SIZE; i++)
-            GUESTREGS->facility_list[i] &= regs->mainstor[ fld + i ];
+            GUESTREGS->facility_list[i] &= READ_MAIN_BYTE( regs->mainstor + (fld + i) );
 
 #endif /* defined( OPTION_SIE2BK_FLD_COPY) */
     }
@@ -884,7 +884,7 @@ int     i;                              /* (work)                    */
                 FETCH_FW( residue, STATEBK->residue );
 
                 /* Fetch the timer value from location 80 */
-                FETCH_FW( olditimer, GUESTREGS->psa->inttimer );
+                FETCH_MAIN_FW( olditimer, GUESTREGS->psa->inttimer );
 
                 /* Bit position 23 of the interval timer is decremented
                    once for each multiple of 3,333 usecs contained in
@@ -893,7 +893,7 @@ int     i;                              /* (work)                    */
                 itimer = olditimer - ((residue / 3333) >> 4);
 
                 /* Store the timer back */
-                STORE_FW( GUESTREGS->psa->inttimer, itimer );
+                STORE_MAIN_FW( GUESTREGS->psa->inttimer, itimer );
 
                 /* Set interrupt flag and interval timer interrupt pending
                    if the interval timer went from positive to negative
@@ -1009,7 +1009,7 @@ static int ARCH_DEP( run_sie )( REGS* regs )
     /* Load the shadow interval timer */
     {
         S32 itimer;
-        FETCH_FW( itimer, GUESTREGS->psa->inttimer );
+        FETCH_MAIN_FW( itimer, GUESTREGS->psa->inttimer );
         set_int_timer( GUESTREGS, itimer );
     }
 #endif
@@ -1704,8 +1704,8 @@ void ARCH_DEP( sie_exit )( REGS* regs, int icode )
 
             /* Point to PSA fields in state descriptor */
             psa = (void*)(regs->mainstor + SIE_STATE(GUESTREGS) + SIE_IP_PSA_OFFSET);
-            STORE_HW( psa->perint, GUESTREGS->perc   );
-            STORE_W(  psa->peradr, GUESTREGS->peradr );
+            STORE_MAIN_HW( psa->perint, GUESTREGS->perc   );
+            STORE_MAIN_W(  psa->peradr, GUESTREGS->peradr );
         }
 
         if (IS_IC_PER_IF( GUESTREGS ))

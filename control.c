@@ -118,9 +118,9 @@ BYTE    *p;                             /* Mainstor pointer          */
     /* Fetch DUCT words 0, 1, and 3 from absolute storage
        (note: the DUCT cannot cross a page boundary) */
     p = FETCH_MAIN_ABSOLUTE( ducto, regs, 16 );
-    FETCH_FW( duct0, p +  0 );
-    FETCH_FW( duct1, p +  4 );
-    FETCH_FW( duct3, p + 12 );
+    FETCH_MAIN_FW( duct0, p +  0 );
+    FETCH_MAIN_FW( duct1, p +  4 );
+    FETCH_MAIN_FW( duct3, p + 12 );
 
     /* Return the original STD unchanged if the dispatchable unit is
        not subspace active or if the ASTE obtained by ASN translation
@@ -140,12 +140,12 @@ BYTE    *p;                             /* Mainstor pointer          */
     /* Fetch subspace ASTE words 0, 2, 3, and 5 from absolute
        storage (note: the ASTE cannot cross a page boundary) */
     p = FETCH_MAIN_ABSOLUTE( ssasteo, regs, 24 );
-    FETCH_FW( ssaste[0], p +  0 );
-    FETCH_FW( ssaste[2], p +  8 );
+    FETCH_MAIN_FW( ssaste[0], p +  0 );
+    FETCH_MAIN_FW( ssaste[2], p +  8 );
 #if defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)
-    FETCH_FW( ssaste[3], p + 12 );
+    FETCH_MAIN_FW( ssaste[3], p + 12 );
 #endif
-    FETCH_FW( ssaste[5], p + 20 );
+    FETCH_MAIN_FW( ssaste[5], p + 20 );
 
     /* ASTE validity exception if subspace ASTE invalid bit is one */
     if (ssaste[0] & ASTE0_INVALID)
@@ -538,9 +538,9 @@ CREG    inst_cr;                        /* Instruction CR            */
     /* Fetch DUCT words 0, 1, and 3 from absolute storage
        (note: the DUCT cannot cross a page boundary) */
     mn = FETCH_MAIN_ABSOLUTE( ducto, regs, 16 );
-    FETCH_FW( duct0, mn +  0 );
-    FETCH_FW( duct1, mn +  4 );
-    FETCH_FW( duct3, mn + 12 );
+    FETCH_MAIN_FW( duct0, mn +  0 );
+    FETCH_MAIN_FW( duct1, mn +  4 );
+    FETCH_MAIN_FW( duct3, mn + 12 );
 
     /* Special operation exception if the current primary ASTE origin
        is not the same as the base ASTE for the dispatchable unit */
@@ -569,8 +569,8 @@ CREG    inst_cr;                        /* Instruction CR            */
         /* Fetch destination ASTE words 2 and 3 from absolute storage
            (note: the ASTE cannot cross a page boundary) */
         mn = FETCH_MAIN_ABSOLUTE( abs, regs, 16 );
-        FETCH_FW( daste[2], mn +  8 );
-        FETCH_FW( daste[3], mn + 12 );
+        FETCH_MAIN_FW( daste[2], mn +  8 );
+        FETCH_MAIN_FW( daste[3], mn + 12 );
 
         break;
 
@@ -593,10 +593,10 @@ CREG    inst_cr;                        /* Instruction CR            */
         /* Fetch subspace ASTE words 0, 2, 3, and 5 from absolute
            storage (note: the ASTE cannot cross a page boundary) */
         mn = FETCH_MAIN_ABSOLUTE( abs, regs, 24 );
-        FETCH_FW( daste[0], mn +  0 );
-        FETCH_FW( daste[2], mn +  8 );
-        FETCH_FW( daste[3], mn + 12 );
-        FETCH_FW( daste[5], mn + 20 );
+        FETCH_MAIN_FW( daste[0], mn +  0 );
+        FETCH_MAIN_FW( daste[2], mn +  8 );
+        FETCH_MAIN_FW( daste[3], mn + 12 );
+        FETCH_MAIN_FW( daste[5], mn + 20 );
 
         /* ASTE validity exception if ASTE invalid bit is one */
         if (daste[0] & ASTE0_INVALID)
@@ -2219,14 +2219,14 @@ U16     updated = 0;                    /* Updated control regs      */
     /* Copy from operand beginning */
     for (i=0; i < m; i++, p1++)
     {
-        FETCH_FW( regs->CR_L( (r1 + i) & 0xF ), p1 );
+        FETCH_MAIN_FW( regs->CR_L( (r1 + i) & 0xF ), p1 );
         updated |= BIT( (r1 + i) & 0xF );
     }
 
     /* Copy from next page */
     for (; i < n; i++, p2++)
     {
-        FETCH_FW( regs->CR_L( (r1 + i) & 0xF ), p2 );
+        FETCH_MAIN_FW( regs->CR_L( (r1 + i) & 0xF ), p2 );
         updated |= BIT( (r1 + i) & 0xF );
     }
 
@@ -3247,8 +3247,8 @@ CREG    savecr12 = 0;                   /* CR12 save                 */
            observed by other CPUs */
         abs = APPLY_PREFIXING( lsto, regs->PX );
         mn = FETCH_MAIN_ABSOLUTE( abs, regs, 2 * 4 );
-        FETCH_FW( lste[0], mn + 0 );
-        FETCH_FW( lste[1], mn + 4 );
+        FETCH_MAIN_FW( lste[0], mn + 0 );
+        FETCH_MAIN_FW( lste[1], mn + 4 );
 
         /* Program check if the LSX invalid bit is set */
         if (lste[0] & LSTE0_INVALID)
@@ -3300,7 +3300,7 @@ CREG    savecr12 = 0;                   /* CR12 save                 */
     mn = FETCH_MAIN_ABSOLUTE( abs, regs, numwords * 4 );
     for (i=0; i < numwords; i++)
     {
-        FETCH_FW( ete[i], mn );
+        FETCH_MAIN_FW( ete[i], mn );
         mn += 4;
     }
 
@@ -3384,7 +3384,7 @@ CREG    savecr12 = 0;                   /* CR12 save                 */
             mn = FETCH_MAIN_ABSOLUTE( abs, regs, 64 );
             for (i=0; i < 16; i++)
             {
-                FETCH_FW( aste[i], mn );
+                FETCH_MAIN_FW( aste[i], mn );
                 mn += 4;
             }
 
@@ -6409,11 +6409,11 @@ char    log_buf[128];                   /* Log buffer                */
 
                         /* Store extended status at specified main storage address */
                         for (i=0; i < 16; i++)
-                            STORE_DW( tregs->mainstor + absx + (i*8), tregs->FPR_L(i) );
-                        STORE_FW( tregs->mainstor + absx + 128, tregs->fpc );
-                        STORE_FW( tregs->mainstor + absx + 132, 0 );
-                        STORE_FW( tregs->mainstor + absx + 136, 0 );
-                        STORE_FW( tregs->mainstor + absx + 140, 0 );
+                            STORE_MAIN_DW( tregs->mainstor + absx + (i*8), tregs->FPR_L(i) );
+                        STORE_MAIN_FW( tregs->mainstor + absx + 128, tregs->fpc );
+                        STORE_MAIN_FW( tregs->mainstor + absx + 132, 0 );
+                        STORE_MAIN_FW( tregs->mainstor + absx + 136, 0 );
+                        STORE_MAIN_FW( tregs->mainstor + absx + 140, 0 );
 
                         /* Perform serialization and checkpoint-sync on target CPU */
 //                      perform_serialization (tregs);
@@ -6759,11 +6759,11 @@ U32    *p1, *p2 = NULL;                 /* Mainstor pointers         */
 
     /* Store at operand beginning */
     for (i=0; i < m; i++)
-        STORE_FW( p1++, regs->CR_L( (r1 + i) & 0xF ));
+        STORE_MAIN_FW( p1++, regs->CR_L( (r1 + i) & 0xF ));
 
     /* Store on next page */
     for (; i < n; i++)
-        STORE_FW( p2++, regs->CR_L( (r1 + i) & 0xF ));
+        STORE_MAIN_FW( p2++, regs->CR_L( (r1 + i) & 0xF ));
 
     ITIMER_UPDATE( effective_addr2, (n*4)-1, regs );
 
@@ -7241,7 +7241,7 @@ static BYTE hexebcdic[16] = { 0xF0,0xF1,0xF2,0xF3,0xF4,0xF5,0xF6,0xF7,
             case 1:
                 /* Basic-machine configuration */
                 sysib111 = (SYSIB111*)(m);
-                memset( sysib111, 0, MAX( sizeof(SYSIB111), 64*4 ));
+                MAINSTOR_MSET( sysib111, 0, MAX( sizeof(SYSIB111), 64*4 ));
                 stsi_capability( stsicap_refresh );
                 sysib111->flag1 |= SYSIB111_PFLAG;
                 get_manufacturer( sysib111->manufact );
@@ -7256,9 +7256,9 @@ static BYTE hexebcdic[16] = { 0xF0,0xF1,0xF2,0xF3,0xF4,0xF5,0xF6,0xF7,
                 get_modeltemp( sysib111->mtci );
                 bld_sysib_sequence( sysib111->seqc );
                 get_plant( sysib111->plant );
-                STORE_FW( sysib111->mcaprating,  sysblk.cpmcr  );
-                STORE_FW( sysib111->mpcaprating, sysblk.cpmpcr );
-                STORE_FW( sysib111->mtcaprating, sysblk.cpmtcr );
+                STORE_MAIN_FW( sysib111->mcaprating,  sysblk.cpmcr  );
+                STORE_MAIN_FW( sysib111->mpcaprating, sysblk.cpmpcr );
+                STORE_MAIN_FW( sysib111->mtcaprating, sysblk.cpmtcr );
                 for (i=0; i < 5; i++)
                 {
                     sysib111->typepct[i] = 100;
@@ -7267,9 +7267,9 @@ static BYTE hexebcdic[16] = { 0xF0,0xF1,0xF2,0xF3,0xF4,0xF5,0xF6,0xF7,
                 {
                     sysib111->ccr = 1;
                     sysib111->cai = sysblk.cpcai;
-                    STORE_FW( sysib111->ncaprating,  sysblk.cpncr  );
-                    STORE_FW( sysib111->npcaprating, sysblk.cpnpcr );
-                    STORE_FW( sysib111->ntcaprating, sysblk.cpntcr );
+                    STORE_MAIN_FW( sysib111->ncaprating,  sysblk.cpncr  );
+                    STORE_MAIN_FW( sysib111->npcaprating, sysblk.cpnpcr );
+                    STORE_MAIN_FW( sysib111->ntcaprating, sysblk.cpntcr );
                 }
                 regs->psw.cc = 0;
                 break;
@@ -7290,7 +7290,7 @@ static BYTE hexebcdic[16] = { 0xF0,0xF1,0xF2,0xF3,0xF4,0xF5,0xF6,0xF7,
                 MAINSTOR_MSET( sysib121, 0, MAX( sizeof( SYSIB121 ), 64*4 ));
                 bld_sysib_sequence( sysib121->seqc );
                 get_plant( sysib121->plant );
-                STORE_HW( sysib121->cpuad, regs->cpuad );
+                STORE_MAIN_HW( sysib121->cpuad, regs->cpuad );
                 regs->psw.cc = 0;
                 break;
 
@@ -7303,19 +7303,19 @@ static BYTE hexebcdic[16] = { 0xF0,0xF1,0xF2,0xF3,0xF4,0xF5,0xF6,0xF7,
                 {
                     sysib122->format = 1;
                     offset = (U16)(sysib122->accap - (BYTE*)sysib122);
-                    STORE_HW( sysib122->accoff, offset );
+                    STORE_MAIN_HW( sysib122->accoff, offset );
                 }
-                STORE_FW( sysib122->nccap,   sysblk.cpncap );
-                STORE_FW( sysib122->sccap,   sysblk.cpscap );
-                STORE_FW( sysib122->cap,     sysblk.cpmcap );
-                STORE_HW( sysib122->totcpu,  MAX_CPU_ENGS  );
-                STORE_HW( sysib122->confcpu, sysblk.cpus   );
-                STORE_HW( sysib122->sbcpu,   sysblk.maxcpu - sysblk.cpus   );
-                STORE_HW( sysib122->resvcpu, MAX_CPU_ENGS  - sysblk.maxcpu );
+                STORE_MAIN_FW( sysib122->nccap,   sysblk.cpncap );
+                STORE_MAIN_FW( sysib122->sccap,   sysblk.cpscap );
+                STORE_MAIN_FW( sysib122->cap,     sysblk.cpmcap );
+                STORE_MAIN_HW( sysib122->totcpu,  MAX_CPU_ENGS  );
+                STORE_MAIN_HW( sysib122->confcpu, sysblk.cpus   );
+                STORE_MAIN_HW( sysib122->sbcpu,   sysblk.maxcpu - sysblk.cpus   );
+                STORE_MAIN_HW( sysib122->resvcpu, MAX_CPU_ENGS  - sysblk.maxcpu );
                 get_mpfactors( (BYTE*)sysib122->mpfact );
                 if (sysib122->format)
                 {
-                    STORE_FW( sysib122->accap, sysblk.cpacap );
+                    STORE_MAIN_FW( sysib122->accap, sysblk.cpacap );
                     get_mpfactors( (BYTE*)sysib122->ampfact );
                 }
                 regs->psw.cc = 0;
@@ -7357,34 +7357,34 @@ static BYTE hexebcdic[16] = { 0xF0,0xF1,0xF2,0xF3,0xF4,0xF5,0xF6,0xF7,
             case 1:
                 /* Logical-partition Current CPU */
                 sysib221 = (SYSIB221 *)(m);
-                memset( sysib221, 0, MAX( sizeof( SYSIB221 ), 64*4 ));
+                MAINSTOR_MSET( sysib221, 0, MAX( sizeof( SYSIB221 ), 64*4 ));
                 bld_sysib_sequence( sysib221->seqc );
                 get_plant( sysib221->plant );
-                STORE_HW( sysib221->lcpuid, regs->cpuad );
-                STORE_HW( sysib221->cpuad,  regs->cpuad );
+                STORE_MAIN_HW( sysib221->lcpuid, regs->cpuad );
+                STORE_MAIN_HW( sysib221->cpuad,  regs->cpuad );
                 regs->psw.cc = 0;
                 break;
 
             case 2:
                 /* Logical-partition All CPUs */
                 sysib222 = (SYSIB222 *)(m);
-                memset( sysib222, 0, MAX( sizeof( SYSIB222 ), 64*4 ));
-                STORE_HW( sysib222->lparnum, sysblk.lparnum );
+                MAINSTOR_MSET( sysib222, 0, MAX( sizeof( SYSIB222 ), 64*4 ));
+                STORE_MAIN_HW( sysib222->lparnum, sysblk.lparnum );
                 sysib222->lcpuc = SYSIB222_LCPUC_SHARED;
-                STORE_HW( sysib222->totcpu,  MAX_CPU_ENGS );
-                STORE_HW( sysib222->confcpu, sysblk.cpus  );
-                STORE_HW( sysib222->sbcpu,   sysblk.maxcpu - sysblk.cpus   );
-                STORE_HW( sysib222->resvcpu, MAX_CPU_ENGS  - sysblk.maxcpu );
+                STORE_MAIN_HW( sysib222->totcpu,  MAX_CPU_ENGS );
+                STORE_MAIN_HW( sysib222->confcpu, sysblk.cpus  );
+                STORE_MAIN_HW( sysib222->sbcpu,   sysblk.maxcpu - sysblk.cpus   );
+                STORE_MAIN_HW( sysib222->resvcpu, MAX_CPU_ENGS  - sysblk.maxcpu );
                 get_lparname(sysib222->lparname);
                 /* FIXME: Should be a percentage of 1000, where 1000
                  *        represents 1.000 and capable of full CPU
                  *        utilization. This usually is NOT the case for
                  *        an LPAR, by definition.
                  */
-                STORE_FW( sysib222->lparcaf, 1000 ); /* Full capability factor */
-                STORE_FW( sysib222->mdep[0], 1000 ); /* ZZ nonzero value */
-                STORE_FW( sysib222->mdep[1], 1000 ); /* ZZ nonzero value */
-                STORE_HW( sysib222->shrcpu,  sysblk.cpus );
+                STORE_MAIN_FW( sysib222->lparcaf, 1000 ); /* Full capability factor */
+                STORE_MAIN_FW( sysib222->mdep[0], 1000 ); /* ZZ nonzero value */
+                STORE_MAIN_FW( sysib222->mdep[1], 1000 ); /* ZZ nonzero value */
+                STORE_MAIN_HW( sysib222->shrcpu,  sysblk.cpus );
                 regs->psw.cc = 0;
                 break;
 
@@ -7410,12 +7410,12 @@ static BYTE hexebcdic[16] = { 0xF0,0xF1,0xF2,0xF3,0xF4,0xF5,0xF6,0xF7,
         MAINSTOR_MSET( sysib322, 0, sizeof( SYSIB322 ));
         sysib322->dbct = 1;
         sysibvmdb = (SYSIBVMDB *)&sysib322->vmdb[0];
-        STORE_HW( sysibvmdb->totcpu,  MAX_CPU_ENGS );
-        STORE_HW( sysibvmdb->confcpu, sysblk.cpus  );
-        STORE_HW( sysibvmdb->sbcpu,   sysblk.maxcpu - sysblk.cpus   );
-        STORE_HW( sysibvmdb->resvcpu, MAX_CPU_ENGS  - sysblk.maxcpu );
+        STORE_MAIN_HW( sysibvmdb->totcpu,  MAX_CPU_ENGS );
+        STORE_MAIN_HW( sysibvmdb->confcpu, sysblk.cpus  );
+        STORE_MAIN_HW( sysibvmdb->sbcpu,   sysblk.maxcpu - sysblk.cpus   );
+        STORE_MAIN_HW( sysibvmdb->resvcpu, MAX_CPU_ENGS  - sysblk.maxcpu );
         get_vmid( sysibvmdb->vmname );
-        STORE_FW( sysibvmdb->vmcaf, 1000 ); /* Full capability factor */
+        STORE_MAIN_FW( sysibvmdb->vmcaf, 1000 ); /* Full capability factor */
         get_cpid( sysibvmdb->cpid );
 
         regs->psw.cc = 0;
@@ -7496,13 +7496,13 @@ static BYTE hexebcdic[16] = { 0xF0,0xF1,0xF2,0xF3,0xF4,0xF5,0xF6,0xF7,
                     /* Bump to next TLE */
                     if (cpumask)
                     {
-                        STORE_DW( &tlecpu->cpumask, cpumask );
+                        STORE_MAIN_DW( &tlecpu->cpumask, cpumask );
                         tle += sizeof(TLECPU);
                     }
                 }
 
                 /* Save the length of this System Information Block */
-                STORE_HW( sysib1512->len, (U16)( tle - (BYTE*)sysib1512 ));
+                STORE_MAIN_HW( sysib1512->len, (U16)( tle - (BYTE*)sysib1512 ));
 
                 /* Successful completion */
                 regs->psw.cc = 0;

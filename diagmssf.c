@@ -305,7 +305,7 @@ DEVBLK            *dev;                /* Device block pointer       */
     spccb = (SPCCB_HEADER*)(regs->mainstor + spccb_absolute_addr);
 
     /* Load SPCCB length from header */
-    FETCH_HW(spccblen,spccb->length);
+    FETCH_MAIN_HW(spccblen,spccb->length);
 
     /* Mark page referenced */
     ARCH_DEP( or_storage_key )( spccb_absolute_addr, STORKEY_REF );
@@ -352,14 +352,14 @@ DEVBLK            *dev;                /* Device block pointer       */
             spccbconfig->hex01 = 0x01;
 
             /* Set CPU array count and offset in SPCCB */
-            STORE_HW(spccbconfig->toticpu,sysblk.maxcpu);
+            STORE_MAIN_HW(spccbconfig->toticpu,sysblk.maxcpu);
             offset = sizeof(SPCCB_HEADER) + sizeof(SPCCB_CONFIG_INFO);
-            STORE_HW(spccbconfig->officpu,offset);
+            STORE_MAIN_HW(spccbconfig->officpu,offset);
 
             /* Set HSA array count and offset in SPCCB */
-            STORE_HW(spccbconfig->tothsa,0);
+            STORE_MAIN_HW(spccbconfig->tothsa,0);
             offset += (U16)(sizeof(SPCCB_CPU_INFO) * sysblk.maxcpu);
-            STORE_HW(spccbconfig->offhsa,offset);
+            STORE_MAIN_HW(spccbconfig->offhsa,offset);
 
             /* Move IPL load parameter to SPCCB */
             get_loadparm (spccbconfig->loadparm);
@@ -521,9 +521,9 @@ U64              wCPU[ MAX_CPU_ENGS ];  /* Wait CPU time    (usecs)  */
 #if defined(FEATURE_PHYSICAL_DIAG204)
         hdrinfo->flags = DIAG204_PHYSICAL_PRESENT;
 #endif /*defined(FEATURE_PHYSICAL_DIAG204)*/
-        STORE_HW(hdrinfo->physcpu,sysblk.cpus);
-        STORE_HW(hdrinfo->offown,sizeof(DIAG204_HDR));
-        STORE_DW(hdrinfo->diagstck,ETOD2TOD(ETOD));
+        STORE_MAIN_HW(hdrinfo->physcpu,sysblk.cpus);
+        STORE_MAIN_HW(hdrinfo->offown,sizeof(DIAG204_HDR));
+        STORE_MAIN_DW(hdrinfo->diagstck,ETOD2TOD(ETOD));
 
         /* hercules partition */
         partinfo = (DIAG204_PART*)(hdrinfo + 1);
@@ -538,11 +538,11 @@ U64              wCPU[ MAX_CPU_ENGS ];  /* Wait CPU time    (usecs)  */
           if (IS_CPU_ONLINE(i))
           {
               memset(cpuinfo, 0, sizeof(DIAG204_PART_CPU));
-              STORE_HW(cpuinfo->cpaddr,sysblk.regs[i]->cpuad);
+              STORE_MAIN_HW(cpuinfo->cpaddr,sysblk.regs[i]->cpuad);
               cpuinfo->index=sysblk.ptyp[i];
-              STORE_HW(cpuinfo->weight,100);
-              STORE_DW(cpuinfo->totdispatch,tCPU[i]);
-              STORE_DW(cpuinfo->effdispatch, uCPU[i]);
+              STORE_MAIN_HW(cpuinfo->weight,100);
+              STORE_MAIN_DW(cpuinfo->totdispatch,tCPU[i]);
+              STORE_MAIN_DW(cpuinfo->effdispatch, uCPU[i]);
               cpuinfo->cflag=0x20;
               cpuinfo += 1;
           }
