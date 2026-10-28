@@ -770,12 +770,12 @@ unsigned int      len, ptyp, i;        /* work                       */
     */
 
     *p = MAX_SCCB_PTYP;         /* (number of entries which follows-1) */
-    memset( p+1, 0, 16-1 );     /* (pad first entry with binary zeros) */
+    MAINSTOR_MSET( p+1, 0, 16-1 );     /* (pad first entry with binary zeros) */
 
     for (ptyp=0; ptyp <= MAX_SCCB_PTYP; ptyp++)
     {
         p += 16;                              /* point to next entry   */
-        memcpy( p, ptyp2long( ptyp ), 16 );   /* move in ASCII value   */
+        MAINSTOR_MCOPY( p, ptyp2long( ptyp ), 16 ); /* move in ASCII value   */
         for (i=0; i < 16; i++)
             p[i] = host_to_guest( p[i] );     /* convert it to EBCDIC  */
     }

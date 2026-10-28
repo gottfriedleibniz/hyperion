@@ -826,12 +826,12 @@ do { \
  #define SWAP_OFF_T(o)  (sizeof(o) <= 4 ? SWAP32((U32)o) : SWAP64(o))
 
 /*-------------------------------------------------------------------*/
-/*             Guest storage FETCH/STORE macros                      */
+/*             Emulated storage FETCH/STORE macros                   */
 /*-------------------------------------------------------------------*/
-/* The following macros fetch a value from emulated guest storage    */
+/* The following macros fetch a value from emulated storage          */
 /* into a local work variable or store a local work variable into    */
-/* emulated guest storage, performing a CONDITIONAL swap in between  */
-/* (via the "CSWAPxx()" macro) to ensure the value placed into guest */
+/* emulated storage, performing a CONDITIONAL swap in between        */
+/* (via the "CSWAPxx()" macro) to ensure the value placed into       */
 /* storage is always big endian or that the local work variable is   */
 /* always in the expected big or little endian format (depending on  */
 /* which endianness Hercules was built for).                         */
@@ -857,6 +857,15 @@ do { \
 #define FETCH_F3( _val, _stor )     (_val) = READ_F3( _stor )
 #define FETCH_DW( _val, _stor )     (_val) = READ_DW( _stor )
 #define FETCH_QW( _val, _stor )     (_val) = READ_QW( _stor )
+
+/*-------------------------------------------------------------------*/
+/*             Main storage mem* macros                              */
+/*-------------------------------------------------------------------*/
+
+#define MAINSTOR_MCOPY(_dest, _src, _len)    memcpy( (_dest), (_src), (_len) )
+#define MAINSTOR_MCOPY_RL(_dest, _src, _len) memcpy_backwards( (_dest), (_src), (_len) )
+#define MAINSTOR_MSET(_dest, _value, _len)   memset( (_dest), (_value), (_len) )
+#define MAINSTOR_MCMP(_ptr1, _ptr2, _num)    memcmp( (_ptr1), (_ptr2), (_num) )
 
 /*-------------------------------------------------------------------*/
 /*            CKD/CCKD header field FETCH/STORE macros               */
