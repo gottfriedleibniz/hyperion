@@ -29,16 +29,26 @@
 
 /*-------------------------------------------------------------------*/
 
-#if defined ( _MSVC_ ) && defined( _M_X64 )
+#if defined ( _MSVC_ ) && (defined( _M_ARM64 ) || defined( _M_ARM64EC ))
+  #define  SFENCE()  __dmb(_ARM64_BARRIER_ISHST)
+#elif defined ( _MSVC_ ) && defined( _M_X64 )
     /*
         Microsoft x64: "On the x64 platform, __faststorefence
         generates an instruction that is a faster store fence
         than the sfence instruction. Use this intrinsic instead
         of _mm_sfence on the x64 platform."
     */
-  #define  SFENCE  __faststorefence
+  #define  SFENCE()  __faststorefence()
+#elif 0 && defined( __aarch64__ ) && (defined( __GNUC__ ) || defined( __clang__ ))
+  /*
+   * GCC intentionally leaves out raw barrier intrinsics from their
+   * implementation of arm_acle.h. Besides inline assembly, or including
+   * <atomic>, the only 'portable' solution that comes to mind is using the
+   * built-in memory model barriers. This requires testing on MacOS.
+   */
+  #define  SFENCE()  __atomic_thread_fence(__ATOMIC_RELEASE) /* ISHST */
 #else
-  #define  SFENCE  _mm_sfence
+  #define  SFENCE()  _mm_sfence()
 #endif
 
 /*-------------------------------------------------------------------*/
@@ -83,6 +93,40 @@ static inline void __clear_page( void* addr, size_t pgszmod64 )
 
     return;
 }
+
+#elif (0 && defined( __aarch64__ ) && (defined( __GNUC__ ) || defined( __clang__ ))) \
+    || defined( _M_ARM64 ) || defined( _M_ARM64EC )
+
+static inline void __clear_page( void* addr, size_t pgszmod64 )
+{
+    size_t i;
+    uint8_t* locaddr;
+    uint8x16_t zero;
+
+    /* Init work reg to 0 */
+    zero = vdupq_n_u8(0);
+
+    /* Copy addr */
+    locaddr = (uint8_t*)addr;
+
+    /* Clear requested page WITHOUT polluting our cache. Note, ARM provides
+     * DC ZVA (Data Cache Zero by VA) for zeroing an entire cache line. The
+     * current approach simply ports the SSE2 function to NEON. */
+    for (i = 0; i < pgszmod64; i++, locaddr += 64)
+    {
+        vst1q_u8(locaddr +  0, zero);
+        vst1q_u8(locaddr + 16, zero);
+        vst1q_u8(locaddr + 32, zero);
+        vst1q_u8(locaddr + 48, zero);
+    }
+
+    /* Copy addr back */
+    addr = locaddr;
+
+    /* Ensure stores are globally visible */
+    SFENCE();
+}
+
 #else /* (all others) */
   #define  __clear_page( _addr, _pgszmod64 )    memset( (void*)(_addr), 0, ((size_t)(_pgszmod64)) << 6 )
 #endif
