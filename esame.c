@@ -4473,7 +4473,7 @@ U32    *p1, *p2;                        /* Mainstor pointers         */
         effective_addr2 &= ADDRESS_MAXWRAP( regs );
         p2 = (U32*) MADDRL(effective_addr2, n - m, b2, regs, ACCTYPE_READ, regs->psw.pkey );
 
-        if (likely( !(m & 0x3) ))
+        if (likely(IS_ALIGNED_POW2( m, FW )))
         {
             /* Addresses are word aligned */
             m >>= 2;
@@ -4544,7 +4544,7 @@ BYTE   *bp1;                            /* Unaligned Mainstor ptr    */
     {
         /* Boundary not crossed */
         n >>= 3;
-        if (likely(!(((uintptr_t)effective_addr2) & 0x07)))
+        if (likely(IS_ALIGNED_POW2( effective_addr2, DW )))
         {
 #if defined( OPTION_SINGLE_CPU_DW ) && defined( ASSIST_STORE_DW )
             if (regs->cpubit == regs->sysblk->started_mask)
@@ -4568,7 +4568,7 @@ BYTE   *bp1;                            /* Unaligned Mainstor ptr    */
         effective_addr2 &= ADDRESS_MAXWRAP( regs );
         p2 = (U64*) MADDRL(effective_addr2, n - m, b2, regs, ACCTYPE_READ, regs->psw.pkey );
 
-        if (likely( !(m & 0x7) ))
+        if (likely(IS_ALIGNED_POW2( m, DW )))
         {
             /* FIXME: This code blows up on at least Mac OS X Snow Leopard
                (10.6) when compiled for a 32-bit Intel host using gcc 4.2.1
@@ -4786,7 +4786,7 @@ BYTE   *bp1;                            /* Unaligned Mainstor ptr    */
     {
         /* Boundary not crossed */
         n >>= 3;
-        if (likely(!(((uintptr_t)effective_addr2) & 0x07)))
+        if (likely(IS_ALIGNED_POW2( effective_addr2, DW )))
         {
 #if defined( OPTION_SINGLE_CPU_DW ) && defined( ASSIST_STORE_DW )
         if (regs->cpubit == regs->sysblk->started_mask)
@@ -4815,7 +4815,7 @@ BYTE   *bp1;                            /* Unaligned Mainstor ptr    */
         effective_addr2 &= ADDRESS_MAXWRAP( regs );
         p2 = (U64*) MADDRL(effective_addr2, n - m, b2, regs, ACCTYPE_WRITE, regs->psw.pkey );
 
-        if (likely( !(m & 0x7) ))
+        if (likely(IS_ALIGNED_POW2( m, DW )))
         {
             /* double word aligned */
             m >>= 3;
@@ -4892,7 +4892,7 @@ U32    *p1, *p2;                        /* Mainstor pointers         */
         effective_addr2 &= ADDRESS_MAXWRAP( regs );
         p2 = (U32*) MADDRL(effective_addr2, n - m, b2, regs, ACCTYPE_WRITE, regs->psw.pkey );
 
-        if (likely( !(m & 0x3) ))
+        if (likely(IS_ALIGNED_POW2( m, FW )))
         {
             /* word aligned */
             m >>= 2;
@@ -8013,7 +8013,7 @@ U32    *p1, *p2;                        /* Mainstor pointers         */
         effective_addr2 &= ADDRESS_MAXWRAP( regs );
         p2 = (U32*) MADDRL(effective_addr2,n - m, b2, regs, ACCTYPE_READ, regs->psw.pkey );
 
-        if (likely( !(m & 0x3) ))
+        if (likely(IS_ALIGNED_POW2( m, FW )))
         {
             /* Addresses are word aligned */
             m >>= 2;
@@ -8381,7 +8381,7 @@ U32    *p1, *p2;                        /* Mainstor pointers         */
         effective_addr2 &= ADDRESS_MAXWRAP( regs );
         p2 = (U32*) MADDRL(effective_addr2, n - m, b2, regs, ACCTYPE_WRITE, regs->psw.pkey );
 
-        if (likely( !(m & 0x3) ))
+        if (likely(IS_ALIGNED_POW2( m, FW )))
         {
             /* word aligned */
             m >>= 2;

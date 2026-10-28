@@ -291,7 +291,7 @@ DEVBLK            *dev;                /* Device block pointer       */
     mssf_command = regs->GR_L(r2);
 
     /* Program check if SPCCB is not on a doubleword boundary */
-    if ( spccb_absolute_addr & 0x00000007 )
+    if (NOT_ALIGNED_POW2( spccb_absolute_addr, DW ))
         ARCH_DEP(program_interrupt) (regs, PGM_SPECIFICATION_EXCEPTION);
 
     /* Program check if SPCCB is outside main storage */

@@ -6357,7 +6357,7 @@ BYTE   *bp1;                            /* Unaligned maintstor ptr   */
     {
         /* Boundary not crossed */
         n >>= 2;
-        if (likely(!(((uintptr_t)effective_addr2) & 0x03)))
+        if (likely(IS_ALIGNED_POW2( effective_addr2, FW )))
         {
             for (i=0; i < n; i++, p1++)
                 regs->GR_L( (r1 + i) & 0xF ) = fetch_fw( p1 );
@@ -6375,7 +6375,7 @@ BYTE   *bp1;                            /* Unaligned maintstor ptr   */
         effective_addr2 &= ADDRESS_MAXWRAP( regs );
         p2 = (U32*) MADDRL(effective_addr2, n - m, b2, regs, ACCTYPE_READ, regs->psw.pkey );
 
-        if (likely( (m & 0x3) == 0 ))
+        if (likely(IS_ALIGNED_POW2( m, FW )))
         {
             /* Addresses are word aligned */
             m >>= 2;

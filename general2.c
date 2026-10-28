@@ -1415,7 +1415,7 @@ BYTE   *bp1;                            /* Unaligned mainstor ptr    */
     {
         /* boundary not crossed */
         n >>= 2;
-        if (likely(!(((uintptr_t)effective_addr2) & 0x03)))
+        if (likely(IS_ALIGNED_POW2( effective_addr2, FW )))
         {
             for (i=0; i < n; i++)
                 store_fw( p1++, regs->GR_L( (r1 + i) & 0xF ));
@@ -1434,7 +1434,7 @@ BYTE   *bp1;                            /* Unaligned mainstor ptr    */
         effective_addr2 &= ADDRESS_MAXWRAP( regs );
 
         p2 = (U32*) MADDRL(effective_addr2, n - m, b2, regs, ACCTYPE_WRITE, regs->psw.pkey );
-        if (likely( !(m & 0x3) ))
+        if (likely(IS_ALIGNED_POW2( m, FW )))
         {
             /* word aligned */
             m >>= 2;
