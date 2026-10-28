@@ -17,16 +17,20 @@
   echo.
   echo     SYNOPSIS
   echo.
-  echo         %~nx0    { 32 ^| 64 ^| detect }
+  echo         %~nx0    { detect ^| list ^| [target] }
   echo.
   echo     ARGUMENTS
-  echo.
-  echo         32 ^| 64     Initializes the the desired Visual Studio
-  echo                     32-bit or 64-bit target build environment.
   echo.
   echo         detect      Detects a Visual Studio installation and
   echo                     defines variables identifying which one.
   echo                     Refer to the below NOTES section.
+  echo.
+  echo         list        List all target architectures available for
+  echo                     build environment initialization.
+  echo.
+  echo         [target]    Architecture used to initialize the Visual
+  echo                     Studio build environment. Cross compilation
+  echo                     adheres to a HOST[_TARGET] format.
   echo.
   echo     OPTIONS
   echo.
@@ -43,10 +47,11 @@
   echo         does NOT initialize the build environment. It defines
   echo         some helpful (informative) variables ONLY.
   echo.
-  echo         The '32' and '64' calls are the ones that initialize the
-  echo         requested Visual Studio build environment. Note too that
-  echo         both calls also set the same variables as a detect call
-  echo         (i.e. an internal "detect" call is always performed).
+  echo         The 'target' call is the one that initializes the Visual
+  echo         Studio build environment for a given architecture. Note
+  echo         that a 'target' call will set the same variables as a
+  echo         'detect' call (i.e. an internal "detect" call is always
+  echo         performed).
   echo.
   echo         The variables which the 'detect' call returns are:
   echo.
@@ -57,10 +62,11 @@
   echo                              (e.g. "150", "90", etc)
   echo.
   echo              vshost          The detected host architecture
-  echo                              (either "x86" or "amd64")
+  echo                              ("x86", "amd64", or "arm64")
   echo.
   echo              vstarget        The requested target architecture:
-  echo                              "x86" if '32', "amd64" if '64'.
+  echo                              "x86" if '32', "amd64" if '64', see
+  echo                              the list and [arch] ARGUMENTS.
   echo.
   echo              vs2026..vs2005  The Visual Studio version numbers
   echo                              for each supported version of it
@@ -77,8 +83,8 @@
   echo.
   echo     VERSION
   echo.
-  echo         3.3     (January 26, 2022)
-
+  echo         3.4     (Feburary 17, 2026)
+:END_HELP
   endlocal
   exit /b 1
 
@@ -123,20 +129,9 @@
   if /i "%~1" == "--help"  goto :HELP
   if /i not "%~2" == ""    goto :HELP
 
-  if     /i not "%~1" == "detect" (
-    if   /i not "%~1" == "32"   (
-      if /i not "%~1" == "64" (
-        goto :HELP
-      )
-    )
-  )
-
   :: Define target architecture...
 
-  if "%~1" == "32" set "vstarget=x86"
-  if "%~1" == "64" set "vstarget=amd64"
-
-  call :detect_vstudio
+  call :detect_vstudio "%~1"
 
   if %rc% NEQ 0 (
     endlocal
@@ -145,7 +140,10 @@
 
   :: Go set the build environment if that's what they want
 
-  if /i not "%~1" == "detect" (
+  if /i "%~1" == "list" (
+    call :print_vcvars_files
+    goto :END_HELP
+  ) else if /i not "%~1" == "detect" (
     goto :SET_VSTUDIO_ENV
   )
 
@@ -181,42 +179,40 @@
     && set "vstarget=%vstarget%"    ^
     && set "VCVARSDIR=%VCVARSDIR%"
 
+  pushd .
+  echo.
+
+  set rc=1
   if %vsver% LSS %vs2017% (
-    goto :vs2015_or_earlier
+    @REM   Visual Studio 2015 or EARLIER
+
+    call "%VCVARSDIR%\vcvarsall.bat"  %vstarget%
+    set "rc=%errorlevel%"
+  ) else (
+    @REM   Visual Studio 2017 or LATER
+
+    @REM Mapped targets for backwards compatibility
+    if /i "%vstarget%" == "x86" (
+      call "%VCVARSDIR%\vcvars32.bat"
+      set "rc=%errorlevel%"
+    ) else if /i "%vstarget%" == "amd64" (
+      call "%VCVARSDIR%\vcvars64.bat"
+      set "rc=%errorlevel%"
+    ) else if exist "%VCVARSDIR%\vcvars%vstarget%.bat" (
+      call "%VCVARSDIR%\vcvars%vstarget%.bat"
+      set "rc=%errorlevel%"
+    ) else (
+      echo %~nx0: ERROR: "%VCVARSDIR%\vcvars%vstarget%.bat" not found
+      echo %~nx0: INFO: Provided target: "%vstarget%"
+      call :print_vcvars_files
+    )
   )
 
-  ::-----------------------------------
-  ::   Visual Studio 2017 or LATER
-  ::-----------------------------------
-
-  pushd .
-  echo.
-
-  if /i "%vstarget%" == "x86"   call "%VCVARSDIR%\vcvars32.bat"
-  if /i "%vstarget%" == "amd64" call "%VCVARSDIR%\vcvars64.bat"
-
   @if defined TRACEON (@echo on) else (@echo off)
 
   echo.
   popd
-  exit /b 0
-
-:vs2015_or_earlier
-
-  ::-----------------------------------
-  ::   Visual Studio 2015 or EARLIER
-  ::-----------------------------------
-
-  pushd .
-  echo.
-
-  call "%VCVARSDIR%\vcvarsall.bat"  %vstarget%
-
-  @if defined TRACEON (@echo on) else (@echo off)
-
-  echo.
-  popd
-  exit /b 0
+  exit /b %rc%
 
 
 ::-----------------------------------------------------------------------------
@@ -224,6 +220,7 @@
 ::-----------------------------------------------------------------------------
 :detect_vstudio
 
+  set "vstarget=%~1"
   set "vsver="
   set "vsname="
   set "VCVARSDIR="
@@ -248,6 +245,7 @@
 :detect_vstudio_error
 
   echo %~nx0: ERROR: No supported version of Visual Studio is installed
+  set "vstarget="
   set "vsver="
   set "vsname="
   set "VCVARSDIR="
@@ -276,6 +274,7 @@
   if not exist "%VSCOMNTOOLS%" (
     echo %~nx0: ERROR: Defined VS%vsver%COMNTOOLS directory does not exist!
     echo %~nx0: INFO: VS%vsver%COMNTOOLS = "%VSCOMNTOOLS%"??
+    set "vstarget="
     set "vsver="
     set "vsname="
     set "VCVARSDIR="
@@ -297,10 +296,66 @@
 
   if   /i "%PROCESSOR_ARCHITEW6432%" == "x86"   set "vshost=x86"
   if   /i "%PROCESSOR_ARCHITEW6432%" == "AMD64" set "vshost=amd64"
+  if   /i "%PROCESSOR_ARCHITEW6432%" == "ARM64" set "vshost=arm64"
   if not defined vshost (
     if /i "%PROCESSOR_ARCHITECTURE%" == "x86"   set "vshost=x86"
     if /i "%PROCESSOR_ARCHITECTURE%" == "AMD64" set "vshost=amd64"
+    if /i "%PROCESSOR_ARCHITECTURE%" == "ARM64" set "vshost=arm64"
   )
   %return%
+
+::-----------------------------------------------------------------------------
+::                          print_vcvars_archs
+::-----------------------------------------------------------------------------
+:print_vcvars_files
+  ::----------------------------------------------------------
+  :: Compile a list of all available Visual Studio host/target
+  :: architectures by iterating over all available vcvars*.bat
+  :: files in %VCVARSDIR%.
+  ::--------------------------------------------------------
+  setlocal enabledelayedexpansion
+
+  @REM Mapped targets for backwards compatibility
+  set "VSARCHS=x64 | x86"
+
+  for %%F in ("%VCVARSDIR%\vcvars*.bat") do (
+    set "filename=%%~nF"
+    set "filename=!filename:~6!"
+    if /I not "!filename!" == "all" (
+      set "VSARCHS=!VSARCHS! ^| !filename!"
+    )
+  )
+
+  echo %~nx0: INFO: Available targets: !VSARCHS!
+  endlocal
+  exit /b 0
+
+:print_vcvars_help
+  ::--------------------------------------------------------
+  :: Compile a list of all available Visual Studio target
+  :: architectures by parsing the vcvarsall.bat help text
+  :: that lists available host/targets.
+  ::--------------------------------------------------------
+  :: Instead of checking for 'vcvars*.bat', the logic in
+  :: SET_VSTUDIO_ENV could be modified to determine if
+  :: vstarget exists in the list generated by this routine.
+  ::--------------------------------------------------------
+  setlocal enabledelayedexpansion
+
+  @REM Mapped files for backwards compatibility
+  set "VSARCHS=32 | 64"
+
+  for /F "tokens=*" %%a in ('
+    call "%VCVARSDIR%\vcvarsall.bat" /help ^| findstr /C:"\[arch\]: "
+  ') do (
+    set "line=%%a"
+    set "VSARCHS=!VSARCHS! ^| !line:~8!"
+    goto :end_print_vcvars
+  )
+
+:end_print_vcvars
+  echo %~nx0: INFO: Available targets: !VSARCHS!
+  endlocal
+  exit /b 0
 
 ::-----------------------------------------------------------------------------
