@@ -267,7 +267,7 @@ int mq = dev->qdio.i_qcnt;
             slsb = (QDIO_SLSB*)(dev->mainstor + dev->qdio.i_slsbla[iq]);
 
             while(mb--)
-                if(slsb->slsbe[ib] == SLSBE_INPUT_EMPTY)
+                if(READ_MAIN_BYTE( slsb->slsbe + ib ) == SLSBE_INPUT_EMPTY)
                 {
                 QDIO_SL *sl = (QDIO_SL*)(dev->mainstor + dev->qdio.i_sla[iq]);
                 U64 sa; U32 len; BYTE *buf;
@@ -281,7 +281,7 @@ int mq = dev->qdio.i_qcnt;
                     FETCH_DW(sa,sl->sbala[ib]);
                     if(STORCHK(sa,sizeof(QDIO_SBAL)-1,dev->qdio.i_slk[iq],STORKEY_REF,dev))
                     {
-                        slsb->slsbe[ib] = SLSBE_ERROR;
+                        STORE_MAIN_BYTE( slsb->slsbe + ib, SLSBE_ERROR );
                         ARCH_DEP( or_dev_4K_storage_key )( dev, dev->qdio.i_slsbla[iq], (STORKEY_REF | STORKEY_CHANGE) );
 #if defined(_FEATURE_QDIO_THININT)
                         set_alsi(dev,ALSI_ERROR);
@@ -300,7 +300,7 @@ int mq = dev->qdio.i_qcnt;
                             break;  // Or should this be continue - ie a discontiguous sbal???
                         if(STORCHK(la,len-1,dev->qdio.i_sbalk[iq],STORKEY_CHANGE,dev))
                         {
-                            slsb->slsbe[ib] = SLSBE_ERROR;
+                            STORE_MAIN_BYTE( slsb->slsbe + ib, SLSBE_ERROR );
                             ARCH_DEP( or_dev_4K_storage_key )( dev, dev->qdio.i_slsbla[iq], (STORKEY_REF | STORKEY_CHANGE) );
 #if defined(_FEATURE_QDIO_THININT)
                             set_alsi(dev,ALSI_ERROR);
@@ -322,7 +322,7 @@ int mq = dev->qdio.i_qcnt;
                         set_dsci(dev,DSCI_IOCOMP);
 #endif /*defined(_FEATURE_QDIO_THININT)*/
                         grp->reqpci = TRUE;
-                        slsb->slsbe[ib] = SLSBE_INPUT_COMPLETED;
+                        STORE_MAIN_BYTE( slsb->slsbe + ib, SLSBE_INPUT_COMPLETED );
                         ARCH_DEP( or_dev_4K_storage_key )( dev, dev->qdio.i_slsbla[iq], (STORKEY_REF | STORKEY_CHANGE) );
                         if(++ib >= 128)
                         {
@@ -383,7 +383,7 @@ int mq = dev->qdio.o_qcnt;
             slsb = (QDIO_SLSB*)(dev->mainstor + dev->qdio.o_slsbla[oq]);
 
             while(mb--)
-                if(slsb->slsbe[ob] == SLSBE_OUTPUT_PRIMED)
+                if(READ_MAIN_BYTE( slsb->slsbe + ob ) == SLSBE_OUTPUT_PRIMED)
                 {
                 QDIO_SL *sl = (QDIO_SL*)(dev->mainstor + dev->qdio.o_sla[oq]);
                 U64 sa; U32 len; BYTE *buf;
@@ -396,7 +396,7 @@ int mq = dev->qdio.o_qcnt;
                     FETCH_DW(sa,sl->sbala[ob]);
                     if(STORCHK(sa,sizeof(QDIO_SBAL)-1,dev->qdio.o_slk[oq],STORKEY_REF,dev))
                     {
-                        slsb->slsbe[ob] = SLSBE_ERROR;
+                        STORE_MAIN_BYTE( slsb->slsbe + ob, SLSBE_ERROR );
                         ARCH_DEP( or_dev_4K_storage_key )( dev, dev->qdio.o_slsbla[oq], (STORKEY_REF | STORKEY_CHANGE) );
 #if defined(_FEATURE_QDIO_THININT)
                         set_alsi(dev,ALSI_ERROR);
@@ -415,7 +415,7 @@ int mq = dev->qdio.o_qcnt;
                             break;  // Or should this be continue - ie a discontiguous sbal???
                         if(STORCHK(la,len-1,dev->qdio.o_sbalk[oq],STORKEY_REF,dev))
                         {
-                            slsb->slsbe[ob] = SLSBE_ERROR;
+                            STORE_MAIN_BYTE( slsb->slsbe + ob, SLSBE_ERROR );
                             ARCH_DEP( or_dev_4K_storage_key )( dev, dev->qdio.o_slsbla[oq], (STORKEY_REF | STORKEY_CHANGE) );
 #if defined(_FEATURE_QDIO_THININT)
                             set_alsi(dev,ALSI_ERROR);
@@ -439,7 +439,7 @@ int mq = dev->qdio.o_qcnt;
                         }
                     }
 
-                    slsb->slsbe[ob] = SLSBE_OUTPUT_COMPLETED;
+                    STORE_MAIN_BYTE( slsb->slsbe + ob, SLSBE_OUTPUT_COMPLETED );
                     ARCH_DEP( or_dev_4K_storage_key )( dev, dev->qdio.o_slsbla[oq], (STORKEY_REF | STORKEY_CHANGE) );
                     if(++ob >= 128)
                     {
