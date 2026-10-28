@@ -593,19 +593,19 @@ int  CTCI_Close( DEVBLK* pDEVBLK )
     PCTCBLK pCTCBLK  = (PCTCBLK)pDEVBLK->dev_data;
 
     // Close the device file (if not already closed)
-    if( pCTCBLK->fd >= 0 )
+    if( !pCTCBLK->bCloseInProgress && pCTCBLK->fd >= 0 )
     {
         // PROGRAMMING NOTE: there's currently no way to interrupt
         // the "CTCI_ReadThread"s TUNTAP_Read of the adapter. Thus
         // we must simply wait for CTCI_ReadThread to eventually
         // notice that we're doing a close (via our setting of the
-        // fCloseInProgress flag). Its TUNTAP_Read will eventually
+        // bCloseInProgress flag). Its TUNTAP_Read will eventually
         // timeout after a few seconds (currently 5, which is dif-
         // ferent than the DEF_NET_READ_TIMEOUT_SECS timeout value
         // CTCI_Read function uses) and will then do the close of
         // the adapter for us (TUNTAP_Close) so we don't have to.
         // All we need to do is ask it to exit (via our setting of
-        // the fCloseInProgress flag) and then wait for it to exit
+        // the bCloseInProgress flag) and then wait for it to exit
         // (which, as stated, could take up to a max of 5 seconds).
 
         // All of this is simply because it's poor form to close a
@@ -616,7 +616,7 @@ int  CTCI_Close( DEVBLK* pDEVBLK )
         // by the time the read request eventually gets serviced.
 
         TID tid = pCTCBLK->tid;
-        pCTCBLK->fCloseInProgress = 1;  // (ask read thread to exit)
+        pCTCBLK->bCloseInProgress = 1;  // (ask read thread to exit)
         join_thread( tid, NULL );       // (wait for thread to end)
 #if defined( OPTION_FTHREADS )
         detach_thread( tid );           // only needed for Fish threads
@@ -1055,7 +1055,7 @@ static void*  CTCI_ReadThread( void* arg )
 
     pCTCBLK->pid = getpid();
 
-    while( pCTCBLK->fd != -1 && !pCTCBLK->fCloseInProgress )
+    while( pCTCBLK->fd != -1 && !pCTCBLK->bCloseInProgress )
     {
         // Read frame from the TUN/TAP interface
         iLength = read_tuntap( pCTCBLK->fd, szBuff, sizeof( szBuff ), DEF_NET_READ_TIMEOUT_SECS );
@@ -1063,7 +1063,7 @@ static void*  CTCI_ReadThread( void* arg )
         // Check for error condition
         if( iLength < 0 )
         {
-            if( !pCTCBLK->fCloseInProgress )
+            if( !pCTCBLK->bCloseInProgress )
             {
                 // "%1d:%04X %s: error reading from device %s: %d %s"
                 WRMSG(HHC00912, "E", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, "CTCI",
@@ -1085,7 +1085,7 @@ static void*  CTCI_ReadThread( void* arg )
 
         // Enqueue frame on buffer, if buffer is full, keep trying
         while( CTCI_EnqueueIPFrame( pDEVBLK, szBuff, iLength ) < 0
-            && pCTCBLK->fd != -1 && !pCTCBLK->fCloseInProgress )
+            && pCTCBLK->fd != -1 && !pCTCBLK->bCloseInProgress )
         {
             if( EMSGSIZE == errno )     // (if too large for buffer)
             {

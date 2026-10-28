@@ -85,13 +85,16 @@ struct  _PTPBLK
     int         fd;                        // TUN/TAP fd
     TID         tid;                       // Read Thread ID
     pid_t       pid;                       // Read Thread pid
+    BYTE        bCloseInProgress;          // Close in progress
+
+    LOCK        ReadEventLock;             // Condition LOCK
+    COND        ReadEvent;                 // Condition signal
+    u_int       fReadWaiting:1;            // ptp_read waiting
+    u_int       fHaltOrClear:1;            // HSCH or CSCH issued
 
     LOCK        ReadBufferLock;            // Read buffer LOCK
     PPTPHDR     pReadBuffer;               // Read buffer
     int         iReadBufferGen;            // Read buffer generation
-
-    LOCK        ReadEventLock;             // Condition LOCK
-    COND        ReadEvent;                 // Condition signal
 
     LOCK        UnsolListLock;             // Unsolicited interrupt list LOCK
     PPTPINT     pFirstPTPINT;              // First PTPINT in list
@@ -101,14 +104,11 @@ struct  _PTPBLK
     u_int       uDebugMask;                // Debug mask
     u_int       fIPv4Spec:1;               // IPv4 specified
     u_int       fIPv6Spec:1;               // IPv6 specified
-    u_int       fCloseInProgress:1;        // Close in progress
     u_int       fActive4:1;                // IPv4 connection active
     u_int       fActive6:1;                // IPv6 connection active
     u_int       fActiveLL6:1;              // IPv6 link local connection active
     u_int       fPreconfigured:1;          // TUN interface pre-configured
     u_int       fPreGuestIPAddr4:1;        // TUN interface pre-configured with guest IPv4 address
-    u_int       fReadWaiting:1;            // ptp_read waiting
-    u_int       fHaltOrClear:1;            // HSCH or CSCH issued
 
     int         iKernBuff;                 // Kernel buffer in K bytes.
     int         iIOBuff;                   // I/O buffer in K bytes.

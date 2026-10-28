@@ -775,7 +775,7 @@ TPAGEMAP   *pmap;
     }
 
     /* Count transaction */
-    atomic_update32( &sysblk.txf_counter, +1 );
+    atomic_add_U32( &sysblk.txf_counter, +1 );
 
     TXFC_INSTR_CHECK( regs );    /* Unallowed in CONSTRAINED mode */
 

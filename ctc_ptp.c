@@ -836,19 +836,19 @@ int  ptp_close( DEVBLK* pDEVBLK )
 
 
     // Close the device file (if not already closed)
-    if (pPTPBLK->fd >= 0)
+    if (!pPTPBLK->bCloseInProgress && pPTPBLK->fd >= 0)
     {
         // PROGRAMMING NOTE: there's currently no way to interrupt
         // the "ptp_read_thread"s TUNTAP_Read of the adapter. Thus
         // we must simply wait for ptp_read_thread to eventually
         // notice that we're doing a close (via our setting of the
-        // fCloseInProgress flag). Its TUNTAP_Read will eventually
+        // bCloseInProgress flag). Its TUNTAP_Read will eventually
         // timeout after a few seconds (currently 5, which is dif-
         // ferent than the PTP_READ_TIMEOUT_SECS timeout value the
         // ptp_read function uses) and will then do the close of
         // the adapter for us (TUNTAP_Close) so we don't have to.
         // All we need to do is ask it to exit (via our setting of
-        // the fCloseInProgress flag) and then wait for it to exit
+        // the bCloseInProgress flag) and then wait for it to exit
         // (which, as stated, could take up to a max of 5 seconds).
 
         // All of this is simply because it's poor form to close a
@@ -859,7 +859,7 @@ int  ptp_close( DEVBLK* pDEVBLK )
         // by the time the read request eventually gets serviced.
 
         TID tid = pPTPBLK->tid;
-        pPTPBLK->fCloseInProgress = 1;  // (ask read thread to exit)
+        pPTPBLK->bCloseInProgress = 1;  // (ask read thread to exit)
         join_thread( tid, NULL );       // (wait for thread to end)
 #if defined( OPTION_FTHREADS )
         detach_thread( tid );           // (wait for thread to end)
@@ -1626,7 +1626,7 @@ void  ptp_read( DEVBLK* pDEVBLK, U32  uCount,
             }
 
             // check for shutting down condition
-            if (pPTPBLK->fCloseInProgress)
+            if (pPTPBLK->bCloseInProgress)
             {
                 closeinprogress = TRUE;
             }
@@ -2096,7 +2096,7 @@ void*  ptp_read_thread( void* arg )
     pPTPBLK->pid = getpid();
 
     // Keep going until we have to stop.
-    while( pPTPBLK->fd != -1 && !pPTPBLK->fCloseInProgress )
+    while( pPTPBLK->fd != -1 && !pPTPBLK->bCloseInProgress )
     {
         // Read an IP packet from the TUN interface.
         iLength = read_tuntap( pPTPBLK->fd, pTunBuf, iTunLen, DEF_NET_READ_TIMEOUT_SECS );
@@ -2104,7 +2104,7 @@ void*  ptp_read_thread( void* arg )
         // Check for error conditions...
         if (iLength < 0)
         {
-            if (!pPTPBLK->fCloseInProgress)
+            if (!pPTPBLK->bCloseInProgress)
             {
                 // HHC00912 "%1d:%04X %s: error reading from device %s: %d %s"
                 WRMSG(HHC00912, "E", SSID_TO_LCSS(pDEVBLK->ssid), pDEVBLK->devnum, pDEVBLK->typname,
@@ -2196,7 +2196,7 @@ void*  ptp_read_thread( void* arg )
         }
 
         // Enqueue IP packet.
-        while( pPTPBLK->fd != -1 && !pPTPBLK->fCloseInProgress )
+        while( pPTPBLK->fd != -1 && !pPTPBLK->bCloseInProgress )
         {
 
             // Obtain the read buffer lock.
@@ -2327,9 +2327,9 @@ void*  ptp_read_thread( void* arg )
 
             }   /* if (iLength > (pPTPHDR->iAreaLen - pPTPHDR->iDataLen)) */
 
-        }   /* while( pPTPBLK->fd != -1 && !pPTPBLK->fCloseInProgress ) */
+        }   /* while( pPTPBLK->fd != -1 && !pPTPBLK->bCloseInProgress ) */
 
-    }   /* while( pPTPBLK->fd != -1 && !pPTPBLK->fCloseInProgress ) */
+    }   /* while( pPTPBLK->fd != -1 && !pPTPBLK->bCloseInProgress ) */
 
     // We must do the close since we were the one doing the i/o...
     VERIFY( pPTPBLK->fd == -1 || TUNTAP_Close( pPTPBLK->fd, pPTPBLK->internal ) == 0 );

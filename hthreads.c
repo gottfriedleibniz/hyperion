@@ -213,6 +213,7 @@ DLL_EXPORT void hthreads_internal_init()
             ht->ht_name       =  strdup( "main" );
             ht->ht_cr_locat   =  ht_cr_locat;
             ht->ht_ob_lock    =  NULL;
+            ht->ht_ob_where   =  NULL;
             ht->ht_footprint  =  false;
 
             InsertListHead( &threadlist, &ht->ht_link );
@@ -457,31 +458,21 @@ static HTHREAD* hthread_find_HTHREAD_locked( TID tid, LIST_ENTRY* anchor )
 }
 
 /*-------------------------------------------------------------------*/
-/* Internal thread function to find an HTHREAD entry in our list     */
-/*-------------------------------------------------------------------*/
-static HTHREAD* hthread_find_HTHREAD( TID tid )
-{
-    HTHREAD* ht;
-    LockThreadsList();
-    {
-        ht = hthread_find_HTHREAD_locked( tid, NULL );
-    }
-    UnlockThreadsList();
-    return ht;
-}
-
-/*-------------------------------------------------------------------*/
 /* Remember that a thread is waiting to obtain a given lock          */
 /*-------------------------------------------------------------------*/
 static void hthread_obtaining_lock( LOCK* plk, const char* loc )
 {
     HTHREAD* ht;
-    if (!(ht = hthread_find_HTHREAD( hthread_self() )))
-        return;
-    ht->ht_ob_lock = plk;
-    free( ht->ht_ob_where );
-    ht->ht_ob_where = strdup( loc );
-    gettimeofday( &ht->ht_ob_time, NULL );
+    LockThreadsList();
+    if ((ht = hthread_find_HTHREAD_locked( hthread_self(), NULL )))
+    {
+        free( ht->ht_ob_where );
+
+        ht->ht_ob_lock = plk;
+        ht->ht_ob_where = loc ? strdup( loc ) : NULL;
+        gettimeofday( &ht->ht_ob_time, NULL );
+    }
+    UnlockThreadsList();
 }
 
 /*-------------------------------------------------------------------*/
@@ -490,9 +481,12 @@ static void hthread_obtaining_lock( LOCK* plk, const char* loc )
 static void hthread_lock_obtained()
 {
     HTHREAD* ht;
-    if (!(ht = hthread_find_HTHREAD( hthread_self() )))
-        return;
-    ht->ht_ob_lock = NULL;
+    LockThreadsList();
+    if ((ht = hthread_find_HTHREAD_locked( hthread_self(), NULL )))
+    {
+        ht->ht_ob_lock = NULL;
+    }
+    UnlockThreadsList();
 }
 
 /*-------------------------------------------------------------------*/
@@ -591,6 +585,7 @@ DLL_EXPORT int  hthread_destroy_lock( LOCK* plk, const char* destroy_loc )
         return EINVAL;
 
     /* Destroy the Internal ILOCK structure lock */
+    LockLocksList();
     if ((rc1 = hthread_mutex_destroy( &ilk->il_locklock )) == 0)
     {
         /* Now destroy the actual locking model HLOCK lock */
@@ -602,17 +597,16 @@ DLL_EXPORT int  hthread_destroy_lock( LOCK* plk, const char* destroy_loc )
 
     if (rc1 == 0 && rc2 == 0)
     {
-        LockLocksList();
         {
             RemoveListEntry( &ilk->il_link );
             lockcount--;
         }
-        UnlockLocksList();
 
         free( ilk->il_name );
         free_aligned( ilk );
         plk->ilk = NULL;
     }
+    UnlockLocksList();
 
     return (rc1 ? rc1 : (rc2 ? rc2 : 0));
 }
@@ -715,6 +709,30 @@ DLL_EXPORT int  hthread_have_lock( LOCK* plk )
     int rc;
     ILOCK* ilk;
     ilk = (ILOCK*) plk->ilk;
+    /*
+     * #RACE: This one matters little unless concurrent updates to TID can be
+     * torn during a read/write (unlikely).
+     *
+     * Line numbers omitted:
+     *  Write of size 8 at 0x7230000003f8 by thread T5 (mutexes: write M0, write M1):
+     *    #0 hthread_obtain_lock $(BUILD_DIR)/../hthreads.c // ilk->il_ob_tid = ...
+     *    #1 Obtain_Interrupt_Lock $(BUILD_DIR)/../hinlines.h
+     *    #2 update_cpu_timer $(BUILD_DIR)/../timer.c
+     *    #3 update_tod_clock $(BUILD_DIR)/../clock.c
+     *    #4 timer_thread $(BUILD_DIR)/../timer.c
+     *  
+     *  Previous read of size 8 at 0x7230000003f8 by main thread (mutexes: write M2):
+     *    #0 hthread_have_lock $(BUILD_DIR)/../hthreads.c
+     *    #1 machine_check_crwpend $(BUILD_DIR)/../machchk.c
+     *    #2 queue_channel_report $(BUILD_DIR)/../machchk.c
+     *    #3 build_attach_chrpt $(BUILD_DIR)/../machchk.c
+     *
+     *  Also:
+     *   Previous write of size 8 at 0x7230000003f8 by thread T5 (mutexes: write M1):
+     *     #0 hthread_release_lock $(BUILD_DIR)/../hthreads.c // ilk->il_ob_tid = 0;
+     *     #1 Release_Interrupt_Lock $(BUILD_DIR)/../hinlines.h
+     *     #2 update_cpu_timer $(BUILD_DIR)/../timer.c
+     */
     rc = hthread_equal_threads( hthread_self(), ilk->il_ob_tid );
     return rc;
 }
@@ -916,8 +934,30 @@ DLL_EXPORT int  hthread_wait_condition( COND* plc, LOCK* plk, const char* wait_l
     PTTRACE( "wait before", plk, plc, wait_loc, PTT_MAGIC );
     rc = hthread_cond_wait( plc, &ilk->il_lock );
     PTTRACE( "wait after", plk, plc, wait_loc, rc );
-    ilk->il_ob_tid = hthread_self();
-    if (rc)
+    if (!rc)
+    {
+        /*
+         * #RACE:
+         *
+         * Line numbers omitted:
+         *  Write of size 8 at 0x72300000cb60 by main thread (mutexes: write M0):
+         *    #0 hthread_wait_condition $(BUILD_DIR)/../hthreads.c
+         *    #1 logger_init $(BUILD_DIR)/../logger.c
+         *    #2 impl $(BUILD_DIR)/../impl.c
+         *
+         *  Previous write of size 8 at 0x72300000cb60 by thread T1 (mutexes: write M1):
+         *    #0 hthread_release_lock $(BUILD_DIR)/../hthreads.c
+         *    #1 logger_thread $(BUILD_DIR)/../logger.c
+         *    #2 hthread_func $(BUILD_DIR)/../hthreads.c
+         */
+        hthread_mutex_lock( &ilk->il_locklock );
+        {
+            ilk->il_ob_locat = wait_loc;
+            ilk->il_ob_tid = hthread_self();
+        }
+        hthread_mutex_unlock( &ilk->il_locklock );
+    }
+    else
         loglock( ilk, rc, "wait_condition", wait_loc );
     return rc;
 }
@@ -935,8 +975,32 @@ DLL_EXPORT int  hthread_timed_wait_condition( COND* plc, LOCK* plk,
     PTTRACE( "tw before", plk, plc, wait_loc, PTT_MAGIC );
     rc = hthread_cond_timedwait( plc, &ilk->il_lock, tm );
     PTTRACE( "tw after", plk, plc, wait_loc, rc );
-    ilk->il_ob_tid = hthread_self();
-    if (rc && ETIMEDOUT != rc)
+    if (!rc)
+    {
+        /*
+         * #RACE:
+         *
+         * Line numbers omitted:
+         *  Write of size 8 at 0x723000000620 by main thread (mutexes: write M0):
+         *    #0 hthread_timed_wait_condition $(BUILD_DIR)/../hthreads.c
+         *    #1 timed_wait_condition_relative_usecs_impl $(BUILD_DIR)/../hscutl.c
+         *    #2 runtest $(BUILD_DIR)/../script.c
+         *    #3 do_special $(BUILD_DIR)/../script.c
+         *  
+         *  Previous write of size 8 at 0x723000000620 by thread T4 (mutexes: write M1, write M2):
+         *    #0 hthread_release_lock $(BUILD_DIR)/../hthreads.c
+         *    #1 CPU_Wait $(BUILD_DIR)/../cpu.c
+         *    #2 s370_process_interrupt $(BUILD_DIR)/../cpu.c
+         *    #3 s370_run_cpu $(BUILD_DIR)/../cpu.c
+         */
+        hthread_mutex_lock( &ilk->il_locklock );
+        {
+            ilk->il_ob_locat = wait_loc;
+            ilk->il_ob_tid = hthread_self();
+        }
+        hthread_mutex_unlock( &ilk->il_locklock );
+    }
+    else if (ETIMEDOUT != rc)
         loglock( ilk, rc, "timed_wait_condition", wait_loc );
     return rc;
 }
@@ -994,6 +1058,23 @@ static void hthread_list_abandoned_locks( TID tid, const char* exit_loc )
         for (ple = locklist.Flink; ple != &locklist; ple = ple->Flink)
         {
             ilk = CONTAINING_RECORD( ple, ILOCK, il_link );
+            /*
+             * #RACE: Some thread locks may be manipulated during iteration.
+             * Noted, but should be of little concern.
+             *
+             * One (of many) example:
+             * Line numbers omitted:
+             *  Read of size 8 at 0x723000000638 by thread T8 (mutexes: write M0):
+             *    #0 hthread_list_abandoned_locks $(BUILD_DIR)/../hthreads.c
+             *    #1 hthread_has_exited $(BUILD_DIR)/../hthreads.c
+             *    #2 hthread_func $(BUILD_DIR)/../hthreads.c
+             *  
+             *  Previous write of size 8 at 0x723000000638 by thread T9 (mutexes: write M1):
+             *    #0 hthread_release_lock $(BUILD_DIR)/../hthreads.c
+             *    #1 FindSCRCTL $(BUILD_DIR)/../script.c
+             *    #2 script_thread $(BUILD_DIR)/../script.c
+             */
+            hthread_mutex_lock( &ilk->il_locklock );
             if (hthread_equal( ilk->il_ob_tid, tid ))
             {
                 char tod[27];           /* "YYYY-MM-DD HH:MM:SS.uuuuuu"  */
@@ -1013,6 +1094,7 @@ static void hthread_list_abandoned_locks( TID tid, const char* exit_loc )
                         ilk->il_name, &tod[11], TRIMLOC( ilk->il_ob_locat ));
                 }
             }
+            hthread_mutex_unlock( &ilk->il_locklock );
         }
     }
     UnlockLocksList();
@@ -1088,6 +1170,7 @@ DLL_EXPORT int  hthread_create_thread( TID* ptid, ATTR* pat,
             ht->ht_name     =  strdup( name );
             ht->ht_tid      =  *ptid;
             ht->ht_ob_lock  =  NULL;
+            ht->ht_ob_where =  NULL;
 
             InsertListHead( &threadlist, &ht->ht_link );
             threadcount++;
@@ -1232,8 +1315,29 @@ static int hthreads_copy_locks_list( ILOCK** ppILOCK, LIST_ENTRY* anchor )
         for (i=0, ple = locklist.Flink; ple != &locklist; ple = ple->Flink, i++)
         {
             ilk = CONTAINING_RECORD( ple, ILOCK, il_link );
-            memcpy( &ilka[i], ilk, sizeof( ILOCK ));
-            ilka[i].il_name = strdup( ilk->il_name );
+            /*
+             * #RACE: Some thread locks may be manipulated (e.g., obtained,
+             * released, destroyed, etc.) during memcpy. Noted, but should be of
+             * little concern for the private copy of the thread list.
+             *
+             * Line numbers omitted:
+             *  Read of size 8 at 0x72300000cb60 by thread T2 (mutexes: write M0):
+             *    #0 __tsan_memcpy <null> (hercules+0x4311e2)
+             *    #1 hthreads_copy_locks_list $(BUILD_DIR)/../hthreads.c
+             *    #2 hthread_report_deadlocks $(BUILD_DIR)/../hthreads.c
+             *    #3 watchdog_thread $(BUILD_DIR)/../impl.c
+             *  
+             *  Previous write of size 8 at 0x72300000cb60 by thread T1 (mutexes: write M1):
+             *    #0 hthread_release_lock $(BUILD_DIR)/../hthreads.c
+             *    #1 logger_thread $(BUILD_DIR)/../logger.c
+             *    #2 hthread_func $(BUILD_DIR)/../hthreads.c
+             */
+            hthread_mutex_lock( &ilk->il_locklock );
+            {
+                memcpy( &ilka[i], ilk, sizeof( ILOCK ));
+                ilka[i].il_name = strdup( ilk->il_name );
+            }
+            hthread_mutex_unlock( &ilk->il_locklock );
         }
 
         k = lockcount;  /* Save how entries there are */
@@ -1531,8 +1635,11 @@ static int hthreads_copy_threads_list( HTHREAD** ppHTHREAD, LIST_ENTRY* anchor )
         for (i=0, ple = threadlist.Flink; ple != &threadlist; ple = ple->Flink, i++)
         {
             ht = CONTAINING_RECORD( ple, HTHREAD, ht_link );
+            /* #RACE: Some hthreads may be manipulated during memcpy. Noted, but
+             * should be of little concern for the private copy of list. */
             memcpy( &hta[i], ht, sizeof( HTHREAD ));
             hta[i].ht_name = strdup( ht->ht_name );
+            hta[i].ht_ob_where = ht->ht_ob_where ? strdup( ht->ht_ob_where ) : NULL;
             hta[i].ht_footprint = false;
         }
 
@@ -1667,7 +1774,10 @@ DLL_EXPORT int threads_cmd( int argc, char* argv[], char* cmdline )
 
                 /* Free our copy of the threads list */
                 for (i=0; i < k; i++)
+                {
                     free( ht[i].ht_name );
+                    free( ht[i].ht_ob_where );
+                }
                 free( ht );
             }
             else
@@ -1837,7 +1947,10 @@ DLL_EXPORT int hthread_report_deadlocks( const char* sev )
 
     /* Free our private array copies of both lists */
     for (i=0; i < ht_count; i++)
+    {
         free( ht[i].ht_name );
+        free( ht[i].ht_ob_where );
+    }
     free( ht );
     for (i=0; i < ilk_count; i++)
         free( ilk[i].il_name );
