@@ -235,32 +235,29 @@ bool    txf_PPA;                        /* true == PPA assist needed */
                     }
 
                     /* Calculate instructions per second */
-                    mipsrate = regs->instcount;
-                    regs->instcount   =  0;
+                    mipsrate = atomic_exchange_U32( &regs->instcount, 0 );
                     regs->prevcount += mipsrate;
                     mipsrate = diffrate(mipsrate, one_sec);
-                    regs->mipsrate = mipsrate;
+                    atomic_store_U32( &regs->mipsrate, (U32)mipsrate );
                     total_mips += mipsrate;
 
                     /* Calculate SIOs per second */
-                    siosrate = regs->siocount;
-                    regs->siocount = 0;
+                    siosrate = atomic_exchange_U32( &regs->siocount, 0 );
                     regs->siototal += siosrate;
                     siosrate = diffrate(siosrate, one_sec);
-                    regs->siosrate = siosrate;
+                    atomic_store_U32( &regs->siosrate, (U32)siosrate );
                     total_sios += siosrate;
 
                     /* Calculate CPU busy percentage */
-                    wait_secs = regs->waittime;
-                    regs->waittime_accumulated += wait_secs;
-                    regs->waittime = 0;
+                    wait_secs = atomic_exchange_U64( &regs->waittime, 0 );
+                    atomic_add_U64( &regs->waittime_accumulated, wait_secs );
 
                     /* Are we currently waiting? */
-                    if (regs->waittod >= saved_then)
+                    if (atomic_load_U64( &regs->waittod ) >= saved_then)
                     {
                         /* Add time spent waiting during this interval too */
-                        wait_secs += (now - regs->waittod);
-                        regs->waittod = now;
+                        wait_secs += (now - atomic_load_U64( &regs->waittod ));
+                        atomic_store_U64( &regs->waittod, now );
                     }
 
                     /* Were we idle the entire interval? */
@@ -369,7 +366,8 @@ void* rubato_thread( void* argp )
     // "Thread id "TIDPAT", prio %2d, name %s started"
     LOG_THREAD_BEGIN( RUBATO_THREAD_NAME );
 
-    sysblk.txf_counter   = 0;
+    /* Clear new transactions count */
+    atomic_store_U32( &sysblk.txf_counter, 0 );
     starting_timerint    = 0;
     intervals_per_second = MAX_TOD_UPDATE_USECS / sysblk.txf_timerint;
 
@@ -389,8 +387,7 @@ void* rubato_thread( void* argp )
                 count[i-1] = count[i];
 
             /* Insert new transactions count into array */
-            count[4] = sysblk.txf_counter;
-            sysblk.txf_counter = 0;
+            count[4] = atomic_exchange_U32(&sysblk.txf_counter, 0);
 
             /* Calculate a maximum transactions-per-second rate
                based on our past transactions count history.
