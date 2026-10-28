@@ -814,6 +814,7 @@ static const BYTE zeros[256] = {0};
 
     else
     {
+        ALIGN_8
         BYTE cr34[8];  // CR3 and CR4
 
         /* Set the FRR entry point from r2 in the stack */

@@ -247,12 +247,14 @@ U32     ar;                             /* Copy of new AR            */
 U32     gr = 0;                         /* Copy of new GR            */
 #if defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)
 U16     grd_offset = 0;                 /* Offset of disjoint GR_H   */
+ALIGN_16
 BYTE    psw[16];                        /* Copy of new PSW           */
 U64     gr8 = 0;                        /* Copy of new GR - 8 bytes  */
 U32     grd = 0;                        /* Copy of new GR - disjoint */
 U64     ia;                             /* ia for trace              */
 BYTE    amode64;                        /* save for amod64           */
 #else /*!defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)*/
+ALIGN_8
 BYTE    psw[8];                         /* Copy of new PSW           */
 U32     ia;                             /* ia for trace              */
 #endif /*!defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)*/
@@ -589,6 +591,7 @@ int     b2;                             /* Base of effective addr    */
 VADR    effective_addr2;                /* Effective address         */
 int     ovf;                            /* 1=overflow                */
 int     dxf;                            /* 1=data exception          */
+ALIGN_16
 BYTE    dec[16];                        /* Packed decimal operand    */
 
     RXY(inst, regs, r1, x2, b2, effective_addr2);
@@ -631,6 +634,7 @@ int     r1;                             /* Value of R1 field         */
 int     x2;                             /* Index register            */
 int     b2;                             /* Base of effective addr    */
 VADR    effective_addr2;                /* Effective address         */
+ALIGN_16
 BYTE    dec[16];                        /* Packed decimal result     */
 
     RXY(inst, regs, r1, x2, b2, effective_addr2);
@@ -2155,6 +2159,7 @@ int     m3;                             /* Mask value                */
 int     b2;                             /* effective address base    */
 VADR    effective_addr2;                /* effective address         */
 int     i;                              /* Integer work area         */
+ALIGN_4
 BYTE    rbyte[4];                       /* Register bytes from mask  */
 
     RSY(inst, regs, r1, m3, b2, effective_addr2);
@@ -2272,6 +2277,7 @@ int     r1, r3;                         /* Register numbers          */
 int     b2;                             /* effective address base    */
 VADR    effective_addr2;                /* effective address         */
 int    i;                               /* Integer work area         */
+ALIGN_4
 BYTE   vbyte[4];                        /* Fetched storage bytes     */
 U32    n;                               /* Fetched value             */
 static const int                        /* Length-1 to fetch by mask */
@@ -4412,6 +4418,7 @@ int     b2, b4;                         /* Base register numbers     */
 VADR    effective_addr2;                /* Operand2 address          */
 VADR    effective_addr4;                /* Operand4 address          */
 int     i, n;                           /* Integer work areas        */
+CACHE_ALIGN
 U32     rwork1[16], rwork2[16];         /* Intermediate work areas   */
 
     SS(inst, regs, r1, r3, b2, effective_addr2, b4, effective_addr4);
@@ -5374,6 +5381,7 @@ DEF_INST(load_program_status_word_extended)
 {
 int     b2;                             /* Base of effective addr    */
 U64     effective_addr2;                /* Effective address         */
+ALIGN_16
 QWORD   qword;
 int     rc;
 
@@ -5420,6 +5428,7 @@ int     rc;
 /*-------------------------------------------------------------------*/
 DEF_INST( load_program_status_word_extended_y )
 {
+ALIGN_16
 QWORD   qword;                          /* PSW fetched from storage  */
 U64     effective_addr1;                /* Effective address         */
 int     b1;                             /* Base of effective addr    */
@@ -6420,7 +6429,9 @@ int     len;                            /* Second operand length     */
 int     b1, b2;                         /* Base registers            */
 VADR    effective_addr1;                /* Effective address         */
 VADR    effective_addr2;                /* Effective address         */
+CACHE_ALIGN
 BYTE    source[33];                     /* 32 digits + implied sign  */
+ALIGN_16
 BYTE    result[16];                     /* 31-digit packed result    */
 int     i, j;                           /* Array subscripts          */
 
@@ -6463,7 +6474,9 @@ int     len;                            /* Second operand length     */
 int     b1, b2;                         /* Base registers            */
 VADR    effective_addr1;                /* Effective address         */
 VADR    effective_addr2;                /* Effective address         */
+CACHE_ALIGN
 BYTE    source[66];                     /* 32 digits + implied sign  */
+ALIGN_16
 BYTE    result[16];                     /* 31-digit packed result    */
 int     i, j;                           /* Array subscripts          */
 
@@ -6507,7 +6520,9 @@ int     len;                            /* First operand length      */
 int     b1, b2;                         /* Base registers            */
 VADR    effective_addr1;                /* Effective address         */
 VADR    effective_addr2;                /* Effective address         */
+ALIGN_32
 BYTE    result[32];                     /* 32-digit result           */
+ALIGN_16
 BYTE    source[16];                     /* 31-digit packed operand   */
 int     i, j;                           /* Array subscripts          */
 int     cc;                             /* Condition code            */
@@ -6563,7 +6578,9 @@ int     len;                            /* First operand length      */
 int     b1, b2;                         /* Base registers            */
 VADR    effective_addr1;                /* Effective address         */
 VADR    effective_addr2;                /* Effective address         */
+CACHE_ALIGN
 BYTE    result[64];                     /* 32-digit result           */
+ALIGN_16
 BYTE    source[16];                     /* 31-digit packed operand   */
 int     i, j;                           /* Array subscripts          */
 int     cc;                             /* Condition code            */
@@ -7654,6 +7671,7 @@ int     b2;                             /* Base of effective addr    */
 VADR    effective_addr2;                /* Effective address         */
 int     ovf;                            /* 1=overflow                */
 int     dxf;                            /* 1=data exception          */
+ALIGN_8
 BYTE    dec[8];                         /* Packed decimal operand    */
 
     RXY(inst, regs, r1, x2, b2, effective_addr2);
@@ -7700,6 +7718,7 @@ int     r1;                             /* Value of R1 field         */
 int     x2;                             /* Index register            */
 int     b2;                             /* Base of effective addr    */
 VADR    effective_addr2;                /* Effective address         */
+ALIGN_16
 BYTE    dec[16];                        /* Packed decimal result     */
 
     RXY(inst, regs, r1, x2, b2, effective_addr2);
@@ -7809,6 +7828,7 @@ int     r1, r3;                         /* Register numbers          */
 int     b2;                             /* effective address base    */
 VADR    effective_addr2;                /* effective address         */
 int    i;                               /* Integer work area         */
+ALIGN_4
 BYTE   vbyte[4];                        /* Fetched storage bytes     */
 U32    n;                               /* Fetched value             */
 static const int                        /* Length-1 to fetch by mask */
@@ -8284,6 +8304,7 @@ int     r1, r3;                         /* Register numbers          */
 int     b2;                             /* effective address base    */
 VADR    effective_addr2;                /* effective address         */
 int     i;                              /* Integer work area         */
+ALIGN_4
 BYTE    rbyte[4];                       /* Byte work area            */
 
     RSY(inst, regs, r1, r3, b2, effective_addr2);

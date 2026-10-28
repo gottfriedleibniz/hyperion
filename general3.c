@@ -4941,6 +4941,7 @@ DEF_INST( perform_functions_with_concurrent_results )
     case 0: // pfcr-qaf,   0, "PFCR Query-Available-Functions"
         {
             // 'query' function is always available
+            ALIGN_16
             U8 result[16] = { 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                               0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 

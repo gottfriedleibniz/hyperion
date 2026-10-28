@@ -1767,6 +1767,7 @@ DEF_INST(store_zone_parameter)
 {
 int     b2;                             /* Values of R fields        */
 RADR    effective_addr2;                /* address of state desc.    */
+CACHE_ALIGN
 ZPB     zpb;                            /* Zone Parameter Block      */
 int     zone;                           /* Zone number               */
 
@@ -1808,6 +1809,7 @@ DEF_INST(set_zone_parameter)
 {
 int     b2;                             /* Values of R fields        */
 RADR    effective_addr2;                /* address of state desc.    */
+CACHE_ALIGN
 ZPB     zpb;                            /* Zone Parameter Block      */
 int     zone;                           /* Zone number               */
 RADR    mso,                            /* Main Storage Origin       */
@@ -1871,6 +1873,7 @@ RADR    effective_addr2;                /* address of state desc.    */
 U32     ioid;                           /* I/O interruption address  */
 U32     ioparm;                         /* I/O interruption parameter*/
 U32     iointid;                        /* I/O interruption ident    */
+ALIGN_16
 FWORD   tpziid[3];
 int     zone;                           /* Zone number               */
 

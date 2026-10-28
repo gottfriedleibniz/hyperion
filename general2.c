@@ -1214,6 +1214,7 @@ int     r1, r3;                         /* Register numbers          */
 int     b2;                             /* effective address base    */
 VADR    effective_addr2;                /* effective address         */
 int     i;                              /* Integer work area         */
+ALIGN_4
 BYTE    rbyte[4];                       /* Byte work area            */
 
     RS(inst, regs, r1, r3, b2, effective_addr2);
@@ -2824,7 +2825,9 @@ DEF_INST(convert_utf16_to_utf32)
     int read;                      /* Bytes read                     */
     VADR srce;                     /* Source address                 */
     GREG srcelen;                  /* Source length                  */
+    ALIGN_4
     BYTE utf16[4];                 /* utf16 character(s)             */
+    ALIGN_4
     BYTE utf32[4];                 /* utf328 character(s)            */
     BYTE uvwxy;                    /* Work value                     */
 #if defined( FEATURE_030_ETF3_ENHANCEMENT_FACILITY )
@@ -2936,7 +2939,9 @@ DEF_INST(convert_utf32_to_utf8)
     int r2;
     VADR srce;                     /* Source address                 */
     GREG srcelen;                  /* Source length                  */
+    ALIGN_4
     BYTE utf32[4];                 /* utf32 character(s)             */
+    ALIGN_4
     BYTE utf8[4];                  /* utf8 character(s)              */
     int write;                     /* Bytes written                  */
     int xlated;                    /* characters translated          */
@@ -3073,7 +3078,9 @@ DEF_INST(convert_utf32_to_utf16)
     int r2;
     VADR srce;                     /* Source address                 */
     GREG srcelen;                  /* Source length                  */
+    ALIGN_4
     BYTE utf16[4];                 /* utf16 character(s)             */
+    ALIGN_4
     BYTE utf32[4];                 /* utf32 character(s)             */
     int write;                     /* Bytes written                  */
     int xlated;                    /* characters translated          */

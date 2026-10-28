@@ -2050,6 +2050,7 @@ DEF_INST( vector_pack_zoned )
     VADR    effective_addr2;           /* Effective address          */
     int     l2;                        /* length code (L2) control   */
     int     i;                         /* Loop variable              */
+    ALIGN_32
     U8      zoned[MAX_ZONED_LENGTH];   /* local zoned decimal        */
     U8      digit_high;                /* high digit of packed byte  */
     U8      digit_low;                 /* low digit of packed byte   */
@@ -2101,6 +2102,7 @@ DEF_INST( vector_load_rightmost_with_length )
     VADR    effective_addr2;           /* Effective address          */
     int     l2;                        /* length code (L2) control   */
     int     i;                         /* Loop variable              */
+    ALIGN_16
     U8      stor[16];                  /* local stor                 */
 
     VSI( inst, regs, i3, b2, effective_addr2, v1 );
@@ -2137,6 +2139,7 @@ DEF_INST( vector_load_rightmost_with_length_reg )
     VADR    effective_addr2;           /* Effective address          */
     int     l2;                        /* length code (L2) control   */
     int     i;                         /* Loop variable              */
+    ALIGN_16
     U8      stor[16];                  /* local stor                 */
     U32     reg32;                     /* r3: bits 32-63             */
 
@@ -2172,6 +2175,7 @@ DEF_INST( vector_unpack_zoned )
     VADR    effective_addr2;           /* Effective address          */
     int     l2;                        /* length code (L2) control   */
     int     i;                         /* Loop variable              */
+    CACHE_ALIGN
     U8      zoned[MAX_ZONED_LENGTH];   /* local zoned decimal        */
     U8      sign;                      /* sign of zoned decimal      */
     U8      digit_low;                 /* low digit of packed byte   */
@@ -2224,6 +2228,7 @@ DEF_INST( vector_store_rightmost_with_length )
     VADR    effective_addr2;           /* Effective address          */
     int     l2;                        /* length code (L2) control   */
     int     i;                         /* Loop variable              */
+    ALIGN_16
     U8      stor[16];                  /* local stor                 */
 
     VSI( inst, regs, i3, b2, effective_addr2, v1 );
@@ -2257,6 +2262,7 @@ DEF_INST( vector_store_rightmost_with_length_reg )
     VADR    effective_addr2;           /* Effective address          */
     int     l2;                        /* length code (L2) control   */
     int     i;                         /* Loop variable              */
+    ALIGN_16
     U8      stor[16];                  /* local stor                 */
     U32     reg32;                     /* r3: bits 32-63             */
 
