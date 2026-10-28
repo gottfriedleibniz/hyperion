@@ -111,7 +111,7 @@ BYTE   *dest;                           /* Pointer to target byte    */
     OBTAIN_MAINLOCK( regs );
     {
         /* OR byte with immediate operand, setting condition code */
-        regs->psw.cc = (H_ATOMIC_OP( dest, i2, or, Or, | ) != 0);
+        regs->psw.cc = (atomic_or_U8( dest, i2 ) != 0);
     }
     RELEASE_MAINLOCK( regs );
 

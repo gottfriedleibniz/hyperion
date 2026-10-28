@@ -19,8 +19,8 @@
 /*-------------------------------------------------------------------*/
 
 #if defined( OPTION_ATOMIC_SKEYS )
-  #define OR_SKEY(  ptr, op )       H_ATOMIC_OP( ptr, op, or,  Or,  | )
-  #define AND_SKEY( ptr, op )       H_ATOMIC_OP( ptr, op, and, And, & )
+  #define OR_SKEY(  ptr, op )       ((void)atomic_or_U8( ptr, op ))
+  #define AND_SKEY( ptr, op )       ((void)atomic_and_U8( ptr, op ))
   #define LOAD_SKEY( ptr )          (*(ptr))
   #define STORE_SKEY( ptr, value )  (*(ptr) = (value))
 #else

@@ -421,7 +421,7 @@ extern inline BYTE cmpxchg8_C11(U64 *old, U64 new, volatile void *ptr);
  *-------------------------------------------------------------------*/
 
 #if (! defined( MAINLOCK_ALWAYS )) \
-    && defined( H_ATOMIC_OP )      \
+    && defined( HERC_ATOMICS )     \
     && defined( cmpxchg1 )         \
     && defined( cmpxchg4 )         \
     && defined( cmpxchg8 )         \
