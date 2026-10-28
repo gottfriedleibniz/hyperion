@@ -2881,7 +2881,7 @@ static INLINE U32 memneq( const BYTE* m1, const BYTE* m2, U32 len )
 {
     U32  i;
     for (i=0; i < len; i++)
-        if (m1[i] != m2[i])
+        if (READ_BYTE( m1 + i ) != READ_BYTE( m2 + i ))
             break;
     return i;
 }
@@ -2929,7 +2929,7 @@ int ARCH_DEP( mem_pad_cmp )
 
     // Quick out if comparing just 1 byte
     if (unlikely( (neqlen = len) == 1 ))
-        rc = (*m1 == *m2 ? 0 : (*m1 < *m2 ? -1 : +1));
+        rc = (READ_BYTE( m1 ) == READ_BYTE( m2 ) ? 0 : (READ_BYTE( m1 ) < READ_BYTE( m2 ) ? -1 : +1));
     else if ((ea1 & PAGEFRAME_BYTEMASK) <= PAGEFRAME_BYTEMASK - (len-1))
     {
         // (1) - Neither operand crosses a page boundary
@@ -3060,7 +3060,7 @@ int ARCH_DEP( mem_cmp )
 
     // Quick out if comparing just 1 byte
     if (unlikely( (neqlen = len) == 1 ))
-        rc = (*m1 == *m2 ? 0 : (*m1 < *m2 ? -1 : +1));
+        rc = (READ_BYTE( m1 ) == READ_BYTE( m2 ) ? 0 : (READ_BYTE( m1 ) < READ_BYTE( m2 ) ? -1 : +1));
     else if ((ea1 & PAGEFRAME_BYTEMASK) <= PAGEFRAME_BYTEMASK - (len-1))
     {
         if  ((ea2 & PAGEFRAME_BYTEMASK) <= PAGEFRAME_BYTEMASK - (len-1))
@@ -3256,7 +3256,7 @@ BYTE    *m1, *m2;                       /* Mainstor addresses        */
     /* Quick out if comparing just 1 byte */
     if (unlikely( !len ))
     {
-        rc = *m1 - *m2;
+        rc = READ_BYTE( m1 ) - READ_BYTE( m2 );
         regs->psw.cc = (rc == 0 ? 0 : (rc < 0 ? 1 : 2 ));
         return;
     }
@@ -3755,7 +3755,7 @@ BYTE    termchar;                       /* Terminating character     */
                    the strings are equal, so return CC=0 and leave
                    the R1 and R2 registers unchanged.
                 */
-                if (*main1 == termchar && *main2 == termchar)
+                if (READ_BYTE( main1 ) == termchar && READ_BYTE( main2 ) == termchar)
                 {
                     regs->psw.cc = 0;
                     return;
@@ -3766,10 +3766,10 @@ BYTE    termchar;                       /* Terminating character     */
                    second operand byte, then return condition code 1
                 */
                 if (0
-                    || *main1 == termchar
+                    || READ_BYTE( main1 ) == termchar
                     || (1
-                        && (*main1 < *main2)
-                        && (*main2 != termchar)
+                        && (READ_BYTE( main1 ) < READ_BYTE( main2 ))
+                        && (READ_BYTE( main2 ) != termchar)
                        )
                 )
                 {
@@ -3783,7 +3783,7 @@ BYTE    termchar;                       /* Terminating character     */
                    -OR- if the first operand byte is HIGHER than the
                    second operand byte, then return condition code 2.
                 */
-                if (*main2 == termchar || *main1 > *main2)
+                if (READ_BYTE( main2 ) == termchar || READ_BYTE( main1 ) > READ_BYTE( main2 ))
                 {
                     regs->psw.cc = 2;
                     SET_GR_A( r1, regs,addr1 );
@@ -3845,7 +3845,7 @@ BYTE    termchar;                       /* Terminating character     */
            the strings are equal, so return CC=0 and leave
            the R1 and R2 registers unchanged.
         */
-        if (*main1 == termchar && *main2 == termchar)
+        if (READ_BYTE( main1 ) == termchar && READ_BYTE( main2 ) == termchar)
         {
             regs->psw.cc = 0;
             return;
@@ -3856,10 +3856,10 @@ BYTE    termchar;                       /* Terminating character     */
            second operand byte, then return CC=1
         */
         if (0
-            || *main1 == termchar
+            || READ_BYTE( main1 ) == termchar
             || (1
-                && (*main1 < *main2)
-                && (*main2 != termchar)
+                && (READ_BYTE( main1 ) < READ_BYTE( main2 ))
+                && (READ_BYTE( main2 ) != termchar)
                )
         )
         {
@@ -3873,7 +3873,7 @@ BYTE    termchar;                       /* Terminating character     */
            -OR- if the first operand byte is HIGHER than the
            second operand byte, then return CC=2.
         */
-        if (*main2 == termchar || *main1 > *main2)
+        if (READ_BYTE( main2 ) == termchar || READ_BYTE( main1 ) > READ_BYTE( main2 ))
         {
             regs->psw.cc = 2;
             SET_GR_A( r1, regs,addr1 );
@@ -3959,7 +3959,7 @@ int ARCH_DEP( mem_cmp_first_equ )
     for (i = 0; i < len ; i++)
     {
         /* compare bytes */
-        if (*m1 == *m2)
+        if (READ_BYTE( m1 ) == READ_BYTE( m2 ))
             return i;
 
         /* update mainstore addresses */
@@ -4075,7 +4075,7 @@ int ARCH_DEP( mem_cmp_first_substr )
             len, sublen, ss_scan_index, ss_index, ss_equ_len, m1, m2);
 #endif
             /* compare bytes */
-            if (*m1 != *m2)
+            if (READ_BYTE( m1 ) != READ_BYTE( m2 ))
                 break;
 
             /* update partial substring length */
@@ -4174,7 +4174,7 @@ int ARCH_DEP( mem_cmp_last_neq )
     for (i = (len-1); i >= 0 ; i--)
     {
         /* compare bytes */
-        if (*m1 != *m2)
+        if (READ_BYTE( m1 ) != READ_BYTE( m2 ))
             return i;
 
         /* update mainstore addresses */
@@ -4234,7 +4234,7 @@ int ARCH_DEP( mem_pad_cmp_last_neq )
     for (i = (len-1); i >= 0 ; i--)
     {
         /* compare byte to pad */
-        if (*m1 != pad)
+        if (READ_BYTE( m1 ) != pad)
             return i;
 
         /* update mainstore address */
@@ -5007,7 +5007,7 @@ DEF_INST(convert_utf8_to_utf16)
 
         /* Fetch a UTF-8 character (1 to 4 bytes) */
         /* first character is always on page */
-        utf[0] = *s2;
+        FETCH_BYTE( utf[0], s2 );
         //utf[0] = ARCH_DEP(vfetchb) ( addr2, r2, regs );
 
         /* Convert UTF-8 to Unicode */
@@ -5042,7 +5042,7 @@ DEF_INST(convert_utf8_to_utf16)
             // does the utf8 character cross a page boundary
             if (s2pg ==  MAINSTOR_PAGEBASE ( s2 + 1 ))
             {
-                utf[1] = *(s2 + 1);
+                FETCH_BYTE( utf[1], s2 + 1 );
             }
             else
             {
@@ -5078,8 +5078,8 @@ DEF_INST(convert_utf8_to_utf16)
             // does the utf8 character cross a page boundary
             if (s2pg ==  MAINSTOR_PAGEBASE ( s2 + 2 ))
             {
-                utf[1] = *(s2 + 1);
-                utf[2] = *(s2 + 2);
+                FETCH_BYTE( utf[1], s2 + 1 );
+                FETCH_BYTE( utf[2], s2 + 2 );
             }
             else
             {
@@ -5151,9 +5151,9 @@ DEF_INST(convert_utf8_to_utf16)
             // does the utf8 character cross a page boundary
             if (s2pg ==  MAINSTOR_PAGEBASE ( s2 + 3 ))
             {
-                utf[1] = *(s2 + 1);
-                utf[2] = *(s2 + 2);
-                utf[3] = *(s2 + 3);
+                FETCH_BYTE( utf[1], s2 + 1 );
+                FETCH_BYTE( utf[2], s2 + 2 );
+                FETCH_BYTE( utf[3], s2 + 3 );
             }
             else
             {
@@ -5228,10 +5228,10 @@ DEF_INST(convert_utf8_to_utf16)
                 /*make big endian*/
                 U32 upair = CSWAP32 ( ((U32)unicode1 << 16) | (U32)unicode2 );
 
-                *(d1 +0) = *( ((BYTE*) &upair)    );
-                *(d1 +1) = *( ((BYTE*) &upair)  +1);
-                *(d1 +2) = *( ((BYTE*) &upair)  +2);
-                *(d1 +3) = *( ((BYTE*) &upair)  +3);
+                STORE_BYTE( d1 + 0, *( ((BYTE*) &upair)    ) );
+                STORE_BYTE( d1 + 1, *( ((BYTE*) &upair) + 1) );
+                STORE_BYTE( d1 + 2, *( ((BYTE*) &upair) + 2) );
+                STORE_BYTE( d1 + 3, *( ((BYTE*) &upair) + 3) );
             }
             else
             {
@@ -5262,8 +5262,8 @@ DEF_INST(convert_utf8_to_utf16)
             {
                 U16 uchar = CSWAP16 ( unicode1 );      /*make big endian*/
 
-                *(d1 +0) = *( ((BYTE*) &uchar)   );
-                *(d1 +1) = *( ((BYTE*) &uchar) +1);
+                STORE_BYTE( d1 + 0, *( ((BYTE*) &uchar)    ) );
+                STORE_BYTE( d1 + 1, *( ((BYTE*) &uchar) + 1) );
             }
             else
             {
@@ -6407,12 +6407,12 @@ BYTE   *bp1;                            /* Unaligned maintstor ptr   */
             b2 = (BYTE*) p1;
 
             for (i=0; i < m; i++)
-                *b1++ = *b2++;
+                FETCH_BYTE(*b1++, b2++);
 
             b2 = (BYTE*) p2;
 
             for (; i < n; i++)
-                *b1++ = *b2++;
+                FETCH_BYTE(*b1++, b2++);
 
             n >>= 2;
 
@@ -7203,14 +7203,14 @@ BYTE    termchar;                       /* Terminating character     */
     for (i=0; i < cpu_length; i++)
     {
         /* Move a single byte */
-        *main1 = *main2;
+        STORE_BYTE( main1, READ_BYTE( main2 ));
 
         /* If we find the terminating character in operand 2, then
            the movement is complete.  Set CC=1 and the R1 register
            to the location of the just moved terminating character
            and leave the R2 register unchanged and exit.
         */
-        if (*main2 == termchar)
+        if (READ_BYTE( main2 ) == termchar)
         {
             regs->psw.cc = 1;
             SET_GR_A( r1, regs,addr1 );

@@ -708,6 +708,14 @@ inline void store_dw_e2k_noswap ( volatile void* ptr, U64 value )
   #define RELEASE_MAINLOCK(_regs)
 #endif
 
+ /*-------------------------------------------------------------------
+ * fetch_byte and store_byte
+ * These exist only for API completeness - no CSWAP'ing required
+ *-------------------------------------------------------------------*/
+
+#define fetch_byte(_p)    *((const U8*)(_p))
+#define store_byte(_p, _v) (*((U8*)(_p)) = (_v))
+
 /*-------------------------------------------------------------------
  * fetch_hw_noswap and fetch_hw
  *-------------------------------------------------------------------*/

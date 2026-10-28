@@ -320,8 +320,8 @@ BYTE   *sk;                             /* Storage key addresses     */
     main2 = MADDR( (addr + 1) & ADDRESS_MAXWRAP( regs ), arn, regs,
                     ACCTYPE_WRITE, regs->psw.pkey );
     *sk |= (STORKEY_REF | STORKEY_CHANGE);
-    *main1 = value >> 8;
-    *main2 = value & 0xFF;
+    STORE_BYTE( main1, value >> 8 );
+    STORE_BYTE( main2, value & 0xFF );
 }
 
 /*-------------------------------------------------------------------*/
@@ -446,10 +446,10 @@ BYTE   *mn;                             /* Main storage addresses    */
 U16     value;
 
     mn = MADDR( addr, arn, regs, ACCTYPE_READ, regs->psw.pkey );
-    value = *mn << 8;
+    value = READ_BYTE( mn ) << 8;
     mn = MADDR( (addr + 1) & ADDRESS_MAXWRAP( regs ), arn, regs,
                  ACCTYPE_READ, regs->psw.pkey );
-    value |= *mn;
+    value |= READ_BYTE( mn );
     return value;
 }
 
@@ -702,7 +702,7 @@ inline void ARCH_DEP( vstoreb )( BYTE value, VADR addr, int arn, REGS* regs )
 BYTE   *main1;                          /* Mainstor address          */
 
     main1 = MADDR( addr, arn, regs, ACCTYPE_WRITE, regs->psw.pkey );
-    *main1 = value;
+    STORE_BYTE( main1, value );
     ITIMER_UPDATE( addr, 1-1, regs );
 }
 
@@ -871,7 +871,7 @@ BYTE   *mn;                             /* Main storage address      */
 
     ITIMER_SYNC( addr, 1-1, regs );
     mn = MADDR( addr, arn, regs, ACCTYPE_READ, regs->psw.pkey );
-    return *mn;
+    return READ_BYTE( mn );
 }
 
 /*-------------------------------------------------------------------*/
@@ -1244,7 +1244,7 @@ int     len1,     len2;                 /* Lengths to copy           */
     {
         source1 = MADDR( addr2, arn2, regs, ACCTYPE_READ,  key2 );
         dest1   = MADDR( addr1, arn1, regs, ACCTYPE_WRITE, key1 );
-        *dest1 = *source1;
+        STORE_BYTE( dest1 , READ_BYTE( source1 ));
         ITIMER_UPDATE( addr1, len, regs );
         return;
     }
@@ -1397,7 +1397,7 @@ int     len1,     len2;                 /* Lengths to copy           */
     {
         source1 = MADDR( addr2, arn2, regs, ACCTYPE_READ,  key2 );
         dest1   = MADDR( addr1, arn1, regs, ACCTYPE_WRITE, key1 );
-        *dest1  = *source1;
+        STORE_BYTE( dest1, READ_BYTE( source1 ));
         ITIMER_UPDATE( addr1, len, regs );
         return;
     }
@@ -1537,7 +1537,7 @@ int     len1, len2, len3;               /* Work areas for lengths    */
     {
         main2 = MADDR( addr2, space2, regs, ACCTYPE_READ,  key2 );
         main1 = MADDR( addr1, space1, regs, ACCTYPE_WRITE, key1 );
-        *main1 = *main2;
+        STORE_BYTE( main1, READ_BYTE( main2 ))
         ITIMER_UPDATE( addr1, len-1, regs );
         return;
     }
