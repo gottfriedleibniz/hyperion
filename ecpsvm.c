@@ -4010,11 +4010,11 @@ int ecpsvm_dostctl(REGS *regs,int r1,int r3,int b2,VADR effective_addr2)
     /* Load the CRs from the ECBLOK */
     if(B_VMPSTAT & VMV370R)
     {
-        F_ECBLOK=fetch_fw(regs->mainstor+vmb+VMECEXT);
+        FETCH_FW( F_ECBLOK, regs->mainstor+vmb+VMECEXT );
         for(i=0;i<16;i++)
         {
              ecb_p=MADDR(F_ECBLOK+(i*4),USE_REAL_ADDR,regs,ACCTYPE_READ,0);
-             crs[i]=fetch_fw(ecb_p);
+             FETCH_FW( crs[i], ecb_p );
         }
     }
     else
@@ -4022,7 +4022,7 @@ int ecpsvm_dostctl(REGS *regs,int r1,int r3,int b2,VADR effective_addr2)
         F_ECBLOK=vmb+VMECEXT;  /* Update ECBLOK ADDRESS for VCR0 Update */
         ecb_p=MADDR(F_ECBLOK,USE_REAL_ADDR,regs,ACCTYPE_READ,0);
         /* Load OLD CR0 From VMBLOK */
-        crs[0]=fetch_fw(ecb_p);
+        FETCH_FW( crs[0], ecb_p );
     }
 
     /* Determine the range of CRs to be stored */
@@ -4100,11 +4100,11 @@ int ecpsvm_dolctl(REGS *regs,int r1,int r3,int b2,VADR effective_addr2)
     }
     if(B_VMPSTAT & VMV370R)
     {
-        F_ECBLOK=fetch_fw(regs->mainstor+vmb+VMECEXT);
+        FETCH_FW( F_ECBLOK, regs->mainstor+vmb+VMECEXT );
     for(i=0;i<16;i++)
     {
         ecb_p=MADDR(F_ECBLOK+(i*4),USE_REAL_ADDR,regs,ACCTYPE_READ,0);
-        ocrs[i]=fetch_fw(ecb_p);
+        FETCH_FW( ocrs[i], ecb_p );
     }
     }
     else
@@ -4112,7 +4112,7 @@ int ecpsvm_dolctl(REGS *regs,int r1,int r3,int b2,VADR effective_addr2)
         F_ECBLOK=vmb+VMECEXT;  /* Update ECBLOK ADDRESS for VCR0 Update */
     ecb_p=MADDR(F_ECBLOK,USE_REAL_ADDR,regs,ACCTYPE_READ,0);
         /* Load OLD CR0 From VMBLOK */
-    ocrs[0]=fetch_fw(ecb_p);
+    FETCH_FW( ocrs[0], ecb_p );
     }
     for(i=0;i<16;i++)
     {
@@ -4240,7 +4240,7 @@ int ecpsvm_dolctl(REGS *regs,int r1,int r3,int b2,VADR effective_addr2)
             j-=16;
         }
         ecb_p=MADDR(F_ECBLOK+(j*4),USE_REAL_ADDR,regs,ACCTYPE_WRITE,0);
-        store_fw(ecb_p,ocrs[j]);
+        STORE_FW(ecb_p,ocrs[j]);
     }
     DEBUG_SASSISTX(LCTL,MSGBUF(buf, "SASSIST LCTL %d,%d Done",r1,r3));
     DEBUG_SASSISTX(LCTL,WRMSG(HHC90000, "D", buf));

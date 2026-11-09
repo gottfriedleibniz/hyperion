@@ -2939,8 +2939,8 @@ int ARCH_DEP( mem_pad_cmp )
             case 2: // halfword
             {
                 U16 v1, v2;
-                v1 = fetch_hw( m1 );
-                v2 = fetch_hw( m2 );
+                FETCH_HW( v1, m1 );
+                FETCH_HW( v2, m2 );
                 rc = (v1 == v2 ? 0 : (v1 < v2 ? -1 : +1));
             }
             break;
@@ -2948,8 +2948,8 @@ int ARCH_DEP( mem_pad_cmp )
             case 4: // fullword
             {
                 U32 v1, v2;
-                v1 = fetch_fw( m1 );
-                v2 = fetch_fw( m2 );
+                FETCH_FW( v1, m1 );
+                FETCH_FW( v2, m2 );
                 rc = (v1 == v2 ? 0 : (v1 < v2 ? -1 : +1));
             }
             break;
@@ -2958,8 +2958,8 @@ int ARCH_DEP( mem_pad_cmp )
             case 8: // doubleword
             {
                 U64 v1, v2;
-                v1 = fetch_dw( m1 );
-                v2 = fetch_dw( m2 );
+                FETCH_DW( v1, m1 );
+                FETCH_DW( v2, m2 );
                 rc = (v1 == v2 ? 0 : (v1 < v2 ? -1 : +1));
             }
             break;
@@ -3072,8 +3072,8 @@ int ARCH_DEP( mem_cmp )
                 case 2: // halfword
                 {
                     U16 v1, v2;
-                    v1 = fetch_hw( m1 );
-                    v2 = fetch_hw( m2 );
+                    FETCH_HW( v1, m1 );
+                    FETCH_HW( v2, m2 );
                     rc = (v1 == v2 ? 0 : (v1 < v2 ? -1 : +1));
                 }
                 break;
@@ -3081,8 +3081,8 @@ int ARCH_DEP( mem_cmp )
                 case 4: // fullword
                 {
                     U32 v1, v2;
-                    v1 = fetch_fw( m1 );
-                    v2 = fetch_fw( m2 );
+                    FETCH_FW( v1, m1 );
+                    FETCH_FW( v2, m2 );
                     rc = (v1 == v2 ? 0 : (v1 < v2 ? -1 : +1));
                 }
                 break;
@@ -3091,8 +3091,8 @@ int ARCH_DEP( mem_cmp )
                 case 8: // doubleword
                 {
                     U64 v1, v2;
-                    v1 = fetch_dw( m1 );
-                    v2 = fetch_dw( m2 );
+                    FETCH_DW( v1, m1 );
+                    FETCH_DW( v2, m2 );
                     rc = (v1 == v2 ? 0 : (v1 < v2 ? -1 : +1));
                 }
                 break;
@@ -3286,8 +3286,8 @@ BYTE    *m1, *m2;                       /* Mainstor addresses        */
                 /* (1a) - halfword compare */
                 {
                     U16 v1, v2;
-                    v1 = fetch_hw( m1 );
-                    v2 = fetch_hw( m2 );
+                    FETCH_HW( v1, m1 );
+                    FETCH_HW( v2, m2 );
                     regs->psw.cc = (v1 == v2 ? 0 : (v1 < v2 ? 1 : 2));
                     return;
                 }
@@ -3297,8 +3297,8 @@ BYTE    *m1, *m2;                       /* Mainstor addresses        */
                 /* (1b) - fullword compare */
                 {
                     U32 v1, v2;
-                    v1 = fetch_fw( m1 );
-                    v2 = fetch_fw( m2 );
+                    FETCH_FW( v1, m1 );
+                    FETCH_FW( v2, m2 );
                     regs->psw.cc = (v1 == v2 ? 0 : (v1 < v2 ? 1 : 2));
                     return;
                 }
@@ -3309,8 +3309,8 @@ BYTE    *m1, *m2;                       /* Mainstor addresses        */
                 if (sizeof( unsigned int ) >= 8)
                 {
                     U64 v1, v2;
-                    v1 = fetch_dw( m1 );
-                    v2 = fetch_dw( m2 );
+                    FETCH_DW( v1, m1 );
+                    FETCH_DW( v2, m2 );
                     regs->psw.cc = (v1 == v2 ? 0 : (v1 < v2 ? 1 : 2));
                     return;
                 }
@@ -6222,14 +6222,14 @@ U32    *p1, *p2 = NULL;                 /* Mainstor pointers         */
     /* Copy from operand beginning */
     for (i=0; i < m; i++, p1++)
     {
-        regs->AR( (r1 + i) & 0xF ) = fetch_fw( p1 );
+        FETCH_FW( regs->AR( (r1 + i) & 0xF ), p1 );
         SET_AEA_AR( regs, (r1 + i) & 0xF );
     }
 
     /* Copy from next page */
     for (; i < n; i++, p2++)
     {
-        regs->AR( (r1 + i) & 0xF ) = fetch_fw( p2 );
+        FETCH_FW( regs->AR( (r1 + i) & 0xF ), p2 );
         SET_AEA_AR( regs, (r1 + i) & 0xF );
     }
 }
@@ -6372,12 +6372,12 @@ BYTE   *bp1;                            /* Unaligned maintstor ptr   */
         if (likely(IS_ALIGNED_POW2( effective_addr2, FW )))
         {
             for (i=0; i < n; i++, p1++)
-                regs->GR_L( (r1 + i) & 0xF ) = fetch_fw( p1 );
+                FETCH_FW( regs->GR_L( (r1 + i) & 0xF ), p1 );
         }
         else
         {
             for (i=0; i < n; i++, bp1+=4)
-                regs->GR_L( (r1 + i) & 0xF ) = fetch_fw( bp1 );
+                FETCH_FW( regs->GR_L( (r1 + i) & 0xF ), bp1 );
         }
     }
     else
@@ -6392,10 +6392,10 @@ BYTE   *bp1;                            /* Unaligned maintstor ptr   */
             /* Addresses are word aligned */
             m >>= 2;
             for (i=0; i < m; i++, p1++)
-                regs->GR_L( (r1 + i) & 0xF ) = fetch_fw( p1 );
+                FETCH_FW( regs->GR_L( (r1 + i) & 0xF ), p1 );
             n >>= 2;
             for (; i < n; i++, p2++)
-                regs->GR_L( (r1 + i) & 0xF ) = fetch_fw( p2 );
+                FETCH_FW( regs->GR_L( (r1 + i) & 0xF ), p2 );
         }
         else
         {

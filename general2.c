@@ -1196,11 +1196,11 @@ U32    *p1, *p2 = NULL;                 /* Mainstor pointers         */
 
     /* Store to first page */
     for (i=0; i < m; i++)
-        store_fw( p1++, regs->AR( (r1 + i) & 0xF ));
+        STORE_FW( p1++, regs->AR( (r1 + i) & 0xF ));
 
     /* Store to next page */
     for (; i < n; i++)
-        store_fw( p2++, regs->AR( (r1 + i) & 0xF ));
+        STORE_FW( p2++, regs->AR( (r1 + i) & 0xF ));
 }
 #endif /* defined( FEATURE_ACCESS_REGISTERS ) */
 
@@ -1419,12 +1419,12 @@ BYTE   *bp1;                            /* Unaligned mainstor ptr    */
         if (likely(IS_ALIGNED_POW2( effective_addr2, FW )))
         {
             for (i=0; i < n; i++)
-                store_fw( p1++, regs->GR_L( (r1 + i) & 0xF ));
+                STORE_FW( p1++, regs->GR_L( (r1 + i) & 0xF ));
         }
         else
         {
             for (i=0; i < n; i++, bp1 += 4)
-                store_fw( bp1, regs->GR_L( (r1 + i) & 0xF ));
+                STORE_FW( bp1, regs->GR_L( (r1 + i) & 0xF ));
         }
         ITIMER_UPDATE( effective_addr2, (n*4)-1, regs );
     }
@@ -1441,12 +1441,12 @@ BYTE   *bp1;                            /* Unaligned mainstor ptr    */
             m >>= 2;
 
             for (i=0; i < m; i++)
-                store_fw( p1++, regs->GR_L( (r1 + i) & 0xF ));
+                STORE_FW( p1++, regs->GR_L( (r1 + i) & 0xF ));
 
             n >>= 2;
 
             for (; i < n; i++)
-                store_fw( p2++, regs->GR_L( (r1 + i) & 0xF ));
+                STORE_FW( p2++, regs->GR_L( (r1 + i) & 0xF ));
         }
         else
         {
