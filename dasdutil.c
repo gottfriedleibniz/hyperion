@@ -2504,7 +2504,7 @@ CKD_RECHDR*  rechdr;                    /* Pointer to record header  */
 
         sz += CKD_RECHDR_SIZE
            +  rechdr->klen
-           +  fetch_hw( rechdr->dlen );
+           +  READ_HW( rechdr->dlen );
     }
 
     /* add length for end-of-track indicator */

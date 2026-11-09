@@ -51,7 +51,7 @@ int      i, j;                          /* Indexes                   */
 
         /* Check if the block is already entered */
         for (j = 0; j < dev->shrd[i]->purgen; j++)
-            if (fetch_fw(dev->shrd[i]->purge[j]) == (U32)block) break;
+            if (READ_FW(dev->shrd[i]->purge[j]) == (U32)block) break;
 
         /* Add the block if it's not already there */
         if (j >= dev->shrd[i]->purgen)
@@ -263,10 +263,10 @@ init_retry:
     /* Check the device type */
     if (dev->devtype == 0)
         FETCH_HW(dev->devtype, dev->devchar + 3);
-    else if (dev->devtype != fetch_hw (dev->devchar + 3))
+    else if (dev->devtype != READ_HW (dev->devchar + 3))
     {
         // "%1d:%04X Shared: remote device %04X is a %04X"
-        WRMSG( HHC00704, "S", LCSS_DEVNUM, dev->rmtnum, fetch_hw( dev->devchar + 3 ));
+        WRMSG( HHC00704, "S", LCSS_DEVNUM, dev->rmtnum, READ_HW( dev->devchar + 3 ));
         return -1;
     }
 
@@ -598,10 +598,10 @@ init_retry:
     dev->numdevid = rc;
 
     /* Check the device type */
-    if (dev->devtype != fetch_hw (dev->devid + 4))
+    if (dev->devtype != READ_HW (dev->devid + 4))
     {
         // "%1d:%04X Shared: remote device %04X is a %04X"
-        WRMSG( HHC00704, "S", LCSS_DEVNUM, dev->rmtnum, fetch_hw( dev->devid + 4 ));
+        WRMSG( HHC00704, "S", LCSS_DEVNUM, dev->rmtnum, READ_HW( dev->devid + 4 ));
         return -1;
     }
 
@@ -1006,7 +1006,7 @@ FWORD    usage;                         /* Usage buffer              */
         WRMSG( HHC00717, "E", LCSS_DEVNUM );
         return -1;
     }
-    return fetch_fw (usage);
+    return READ_FW (usage);
 } /* shared_used */
 
 /*-------------------------------------------------------------------
@@ -1127,7 +1127,7 @@ DEVBLK         *dev = data;             /* -> device block           */
         {
             for (p = 0; p < dev->rmtpurgen; p++)
             {
-                if (trk == (int)fetch_fw (dev->rmtpurge[p]))
+                if (trk == (int)READ_FW (dev->rmtpurge[p]))
                 {
                     SHRDTRACE("purge %d",trk);
                     cache_release (ix, i, 0);
@@ -1990,7 +1990,7 @@ char     trcmsg[32];
         dev->comp = dev->compoff = 0;
 
         /* Call the I/O read exit */
-        rcd = (int)fetch_fw (buf);
+        rcd = (int)READ_FW (buf);
         rc = (dev->hnd->read) (dev, rcd, &flag);
         SHRDTRACE( "server request read rcd %d flag %2.2x rc=%d",
                 rcd, flag, rc );
@@ -2022,7 +2022,7 @@ char     trcmsg[32];
 
         /* Call the I/O write exit */
         FETCH_HW(off, buf);
-        rcd = (int)fetch_fw (buf + 2);
+        rcd = (int)READ_FW (buf + 2);
 
         rc = (dev->hnd->write) (dev, rcd, off, buf + 6, len - 6, &flag);
         SHRDTRACE( "server request write rcd %d off %d len %d flag %2.2x rc=%d",

@@ -158,14 +158,14 @@ int ARCH_DEP(load_psw) (REGS *regs, BYTE *addr)
 #if defined( FEATURE_001_ZARCH_INSTALLED_FACILITY )
         regs->psw.zerobyte = addr[3] & 0xFE;
         regs->psw.amode64  = addr[3] & 0x01;
-        regs->psw.zeroword = fetch_fw(addr+4) & 0x7FFFFFFF;
-        regs->psw.IA       = fetch_dw (addr + 8);
+        regs->psw.zeroword = READ_FW(addr+4) & 0x7FFFFFFF;
+        regs->psw.IA       = READ_DW(addr + 8);
         regs->psw.AMASK    = regs->psw.amode64 ? AMASK64
                            : regs->psw.amode   ? AMASK31 : AMASK24;
 #else
         regs->psw.zerobyte = addr[3];
         regs->psw.amode64  = 0;
-        regs->psw.IA       = fetch_fw(addr + 4) & 0x7FFFFFFF;
+        regs->psw.IA       = READ_FW(addr + 4) & 0x7FFFFFFF;
         regs->psw.AMASK    = regs->psw.amode ? AMASK31 : AMASK24;
 #endif
 

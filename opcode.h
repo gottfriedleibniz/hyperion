@@ -837,17 +837,23 @@ do { \
 /* which endianness Hercules was built for).                         */
 /*-------------------------------------------------------------------*/
 
-#define FETCH_HW( _val, _stor )     (_val) = fetch_hw( _stor )
-#define FETCH_FW( _val, _stor )     (_val) = fetch_fw( _stor )
-#define FETCH_F3( _val, _stor )     (_val) = fetch_f3( _stor )
-#define FETCH_DW( _val, _stor )     (_val) = fetch_dw( _stor )
-#define FETCH_QW( _val, _stor )     (_val) = fetch_qw( _stor )
+#define READ_HW( _stor )            fetch_hw( _stor )
+#define READ_FW( _stor )            fetch_fw( _stor )
+#define READ_F3( _stor )            fetch_f3( _stor )
+#define READ_DW( _stor )            fetch_dw( _stor )
+#define READ_QW( _stor )            fetch_qw( _stor )
 
 #define STORE_HW( _stor, _val )     store_hw( _stor, _val )
 #define STORE_FW( _stor, _val )     store_fw( _stor, _val )
 #define STORE_F3( _stor, _val )     store_f3( _stor, _val )
 #define STORE_DW( _stor, _val )     store_dw( _stor, _val )
 #define STORE_QW( _stor, _val )     store_qw( _stor, _val )
+
+#define FETCH_HW( _val, _stor )     (_val) = READ_HW( _stor )
+#define FETCH_FW( _val, _stor )     (_val) = READ_FW( _stor )
+#define FETCH_F3( _val, _stor )     (_val) = READ_F3( _stor )
+#define FETCH_DW( _val, _stor )     (_val) = READ_DW( _stor )
+#define FETCH_QW( _val, _stor )     (_val) = READ_QW( _stor )
 
 /*-------------------------------------------------------------------*/
 /*            CKD/CCKD header field FETCH/STORE macros               */
@@ -868,6 +874,10 @@ do { \
 #define STORE_LE_HW( _stor, _val )  store_hw( _stor, SWAP16( _val ))
 #define STORE_LE_FW( _stor, _val )  store_fw( _stor, SWAP32( _val ))
 #define STORE_LE_DW( _stor, _val )  store_dw( _stor, SWAP64( _val ))
+
+#define READ_LE_HW( _stor )         SWAP16( fetch_hw( _stor ))
+#define READ_LE_FW( _stor )         SWAP32( fetch_fw( _stor ))
+#define READ_LE_DW( _stor )         SWAP64( fetch_dw( _stor ))
 
 #include "machdep.h"
 
@@ -1492,7 +1502,7 @@ do { \
 do {                                                                  \
     FOOTPRINT( (_ip), (_regs) );                                      \
     BEG_COUNT_INSTR( (_ip), (_regs) );                                \
-    (_oct)[ fetch_hw( (_ip) )]( (_ip), (_regs) );                     \
+    (_oct)[ READ_HW( (_ip) )]( (_ip), (_regs) );                      \
     END_COUNT_INSTR( (_ip), (_regs) );                                \
 } while (0)
 
@@ -1504,7 +1514,7 @@ do {                                                                  \
       CHECK_TXF_CONSTRAINTS( (_ip), (_regs) );                        \
       FOOTPRINT( (_ip), (_regs) );                                    \
       BEG_COUNT_INSTR( (_ip), (_regs) );                              \
-      (_oct)[ fetch_hw( (_ip) )]( (_ip), (_regs) );                   \
+      (_oct)[ READ_HW( (_ip) )]( (_ip), (_regs) );                    \
       END_COUNT_INSTR( (_ip), (_regs) );                              \
   } while (0)
 
