@@ -1796,6 +1796,24 @@ BYTE    old;                            /* Old value                 */
             /* Get old value */
             old = *main2;
 
+            /*
+             * #RACE: TSAN also catches the issue below! Leaving this comment in
+             * to serve as an example.
+             * 
+             * Line numbers omitted:
+             *  Read of size 1 at 0x7f028de13188 by thread T3:
+             *    #0 z900_test_and_set $(BUILD_DIR)/../general2.c // old = *main2;
+             *    #1 z900_run_cpu $(BUILD_DIR)/../cpu.c
+             *    #2 cpu_thread $(BUILD_DIR)/../cpu.c
+             *    #3 hthread_func $(BUILD_DIR)/../hthreads.c
+             *
+             *  Previous atomic write of size 1 at 0x7f028de13188 by thread T7:
+             *    #0 cmpxchg1_C11 $(BUILD_DIR)/../machdep.h // while (cmpxchg1( &old, 255, main2 ));
+             *    #1 z900_test_and_set $(BUILD_DIR)/../general2.c
+             *    #2 z900_run_cpu $(BUILD_DIR)/../cpu.c
+             *    #3 cpu_thread $(BUILD_DIR)/../cpu.c
+             *    #4 hthread_func $(BUILD_DIR)/../hthreads.c
+             */
             /* Attempt to exchange the values */
             /*  The WHILE statement that follows could lead to a        */
             /*  TS-style lock release never being noticed, because      */
