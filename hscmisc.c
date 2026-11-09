@@ -3378,7 +3378,7 @@ bool insttrace_all()
     if (sysblk.insttrace)
     {
         int  cpu;
-        for (cpu=0; cpu < sysblk.maxcpu; cpu++)
+        for (cpu=0; cpu < SYS_GET_MAXCPU(); cpu++)
         {
             if (IS_CPU_ONLINE( cpu ))
             {

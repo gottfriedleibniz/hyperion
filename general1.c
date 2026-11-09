@@ -2381,7 +2381,7 @@ U32     new;                            /* new value                 */
             /* Check for PER 1 GRA event */
             PER_GRA_CHECK( regs, PER_GRA_MASK( r1 ));
 
-            if (sysblk.cpus > 1)
+            if (SYS_GET_CPUS() > 1)
                 sched_yield();
         }
     }
@@ -2450,7 +2450,7 @@ U64     old, new;                       /* old, new values           */
             /* Check for PER 1 GRA event */
             PER_GRA_CHECK( regs, PER_GRA_MASK2( r1, r1+1 ));
 
-            if (sysblk.cpus > 1)
+            if (SYS_GET_CPUS() > 1)
                 sched_yield();
         }
     }

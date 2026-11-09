@@ -524,7 +524,7 @@ VADR    effective_addr2,
         }
         RELEASE_MAINLOCK_UNCONDITIONAL( regs );
 
-        if(regs->psw.cc && sysblk.cpus > 1)
+        if(regs->psw.cc && SYS_GET_CPUS() > 1)
         {
             PTT_CSF("*PLO",regs->GR_L(0),regs->GR_L(r1),regs->psw.IA_L);
             sched_yield();
@@ -1817,7 +1817,7 @@ BYTE    old;                            /* Old value                 */
         }
         else
 #endif
-            if (sysblk.cpus > 1)
+            if (SYS_GET_CPUS() > 1)
                 sched_yield();
     }
     else

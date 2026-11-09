@@ -77,14 +77,14 @@ int build_config( const char* hercules_cnf )
 
     /* Set sysblk.maxcpu to our preferred default value, if possible */
 #if (PREF_DEF_MAXCPU <= MAX_CPU_ENGS)
-    sysblk.maxcpu = PREF_DEF_MAXCPU;
+    SYS_SET_MAXCPU( PREF_DEF_MAXCPU );
 #else
     WARNING( "sysblk.maxcpu reduced from " QSTR( PREF_DEF_MAXCPU ) " to " QSTR( MAX_CPU_ENGS ))
-    sysblk.maxcpu = MAX_CPU_ENGS;
+    SYS_SET_MAXCPU( MAX_CPU_ENGS );
 #endif
 
 #if defined( _FEATURE_S370_S390_VECTOR_FACILITY )
-    sysblk.numvec = sysblk.maxcpu;
+    sysblk.numvec = SYS_GET_MAXCPU();
 #else
     sysblk.numvec = 0;
 #endif
@@ -108,7 +108,7 @@ int build_config( const char* hercules_cnf )
     csr_reset();
 
     /* Default CPU type CP */
-    for (i=0; i < sysblk.maxcpu; i++)
+    for (i=0; i < SYS_GET_MAXCPU(); i++)
         sysblk.ptyp[i] = SCCB_PTYP_CP;
 
     /* Default main storage to 2M with one CPU */
@@ -121,7 +121,7 @@ int build_config( const char* hercules_cnf )
         return -1; // (error message already issued)
 
     /* Connect each channel set to its home cpu */
-    for (i=0; i < sysblk.maxcpu; i++)
+    for (i=0; i < SYS_GET_MAXCPU(); i++)
         if (IS_CPU_ONLINE(i))
             sysblk.regs[i]->chanset = i < FEATURE_LCSS_MAX ? i : 0xFFFF;
 

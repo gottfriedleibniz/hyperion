@@ -352,13 +352,13 @@ DEVBLK            *dev;                /* Device block pointer       */
             spccbconfig->hex01 = 0x01;
 
             /* Set CPU array count and offset in SPCCB */
-            STORE_MAIN_HW(spccbconfig->toticpu,sysblk.maxcpu);
+            STORE_MAIN_HW(spccbconfig->toticpu,SYS_GET_MAXCPU());
             offset = sizeof(SPCCB_HEADER) + sizeof(SPCCB_CONFIG_INFO);
             STORE_MAIN_HW(spccbconfig->officpu,offset);
 
             /* Set HSA array count and offset in SPCCB */
             STORE_MAIN_HW(spccbconfig->tothsa,0);
-            offset += (U16)(sizeof(SPCCB_CPU_INFO) * sysblk.maxcpu);
+            offset += (U16)(sizeof(SPCCB_CPU_INFO) * SYS_GET_MAXCPU());
             STORE_MAIN_HW(spccbconfig->offhsa,offset);
 
             /* Move IPL load parameter to SPCCB */
@@ -366,7 +366,7 @@ DEVBLK            *dev;                /* Device block pointer       */
 
             /* Build the CPU information array after the SCP info */
             spccbcpu = (SPCCB_CPU_INFO*)(spccbconfig+1);
-            for (i = 0; i < sysblk.maxcpu; i++, spccbcpu++)
+            for (i = 0; i < SYS_GET_MAXCPU(); i++, spccbcpu++)
             {
                 memset( spccbcpu, 0, sizeof(SPCCB_CPU_INFO) );
                 spccbcpu->cpuaddr = i;
@@ -502,7 +502,7 @@ U64              wCPU[ MAX_CPU_ENGS ];  /* Wait CPU time    (usecs)  */
         /* Get processor time(s) and leave out non-CPU processes and
          * threads
          */
-        for(i = 0; i < sysblk.maxcpu; ++i)
+        for(i = 0; i < SYS_GET_MAXCPU(); ++i)
         {
             if (IS_CPU_ONLINE(i))
             {
@@ -521,7 +521,7 @@ U64              wCPU[ MAX_CPU_ENGS ];  /* Wait CPU time    (usecs)  */
 #if defined(FEATURE_PHYSICAL_DIAG204)
         hdrinfo->flags = DIAG204_PHYSICAL_PRESENT;
 #endif /*defined(FEATURE_PHYSICAL_DIAG204)*/
-        STORE_MAIN_HW(hdrinfo->physcpu,sysblk.cpus);
+        STORE_MAIN_HW(hdrinfo->physcpu,SYS_GET_CPUS());
         STORE_MAIN_HW(hdrinfo->offown,sizeof(DIAG204_HDR));
         STORE_MAIN_DW(hdrinfo->diagstck,ETOD2TOD(ETOD));
 
@@ -529,12 +529,12 @@ U64              wCPU[ MAX_CPU_ENGS ];  /* Wait CPU time    (usecs)  */
         partinfo = (DIAG204_PART*)(hdrinfo + 1);
         memset(partinfo, 0, sizeof(DIAG204_PART));
         partinfo->partnum = sysblk.lparnum;     /* Hercules partition */
-        partinfo->virtcpu = sysblk.cpus;
+        partinfo->virtcpu = SYS_GET_CPUS();
         get_lparname(partinfo->partname);
 
         /* hercules cpu's */
         cpuinfo = (DIAG204_PART_CPU*)(partinfo + 1);
-        for(i = 0; i < sysblk.maxcpu; i++)
+        for(i = 0; i < SYS_GET_MAXCPU(); i++)
           if (IS_CPU_ONLINE(i))
           {
               memset(cpuinfo, 0, sizeof(DIAG204_PART_CPU));
@@ -556,12 +556,12 @@ U64              wCPU[ MAX_CPU_ENGS ];  /* Wait CPU time    (usecs)  */
         partinfo = (DIAG204_PART*)cpuinfo;
         memset(partinfo, 0, sizeof(DIAG204_PART));
         partinfo->partnum = 0; /* Physical machine */
-        partinfo->virtcpu = sysblk.cpus;
+        partinfo->virtcpu = SYS_GET_CPUS();
         memcpy(partinfo->partname,physical,sizeof(physical));
 
         /* report all emulated physical cpu's */
         cpuinfo = (DIAG204_PART_CPU*)(partinfo + 1);
-        for(i = 0; i < sysblk.maxcpu; i++)
+        for(i = 0; i < SYS_GET_MAXCPU(); i++)
           if (IS_CPU_ONLINE(i))
           {
               memset(cpuinfo, 0, sizeof(DIAG204_PART_CPU));
@@ -581,7 +581,7 @@ U64              wCPU[ MAX_CPU_ENGS ];  /* Wait CPU time    (usecs)  */
 #if defined(FEATURE_EXTENDED_DIAG204)
     /* Extended subcode 5 returns the size of the data areas provided by extended subcodes 6 and 7 */
     case 0x00010005:
-        i = sizeof(DIAG204_X_HDR) + ((sizeof(DIAG204_X_PART) + (sysblk.maxcpu * sizeof(DIAG204_X_PART_CPU))) * 2);
+        i = sizeof(DIAG204_X_HDR) + ((sizeof(DIAG204_X_PART) + (SYS_GET_MAXCPU() * sizeof(DIAG204_X_PART_CPU))) * 2);
         regs->GR_L(r2+1) = (i + PAGEFRAME_BYTEMASK) / PAGEFRAME_PAGESIZE;
         regs->GR_L(r2) = 0;
 
@@ -607,7 +607,7 @@ U64              wCPU[ MAX_CPU_ENGS ];  /* Wait CPU time    (usecs)  */
         /* Get processor time(s) and leave out non-CPU processes and
          * threads
          */
-        for(i = 0; i < sysblk.maxcpu; ++i)
+        for(i = 0; i < SYS_GET_MAXCPU(); ++i)
         {
             if (IS_CPU_ONLINE(i))
             {
@@ -628,7 +628,7 @@ U64              wCPU[ MAX_CPU_ENGS ];  /* Wait CPU time    (usecs)  */
 #if defined(FEATURE_PHYSICAL_DIAG204)
         hdrxinfo->flags = DIAG204_X_PHYSICAL_PRESENT;
 #endif /*defined(FEATURE_PHYSICAL_DIAG204)*/
-        STORE_HW(hdrxinfo->physcpu,sysblk.cpus);
+        STORE_HW(hdrxinfo->physcpu,SYS_GET_CPUS());
         STORE_HW(hdrxinfo->offown,sizeof(DIAG204_X_HDR));
         STORE_DW(hdrxinfo->diagstck1,ETOD.high);
         STORE_DW(hdrxinfo->diagstck2,ETOD.low);
@@ -637,7 +637,7 @@ U64              wCPU[ MAX_CPU_ENGS ];  /* Wait CPU time    (usecs)  */
         partxinfo = (DIAG204_X_PART*)(hdrxinfo + 1);
         memset(partxinfo, 0, sizeof(DIAG204_X_PART));
         partxinfo->partnum = sysblk.lparnum;    /* Hercules partition */
-        partxinfo->virtcpu = sysblk.cpus;
+        partxinfo->virtcpu = SYS_GET_CPUS();
         partxinfo->realcpu = hostinfo.num_procs;
         get_lparname(partxinfo->partname);
         get_sysname(partxinfo->cpcname);
@@ -648,7 +648,7 @@ U64              wCPU[ MAX_CPU_ENGS ];  /* Wait CPU time    (usecs)  */
 
         /* hercules cpu's */
         cpuxinfo = (DIAG204_X_PART_CPU*)(partxinfo + 1);
-        for(i = 0; i < sysblk.maxcpu; i++)
+        for(i = 0; i < SYS_GET_MAXCPU(); i++)
           if (IS_CPU_ONLINE(i))
           {
               memset(cpuxinfo, 0, sizeof(DIAG204_X_PART_CPU));
@@ -683,13 +683,13 @@ U64              wCPU[ MAX_CPU_ENGS ];  /* Wait CPU time    (usecs)  */
         partxinfo = (DIAG204_X_PART*)cpuxinfo;
         memset(partxinfo, 0, sizeof(DIAG204_X_PART));
         partxinfo->partnum = 0; /* Physical machine */
-        partxinfo->virtcpu = sysblk.cpus;
+        partxinfo->virtcpu = SYS_GET_CPUS();
         partxinfo->realcpu = hostinfo.num_procs;
         memcpy(partxinfo->partname,physical,sizeof(physical));
 
         /* report all emulated physical cpu's */
         cpuxinfo = (DIAG204_PART_CPU*)(partinfo + 1);
-        for(i = 0; i < sysblk.maxcpu; i++)
+        for(i = 0; i < SYS_GET_MAXCPU(); i++)
           if (IS_CPU_ONLINE(i))
           {
               memset(cpuxinfo, 0, sizeof(DIAG204_X_PART_CPU));
