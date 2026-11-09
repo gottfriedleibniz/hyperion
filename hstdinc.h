@@ -128,12 +128,12 @@
   #define _GCC_SSE2_
 #endif
 
-#if defined( _M_ARM64 ) || defined( _M_ARM64EC )
+#if defined( __aarch64__ )
+  #include <arm_neon.h>
+#elif defined( _M_ARM64 ) || defined( _M_ARM64EC )
  /* Use the Microsoft-specific header because older VC runtimes fail to
   * redirect arm_neon.h to arm64_neon.h when targeting ARM64EC. */
   #include <arm64_neon.h>
-#elif defined( __aarch64__ )
-  #include <arm_neon.h>
 #endif
 
 #include <stddef.h>             // (ptrdiff_t, size_t, offsetof, etc)
