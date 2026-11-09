@@ -352,6 +352,7 @@ inline void ARCH_DEP( vstore4_full )( U32 value, VADR addr, int arn, REGS* regs 
 BYTE   *main1, *main2;                  /* Mainstor addresses        */
 BYTE   *sk;                             /* Storage key addresses     */
 int     len;                            /* Length to end of page     */
+ALIGN_4
 BYTE    temp[4];                        /* Copied value              */
 
     len = PAGEFRAME_PAGESIZE - (addr & PAGEFRAME_BYTEMASK);
@@ -386,6 +387,7 @@ inline void ARCH_DEP( vstore8_full )( U64 value, VADR addr, int arn, REGS* regs 
 BYTE   *main1, *main2;                  /* Mainstor addresses        */
 BYTE   *sk;                             /* Storage key addresses     */
 int     len;                            /* Length to end of page     */
+ALIGN_8
 BYTE    temp[8];                        /* Copied value              */
 
     len = PAGEFRAME_PAGESIZE - (addr & PAGEFRAME_BYTEMASK);
@@ -419,6 +421,7 @@ inline void ARCH_DEP( vstore16_full )( QW value, VADR addr, int arn, REGS* regs 
 BYTE   *main1, * main2;                  /* Mainstor addresses        */
 BYTE   *sk;                             /* Storage key addresses     */
 int     len;                            /* Length to end of page     */
+ALIGN_16
 BYTE    temp[16];                        /* Copied value              */
 
     len = PAGEFRAME_PAGESIZE - (addr & PAGEFRAME_BYTEMASK);
@@ -476,6 +479,7 @@ inline U32 ARCH_DEP( vfetch4_full )( VADR addr, int arn, REGS* regs )
 {
 BYTE   *mn;                             /* Main storage addresses    */
 int     len;                            /* Length to end of page     */
+ALIGN_8
 BYTE    temp[8];                        /* Copy destination          */
 
     len = PAGEFRAME_PAGESIZE - (addr & PAGEFRAME_BYTEMASK);
@@ -505,6 +509,7 @@ inline U64 ARCH_DEP( vfetch8_full )( VADR addr, int arn, REGS* regs )
 {
 BYTE   *mn;                             /* Main storage addresses    */
 int     len;                            /* Length to end of page     */
+ALIGN_16
 BYTE    temp[16];                       /* Copy destination          */
 
     /* Get absolute address of first byte of operand */
@@ -535,6 +540,7 @@ inline QW ARCH_DEP( vfetch16_full )( VADR addr, int arn, REGS* regs )
 {
 BYTE   *mn;                             /* Main storage addresses    */
 int     len;                            /* Length to end of page     */
+ALIGN_16
 BYTE    temp[32];                       /* Copy destination          */
 
     /* Get absolute address of first byte of operand */

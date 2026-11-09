@@ -2140,8 +2140,11 @@ VADR    effective_addr2;                /* (op2 effective address)   */
 VADR    op1_addr, op3_addr;             /* (op1 & op3 fetch addr)    */
 GREG    work_reg;                       /* (register work area)      */
 U16     index, max_index;               /* (operand index values)    */
+ALIGN_8
 BYTE    op1[CFC_MAX_OPSIZE];            /* (work field)              */
+ALIGN_8
 BYTE    op3[CFC_MAX_OPSIZE];            /* (work field)              */
+ALIGN_8
 BYTE    tmp[CFC_MAX_OPSIZE];            /* (work field)              */
 BYTE    descending;                     /* (sort-order control bit)  */
 #if defined( FEATURE_001_ZARCH_INSTALLED_FACILITY )
@@ -3501,6 +3504,7 @@ DEF_INST(compare_logical_character_long)
 
     if (rc == 0 && padded_len && total < MAX_CPU_AMT)
     {
+        CACHE_ALIGN
         BYTE  padding[ CHUNK_AMT ];
         VADR  addr     =  (len1 > len2) ? addr1 : addr2;
         int   r        =  (len1 > len2) ? r1    : r2;
@@ -3650,6 +3654,7 @@ DEF_INST(compare_logical_long_extended)
 
     if (rc == 0 && padded_len && total < MAX_CPU_AMT)
     {
+        CACHE_ALIGN
         BYTE  padding[ MAX_CPU_AMT ];
         VADR  addr     =  (len1 > len2) ? addr1 : addr2;
         int   r        =  (len1 > len2) ? r1    : r3;
@@ -4793,6 +4798,7 @@ U16     uvwxy;                          /* Unicode work area         */
 U16     unicode1;                       /* Unicode character         */
 U16     unicode2;                       /* Unicode low surrogate     */
 GREG    n;                              /* Number of UTF-8 bytes - 1 */
+ALIGN_4
 BYTE    utf[4];                         /* UTF-8 bytes               */
 #if defined( FEATURE_030_ETF3_ENHANCEMENT_FACILITY )
 bool    wfc;                            /* Well-Formedness-Checking  */
@@ -4946,6 +4952,7 @@ DEF_INST(convert_utf8_to_utf16)
     U16     unicode1;                       /* Unicode character         */
     U16     unicode2 = 0;                   /* Unicode low surrogate     */
     GREG    n;                              /* Number of UTF-8 bytes - 1 */
+    ALIGN_4
     BYTE    utf[4];                         /* UTF-8 bytes               */
     #if defined( FEATURE_030_ETF3_ENHANCEMENT_FACILITY )
     bool    wfc;                            /* WellFormednessChecking    */
@@ -5318,6 +5325,7 @@ int     b2;                             /* Base of effective addr    */
 VADR    effective_addr2;                /* Effective address         */
 int     ovf;                            /* 1=overflow                */
 int     dxf;                            /* 1=data exception          */
+ALIGN_8
 BYTE    dec[8];                         /* Packed decimal operand    */
 
     RX(inst, regs, r1, x2, b2, effective_addr2);
@@ -5365,6 +5373,7 @@ int     r1;                             /* Value of R1 field         */
 int     x2;                             /* Index register            */
 int     b2;                             /* Base of effective addr    */
 VADR    effective_addr2;                /* Effective address         */
+ALIGN_16
 BYTE    dec[16];                        /* Packed decimal result     */
 
     RX(inst, regs, r1, x2, b2, effective_addr2);
@@ -5920,6 +5929,7 @@ DEF_INST(BF_7)
 int    r1;                              /* Register numbers          */
 int    b2;                              /* effective address base    */
 VADR   effective_addr2;                 /* effective address         */
+ALIGN_4
 BYTE   vbyte[4];                        /* Fetched storage bytes     */
 U32    n;                               /* Fetched value             */
 
@@ -5966,6 +5976,7 @@ int    r1, r3;                          /* Register numbers          */
 int    b2;                              /* effective address base    */
 VADR   effective_addr2;                 /* effective address         */
 int    i;                               /* Integer work area         */
+ALIGN_4
 BYTE   vbyte[4];                        /* Fetched storage bytes     */
 U32    n;                               /* Fetched value             */
 static const int                        /* Length-1 to fetch by mask */
@@ -6017,6 +6028,7 @@ int    r1, r3;                          /* Register numbers          */
 int    b2;                              /* effective address base    */
 VADR   effective_addr2;                 /* effective address         */
 int    i;                               /* Integer work area         */
+ALIGN_4
 BYTE   vbyte[4];                        /* Fetched storage bytes     */
 U32    n;                               /* Fetched value             */
 static const int                        /* Length-1 to fetch by mask */

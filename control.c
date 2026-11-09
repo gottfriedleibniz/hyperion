@@ -2269,6 +2269,7 @@ DEF_INST( load_program_status_word )
 {
 int     b2;                             /* Base of effective addr    */
 VADR    effective_addr2;                /* Effective address         */
+ALIGN_8
 DBLWRD  dword;
 int     rc;
 #if defined( FEATURE_001_ZARCH_INSTALLED_FACILITY )

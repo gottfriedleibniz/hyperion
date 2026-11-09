@@ -607,6 +607,7 @@ do {if (sr_read_value((FILE*)(_file), (U32)(_suslen), (void*)(_p), (U32)(_reslen
 /*********************************************************************/
 static INLINE int sr_write_hdr (FILE* file, U32 key, U32 len)
 {
+ALIGN_8
 BYTE  buf[8];
 
     TRACE("SR: sr_write_hdr:    key=0x%8.8x, len=0x%8.8x\n", key, len);
@@ -683,6 +684,7 @@ BYTE*  buf  = p;
 /*********************************************************************/
 static INLINE int sr_write_value (FILE* file, U32 key, U64 val, U32 len)
 {
+ALIGN_8
 BYTE    buf[8];
 
     TRACE("SR: sr_write_value:  key=0x%8.8x, len=0x%8.8x, val=0x%16.16"PRIx64"\n", key, len, val);
@@ -717,6 +719,7 @@ BYTE    buf[8];
 /*********************************************************************/
 static INLINE int sr_read_hdr (FILE* file, U32* key, U32* len)
 {
+ALIGN_8
 BYTE  buf[8];
 
     if (SR_READ(buf, 1, 8, file) != 8)
@@ -815,6 +818,7 @@ BYTE*  buf  = p;
 /*********************************************************************/
 static INLINE int sr_read_value (FILE* file, U32 suslen, void* p, U32 reslen)
 {
+ALIGN_8
 BYTE    buf[8];
 U64     value;
 

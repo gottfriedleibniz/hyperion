@@ -1134,6 +1134,7 @@ DEF_INST( neural_network_processing_assist )
 /*-------------------------------------------------------------------*/
 static inline void ARCH_DEP( nnpa_qaf ) ( VADR pb_addr, REGS* regs)
 {
+    CACHE_ALIGN
     BYTE l_pb[256];                     /* local parameter block   */
 
     memset(&l_pb, 0, sizeof(l_pb) );    /* zero */
