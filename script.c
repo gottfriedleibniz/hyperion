@@ -94,7 +94,7 @@ char   *buf1;                           /* Pointer to resolved buffer*/
             c = fgetc(fp);
 
             /* Check for I/O error */
-            if (ferror(fp))
+            if (c == EOF && ferror(fp))
             {
                 WRMSG(HHC01432, "S", *inc_stmtnum, fname, "fgetc()", strerror(errno));
                 return -1;
