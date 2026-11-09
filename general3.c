@@ -79,7 +79,7 @@ int     rc;                             /* Return code               */
         } /* end switch(opcode) */
 
         /* Regular store if operand is not on a fullword boundary */
-        if ((effective_addr1 & 0x03) != 0) {
+        if (NOT_ALIGNED_POW2( effective_addr1, FW )) {
             ARCH_DEP(vstore4) (result, effective_addr1, b1, regs);
             break;
         }
@@ -152,7 +152,7 @@ int     rc;                             /* Return code               */
         } /* end switch(opcode) */
 
         /* Regular store if operand is not on a doubleword boundary */
-        if ((effective_addr1 & 0x07) != 0) {
+        if (NOT_ALIGNED_POW2( effective_addr1, DW )) {
             ARCH_DEP(vstore8) (result, effective_addr1, b1, regs);
             break;
         }
