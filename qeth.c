@@ -629,6 +629,57 @@ int i;  /* Utility variable */
     /* Find a matching MAC (Unicast or Multicast) */
     for(i = 0; i < OSA_MAXMAC; i++)
     {
+        /*
+         * #RACE: The accesses to type are a data-race under the C memory model.
+         * The compiler is currently not required to preserve the ordering
+         * intended by the source code, i.e., 'type = ...' could become
+         * reordered to occur before the memcpy of the MAC address. TSAN will
+         * generate:
+         *
+         * Line numbers omitted:
+         *  WARNING: ThreadSanitizer: data race (pid=312437)
+         *    Read of size 4 at 0x727000000ce0 by thread T17:
+         *      #0 validate_mac $(BUILD_DIR)/qeth.c // (grp->mac[i].type & type) 
+         *      #1 read_L2_packets $(BUILD_DIR)/qeth.c
+         *      #2 process_input_queues $(BUILD_DIR)/qeth.c
+         *      #3 qeth_execute_ccw $(BUILD_DIR)/qeth.c
+         *      #4 z900_execute_ccw_chain $(BUILD_DIR)/channel.c
+         *      #5 call_execute_ccw_chain $(BUILD_DIR)/channel.c
+         *      #6 device_thread $(BUILD_DIR)/channel.c
+         *      #7 hthread_func $(BUILD_DIR)/hthreads.c
+         *    
+         *    Previous write of size 4 at 0x727000000ce0 by thread T15:
+         *      #0 register_mac $(BUILD_DIR)/qeth.c // grp->mac[i].type = type;
+         *      #1 osa_adapter_cmd $(BUILD_DIR)/qeth.c
+         *      #2 qeth_execute_ccw $(BUILD_DIR)/qeth.c
+         *      #3 z900_execute_ccw_chain $(BUILD_DIR)/channel.c
+         *      #4 call_execute_ccw_chain $(BUILD_DIR)/channel.c
+         *      #5 device_thread $(BUILD_DIR)/channel.c
+         *      #6 hthread_func $(BUILD_DIR)/hthreads.c
+         *
+         * Also:
+         *  WARNING: ThreadSanitizer: data race (pid=312437)
+         *    Read of size 6 at 0x727000000cd8 by thread T17:
+         *      #0 bcmp <null> (hercules+0x44214e)
+         *      #1 validate_mac $(BUILD_DIR)/qeth.c
+         *      #2 read_L2_packets $(BUILD_DIR)/qeth.c
+         *      #3 process_input_queues $(BUILD_DIR)/qeth.c
+         *      #4 qeth_execute_ccw $(BUILD_DIR)/qeth.c
+         *      #5 z900_execute_ccw_chain $(BUILD_DIR)/channel.c
+         *      #6 call_execute_ccw_chain $(BUILD_DIR)/channel.c
+         *      #7 device_thread $(BUILD_DIR)/channel.c
+         *      #8 hthread_func $(BUILD_DIR)/hthreads.c
+         *    
+         *    Previous write of size 6 at 0x727000000cd8 by thread T15:
+         *      #0 __tsan_memcpy <null> (hercules+0x4311e2)
+         *      #1 register_mac $(BUILD_DIR)/qeth.c // memcpy(grp->mac[i].addr, mac, IFHWADDRLEN);
+         *      #2 osa_adapter_cmd $(BUILD_DIR)/qeth.c
+         *      #3 qeth_execute_ccw $(BUILD_DIR)/qeth.c
+         *      #4 z900_execute_ccw_chain $(BUILD_DIR)/channel.c
+         *      #5 call_execute_ccw_chain $(BUILD_DIR)/channel.c
+         *      #6 device_thread $(BUILD_DIR)/channel.c
+         *      #7 hthread_func $(BUILD_DIR)/hthreads.c
+         */
         /* Find a type matching the search mask with a matching MAC addr */
         if((grp->mac[i].type & type) && !memcmp(grp->mac[i].addr,mac,IFHWADDRLEN))
             return grp->mac[i].type | grp->promisc;
@@ -3565,6 +3616,49 @@ static QRC write_buffered_packets( DEVBLK* dev, OSA_GRP *grp,
         /* Save starting Storage Block number */
         ssb = sb;
 
+        /*
+         * #RACE: Requires validation.
+         *
+         * Line numbers omitted:
+         *  WARNING: ThreadSanitizer: data race (pid=571613)
+         *    Read of size 8 at 0x7f668e77e708 by thread T19:
+         *      #0 fetch_dw_noswap $(BUILD_DIR)/machdep.h
+         *      #1 write_buffered_packets $(BUILD_DIR)/qeth.c // FETCH_DW( sba,   sbal->sbale[sb].addr   );
+         *      #2 process_output_queues $(BUILD_DIR)/qeth.c
+         *      #3 qeth_execute_ccw $(BUILD_DIR)/qeth.c
+         *      #4 z900_execute_ccw_chain $(BUILD_DIR)/channel.c
+         *      #5 call_execute_ccw_chain $(BUILD_DIR)/channel.c
+         *      #6 device_thread $(BUILD_DIR)/channel.c
+         *      #7 hthread_func $(BUILD_DIR)/hthreads.c
+         *
+         *    Previous atomic write of size 8 at 0x7f668e77e708 by thread T5:
+         *      #0 atomic_store_U64 $(BUILD_DIR)/hatomic.h:
+         *      #1 z900_vstore8 $(BUILD_DIR)/vstore.h
+         *      #2 z900_store_long $(BUILD_DIR)/esame.c
+         *      #3 z900_execute_opcode_e3________xx $(BUILD_DIR)/opcode.c
+         *      #4 z900_run_cpu $(BUILD_DIR)/cpu.c
+         *      #5 cpu_thread $(BUILD_DIR)/cpu.c
+         *      #6 hthread_func $(BUILD_DIR)/hthreads.c
+         *
+         * Also:
+         *  Read of size 4 at 0x7f668e77e704 by thread T19:
+         *    #0 fetch_fw_noswap $(BUILD_DIR)/machdep.h
+         *    #1 write_buffered_packets $(BUILD_DIR)/qeth.c // FETCH_FW( sblen, sbal->sbale[sb].length );
+         *    #2 process_output_queues $(BUILD_DIR)/qeth.c
+         *    #3 qeth_execute_ccw $(BUILD_DIR)/qeth.c
+         *    #4 z900_execute_ccw_chain $(BUILD_DIR)/channel.c
+         *    #5 call_execute_ccw_chain $(BUILD_DIR)/channel.c
+         *    #6 device_thread $(BUILD_DIR)/channel.c
+         *    #7 hthread_func $(BUILD_DIR)/hthreads.c
+         *  
+         *  Previous atomic write of size 4 at 0x7f668e77e704 by thread T5:
+         *    #0 atomic_store_U32 $(BUILD_DIR)/hatomic.h
+         *    #1 z900_vstore4 $(BUILD_DIR)/vstore.h
+         *    #2 z900_5040 $(BUILD_DIR)/general1.c
+         *    #3 z900_run_cpu $(BUILD_DIR)/cpu.c
+         *    #4 cpu_thread $(BUILD_DIR)/cpu.c
+         *    #5 hthread_func $(BUILD_DIR)/hthreads.c
+         */
         /* Retrieve the (next) Storage Block address and length */
         FETCH_DW( sba,   sbal->sbale[sb].addr   );
         FETCH_FW( sblen, sbal->sbale[sb].length );

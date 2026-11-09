@@ -111,7 +111,7 @@ BYTE   *dest;                           /* Pointer to target byte    */
     OBTAIN_MAINLOCK( regs );
     {
         /* OR byte with immediate operand, setting condition code */
-        regs->psw.cc = (H_ATOMIC_OP( dest, i2, or, Or, | ) != 0);
+        regs->psw.cc = (atomic_or_U8( dest, i2 ) != 0);
     }
     RELEASE_MAINLOCK( regs );
 
@@ -1718,6 +1718,9 @@ int     rc;                             /* Return code               */
     /* Set the main storage reference and change bits */
     ARCH_DEP( or_storage_key )( px, (STORKEY_REF | STORKEY_CHANGE) );
 
+    /* Obtain the interrupt lock for load_psw and s390_load_psw */
+    OBTAIN_INTLOCK (regs);
+
     /* Use the I-byte to set the SVC interruption code */
     regs->psw.intcode = i;
 
@@ -1729,10 +1732,19 @@ int     rc;                             /* Return code               */
     if ( ECMODE(&regs->psw) )
 #endif
     {
+#if 0
+        U32 svcint = ((U32)0 << 24)     | /* psa->svcint[0] */
+            ((U32)REAL_ILC(regs) << 16) | /* psa->svcint[1] */
+            ((U32)0 << 8)               | /* psa->svcint[2] */
+            ((U32)i & 0xFF);              /* psa->svcint[3] */
+
+        STORE_FW( &psa->svcint, svcint );
+#else
         psa->svcint[0] = 0;
         psa->svcint[1] = REAL_ILC(regs);
         psa->svcint[2] = 0;
         psa->svcint[3] = i;
+#endif
     }
 
     /* Store current PSW at PSA+X'20' */
@@ -1740,11 +1752,15 @@ int     rc;                             /* Return code               */
 
     /* Load new PSW from PSA+X'60' */
     if ( (rc = ARCH_DEP(load_psw) ( regs, psa->svcnew ) ) )
+    {
+        RELEASE_INTLOCK (regs);
         regs->program_interrupt (regs, rc);
+    }
 
     /* Perform serialization and checkpoint synchronization */
     PERFORM_SERIALIZATION (regs);
     PERFORM_CHKPT_SYNC (regs);
+    RELEASE_INTLOCK (regs);
 
     RETURN_INTCHECK(regs);
 
@@ -1780,6 +1796,24 @@ BYTE    old;                            /* Old value                 */
             /* Get old value */
             old = *main2;
 
+            /*
+             * #RACE: TSAN also catches the issue below! Leaving this comment in
+             * to serve as an example.
+             * 
+             * Line numbers omitted:
+             *  Read of size 1 at 0x7f028de13188 by thread T3:
+             *    #0 z900_test_and_set $(BUILD_DIR)/../general2.c // old = *main2;
+             *    #1 z900_run_cpu $(BUILD_DIR)/../cpu.c
+             *    #2 cpu_thread $(BUILD_DIR)/../cpu.c
+             *    #3 hthread_func $(BUILD_DIR)/../hthreads.c
+             *
+             *  Previous atomic write of size 1 at 0x7f028de13188 by thread T7:
+             *    #0 cmpxchg1_C11 $(BUILD_DIR)/../machdep.h // while (cmpxchg1( &old, 255, main2 ));
+             *    #1 z900_test_and_set $(BUILD_DIR)/../general2.c
+             *    #2 z900_run_cpu $(BUILD_DIR)/../cpu.c
+             *    #3 cpu_thread $(BUILD_DIR)/../cpu.c
+             *    #4 hthread_func $(BUILD_DIR)/../hthreads.c
+             */
             /* Attempt to exchange the values */
             /*  The WHILE statement that follows could lead to a        */
             /*  TS-style lock release never being noticed, because      */

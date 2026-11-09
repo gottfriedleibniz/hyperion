@@ -178,8 +178,45 @@ void ARCH_DEP( set_guest_aea_mode )( REGS* regs )
 /*-------------------------------------------------------------------*/
 void ARCH_DEP( do_purge_tlb )( REGS* regs )
 {
+    /*
+     * #RACE: Racing around AIA invalidation. Requires validation.
+     * 
+     * Line numbers omitted:
+     *  Read of size 8 at 0x72c800078208 by thread T7 (mutexes: write M0):
+     *    #0 z900_do_purge_tlb $(BUILD_DIR)/../dat.c // INVALIDATE_AIA( regs );
+     *    #1 z900_purge_tlb $(BUILD_DIR)/../dat.c
+     *    #2 z900_purge_tlb_all $(BUILD_DIR)/../dat.h
+     *    #3 z900_compare_and_swap_and_purge_instruction $(BUILD_DIR)/../control.c
+     *    #4 z900_compare_and_swap_and_purge $(BUILD_DIR)/../control.c
+     *    #5 z900_run_cpu $(BUILD_DIR)/../cpu.c
+     *
+     *  Previous write of size 8 at 0x72c800078208 by thread T9:
+     *    #0 z900_SuccessfulBranch $(BUILD_DIR)/../cpu.c // "Branch target is in another page: point the PSW to the target"
+     *    #1 z900_branch_and_set_mode $(BUILD_DIR)/../general1.c
+     *    #2 z900_run_cpu $(BUILD_DIR)/../cpu.c
+     *    #3 cpu_thread $(BUILD_DIR)/../cpu.c
+     */
     INVALIDATE_AIA( regs );
 
+    /*
+     * #RACE: Less significant. Requires validation.
+     *
+     * Line numbers omitted:
+     *  Write of size 4 at 0x72c800082f70 by thread T6 (mutexes: write M0):
+     *    #0 z900_do_purge_tlb $(BUILD_DIR)/../dat.c // ++regs->tlbID
+     *    #1 z900_purge_tlb $(BUILD_DIR)/../dat.c
+     *    #2 z900_purge_tlb_all $(BUILD_DIR)/../dat.h
+     *    #3 z900_compare_and_swap_and_purge_instruction $(BUILD_DIR)/../control.c
+     *    #4 z900_compare_and_swap_and_purge $(BUILD_DIR)/../control.c
+     *    #5 z900_run_cpu $(BUILD_DIR)/../cpu.c
+     *    #6 cpu_thread $(BUILD_DIR)/../cpu.c
+     *
+     *  Previous read of size 4 at 0x72c800082f70 by thread T9:
+     *    #0 z900_maddr_l $(BUILD_DIR)/../dat.h // ((addr & TLBID_PAGEMASK) | regs->tlbID)
+     *    #1 z900_or_immediate $(BUILD_DIR)/../general2.c
+     *    #2 z900_run_cpu $(BUILD_DIR)/../cpu.c
+     *    #3 cpu_thread $(BUILD_DIR)/../cpu.c
+     */
     if (((++regs->tlbID) & TLBID_BYTEMASK) == 0)
     {
         memset( &regs->tlb.vaddr, 0, TLBN * sizeof( DW ));
@@ -1898,6 +1935,45 @@ void ARCH_DEP( do_purge_tlbe )( REGS* regs, REGS* host_regs, U64 pfra )
 {
 int  i;
 
+    /*
+     * #RACE: Racing around AIA invalidation. Requires validation.
+     *
+     * Line numbers omitted:
+     *  Read of size 8 at 0x72c800060068 by thread T3 (mutexes: write M0):
+     *    #0 z900_do_purge_tlbe $(BUILD_DIR)/../dat.c
+     *    #1 z900_purge_tlbe $(BUILD_DIR)/../dat.c
+     *    #2 z900_purge_tlbe_all $(BUILD_DIR)/../dat.h
+     *    #3 z900_invalidate_pte $(BUILD_DIR)/../dat.c
+     *    #4 z900_invalidate_page_table_entry $(BUILD_DIR)/../control.c
+     *    #5 z900_run_cpu $(BUILD_DIR)/../cpu.c
+     *
+     *  Previous write of size 8 at 0x72c800018208 by thread T5:
+     *    #0 z900_instfetch $(BUILD_DIR)/../vstore.h // All fields in: "Instr addr now known to be valid so reset instinvalid flag" scope
+     *    #1 z900_run_cpu $(BUILD_DIR)/../cpu.c
+     *
+     * Also:
+     *  Previous write of size 8 at 0x72c800018090 by thread T5:
+     *    #0 z900_set_addressing_mode_31 $(BUILD_DIR)/../esame.c // regs->psw.AMASK = AMASK31;
+     *    #1 z900_run_cpu $(BUILD_DIR)/../cpu.c
+     *    #2 cpu_thread $(BUILD_DIR)/../cpu.c
+     *    #3 hthread_func $(BUILD_DIR)/../hthreads.c
+     *
+     * Also:
+     *  Previous write of size 8 at 0x72c800060068 by thread T8:
+     *    #0 z900_test_under_mask $(BUILD_DIR)/../general2.c // SI( ... ) -> INST_UPDATE_PSW( ... ) -> (_regs)->ip += (_len);
+     *    #1 z900_run_cpu $(BUILD_DIR)/../cpu.c
+     *
+     * Also (generic example for z/Arch S format):
+     *  Previous write of size 8 at 0x72c800018068 by thread T5:
+     *    #0 z900_and_character $(BUILD_DIR)/../general1.c // INST_UPDATE_PSW -> INST_UPDATE_PSW( ... ) -> (_regs)->ip += (_len);
+     *    #1 z900_run_cpu $(BUILD_DIR)/../cpu.c
+     *
+     * Also:
+     *  Previous write of size 8 at 0x72c800078208 by thread T9:
+     *    #0 z900_SuccessfulBranch $(BUILD_DIR)/../cpu.c // "Branch target is in another page: point the PSW to the target"
+     *    #1 z900_branch_and_set_mode $(BUILD_DIR)/../general1.c
+     *    #2 z900_run_cpu $(BUILD_DIR)/../cpu.c
+     */
     INVALIDATE_AIA( regs );
 
     for (i=0; i < TLBN; i++)
@@ -2480,7 +2556,8 @@ int     ix = TLBIX(addr);               /* TLB index                 */
     if (likely( acctype & ACC_READ ))
     {
         /* Program check if fetch protected location */
-        if (unlikely(ARCH_DEP(is_fetch_protected) (addr, *regs->dat.storkey, akey, regs)))
+        BYTE skey = LOAD_SKEY(regs->dat.storkey);
+        if (unlikely(ARCH_DEP(is_fetch_protected) (addr, skey, akey, regs)))
         {
             if (SIE_MODE(regs)) HOSTREGS->dat.protect = 0;
             goto vabs_prot_excp;
@@ -2499,7 +2576,8 @@ int     ix = TLBIX(addr);               /* TLB index                 */
     else /* (acctype & (ACC_WRITE | ACC_CHECK)) */
     {
         /* Program check if store protected location */
-        if (unlikely(ARCH_DEP(is_store_protected) (addr, *regs->dat.storkey, akey, regs)))
+        BYTE skey = LOAD_SKEY(regs->dat.storkey);
+        if (unlikely(ARCH_DEP(is_store_protected) (addr, skey, akey, regs)))
         {
             if (SIE_MODE(regs)) HOSTREGS->dat.protect = 0;
             goto vabs_prot_excp;

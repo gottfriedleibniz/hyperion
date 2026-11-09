@@ -1317,6 +1317,9 @@ bool    intercept;                      /* False for virtual pgmint  */
         int pgmintloop = 0;
         int detect_pgmintloop = FACILITY_ENABLED( HERC_DETECT_PGMINTLOOP, realregs );
 
+        /* Obtain the interrupt lock for load_psw and cpustate */
+        OBTAIN_INTLOCK( realregs );
+
         /* Store current PSW at PSA+X'28' or PSA+X'150' for ESAME */
         ARCH_DEP( store_psw )( realregs, psa->pgmold );
 
@@ -1336,6 +1339,8 @@ bool    intercept;                      /* False for virtual pgmint  */
 #if defined( _FEATURE_SIE )
             if (SIE_MODE( realregs ))
             {
+                RELEASE_INTLOCK( realregs );
+
                 PTT_PGM( "*PGM *lpsw", code, 0, 0 );
                 PTT_PGM( "PGM progjmp", pcode, 0, 0 );
                 longjmp( realregs->progjmp, pcode );
@@ -1375,13 +1380,10 @@ bool    intercept;                      /* False for virtual pgmint  */
             WRMSG( HHC00803, "I", PTYPSTR( realregs->cpuad ),
                 realregs->cpuad, buf );
 
-            OBTAIN_INTLOCK( realregs );
-            {
-                realregs->cpustate = CPUSTATE_STOPPING;
-                ON_IC_INTERRUPT( realregs );
-            }
-            RELEASE_INTLOCK( realregs );
+            realregs->cpustate = CPUSTATE_STOPPING;
+            ON_IC_INTERRUPT( realregs );
         }
+        RELEASE_INTLOCK( realregs );
 
         /*-----------------------------------------------------------*/
         /*  Normal non-intercepted program interrupt: return to      */
@@ -2004,8 +2006,8 @@ int     aswitch;
         oldregs = malloc_aligned(sizeof(REGS), 4096);
         if (oldregs)
         {
-            memcpy(oldregs, regs, sizeof(REGS));
             obtain_lock(&sysblk.cpulock[cpu]);
+            memcpy(oldregs, regs, sizeof(REGS));
         }
         else
         {

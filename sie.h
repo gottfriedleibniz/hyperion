@@ -279,7 +279,7 @@ inline bool ARCH_DEP( LockUnlockSCALock )( REGS* regs, bool lock, bool trylock )
     {
         // Atomically 'and' the lock bit off
         new = (BYTE)(~SCAIPLKH);
-        (void) H_ATOMIC_OP( &scabk->scaiplk0, new, and, And, & );
+        (void) atomic_and_U8( &scabk->scaiplk0, new );
     }
 
     // Set Reference and Change bit for the byte we just modified
@@ -337,7 +337,7 @@ inline void ARCH_DEP( LockUnlockRCPLock )( REGS* regs, RCPTE* rcpte, bool lock )
     {
         // Atomically 'and' the lock bit off
         new = (BYTE)(~RCPLOCK);
-        (void) H_ATOMIC_OP( &rcpte->rcpbyte, new, and, And, & );
+        (void) atomic_and_U8( &rcpte->rcpbyte, new );
     }
 
     // Set Reference and Change bit for the byte we just modified
@@ -387,7 +387,7 @@ inline void ARCH_DEP( LockUnlockSKALock )( REGS* regs, bool lock )
     {
         // Atomically 'and' the lock bit off
         new = ~SIE_RCPO0_SKAIP;
-        (void) H_ATOMIC_OP( &regs->siebk->SIE_RCPO0, new, and, And, & );
+        (void) atomic_and_U8( &regs->siebk->SIE_RCPO0, new );
     }
 
     // Set Reference and Change bit for the byte we just modified

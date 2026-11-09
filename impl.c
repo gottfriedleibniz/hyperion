@@ -564,6 +564,32 @@ static void* watchdog_thread( void* arg )
 
         for (cpu=0; cpu < sysblk.maxcpu; cpu++)
         {
+            /*
+             * #RACE: It should be noted that this loop is executing without
+             * ownership of the interrupt lock. Therefore, it is possible for the
+             * CPU State to change **after** this check.
+             *
+             * Line numbers omitted:
+             *   Write of size 1 at 0x72c800018060 by main thread (mutexes: write M0):
+             *     #0 deconfigure_cpu ../config.c // sysblk.regs[ target_cpu ]->cpustate = CPUSTATE_STOPPING;
+             *     #1 configure_numcpu_intlock_held ../config.c
+             *     #2 configure_numcpu ../config.c
+             *     #3 numcpu_cmd ../hsccmd.c
+             *     #4 CallHercCmd ../cmdtab.c
+             *     #5 DoCallHercCmdLine ../cmdtab.c
+             *     #6 HercCmdLine ../cmdtab.c
+             *     #7 the_real_panel_command ../cmdtab.c
+             *     #8 <null> <null> (hdt1052c.so+0x1005)
+             *     #9 process_script_file ../script.c
+             *     #10 process_script_file ../script.c
+             *     #11 process_rc_file ../impl.c
+             *     #12 impl ../impl.c
+             *     #13 main ../bootstrap.c
+             * 
+             *   Previous read of size 1 at 0x72c800018060 by thread T2:
+             *     #0 watchdog_thread ../impl.c // || regs->cpustate != CPUSTATE_STARTED
+             *     #1 hthread_func ../hthreads.c
+             */
             /* We're only interested in ONLINE and STARTED CPUs */
             if (0
                 || !IS_CPU_ONLINE( cpu )
@@ -1069,6 +1095,7 @@ int     rc;
 
     /* Initialize Hercules Threading package */
     hthreads_internal_init();
+    symbols_init();
 
     /* Initialize 'hostinfo' BEFORE display_version is called */
     init_hostinfo( &hostinfo );
