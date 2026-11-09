@@ -149,7 +149,11 @@
  *
  *  On failure, attempts to typedef an array type of negative size
  *  resulting in a compiler error message that might look something
- *  like the following:
+ *  like the following if compiling with a C11 enabled compiler:
+ *
+ *      demo.c:32: error: static assertion failed due to requirement '...': demo_c_32
+ *
+ *  or with an older standard-enabled:
  *
  *      demo.c:32: error: size of array 'assertion_failed_demo_c_32' is negative
  *
@@ -172,10 +176,14 @@
  *                      file where the CASSERT statement appears.
  */
 #if !defined( CASSERT )
-#define       CASSERT( cond, file )     _CASSERT_LINE( cond, __LINE__, file )
-#define      _CASSERT_PASTE( a, b )     a ## b
-#define      _CASSERT_LINE( cond, line, file ) \
-typedef char _CASSERT_PASTE( assertion_failed_ ## file, line )[ 2 * !!(cond) - 1 ]
+  #if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L /* >= C11 */
+    #define       CASSERT(cond, file)       _Static_assert((cond), #file)
+  #else
+    #define       CASSERT( cond, file )     _CASSERT_LINE( cond, __LINE__, file )
+    #define      _CASSERT_PASTE( a, b )     a ## b
+    #define      _CASSERT_LINE( cond, line, file ) \
+    typedef char _CASSERT_PASTE( assertion_failed_ ## file, line )[ 2 * !!(cond) - 1 ]
+  #endif
 #endif
 
 /*-------------------------------------------------------------------*/
