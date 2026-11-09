@@ -837,18 +837,21 @@ do { \
 /* which endianness Hercules was built for).                         */
 /*-------------------------------------------------------------------*/
 
+#define READ_BYTE( _stor )          fetch_byte( _stor )
 #define READ_HW( _stor )            fetch_hw( _stor )
 #define READ_FW( _stor )            fetch_fw( _stor )
 #define READ_F3( _stor )            fetch_f3( _stor )
 #define READ_DW( _stor )            fetch_dw( _stor )
 #define READ_QW( _stor )            fetch_qw( _stor )
 
+#define STORE_BYTE( _stor, _val )   store_byte( _stor, _val )
 #define STORE_HW( _stor, _val )     store_hw( _stor, _val )
 #define STORE_FW( _stor, _val )     store_fw( _stor, _val )
 #define STORE_F3( _stor, _val )     store_f3( _stor, _val )
 #define STORE_DW( _stor, _val )     store_dw( _stor, _val )
 #define STORE_QW( _stor, _val )     store_qw( _stor, _val )
 
+#define FETCH_BYTE( _val, _stor )   (_val) = READ_BYTE( _stor )
 #define FETCH_HW( _val, _stor )     (_val) = READ_HW( _stor )
 #define FETCH_FW( _val, _stor )     (_val) = READ_FW( _stor )
 #define FETCH_F3( _val, _stor )     (_val) = READ_F3( _stor )
