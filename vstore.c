@@ -156,9 +156,9 @@ extern inline void ARCH_DEP( move_chars_rl )( VADR addr1, int arn1, BYTE key1,
 /*  given feature was defined for *ANY* of the build architectures.  */
 /*-------------------------------------------------------------------*/
 
-extern inline void concpy    ( REGS* regs, void* d, void* s, int n );
+extern inline void concpy    ( void* d, const void* s, int n );
 #if defined( _FEATURE_061_MISC_INSTR_EXT_FACILITY_3 )
-extern inline void concpy_rl ( REGS* regs, void* d, void* s, int n );
+extern inline void concpy_rl ( void* d, const void* s, int n );
 #endif
 
 #endif // !defined(_GEN_ARCH)
