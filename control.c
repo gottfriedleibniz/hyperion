@@ -7287,7 +7287,7 @@ static BYTE hexebcdic[16] = { 0xF0,0xF1,0xF2,0xF3,0xF4,0xF5,0xF6,0xF7,
             case 1:
                 /* Basic-machine Current CPU */
                 sysib121 = (SYSIB121*)(m);
-                memset( sysib121, 0, MAX( sizeof( SYSIB121 ), 64*4 ));
+                MAINSTOR_MSET( sysib121, 0, MAX( sizeof( SYSIB121 ), 64*4 ));
                 bld_sysib_sequence( sysib121->seqc );
                 get_plant( sysib121->plant );
                 STORE_HW( sysib121->cpuad, regs->cpuad );
@@ -7297,7 +7297,7 @@ static BYTE hexebcdic[16] = { 0xF0,0xF1,0xF2,0xF3,0xF4,0xF5,0xF6,0xF7,
             case 2:
                 /* Basic-machine All CPUs */
                 sysib122 = (SYSIB122*)(m);
-                memset( sysib122, 0, MAX( sizeof( SYSIB122 ), 64*4 ));
+                MAINSTOR_MSET( sysib122, 0, MAX( sizeof( SYSIB122 ), 64*4 ));
                 stsi_capability( stsicap_read );
                 if (0)  /* Change -0- to the proper test when Hercules supports alternate CPUs */
                 {
@@ -7407,7 +7407,7 @@ static BYTE hexebcdic[16] = { 0xF0,0xF1,0xF2,0xF3,0xF4,0xF5,0xF6,0xF7,
         m = MADDR( effective_addr2, b2, regs, ACCTYPE_WRITE, regs->psw.pkey );
 
         sysib322 = (SYSIB322 *)(m);
-        memset( sysib322, 0, sizeof( SYSIB322 ));
+        MAINSTOR_MSET( sysib322, 0, sizeof( SYSIB322 ));
         sysib322->dbct = 1;
         sysibvmdb = (SYSIBVMDB *)&sysib322->vmdb[0];
         STORE_HW( sysibvmdb->totcpu,  MAX_CPU_ENGS );
@@ -7444,7 +7444,7 @@ static BYTE hexebcdic[16] = { 0xF0,0xF1,0xF2,0xF3,0xF4,0xF5,0xF6,0xF7,
             case 2:
                 /* Topology information of current configuration */
                 sysib1512 = (SYSIB1512 *)(m);
-                memset( sysib1512, 0, sizeof( SYSIB1512 ));
+                MAINSTOR_MSET( sysib1512, 0, sizeof( SYSIB1512 ));
 
                 sysib1512->mnest = 2;
                 sysib1512->mag[4] = 1;
@@ -7456,7 +7456,7 @@ static BYTE hexebcdic[16] = { 0xF0,0xF1,0xF2,0xF3,0xF4,0xF5,0xF6,0xF7,
 
                 /* Build a container TLE */
                 tlecntnr = (TLECNTNR *)tle;
-                memset( tlecntnr, 0x00, sizeof( TLECNTNR ));
+                MAINSTOR_MSET( tlecntnr, 0x00, sizeof( TLECNTNR ));
                 tlecntnr->nl = 1;
                 tlecntnr->cntnrid = cntnrid;
                 tle += sizeof( TLECNTNR );
@@ -7479,7 +7479,7 @@ static BYTE hexebcdic[16] = { 0xF0,0xF1,0xF2,0xF3,0xF4,0xF5,0xF6,0xF7,
                             /* Initialize new TLE for this type */
                             if (!cpumask)
                             {
-                                memset( tlecpu, 0, sizeof( TLECPU ));
+                                MAINSTOR_MSET( tlecpu, 0, sizeof( TLECPU ));
                                 tlecpu->nl = 0;
                                 if (sysblk.topology == TOPOLOGY_VERT) {
                                     tlecpu->flags = CPUTLE_FLAG_VERTMED;

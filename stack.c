@@ -280,7 +280,7 @@ int  i;
     }
 
     /* bits 0-63 of PSW at offset +16 */
-    memcpy(regs->mainstor + tsaa1, trap_psw, 8);
+    MAINSTOR_MCOPY(regs->mainstor + tsaa1, trap_psw, 8);
     tsaa1 += 8;
     if((tsaa1 & PAGEFRAME_BYTEMASK) == 0)
     {
@@ -292,12 +292,12 @@ int  i;
     /* bits 64-127 of PSW at offset +24 */
     if(tcba0 & TCB0_P)
     {
-        memcpy(regs->mainstor + tsaa1, trap_psw + 8, 8);
+        MAINSTOR_MCOPY(regs->mainstor + tsaa1, trap_psw + 8, 8);
     }
     else
     {
 #endif /*defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)*/
-        memset(regs->mainstor + tsaa1, 0, 8);
+        MAINSTOR_MSET(regs->mainstor + tsaa1, 0, 8);
 #if defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)
     }
 #endif /*defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)*/
@@ -403,7 +403,7 @@ int     i;                              /* Array subscript           */
 
     /* Fetch the entry descriptor of the current entry */
     absold = ARCH_DEP(abs_stack_addr) (lsea, regs, ACCTYPE_READ);
-    memcpy (&lsed, regs->mainstor+absold, sizeof(LSED));
+    MAINSTOR_MCOPY (&lsed, regs->mainstor+absold, sizeof(LSED));
     lseaold = lsea;
 
     DBGMSG( "stack: Current stack entry at " F_VADR "\n", lsea );
@@ -439,7 +439,7 @@ int     i;                              /* Array subscript           */
 
         /* Fetch the entry descriptor of the next section's header */
         absold = ARCH_DEP(abs_stack_addr) (fsha, regs, ACCTYPE_READ);
-        memcpy (&lsed, regs->mainstor+absold, sizeof(LSED));
+        MAINSTOR_MCOPY (&lsed, regs->mainstor+absold, sizeof(LSED));
         lseaold = fsha;
 
         DBGMSG("stack: et=%2.2X si=%2.2X rfs=%2.2X%2.2X "
@@ -568,7 +568,7 @@ int     i;                              /* Array subscript           */
 
     /* Store bits 0-63 of the current PSW in bytes 136-143 */
     ARCH_DEP(store_psw) (regs, currpsw);
-    memcpy (regs->mainstor + abs, currpsw, 8);
+    MAINSTOR_MCOPY (regs->mainstor + abs, currpsw, 8);
 
 #if defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)
     /* For ESAME, use the addressing mode bits from the return
@@ -649,7 +649,7 @@ int     i;                              /* Array subscript           */
         abs = abs2;
 
     /* Store zeroes in bytes 152-159 */
-    memset (regs->mainstor+abs, 0, 8);
+    MAINSTOR_MSET (regs->mainstor+abs, 0, 8);
 
     /* Update virtual and absolute addresses to point to byte 160 */
     lsea += 8;
@@ -662,7 +662,7 @@ int     i;                              /* Array subscript           */
 
 #if defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)
     /* For ESAME, store zeroes in bytes 160-167 */
-    memset (regs->mainstor+abs, 0, 8);
+    MAINSTOR_MSET (regs->mainstor+abs, 0, 8);
 
     /* Update virtual and absolute addresses to point to byte 168 */
     lsea += 8;
@@ -752,7 +752,7 @@ int     i;                              /* Array subscript           */
     /* Store the linkage stack entry descriptor in the last eight
        bytes of the new state entry (bytes 160-167 for ESA/390,
        or bytes 288-295 for ESAME) */
-    memcpy (regs->mainstor+abs, &lsed2, sizeof(LSED));
+    MAINSTOR_MCOPY (regs->mainstor+abs, &lsed2, sizeof(LSED));
 
     DBGMSG( "stack: New stack entry at " F_VADR "\n", lsea );
     DBGMSG( "stack: et=%2.2X si=%2.2X rfs=%2.2X%2.2X nes=%2.2X%2.2X\n",
@@ -762,7 +762,7 @@ int     i;                              /* Array subscript           */
     /* [5.12.3.3] Update the current entry */
     STORE_HW(lsed.nes, LSSE_SIZE);
     absold = ARCH_DEP(abs_stack_addr) (lseaold, regs, ACCTYPE_WRITE);
-    memcpy (regs->mainstor+absold, &lsed, sizeof(LSED));
+    MAINSTOR_MCOPY (regs->mainstor+absold, &lsed, sizeof(LSED));
 
     DBGMSG( "stack: Previous stack entry updated at A:" F_RADR "\n",
             absold );
@@ -823,7 +823,7 @@ VADR    bsea;                           /* Backward stack entry addr */
 
     /* Fetch the entry descriptor of the current entry */
     abs = ARCH_DEP(abs_stack_addr) (lsea, regs, ACCTYPE_READ);
-    memcpy (lsedptr, regs->mainstor+abs, sizeof(LSED));
+    MAINSTOR_MCOPY (lsedptr, regs->mainstor+abs, sizeof(LSED));
 
     DBGMSG( "stack: Stack entry located at " F_VADR "\n", lsea );
     DBGMSG( "stack: et=%2.2X si=%2.2X rfs=%2.2X%2.2X nes=%2.2X%2.2X\n",
@@ -859,7 +859,7 @@ VADR    bsea;                           /* Backward stack entry addr */
 
         /* Fetch the entry descriptor of the designated entry */
         abs = ARCH_DEP(abs_stack_addr) (lsea, regs, ACCTYPE_READ);
-        memcpy (lsedptr, regs->mainstor+abs, sizeof(LSED));
+        MAINSTOR_MCOPY (lsedptr, regs->mainstor+abs, sizeof(LSED));
 
         DBGMSG("stack: et=%2.2X si=%2.2X rfs=%2.2X%2.2X "
                 "nes=%2.2X%2.2X\n",
@@ -1300,7 +1300,7 @@ VADR    lsep;                           /* Virtual addr of entry desc.
             lsea, abs);
 
     /* Copy PSW bits 0-63 from bytes 136-143 of the stack entry */
-    memcpy (newpsw, regs->mainstor + abs, 8);
+    MAINSTOR_MCOPY (newpsw, regs->mainstor + abs, 8);
 
 #if defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)
     /* For ESAME, advance to byte 168 of the stack entry */
@@ -1313,7 +1313,7 @@ VADR    lsep;                           /* Virtual addr of entry desc.
         abs = ARCH_DEP(abs_stack_addr) (lsea, regs, ACCTYPE_READ);
 
     /* Copy ESAME PSW bits 64-127 from bytes 168-175 */
-    memcpy (newpsw + 8, regs->mainstor + abs, 8);
+    MAINSTOR_MCOPY (newpsw + 8, regs->mainstor + abs, 8);
 
     /* Update virtual and absolute addresses to point to byte 176 */
     lsea += 8;
