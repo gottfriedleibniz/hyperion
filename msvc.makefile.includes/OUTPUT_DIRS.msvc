@@ -24,6 +24,8 @@ DEBUG_PREFIX = debug.
 
 !IF ("$(CPU)" == "i386")
 ARCH_PREFIX = dllmod.
+!ELSEIF ("$(ABI)"  != "")
+ARCH_PREFIX = $(ABI).
 !ELSE
 ARCH_PREFIX = $(CPU).
 !ENDIF

@@ -15,11 +15,16 @@
 
 APPVER_VISTA = 6.0              # Windows Vista
 APPVER_WIN7  = 6.1              # Windows 7
+APPVER_WIN8  = 6.2              # Windows 8
 
 
 # Now use those constants to set our Windows build target.
 
+!IF "$(CPU)" == "ARM64" || "$(ABI)" == "ARM64EC"
+APPVER = $(APPVER_WIN8)           # Minimum Windows Platform
+!ELSE
 APPVER = $(APPVER_VISTA)          # Minimum Windows Platform
+!ENDIF
 TARGETOS = WINNT                  # ALWAYS! (Win9x is dead!)
 
 
@@ -33,6 +38,11 @@ _WIN32_IE    = 0x0700           # Internet Explorer 7.0
 !IF "$(APPVER)" == "$(APPVER_WIN7)"
 NMAKE_WINVER = 0x0601           # (same thing as a hex value)
 _WIN32_IE    = 0x0800           # Internet Explorer 8.0
+!ENDIF
+
+!IF "$(APPVER)" == "$(APPVER_WIN8)"
+NMAKE_WINVER = 0x0602           # (same thing as a hex value)
+_WIN32_IE    = 0x0A00           # Internet Explorer 10.0
 !ENDIF
 
 #-------------------------------------------------------------
