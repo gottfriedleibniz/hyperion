@@ -422,7 +422,7 @@ DEVBLK* dev;                            /* -> device block           */
     if ((regs->psw.cc = resume_subchan( regs, dev )) != 0)
         PTIO( ERR, "*RSCH" );
 
-    regs->siocount++;
+    atomic_add_U32( &regs->siocount, 1u );
     UPDATE_SYSBLK_SIOSCOUNT( 1 );
 }
 
@@ -623,7 +623,7 @@ ORB     orb;                            /* Operation request block   */
     /* Start the channel program and set the condition code */
     regs->psw.cc = ARCH_DEP( startio )( regs, dev, &orb );
 
-    regs->siocount++;
+    atomic_add_U32( &regs->siocount, 1u );
     UPDATE_SYSBLK_SIOSCOUNT( 1 );
 
     /* Set the last path used mask */
@@ -1173,7 +1173,7 @@ BYTE    ccwkey;                         /* Bits 0-3=key, 4=suspend   */
     if (regs->psw.cc > 1)
         PTIO(ERR,"*SIO");
 
-    regs->siocount++;
+    atomic_add_U32( &regs->siocount, 1u );
     UPDATE_SYSBLK_SIOSCOUNT( 1 );
 }
 
