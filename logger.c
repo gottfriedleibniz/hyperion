@@ -446,21 +446,17 @@ static void* logger_thread( void* arg )
                 if (nLeft)
                     logger_logfile_write( pLeft, nLeft );
             }
-        }
-        release_lock( &logger_lock );
 
-        /* Increment buffer index to next available position */
-        logger_currmsg += bytes_read;
+            /* Increment buffer index to next available position */
+            logger_currmsg += bytes_read;
 
-        if (logger_currmsg >= logger_bufsize)
-        {
-            logger_currmsg = 0;
-            logger_wrapped = 1;
-        }
+            if (logger_currmsg >= logger_bufsize)
+            {
+                logger_currmsg = 0;
+                logger_wrapped = 1;
+            }
 
-        /* Notify all interested parties new log data is available */
-        obtain_lock( &logger_lock );
-        {
+            /* Notify all interested parties new log data is available */
             broadcast_condition( &logger_cond );
         }
         release_lock( &logger_lock );
