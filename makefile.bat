@@ -668,8 +668,7 @@
   if /i "%targ_arch%"  == "amd64"       set "CPU=AMD64"
   if /i "%targ_arch%"  == "amd64"       set "_WIN64=1"
 
-  if /i "%targ_arch%"  == "arm64"       set "CPU=AMD64"
-  if /i "%targ_arch%"  == "arm64"       set "ABI=ARM64EC"
+  if /i "%targ_arch%"  == "arm64"       set "CPU=ARM64"
   if /i "%targ_arch%"  == "arm64"       set "_WIN64=1"
   if /i "%targ_arch%"  == "arm64" (
     @REM Disable ARM64 compilation for VS2017 and earlier

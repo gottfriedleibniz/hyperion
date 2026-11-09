@@ -60,11 +60,19 @@ PCRE_DIR = $(PCRE_DIR)\ia64
 !ENDIF
 
 !IFDEF PCRE_DIR
+!IF "$(CPU)" == "ARM64"
+PCRE_INCNAME  = pcre2posix.h
+PCRE_LIBNAME1 = pcre2-8.lib
+PCRE_LIBNAME2 = pcre2-posix.lib
+PCRE_DLLNAME1 = pcre2-8.dll
+PCRE_DLLNAME2 = pcre2-posix.dll
+!ELSE
 PCRE_INCNAME  = pcreposix.h
 PCRE_LIBNAME1 = pcre.lib
 PCRE_LIBNAME2 = pcreposix.lib
 PCRE_DLLNAME1 = pcre3.dll
 PCRE_DLLNAME2 = pcreposix3.dll
+!ENDIF
 !IF EXIST("$(PCRE_DIR)\include")
 PCRE_INCDIR   = $(PCRE_DIR)\include
 !ELSEIF EXIST("$(PCRE_DIR)\inc")
