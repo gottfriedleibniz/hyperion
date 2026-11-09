@@ -3253,7 +3253,7 @@ U64     ccw;                            /* First 8-bytes of CCW      */
     ARCH_DEP( or_dev_storage_key )( dev, ccwaddr, STORKEY_REF );
 
     /* Extract CCW opcode, flags, byte count, and data address */
-    FETCH_DW( ccw, dev->mainstor + ccwaddr );
+    FETCH_MAIN_DW( ccw, dev->mainstor + ccwaddr );
     
     if (ccwfmt == 0)
     {

@@ -1738,7 +1738,7 @@ int     rc;                             /* Return code               */
             ((U32)0 << 8)               | /* psa->svcint[2] */
             ((U32)i & 0xFF);              /* psa->svcint[3] */
 
-        STORE_FW( &psa->svcint, svcint );
+        STORE_MAIN_FW( &psa->svcint, svcint );
 #else
         psa->svcint[0] = 0;
         psa->svcint[1] = REAL_ILC(regs);
