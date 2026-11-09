@@ -826,12 +826,12 @@ do { \
  #define SWAP_OFF_T(o)  (sizeof(o) <= 4 ? SWAP32((U32)o) : SWAP64(o))
 
 /*-------------------------------------------------------------------*/
-/*             Emulated storage FETCH/STORE macros                   */
+/*             Guest storage FETCH/STORE macros                      */
 /*-------------------------------------------------------------------*/
-/* The following macros fetch a value from emulated storage          */
+/* The following macros fetch a value from emulated guest storage    */
 /* into a local work variable or store a local work variable into    */
-/* emulated storage, performing a CONDITIONAL swap in between        */
-/* (via the "CSWAPxx()" macro) to ensure the value placed into       */
+/* emulated guest storage, performing a CONDITIONAL swap in between  */
+/* (via the "CSWAPxx()" macro) to ensure the value placed into guest */
 /* storage is always big endian or that the local work variable is   */
 /* always in the expected big or little endian format (depending on  */
 /* which endianness Hercules was built for).                         */
@@ -858,14 +858,63 @@ do { \
 #define FETCH_DW( _val, _stor )     (_val) = READ_DW( _stor )
 #define FETCH_QW( _val, _stor )     (_val) = READ_QW( _stor )
 
+/* #EXPERIMENTATION */
 /*-------------------------------------------------------------------*/
-/*             Main storage mem* macros                              */
+/*             Main storage FETCH/STORE macros                       */
+/*-------------------------------------------------------------------*/
+/* The following macros fetch a value from emulated storage          */
+/* into a local work variable or store a local work variable into    */
+/* emulated storage.                                                 */
 /*-------------------------------------------------------------------*/
 
 #define MAINSTOR_MCOPY(_dest, _src, _len)    memcpy( (_dest), (_src), (_len) )
 #define MAINSTOR_MCOPY_RL(_dest, _src, _len) memcpy_backwards( (_dest), (_src), (_len) )
 #define MAINSTOR_MSET(_dest, _value, _len)   memset( (_dest), (_value), (_len) )
 #define MAINSTOR_MCMP(_ptr1, _ptr2, _num)    memcmp( (_ptr1), (_ptr2), (_num) )
+
+#define READ_MAIN_BYTE( _stor )              READ_BYTE( _stor )
+#define READ_MAIN_HW( _stor )                READ_HW( _stor )
+#define READ_MAIN_FW( _stor )                READ_FW( _stor )
+#define READ_MAIN_DW( _stor )                READ_DW( _stor )
+#define READ_MAIN_QW( _stor )                READ_QW( _stor )
+
+#define STORE_MAIN_BYTE( _stor, _val)        STORE_BYTE( _stor, _val )
+#define STORE_MAIN_HW( _stor, _val)          STORE_HW( _stor, _val )
+#define STORE_MAIN_FW( _stor, _val)          STORE_FW( _stor, _val )
+#define STORE_MAIN_DW( _stor, _val)          STORE_DW( _stor, _val )
+#define STORE_MAIN_QW( _stor, _val )         STORE_QW( _stor, _val )
+
+/* Macros for reading/storing values from/to unaligned (packed) storage, */
+/* primarily to support z/Architecture's relaxed alignment model.        */
+
+#define READ_MAIN_HW_UL( _stor )             READ_HW( _stor )
+#define READ_MAIN_FW_UL( _stor )             READ_FW( _stor )
+#define READ_MAIN_DW_UL( _stor )             READ_DW( _stor )
+#define READ_MAIN_QW_UL( _stor )             READ_QW( _stor )
+
+#define STORE_MAIN_HW_UL( _stor, _val )      STORE_HW( _stor, _val )
+#define STORE_MAIN_FW_UL( _stor, _val )      STORE_FW( _stor, _val )
+#define STORE_MAIN_DW_UL( _stor, _val )      STORE_DW( _stor, _val )
+#define STORE_MAIN_QW_UL( _stor, _val )      STORE_QW( _stor, _val )
+
+/* Macros for performing compound assignment operations, primarily       */
+/* to abstract the underlying read-modify-write semantics.               */
+
+#define OR_MAIN_BYTE( _stor, _val )          (*(_stor) |= (_val))
+#define AND_MAIN_BYTE( _stor, _val )         (*(_stor) &= (_val))
+#define XOR_MAIN_BYTE( _stor, _val )         (*(_stor) ^= (_val))
+
+/* FETCH */
+
+#define FETCH_MAIN_BYTE( _val, _stor )       (_val) = READ_MAIN_BYTE( _stor )
+#define FETCH_MAIN_HW( _val, _stor )         (_val) = READ_MAIN_HW( _stor )
+#define FETCH_MAIN_FW( _val, _stor )         (_val) = READ_MAIN_FW( _stor )
+#define FETCH_MAIN_DW( _val, _stor )         (_val) = READ_MAIN_DW( _stor )
+#define FETCH_MAIN_QW( _val, _stor )         (_val) = READ_MAIN_QW( _stor )
+
+#define FETCH_MAIN_HW_UL( _val, _stor )      (_val) = READ_MAIN_HW_UL( _stor )
+#define FETCH_MAIN_FW_UL( _val, _stor )      (_val) = READ_MAIN_FW_UL( _stor )
+#define FETCH_MAIN_DW_UL( _val, _stor )      (_val) = READ_MAIN_DW_UL( _stor )
 
 /*-------------------------------------------------------------------*/
 /*            CKD/CCKD header field FETCH/STORE macros               */

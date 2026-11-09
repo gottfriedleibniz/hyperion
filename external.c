@@ -84,13 +84,13 @@ int     rc;
     && code != EXT_BLOCKIO_INTERRUPT
 #endif /* defined(FEATURE_VM_BLOCKIO) */
     && code != EXT_EMERGENCY_SIGNAL_INTERRUPT)
-        STORE_HW(psa->extcpad,0);
+        STORE_MAIN_HW(psa->extcpad,0);
 
 #if defined(FEATURE_BCMODE)
     /* For ECMODE, store external interrupt code at PSA+X'86' */
     if ( ECMODE(&regs->psw) )
 #endif /*defined(FEATURE_BCMODE)*/
-        STORE_HW(psa->extint,code);
+        STORE_MAIN_HW(psa->extint,code);
 
     if ( !SIE_MODE(regs)
 #if defined(_FEATURE_EXPEDITED_SIE_SUBSET)
@@ -209,7 +209,7 @@ U16     servcode;      /* Service Signal or Block I/O Interrupt code */
 
         /* Store originating CPU address at PSA+X'84' */
         psa = (void*)(regs->mainstor + regs->PX);
-        STORE_HW(psa->extcpad,cpuad);
+        STORE_MAIN_HW(psa->extcpad,cpuad);
 
         /* Reset emergency signal pending flag if there are
            no other CPUs which generated emergency signal */
@@ -248,7 +248,7 @@ U16     servcode;      /* Service Signal or Block I/O Interrupt code */
 
         /* Store originating CPU address at PSA+X'84' */
         psa = (void*)(regs->mainstor + regs->PX);
-        STORE_HW(psa->extcpad,cpuad);
+        STORE_MAIN_HW(psa->extcpad,cpuad);
 
         /* Reset emergency signal pending flag if there are
            no other CPUs which generated emergency signal */
@@ -277,7 +277,7 @@ U16     servcode;      /* Service Signal or Block I/O Interrupt code */
 
         /* Store originating CPU address at PSA+X'84' */
         psa = (void*)(regs->mainstor + regs->PX);
-        STORE_HW(psa->extcpad,regs->extccpu);
+        STORE_MAIN_HW(psa->extcpad,regs->extccpu);
 
         /* Generate external call interrupt */
         ARCH_DEP(external_interrupt) (EXT_EXTERNAL_CALL_INTERRUPT, regs);
@@ -427,7 +427,7 @@ U16     servcode;      /* Service Signal or Block I/O Interrupt code */
                     sysblk.bioparm
                 );
 #endif
-                STORE_DW(regs->mainstor + servpadr,sysblk.bioparm);
+                STORE_MAIN_DW(regs->mainstor + servpadr,sysblk.bioparm);
                 psa = (void*)(regs->mainstor + regs->PX);
             }
             else
@@ -452,11 +452,11 @@ U16     servcode;      /* Service Signal or Block I/O Interrupt code */
 
                 /* Store Block I/O parameter at PSA+X'80' */
                 psa = (void*)(regs->mainstor + regs->PX);
-                STORE_FW(psa->extparm,(U32)sysblk.bioparm);
+                STORE_MAIN_FW(psa->extparm,(U32)sysblk.bioparm);
             }
 
             /* Store sub-interruption code and status at PSA+X'84' */
-            STORE_HW(psa->extcpad,(sysblk.biosubcd<<8)|sysblk.biostat);
+            STORE_MAIN_HW(psa->extcpad,(sysblk.biosubcd<<8)|sysblk.biostat);
 
             /* Reset interruption data */
             sysblk.bioparm  = 0;
@@ -488,7 +488,7 @@ U16     servcode;      /* Service Signal or Block I/O Interrupt code */
 
             /* Store service signal parameter at PSA+X'80' */
             psa = (void*)(regs->mainstor + regs->PX);
-            STORE_FW(psa->extparm,sysblk.servparm);
+            STORE_MAIN_FW(psa->extparm,sysblk.servparm);
 
         }  /* end switch(sysblk.servcode) */
         /* Reset service parameter */
@@ -523,7 +523,7 @@ U16     servcode;      /* Service Signal or Block I/O Interrupt code */
 
         /* Store service signal parameter at PSA+X'80' */
         psa = (void*)(regs->mainstor + regs->PX);
-        STORE_FW(psa->extparm,sysblk.servparm);
+        STORE_MAIN_FW(psa->extparm,sysblk.servparm);
 
         /* Reset service parameter */
         sysblk.servparm = 0;
@@ -578,27 +578,27 @@ PSA     *sspsa;                         /* -> Store status area      */
     sspsa = (void*)(ssreg->mainstor + aaddr);
 
     /* Store CPU timer in bytes 216-223 */
-    STORE_DW(sspsa->storeptmr, get_cpu_timer(ssreg));
+    STORE_MAIN_DW(sspsa->storeptmr, get_cpu_timer(ssreg));
 
     /* Store clock comparator in bytes 224-231 */
 #if defined( FEATURE_001_ZARCH_INSTALLED_FACILITY )
-    STORE_DW( sspsa->storeclkc, ssreg->clkc );
+    STORE_MAIN_DW( sspsa->storeclkc, ssreg->clkc );
 #else
-    STORE_DW( sspsa->storeclkc, ssreg->clkc << 8 );
+    STORE_MAIN_DW( sspsa->storeclkc, ssreg->clkc << 8 );
 #endif
 
     /* Store PSW in bytes 256-263 */
     ARCH_DEP(store_psw) (ssreg, sspsa->storepsw);
 
     /* Store prefix register in bytes 264-267 */
-    STORE_FW(sspsa->storepfx,ssreg->PX);
+    STORE_MAIN_FW(sspsa->storepfx,ssreg->PX);
 
 #if defined( FEATURE_001_ZARCH_INSTALLED_FACILITY )
     /* Store Floating Point Control Register */
-    STORE_FW(sspsa->storefpc,ssreg->fpc);
+    STORE_MAIN_FW(sspsa->storefpc,ssreg->fpc);
 
     /* Store TOD Programmable register */
-    STORE_FW(sspsa->storetpr,ssreg->todpr);
+    STORE_MAIN_FW(sspsa->storetpr,ssreg->todpr);
 #endif
 
 #if defined( _900 )
@@ -613,29 +613,29 @@ PSA     *sspsa;                         /* -> Store status area      */
 
     /* Store access registers in bytes 288-351 */
     for (i = 0; i < 16; i++)
-        STORE_FW(sspsa->storear[i],ssreg->AR(i));
+        STORE_MAIN_FW(sspsa->storear[i],ssreg->AR(i));
 
     /* Store floating-point registers in bytes 352-383 */
 #if defined( FEATURE_001_ZARCH_INSTALLED_FACILITY )
     for (i = 0; i < 16; i++)
-        STORE_DW(sspsa->storefpr[i],ssreg->FPR_L(i));
+        STORE_MAIN_DW(sspsa->storefpr[i],ssreg->FPR_L(i));
 #else
     for (i = 0; i < 4; i++)
-        STORE_DW(sspsa->storefpr[i],ssreg->FPR_L(i*2));
+        STORE_MAIN_DW(sspsa->storefpr[i],ssreg->FPR_L(i*2));
 #endif
 
     /* Store general-purpose registers in bytes 384-447 */
     for (i = 0; i < 16; i++)
-        STORE_W(sspsa->storegpr[i],ssreg->GR(i));
+        STORE_MAIN_W(sspsa->storegpr[i],ssreg->GR(i));
 
     /* Store control registers in bytes 448-511 */
     for (i = 0; i < 16; i++)
-        STORE_W(sspsa->storecr[i],ssreg->CR(i));
+        STORE_MAIN_W(sspsa->storecr[i],ssreg->CR(i));
 
     /* Store Breaking-Event Address Register if BEAR-Enhancement */
 #if defined( FEATURE_193_BEAR_ENH_FACILITY )
     if (FACILITY_ENABLED( 193_BEAR_ENH, ssreg ))
-        STORE_DW( sspsa->bear, ssreg->bear );
+        STORE_MAIN_DW( sspsa->bear, ssreg->bear );
 #endif
 
 } /* end function store_status */
