@@ -671,6 +671,10 @@
  #define    _FEATURE_V128_SSE
 #endif
 
+#if defined ( FEATURE_V128_NEON )
+ #define    _FEATURE_V128_NEON
+#endif
+
 #if defined( FEATURE_ZVM_ESSA )
  #define    _FEATURE_ZVM_ESSA
 #endif

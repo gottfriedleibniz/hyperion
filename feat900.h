@@ -239,8 +239,32 @@
 #define FEATURE_TRACING
 #define FEATURE_VIRTUAL_ARCHITECTURE_LEVEL
 #define FEATURE_VM_BLOCKIO
+
+/* ARM64 processor? */
+#if defined( _M_ARM64 ) || defined( _M_ARM64EC )
+  /* #WoA: Unconditionally assume NEON and CRYPTO are available when compiling
+   * with MSVC and check for feature flags otherwise. */
+  #if defined( _MSVC_ ) || defined( __ARM_NEON )
+    #define FEATURE_V128_NEON  1
+  #endif
+  
+  /* #WoA: ARMv8 crypto intrinsics were unavailable until VS2017_5 and
+   * redesigned in VS2019 (e.g., introducing poly types). Avoid headaches! */
+  #if (defined( _MSC_VER ) && _MSC_VER >= 1920) || defined( __ARM_FEATURE_CRYPTO )
+    #define FEATURE_HW_CLMUL 1
+  #endif
+
+  /* compile debug message: are we using intrinsics? */
+  #if 0
+    #if defined( FEATURE_V128_NEON )
+      #pragma message("FEATURE_V128_NEON is defined. Using intrinsics." )
+    #else
+      #pragma message("No intrinsics are included for optimization; only compiler optimization")
+    #endif
+  #endif
+
 /* INTEL X64 processor? */
-#if defined( __x86_64__ ) || defined( _M_X64 )
+#elif defined( __x86_64__ ) || defined( _M_X64 )
   /* MSVC on X64: intrinsics are available and could be used for optimization */
   #if defined( _MSC_VER ) || defined( _MSVC_ )
     #define FEATURE_V128_SSE  1

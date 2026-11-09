@@ -116,7 +116,9 @@
   #include <dbghelp.h>
   #include <crtdbg.h>
   #include <intrin.h>
-  #include <wmmintrin.h>
+  #if !defined( _M_ARM64 ) && !defined( _M_ARM64EC )
+    #include <wmmintrin.h>
+  #endif
 #else
   #include <libgen.h>
 #endif
@@ -124,6 +126,12 @@
 #if defined( __GNUC__) && defined( __SSE2__ ) && ( __SSE2__ == 1 )
   #include <x86intrin.h>
   #define _GCC_SSE2_
+#endif
+
+#if defined( _M_ARM64 ) || defined( _M_ARM64EC )
+ /* Use the Microsoft-specific header because older VC runtimes fail to
+  * redirect arm_neon.h to arm64_neon.h when targeting ARM64EC. */
+  #include <arm64_neon.h>
 #endif
 
 #include <stddef.h>             // (ptrdiff_t, size_t, offsetof, etc)
