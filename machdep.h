@@ -697,7 +697,7 @@ inline void store_dw_e2k_noswap ( volatile void* ptr, U64 value )
  *-------------------------------------------------------------------*/
 
 #if (! defined( MAINLOCK_ALWAYS )) \
-    && defined( H_ATOMIC_OP )      \
+    && defined( HERC_ATOMICS )     \
     && defined( cmpxchg1 )         \
     && defined( cmpxchg4 )         \
     && defined( cmpxchg8 )         \
