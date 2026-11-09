@@ -1224,7 +1224,7 @@ BYTE    rbyte[4];                       /* Byte work area            */
 
     case 7:
         /* Optimized case */
-        store_fw(rbyte, regs->GR_L(r1));
+        STORE_FW(rbyte, regs->GR_L(r1));
         ARCH_DEP(vstorec) (rbyte+1, 2, effective_addr2, b2, regs);
         break;
 

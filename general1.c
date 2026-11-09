@@ -1669,7 +1669,7 @@ S16  ri2;                               /* 16-bit relative operand   */
     /* Branch if R1 mask bit is set */
     if (inst[1] & (0x80 >> regs->psw.cc))
     {
-        ri2 = fetch_hw( &inst[2] );
+        FETCH_HW( ri2, &inst[2] );
         SUCCESSFUL_RELATIVE_BRANCH( regs, 2LL*ri2 );
     }
     else
@@ -2046,7 +2046,7 @@ BYTE    *main2;                         /* Operand-2 mainstor addr   */
         for (j=0; j < i; j++)
         {
             /* Fetch fullword from second operand */
-            n = fetch_fw( main2 );
+            FETCH_FW( n, main2 );
             main2 += 4;
 
             /* Accumulate the fullword into the checksum */
@@ -5939,7 +5939,7 @@ U32    n;                               /* Fetched value             */
     /* Optimized case */
     vbyte[0] = 0;
     ARCH_DEP(vfetchc) (vbyte + 1, 2, effective_addr2, b2, regs);
-    n = fetch_fw (vbyte);
+    FETCH_FW(n, vbyte);
     regs->GR_L(r1) = (regs->GR_L(r1) & 0xFF000000) | n;
     regs->psw.cc = n ? n & 0x00800000 ? 1 : 2 : 0;
 
@@ -5997,7 +5997,7 @@ static const unsigned int               /* Turn reg bytes off by mask*/
        If so, set the fetched byte to 0 to force zero cc */
     if (!r3) vbyte[0] = 0;
 
-    n = fetch_fw (vbyte);
+    FETCH_FW(n, vbyte);
     regs->psw.cc = n ? n & 0x80000000 ? 1 : 2 : 0;
 
     /* Turn off the reg bytes we are going to set */
@@ -6048,7 +6048,7 @@ static const unsigned int               /* Turn reg bytes off by mask*/
         /* Optimized case */
         vbyte[0] = 0;
         ARCH_DEP(vfetchc) (vbyte + 1, 2, effective_addr2, b2, regs);
-        n = fetch_fw (vbyte);
+        FETCH_FW(n, vbyte);
         regs->GR_L(r1) = (regs->GR_L(r1) & 0xFF000000) | n;
         regs->psw.cc = n ? n & 0x00800000 ?
                        1 : 2 : 0;
@@ -6069,7 +6069,7 @@ static const unsigned int               /* Turn reg bytes off by mask*/
            If so, set the fetched byte to 0 to force zero cc */
         if (!r3) vbyte[0] = 0;
 
-        n = fetch_fw (vbyte);
+        FETCH_FW(n, vbyte);
         regs->psw.cc = n ? n & 0x80000000 ?
                        1 : 2 : 0;
 

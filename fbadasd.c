@@ -1118,11 +1118,11 @@ int     repcnt;                         /* Replication count         */
         repcnt = iobuf[1];
 
         /* Bytes 2-3 contain the block count */
-        dev->fbalcnum = fetch_hw(iobuf + 2);
+        FETCH_HW(dev->fbalcnum, iobuf + 2);
 
         /* Bytes 4-7 contain the displacement of the first block
            relative to the start of the dataset */
-        dev->fbalcblk = fetch_fw(iobuf + 4);
+        FETCH_FW(dev->fbalcblk, iobuf + 4);
 
         /* Verify that the block count is non-zero, and that
            the starting and ending blocks fall within the extent */
@@ -1218,15 +1218,15 @@ int     repcnt;                         /* Replication count         */
 
         /* Bytes 4-7 contain the block number of the first block
            of the extent relative to the start of the device */
-        dev->fbaxblkn = fetch_fw(iobuf + 4);
+        FETCH_FW(dev->fbaxblkn, iobuf + 4);
 
         /* Bytes 8-11 contain the block number of the first block
            of the extent relative to the start of the dataset */
-        dev->fbaxfirst = fetch_fw(iobuf + 8);
+        FETCH_FW(dev->fbaxfirst, iobuf + 8);
 
         /* Bytes 12-15 contain the block number of the last block
            of the extent relative to the start of the dataset */
-        dev->fbaxlast = fetch_fw(iobuf + 12);
+        FETCH_FW(dev->fbaxlast, iobuf + 12);
 
         /* Validate the extent description by checking that the
            ending block is not less than the starting block and

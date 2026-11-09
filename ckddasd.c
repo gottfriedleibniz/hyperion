@@ -537,7 +537,7 @@ BYTE            serial[12+1] = {0};     /* Dasd serial number        */
                 {
                     devhdr.dh_fileseq = (fileseq == 1 ? 0 : fileseq);
                     highcyl = 0;
-                    store_hw( devhdr.dh_highcyl, 0 );
+                    STORE_HW( devhdr.dh_highcyl, 0 );
                     lseek (dev->fd, 0, SEEK_SET);
                     rc = write (dev->fd, &devhdr, CKD_DEVHDR_SIZE);
                 }
@@ -1070,8 +1070,8 @@ ckd_read_track_retry:
     {
         trkhdr = (CKD_TRKHDR*)dev->buf;
         trkhdr->bin = 0;
-        store_hw( trkhdr->cyl,  cyl  );
-        store_hw( trkhdr->head, head );
+        STORE_HW( trkhdr->cyl,  cyl  );
+        STORE_HW( trkhdr->head, head );
         memset (dev->buf + CKD_TRKHDR_SIZE, 0xFF, 8);
     }
 
@@ -1605,8 +1605,8 @@ int shift;  /* num of bits to shift left 'high cyl' in sense6 */
         case FORMAT_5: /* Data check with displacement information */
 
             /* Sense bytes 8-12 contain the CCHHR of the record in error */
-            store_hw( &dev->sense[ 8], (U16)dev->ckdcurcyl  );
-            store_hw( &dev->sense[10], (U16)dev->ckdcurhead );
+            STORE_HW( &dev->sense[ 8], (U16)dev->ckdcurcyl  );
+            STORE_HW( &dev->sense[10], (U16)dev->ckdcurhead );
             dev->sense[12] = (BYTE) dev->ckdcurrec;
             break;
     }
@@ -1615,7 +1615,7 @@ int shift;  /* num of bits to shift left 'high cyl' in sense6 */
     dev->sense[27] = 0x80;
 
     /* Sense bytes 29-30 contain the cylinder address */
-    store_hw( &dev->sense[29], (U16)dev->ckdcurcyl  );
+    STORE_HW( &dev->sense[29], (U16)dev->ckdcurcyl  );
 
     /* Sense byte 31 contains the head address */
     dev->sense[31] = dev->ckdcurhead & 0xFF;
@@ -1863,8 +1863,8 @@ char           *orient[] = {"none", "index", "count", "key", "data", "eot"};
         {
             memcpy( rechdr, dev->ckdfcwrk, CKD_RECHDR_SIZE );
 
-            cyl  = fetch_hw( rechdr->cyl );
-            head = fetch_hw( rechdr->head );
+            FETCH_HW( cyl, rechdr->cyl );
+            FETCH_HW( head, rechdr->head );
 
             if ((rc = ckd_seek( dev, cyl, head, NULL, unitstat )) < 0)
                 return -1;
@@ -2133,7 +2133,7 @@ U32             ckdlen;                 /* Count+key+data length     */
     /* Extract the record number, key length and data length */
     recnum  =            rechdr.rec;
     keylen  =            rechdr.klen;
-    datalen =  fetch_hw( rechdr.dlen );
+    FETCH_HW( datalen, rechdr.dlen );
 
     /* Calculate total count key and data size */
     ckdlen = CKD_RECHDR_SIZE + keylen + datalen;
@@ -6457,7 +6457,7 @@ static bool PerformSubsystemFunction
             /* Prepare subsystem statistics record */
             memset (iobuf, 0, dev->ckdssdlen);
             iobuf[1] = dev->devnum & 0xFF;
-            store_hw( &iobuf[94], myssid );
+            STORE_HW( &iobuf[94], myssid );
             break;
 
         case 0x03:  /* Read attention message for this path-group for
@@ -6635,19 +6635,19 @@ static bool PerformSubsystemFunction
         memset (iobuf, 0, 96);
 
         /* Bytes 0-31 contain the subsystem node descriptor */
-        store_fw(&iobuf[0], 0x00000100);
+        STORE_FW(&iobuf[0], 0x00000100);
         sprintf ((char *)&iobuf[4], "00%4.4X   HRCZZ000000000001",
                             dev->ckdcu->devt);
         for (i = 4; i < 30; i++)
             iobuf[i] = host_to_guest(iobuf[i]);
 
         /* Bytes 32-63 contain node qualifier data */
-        store_fw( &iobuf[32], 0x00000000 ); // flags+zeros
-        store_fw( &iobuf[40], 0x00000000 );
-        store_fw( &iobuf[40], 0x41010000 ); // start range
-        store_fw( &iobuf[44], 0x41010001 ); // end range
-        store_fw( &iobuf[48], 0x41010010 ); // start range
-        store_fw( &iobuf[52], 0x41010011 ); // end range
+        STORE_FW( &iobuf[32], 0x00000000 ); // flags+zeros
+        STORE_FW( &iobuf[40], 0x00000000 );
+        STORE_FW( &iobuf[40], 0x41010000 ); // start range
+        STORE_FW( &iobuf[44], 0x41010001 ); // end range
+        STORE_FW( &iobuf[48], 0x41010010 ); // start range
+        STORE_FW( &iobuf[52], 0x41010011 ); // end range
 
         /* Bytes 64-95 contain a 2nd subsystem node descriptor */
         iobuf[64] = 0x00;
@@ -7013,8 +7013,8 @@ static bool LocateRecordExtended
      * extent, Locate Record Extended is terminated with status that
      * includes unit check (File Protected).
      */
-    cyl  = fetch_hw( &iobuf[4] );
-    head = fetch_hw( &iobuf[6] );
+    FETCH_HW( cyl, &iobuf[4] );
+    FETCH_HW( head, &iobuf[6] );
 
     if (validate)
     {
@@ -7149,7 +7149,7 @@ static bool LocateRecordExtended
     if ((dev->ckdlaux & CKDLAUX_TLFVALID) == 0)
         dev->ckdltranlf = dev->ckdxblksz;
     else
-        dev->ckdltranlf = fetch_hw( &iobuf[14] );
+        FETCH_HW( dev->ckdltranlf, &iobuf[14] );
 
     /*
      * Bytes 18-19 contain an unsigned 16-bit binary value that
@@ -7170,7 +7170,7 @@ static bool LocateRecordExtended
      * that includes unit check (Command Reject, format X'04', Invalid
      * Parameter).
      */
-    num = fetch_hw( &iobuf[18] );
+    FETCH_HW( num, &iobuf[18] );
 
     if (validate)
     {

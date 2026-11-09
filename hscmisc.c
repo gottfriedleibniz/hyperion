@@ -2838,7 +2838,7 @@ const char* FormatNEQ( NEQ* neq, char* buf, size_t bufsz )
     if (bufsz <= 1 || !neq)
         return buf;
 
-    iid = fetch_hw( &neq->iid );
+    FETCH_HW( iid, &neq->iid );
 
     snprintf( buf, bufsz,
 
