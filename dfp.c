@@ -2587,6 +2587,7 @@ int             r1, r2;                 /* Values of R fields        */
 decimal128      x1;                     /* Extended DFP values       */
 decNumber       dwork, *dp;             /* Working decimal numbers   */
 decContext      set;                    /* Working context           */
+ALIGN_16
 BYTE            pwork[16];              /* 31-digit packed work area */
 int32_t         scale = 0;              /* Scaling factor            */
 
@@ -2632,6 +2633,7 @@ int             r1, r2;                 /* Values of R fields        */
 decimal64       x1;                     /* Long DFP values           */
 decNumber       dwork, *dp;             /* Working decimal numbers   */
 decContext      set;                    /* Working context           */
+ALIGN_8
 BYTE            pwork[8];               /* 15-digit packed work area */
 int32_t         scale = 0;              /* Scaling factor            */
 
@@ -2780,6 +2782,7 @@ VADR            effective_addr2;        /* Effective address         */
 decimal128      x1;                     /* Extended DFP value        */
 decNumber       d;                      /* Working decimal number    */
 decContext      set;                    /* Working context           */
+CACHE_ALIGN
 char            zoned[CXZT_MAXLEN];     /* Zoned decimal operand     */
 
     RSL_RM(inst, regs, r1, l2, b2, effective_addr2, m3);
@@ -2833,6 +2836,7 @@ VADR            effective_addr2;        /* Effective address         */
 decimal64       x1;                     /* Long DFP value            */
 decNumber       d;                      /* Working decimal number    */
 decContext      set;                    /* Working context           */
+CACHE_ALIGN
 char            zoned[CDZT_MAXLEN];     /* Zoned decimal operand     */
 
     RSL_RM(inst, regs, r1, l2, b2, effective_addr2, m3);
@@ -2887,6 +2891,7 @@ DEF_INST(convert_packed_to_dfp_ext)
     decimal128      x1;                     /* Extended DFP value        */
     decNumber       d;                      /* Working decimal number    */
     decContext      set;                    /* Working context           */
+    CACHE_ALIGN
     char            packed[CXPT_MAXLEN];    /* Packed decimal operand    */
 
     RSL_RM(inst, regs, r1, l2, b2, effective_addr2, m3);
@@ -2953,6 +2958,7 @@ DEF_INST(convert_packed_to_dfp_long)
     decimal64       x1;                     /* Long DFP value            */
     decNumber       d;                      /* Working decimal number    */
     decContext      set;                    /* Working context           */
+    CACHE_ALIGN
     char            packed[CDPT_MAXLEN];    /* Packed decimal operand    */
 
     RSL_RM(inst, regs, r1, l2, b2, effective_addr2, m3);
@@ -3618,6 +3624,7 @@ decimal128      x1;                     /* Extended DFP value        */
 decNumber       dwork, dcoeff;          /* Working decimal numbers   */
 decContext      set;                    /* Working context           */
 int             cc;                     /* Condition code            */
+CACHE_ALIGN
 char            zoned[CZXT_MAXLEN];     /* Zoned decimal result      */
 
     RSL_RM(inst, regs, r1, l2, b2, effective_addr2, m3);
@@ -3672,6 +3679,7 @@ decimal64       x1;                     /* Long DFP value            */
 decNumber       dwork, dcoeff;          /* Working decimal numbers   */
 decContext      set;                    /* Working context           */
 int             cc;                     /* Condition code            */
+CACHE_ALIGN
 char            zoned[CZDT_MAXLEN];     /* Zoned decimal result      */
 
     RSL_RM(inst, regs, r1, l2, b2, effective_addr2, m3);
@@ -3727,6 +3735,7 @@ DEF_INST(convert_dfp_ext_to_packed)
     decNumber       dwork, dcoeff;          /* Working decimal numbers   */
     decContext      set;                    /* Working context           */
     int             cc;                     /* Condition code            */
+    CACHE_ALIGN
     char            packed[CPXT_MAXLEN];    /* Packed decimal result     */
 
     RSL_RM(inst, regs, r1, l2, b2, effective_addr2, m3);
@@ -3781,6 +3790,7 @@ DEF_INST(convert_dfp_long_to_packed)
     decNumber       dwork, dcoeff;          /* Working decimal numbers   */
     decContext      set;                    /* Working context           */
     int             cc;                     /* Condition code            */
+    CACHE_ALIGN
     char            packed[CPDT_MAXLEN];    /* Packed decimal result     */
 
     RSL_RM(inst, regs, r1, l2, b2, effective_addr2, m3);

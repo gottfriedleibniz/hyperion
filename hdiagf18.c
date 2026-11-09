@@ -198,7 +198,7 @@ U16     options;                     /* supplied options             */
     case QUERY:
 
         /* Specification exception if CPB is not on a doubleword boundary */
-        if ( (regs->GR(2) & 0x7 ) !=0 )
+        if (NOT_ALIGNED_POW2( regs->GR(2), DW ))
         {
             ARCH_DEP(program_interrupt) (regs, PGM_SPECIFICATION_EXCEPTION);
         }

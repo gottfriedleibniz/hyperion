@@ -589,19 +589,19 @@ BYTE           *pos;                    /* -> Next position in buffer*/
     /* Build the track header */
     trkhdr = (CKD_TRKHDR*)buf;
     trkhdr->bin = 0;
-    store_hw(&trkhdr->cyl,  (U16) cyl);
-    store_hw(&trkhdr->head, (U16) head);
+    STORE_HW(&trkhdr->cyl,  (U16) cyl);
+    STORE_HW(&trkhdr->head, (U16) head);
     pos = buf + CKD_TRKHDR_SIZE;
 
     /* Build record zero */
     r = 0;
     rechdr = (CKD_RECHDR*)pos;
     pos += CKD_RECHDR_SIZE;
-    store_hw(&rechdr->cyl,  (U16) cyl);
-    store_hw(&rechdr->head, (U16) head);
+    STORE_HW(&rechdr->cyl,  (U16) cyl);
+    STORE_HW(&rechdr->head, (U16) head);
     rechdr->rec = r;
     rechdr->klen = 0;
-    store_hw(&rechdr->dlen, CKD_R0_DLEN);
+    STORE_HW(&rechdr->dlen, CKD_R0_DLEN);
     pos +=                  CKD_R0_DLEN;
     r++;
 
@@ -611,11 +611,11 @@ BYTE           *pos;                    /* -> Next position in buffer*/
         rechdr = (CKD_RECHDR*)pos;
         pos += CKD_RECHDR_SIZE;
 
-        store_hw(&rechdr->cyl,  (U16) cyl);
-        store_hw(&rechdr->head, (U16) head);
+        STORE_HW(&rechdr->cyl,  (U16) cyl);
+        STORE_HW(&rechdr->head, (U16) head);
         rechdr->rec = r;
         rechdr->klen = 0;
-        store_hw(&rechdr->dlen, 0);
+        STORE_HW(&rechdr->dlen, 0);
         r++;
     }
     else if (nullfmt == CKD_NULLTRK_FMT2)
@@ -625,11 +625,11 @@ BYTE           *pos;                    /* -> Next position in buffer*/
             rechdr = (CKD_RECHDR*)pos;
             pos += CKD_RECHDR_SIZE;
 
-            store_hw(&rechdr->cyl,  (U16) cyl);
-            store_hw(&rechdr->head, (U16) head);
+            STORE_HW(&rechdr->cyl,  (U16) cyl);
+            STORE_HW(&rechdr->head, (U16) head);
             rechdr->rec = r;
             rechdr->klen = 0;
-            store_hw(&rechdr->dlen, CKD_NULL_FMT2_DLEN );
+            STORE_HW(&rechdr->dlen, CKD_NULL_FMT2_DLEN );
             r++;
             pos +=                  CKD_NULL_FMT2_DLEN;
         }

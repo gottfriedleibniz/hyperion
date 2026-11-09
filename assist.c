@@ -168,7 +168,7 @@ DEF_INST(obtain_local_lock)
     GUEST_CHECK( );
 
     /* Specification exception if operands are not on word boundary */
-    if ((effective_addr1 & 0x00000003) || (effective_addr2 & 0x00000003))
+    if (NOT_ALIGNED_POW2( effective_addr1, FW ) || NOT_ALIGNED_POW2( effective_addr2, FW ))
         ARCH_DEP(program_interrupt) (regs, PGM_SPECIFICATION_EXCEPTION);
 
     PERFORM_SERIALIZATION(regs);
@@ -262,7 +262,7 @@ int     acc_mode = 0;                   /* access mode to use        */
     GUEST_CHECK( );
 
     /* Specification exception if operands are not on word boundary */
-    if ((effective_addr1 & 0x00000003) || (effective_addr2 & 0x00000003))
+    if (NOT_ALIGNED_POW2( effective_addr1, FW ) || NOT_ALIGNED_POW2( effective_addr2, FW ))
         ARCH_DEP(program_interrupt) (regs, PGM_SPECIFICATION_EXCEPTION);
 
     /* Obtain main-storage access lock */
@@ -359,7 +359,7 @@ DEF_INST(obtain_cms_lock)
     GUEST_CHECK( );
 
     /* Specification exception if operands are not on word boundary */
-    if ((effective_addr1 & 0x00000003) || (effective_addr2 & 0x00000003))
+    if (NOT_ALIGNED_POW2( effective_addr1, FW ) || NOT_ALIGNED_POW2( effective_addr2, FW ))
         ARCH_DEP(program_interrupt) (regs, PGM_SPECIFICATION_EXCEPTION);
 
     PERFORM_SERIALIZATION(regs);
@@ -466,7 +466,7 @@ int     acc_mode = 0;                   /* access mode to use        */
     GUEST_CHECK( );
 
     /* Specification exception if operands are not on word boundary */
-    if ((effective_addr1 & 0x00000003) || (effective_addr2 & 0x00000003))
+    if (NOT_ALIGNED_POW2( effective_addr1, FW ) || NOT_ALIGNED_POW2( effective_addr2, FW ))
         ARCH_DEP(program_interrupt) (regs, PGM_SPECIFICATION_EXCEPTION);
 
     /* General register 11 contains the lock address */
@@ -550,7 +550,7 @@ VADR    effective_addr1,
     GUEST_CHECK( );
 
     /* Specification exception if operands are not on word boundary */
-    if ((effective_addr1 & 0x00000003) || (effective_addr2 & 0x00000003))
+    if (NOT_ALIGNED_POW2( effective_addr1, FW ) || NOT_ALIGNED_POW2( effective_addr2, FW ))
         ARCH_DEP(program_interrupt) (regs, PGM_SPECIFICATION_EXCEPTION);
 
     PTT_ERR("*E508 TRSVC",effective_addr1,effective_addr2,regs->psw.IA_L);
@@ -573,7 +573,7 @@ VADR    effective_addr1,
     GUEST_CHECK( );
 
     /* Specification exception if operands are not on word boundary */
-    if ((effective_addr1 & 0x00000003) || (effective_addr2 & 0x00000003))
+    if (NOT_ALIGNED_POW2( effective_addr1, FW ) || NOT_ALIGNED_POW2( effective_addr2, FW ))
         ARCH_DEP(program_interrupt) (regs, PGM_SPECIFICATION_EXCEPTION);
 
     PTT_ERR("*E509 TRPGM",effective_addr1,effective_addr2,regs->psw.IA_L);
@@ -596,7 +596,7 @@ VADR    effective_addr1,
     GUEST_CHECK( );
 
     /* Specification exception if operands are not on word boundary */
-    if ((effective_addr1 & 0x00000003) || (effective_addr2 & 0x00000003))
+    if (NOT_ALIGNED_POW2( effective_addr1, FW ) || NOT_ALIGNED_POW2( effective_addr2, FW ))
         ARCH_DEP(program_interrupt) (regs, PGM_SPECIFICATION_EXCEPTION);
 
     PTT_ERR("*E50A TRSRB",effective_addr1,effective_addr2,regs->psw.IA_L);
@@ -619,7 +619,7 @@ VADR    effective_addr1,
     GUEST_CHECK( );
 
     /* Specification exception if operands are not on word boundary */
-    if ((effective_addr1 & 0x00000003) || (effective_addr2 & 0x00000003))
+    if (NOT_ALIGNED_POW2( effective_addr1, FW ) || NOT_ALIGNED_POW2( effective_addr2, FW ))
         ARCH_DEP(program_interrupt) (regs, PGM_SPECIFICATION_EXCEPTION);
 
     PTT_ERR("*E50B TRIO",effective_addr1,effective_addr2,regs->psw.IA_L);
@@ -642,7 +642,7 @@ VADR    effective_addr1,
     GUEST_CHECK( );
 
     /* Specification exception if operands are not on word boundary */
-    if ((effective_addr1 & 0x00000003) || (effective_addr2 & 0x00000003))
+    if (NOT_ALIGNED_POW2( effective_addr1, FW ) || NOT_ALIGNED_POW2( effective_addr2, FW ))
         ARCH_DEP(program_interrupt) (regs, PGM_SPECIFICATION_EXCEPTION);
 
     PTT_ERR("*E50C TRTSK",effective_addr1,effective_addr2,regs->psw.IA_L);
@@ -665,7 +665,7 @@ VADR    effective_addr1,
     GUEST_CHECK( );
 
     /* Specification exception if operands are not on word boundary */
-    if ((effective_addr1 & 0x00000003) || (effective_addr2 & 0x00000003))
+    if (NOT_ALIGNED_POW2( effective_addr1, FW ) || NOT_ALIGNED_POW2( effective_addr2, FW ))
         ARCH_DEP(program_interrupt) (regs, PGM_SPECIFICATION_EXCEPTION);
 
     PTT_ERR("*E50D TRRTN",effective_addr1,effective_addr2,regs->psw.IA_L);
@@ -814,6 +814,7 @@ static const BYTE zeros[256] = {0};
 
     else
     {
+        ALIGN_8
         BYTE cr34[8];  // CR3 and CR4
 
         /* Set the FRR entry point from r2 in the stack */

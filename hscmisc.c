@@ -416,7 +416,7 @@ char    buf[512];                       /* MSGBUF work buffer        */
         }
 
         /* Determine opcode and check for addressing exception */
-        opcode = regs->mainstor[aaddr];
+        FETCH_MAIN_BYTE( opcode, regs->mainstor + aaddr );
         ilc = ILC(opcode);
 
         if (aaddr + ilc > regs->mainlim)
@@ -569,7 +569,7 @@ char    cmd;
             }
 
             /* Update absolute storage */
-            regs->mainstor[aaddr] = newval[i];
+            STORE_MAIN_BYTE( regs->mainstor + aaddr, newval[i] );
 
         } /* end for(i) */
     }
@@ -789,7 +789,7 @@ size_t  totamt;                         /* Total amount to be dumped */
             }
 
             /* Update absolute storage */
-            regs->mainstor[aaddr] = newval[i];
+            STORE_MAIN_BYTE( regs->mainstor + aaddr, newval[i] );
         }
     }
 
@@ -1177,7 +1177,7 @@ char    regs_msg_buf[8*512] = {0};
     )
     {
         S64 offset;
-        S32 relative_long_operand = fetch_fw( inst+2 );
+        S32 relative_long_operand = READ_FW( inst+2 );
         offset = 2LL * relative_long_operand;
         addr1 = PSW_IA_FROM_IP( regs, 0 );  // (current instruction address)
 
@@ -2449,8 +2449,8 @@ DLL_EXPORT REGS* copy_regs( REGS* regs )
 
     newregs->tlbID      = 1;
     newregs->ghostregs  = 1;      /* indicate these aren't real regs */
-    HOST(  newregs )    = newregs;
-    GUEST( newregs )    = NULL;
+    SET_HOST_REGS( newregs, newregs );
+    SET_GUEST_REGS( newregs, NULL );
     newregs->sie_active = 0;
 
     /* Copy host regs if in SIE mode (newregs is SIE guest regs) */
@@ -2464,11 +2464,11 @@ DLL_EXPORT REGS* copy_regs( REGS* regs )
         hostregs->tlbID     = 1;
         hostregs->ghostregs = 1;  /* indicate these aren't real regs */
 
-        HOST(  hostregs )   = hostregs;
-        GUEST( hostregs )   = newregs;
+        SET_HOST_REGS( hostregs, hostregs );
+        SET_GUEST_REGS( hostregs, newregs );
 
-        HOST(  newregs  )   = hostregs;
-        GUEST( newregs  )   = newregs;
+        SET_HOST_REGS( newregs, hostregs );
+        SET_GUEST_REGS( newregs, newregs );
     }
 
     return newregs;
@@ -2838,7 +2838,7 @@ const char* FormatNEQ( NEQ* neq, char* buf, size_t bufsz )
     if (bufsz <= 1 || !neq)
         return buf;
 
-    iid = fetch_hw( &neq->iid );
+    FETCH_HW( iid, &neq->iid );
 
     snprintf( buf, bufsz,
 
@@ -3137,7 +3137,7 @@ const char* FormatCIW( BYTE* ciw, char* buf, size_t bufsz )
             , ciw[0], ciw[1], ciw[2], ciw[3]
             , type[ ciw[0] & 0x0F ]
             , ciw[1]
-            , fetch_hw( ciw+2 )
+            , READ_HW( ciw+2 )
         );
     }
     else
@@ -3378,7 +3378,7 @@ bool insttrace_all()
     if (sysblk.insttrace)
     {
         int  cpu;
-        for (cpu=0; cpu < sysblk.maxcpu; cpu++)
+        for (cpu=0; cpu < SYS_GET_MAXCPU(); cpu++)
         {
             if (IS_CPU_ONLINE( cpu ))
             {

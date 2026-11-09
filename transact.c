@@ -414,7 +414,7 @@ bool        per_tend = false;           /* true = check for PER TEND */
                 mainaddr = pmap->mainpageaddr + (j << ZCACHE_LINE_SHIFT);
                 saveaddr = pmap->altpageaddr  + (j << ZCACHE_LINE_SHIFT) + ZPAGEFRAME_PAGESIZE;
 
-                if (memcmp( saveaddr, mainaddr, ZCACHE_LINE_SIZE ) == 0)
+                if (MAINSTOR_MCMP( saveaddr, mainaddr, ZCACHE_LINE_SIZE ) == 0)
                     continue;
 
                 /*--------------------------------------*/
@@ -1486,13 +1486,13 @@ int        retry;           /* Actual retry code                     */
 
     if (pi_tdb)
     {
-        memcpy( pi_tdb, &regs->txf_tdb, sizeof( TDB ));
+        MAINSTOR_MCOPY( pi_tdb, &regs->txf_tdb, sizeof( TDB ));
         ARCH_DEP( or_storage_key )( MAIN_TO_ABS( pi_tdb ), (STORKEY_REF | STORKEY_CHANGE) );
     }
 
     if (tb_tdb)
     {
-        memcpy( tb_tdb, &regs->txf_tdb, sizeof( TDB ));
+        MAINSTOR_MCOPY( tb_tdb, &regs->txf_tdb, sizeof( TDB ));
         ARCH_DEP( or_storage_key )( MAIN_TO_ABS( tb_tdb ), (STORKEY_REF | STORKEY_CHANGE) );
     }
 
@@ -1906,7 +1906,7 @@ void txf_abort_all( U16 cpuad, int why, const char* location )
     why |= TXF_WHY_DELAYED_ABORT;
 
     for (cpu=0, regs = sysblk.regs[ 0 ];
-        cpu < sysblk.maxcpu; regs = sysblk.regs[ ++cpu ])
+        cpu < SYS_GET_MAXCPU(); regs = sysblk.regs[ ++cpu ])
     {
         /* Skip ourselves or any CPU that isn't online */
         if (0
@@ -2131,8 +2131,8 @@ DLL_EXPORT BYTE* txf_maddr_l( const U64  vaddr,   const size_t  len,
         savepage = altpage + ZPAGEFRAME_PAGESIZE;
 
         /* Capture a copy of this page */
-        memcpy( altpage,  pageaddr, ZPAGEFRAME_PAGESIZE );
-        memcpy( savepage, altpage,  ZPAGEFRAME_PAGESIZE );
+        MAINSTOR_MCOPY( altpage,  pageaddr, ZPAGEFRAME_PAGESIZE );
+        MAINSTOR_MCOPY( savepage, altpage,  ZPAGEFRAME_PAGESIZE );
 
         /* Finish mapping this page */
         pmap->mainpageaddr = (BYTE*) addrpage;
@@ -2160,8 +2160,8 @@ DLL_EXPORT BYTE* txf_maddr_l( const U64  vaddr,   const size_t  len,
             altpagec  = pmap->altpageaddr  + (cacheidx << ZCACHE_LINE_SHIFT);
             savepagec = altpagec + ZPAGEFRAME_PAGESIZE;
 
-            memcpy( altpagec,  pageaddrc, ZCACHE_LINE_SIZE );
-            memcpy( savepagec, altpagec,  ZCACHE_LINE_SIZE );
+            MAINSTOR_MCOPY( altpagec,  pageaddrc, ZCACHE_LINE_SIZE );
+            MAINSTOR_MCOPY( savepagec, altpagec,  ZCACHE_LINE_SIZE );
 
             /* Remember how we accessed this cache line */
             pmap->cachemap[ cacheidx ] = cmtype;

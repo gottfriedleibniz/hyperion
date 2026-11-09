@@ -837,17 +837,84 @@ do { \
 /* which endianness Hercules was built for).                         */
 /*-------------------------------------------------------------------*/
 
-#define FETCH_HW( _val, _stor )     (_val) = fetch_hw( _stor )
-#define FETCH_FW( _val, _stor )     (_val) = fetch_fw( _stor )
-#define FETCH_F3( _val, _stor )     (_val) = fetch_f3( _stor )
-#define FETCH_DW( _val, _stor )     (_val) = fetch_dw( _stor )
-#define FETCH_QW( _val, _stor )     (_val) = fetch_qw( _stor )
+#define READ_BYTE( _stor )          fetch_byte( _stor )
+#define READ_HW( _stor )            fetch_hw( _stor )
+#define READ_FW( _stor )            fetch_fw( _stor )
+#define READ_F3( _stor )            fetch_f3( _stor )
+#define READ_DW( _stor )            fetch_dw( _stor )
+#define READ_QW( _stor )            fetch_qw( _stor )
 
+#define STORE_BYTE( _stor, _val )   store_byte( _stor, _val )
 #define STORE_HW( _stor, _val )     store_hw( _stor, _val )
 #define STORE_FW( _stor, _val )     store_fw( _stor, _val )
 #define STORE_F3( _stor, _val )     store_f3( _stor, _val )
 #define STORE_DW( _stor, _val )     store_dw( _stor, _val )
 #define STORE_QW( _stor, _val )     store_qw( _stor, _val )
+
+#define FETCH_BYTE( _val, _stor )   (_val) = READ_BYTE( _stor )
+#define FETCH_HW( _val, _stor )     (_val) = READ_HW( _stor )
+#define FETCH_FW( _val, _stor )     (_val) = READ_FW( _stor )
+#define FETCH_F3( _val, _stor )     (_val) = READ_F3( _stor )
+#define FETCH_DW( _val, _stor )     (_val) = READ_DW( _stor )
+#define FETCH_QW( _val, _stor )     (_val) = READ_QW( _stor )
+
+/* #EXPERIMENTATION */
+/*-------------------------------------------------------------------*/
+/*             Main storage FETCH/STORE macros                       */
+/*-------------------------------------------------------------------*/
+/* The following macros fetch a value from emulated storage          */
+/* into a local work variable or store a local work variable into    */
+/* emulated storage.                                                 */
+/*-------------------------------------------------------------------*/
+
+#define MAINSTOR_MCOPY(_dest, _src, _len)    memcpy( (_dest), (_src), (_len) )
+#define MAINSTOR_MCOPY_RL(_dest, _src, _len) memcpy_backwards( (_dest), (_src), (_len) )
+#define MAINSTOR_MSET(_dest, _value, _len)   memset( (_dest), (_value), (_len) )
+#define MAINSTOR_MCMP(_ptr1, _ptr2, _num)    memcmp( (_ptr1), (_ptr2), (_num) )
+
+#define READ_MAIN_BYTE( _stor )              READ_BYTE( _stor )
+#define READ_MAIN_HW( _stor )                READ_HW( _stor )
+#define READ_MAIN_FW( _stor )                READ_FW( _stor )
+#define READ_MAIN_DW( _stor )                READ_DW( _stor )
+#define READ_MAIN_QW( _stor )                READ_QW( _stor )
+
+#define STORE_MAIN_BYTE( _stor, _val)        STORE_BYTE( _stor, _val )
+#define STORE_MAIN_HW( _stor, _val)          STORE_HW( _stor, _val )
+#define STORE_MAIN_FW( _stor, _val)          STORE_FW( _stor, _val )
+#define STORE_MAIN_DW( _stor, _val)          STORE_DW( _stor, _val )
+#define STORE_MAIN_QW( _stor, _val )         STORE_QW( _stor, _val )
+
+/* Macros for reading/storing values from/to unaligned (packed) storage, */
+/* primarily to support z/Architecture's relaxed alignment model.        */
+
+#define READ_MAIN_HW_UL( _stor )             READ_HW( _stor )
+#define READ_MAIN_FW_UL( _stor )             READ_FW( _stor )
+#define READ_MAIN_DW_UL( _stor )             READ_DW( _stor )
+#define READ_MAIN_QW_UL( _stor )             READ_QW( _stor )
+
+#define STORE_MAIN_HW_UL( _stor, _val )      STORE_HW( _stor, _val )
+#define STORE_MAIN_FW_UL( _stor, _val )      STORE_FW( _stor, _val )
+#define STORE_MAIN_DW_UL( _stor, _val )      STORE_DW( _stor, _val )
+#define STORE_MAIN_QW_UL( _stor, _val )      STORE_QW( _stor, _val )
+
+/* Macros for performing compound assignment operations, primarily       */
+/* to abstract the underlying read-modify-write semantics.               */
+
+#define OR_MAIN_BYTE( _stor, _val )          (*(_stor) |= (_val))
+#define AND_MAIN_BYTE( _stor, _val )         (*(_stor) &= (_val))
+#define XOR_MAIN_BYTE( _stor, _val )         (*(_stor) ^= (_val))
+
+/* FETCH */
+
+#define FETCH_MAIN_BYTE( _val, _stor )       (_val) = READ_MAIN_BYTE( _stor )
+#define FETCH_MAIN_HW( _val, _stor )         (_val) = READ_MAIN_HW( _stor )
+#define FETCH_MAIN_FW( _val, _stor )         (_val) = READ_MAIN_FW( _stor )
+#define FETCH_MAIN_DW( _val, _stor )         (_val) = READ_MAIN_DW( _stor )
+#define FETCH_MAIN_QW( _val, _stor )         (_val) = READ_MAIN_QW( _stor )
+
+#define FETCH_MAIN_HW_UL( _val, _stor )      (_val) = READ_MAIN_HW_UL( _stor )
+#define FETCH_MAIN_FW_UL( _val, _stor )      (_val) = READ_MAIN_FW_UL( _stor )
+#define FETCH_MAIN_DW_UL( _val, _stor )      (_val) = READ_MAIN_DW_UL( _stor )
 
 /*-------------------------------------------------------------------*/
 /*            CKD/CCKD header field FETCH/STORE macros               */
@@ -868,6 +935,10 @@ do { \
 #define STORE_LE_HW( _stor, _val )  store_hw( _stor, SWAP16( _val ))
 #define STORE_LE_FW( _stor, _val )  store_fw( _stor, SWAP32( _val ))
 #define STORE_LE_DW( _stor, _val )  store_dw( _stor, SWAP64( _val ))
+
+#define READ_LE_HW( _stor )         SWAP16( fetch_hw( _stor ))
+#define READ_LE_FW( _stor )         SWAP32( fetch_fw( _stor ))
+#define READ_LE_DW( _stor )         SWAP64( fetch_dw( _stor ))
 
 #include "machdep.h"
 
@@ -1492,7 +1563,7 @@ do { \
 do {                                                                  \
     FOOTPRINT( (_ip), (_regs) );                                      \
     BEG_COUNT_INSTR( (_ip), (_regs) );                                \
-    (_oct)[ fetch_hw( (_ip) )]( (_ip), (_regs) );                     \
+    (_oct)[ READ_HW( (_ip) )]( (_ip), (_regs) );                      \
     END_COUNT_INSTR( (_ip), (_regs) );                                \
 } while (0)
 
@@ -1504,7 +1575,7 @@ do {                                                                  \
       CHECK_TXF_CONSTRAINTS( (_ip), (_regs) );                        \
       FOOTPRINT( (_ip), (_regs) );                                    \
       BEG_COUNT_INSTR( (_ip), (_regs) );                              \
-      (_oct)[ fetch_hw( (_ip) )]( (_ip), (_regs) );                   \
+      (_oct)[ READ_HW( (_ip) )]( (_ip), (_regs) );                    \
       END_COUNT_INSTR( (_ip), (_regs) );                              \
   } while (0)
 
@@ -2171,13 +2242,13 @@ do {                                                                  \
    /* Do it for the current CPU first */                                \
    ARCH_DEP( invalidate_tlbe )( (_regs), abs );                         \
                                                                         \
-   if (sysblk.cpus > 1)                                                 \
+   if (SYS_GET_CPUS() > 1)                                              \
    {                                                                    \
      int cpu;        /* CPU being examined */                           \
      REGS* cregs;    /* register context for CPU being examined */      \
                                                                         \
      /* Do invalidate for all of the other online CPUs too */           \
-     for (cpu=0; cpu < sysblk.hicpu; cpu++)                             \
+     for (cpu=0; cpu < SYS_GET_HICPU(); cpu++)                          \
      {                                                                  \
        /* Skip our own CPU and CPUs which aren't online */              \
        if (IS_CPU_ONLINE( cpu ) && cpu != (_regs)->cpuad)               \
