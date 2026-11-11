@@ -396,8 +396,9 @@ struct CCKD_EXT {                       /* Ext for compressed ckd    */
         DEVBLK          *devnext;       /* cckd device queue         */
 
         unsigned int     ckddasd:1,     /* 1=CKD dasd                */
-                         fbadasd:1,     /* 1=FBA dasd                */
-                         cckdioact:1,   /* 1=Channel program active  */
+                         fbadasd:1;     /* 1=FBA dasd                */
+        unsigned int:0;                 /* Move to next storage unit */
+        unsigned int     cckdioact:1,   /* 1=Channel program active  */
                          bufused:1,     /* 1=newbuf was used         */
                          updated:1,     /* 1=Update occurred         */
                          merging:1,     /* 1=File merge in progress  */
