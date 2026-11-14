@@ -176,13 +176,13 @@ VADR    effective_addr2;                /* Effective address         */
 
     /* Program check if operand address bits 56-60 are non-zero */
     if ((effective_addr2 & 0xFF) & ~(FPC_BRM_3BIT))
-        regs->program_interrupt (regs, PGM_SPECIFICATION_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_SPECIFICATION_EXCEPTION);
 
     /* Program check if operand address bits 61-63 not a valid BRM */
     if ((effective_addr2 & FPC_BRM_3BIT) == BRM_RESV4
      || (effective_addr2 & FPC_BRM_3BIT) == BRM_RESV5
      || (effective_addr2 & FPC_BRM_3BIT) == BRM_RESV6)
-        regs->program_interrupt (regs, PGM_SPECIFICATION_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_SPECIFICATION_EXCEPTION);
 
     /* Set FPC 3-bit BFP rounding mode bits from operand address */
     regs->fpc &= ~(FPC_BRM_3BIT);
@@ -284,7 +284,7 @@ CREG    newcr12 = 0;                    /* CR12 upon completion      */
     /* All flag bits must be zero in ESA/390 mode */
     if(flags)
 #endif /*!defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)*/
-        regs->program_interrupt (regs, PGM_SPECIFICATION_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_SPECIFICATION_EXCEPTION);
 
     /* Fetch the offset to the new psw */
     mn = MADDR (pl_addr + 2, USE_INST_SPACE, regs, ACCTYPE_INSTFETCH, regs->psw.pkey);
@@ -385,7 +385,7 @@ CREG    newcr12 = 0;                    /* CR12 upon completion      */
 #if defined(FEATURE_MULTIPLE_CONTROLLED_DATA_SPACE)
     if(SIE_STATE_BIT_ON(regs, MX, XC)
       && (psw[2] & 0x80))
-        regs->program_interrupt (regs, PGM_SPECIAL_OPERATION_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_SPECIAL_OPERATION_EXCEPTION);
 #endif /*defined(FEATURE_MULTIPLE_CONTROLLED_DATA_SPACE)*/
 
     /* Special operation exception when setting AR space mode
@@ -393,14 +393,14 @@ CREG    newcr12 = 0;                    /* CR12 upon completion      */
     if(!REAL_MODE(&regs->psw)
       && ((psw[2] & 0xC0) == 0x40)
       && !ASF_ENABLED(regs) )
-        regs->program_interrupt (regs, PGM_SPECIAL_OPERATION_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_SPECIAL_OPERATION_EXCEPTION);
 
     /* Privileged Operation exception when setting home
        space mode in problem state */
     if(!REAL_MODE(&regs->psw)
       && PROBSTATE(&regs->psw)
       && ((psw[2] & 0xC0) == 0xC0) )
-        regs->program_interrupt (regs, PGM_PRIVILEGED_OPERATION_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_PRIVILEGED_OPERATION_EXCEPTION);
 
 #if defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)
     /* Handle 16 byte psw operand */
@@ -412,7 +412,7 @@ CREG    newcr12 = 0;                    /* CR12 upon completion      */
             /* restore the psw */
             regs->psw = save_psw;
             /* And generate a program interrupt */
-            regs->program_interrupt (regs, PGM_SPECIFICATION_EXCEPTION);
+            CALL_PROGRAM_INTERRUPT(regs, PGM_SPECIFICATION_EXCEPTION);
         }
     }
     /* Handle 8 byte psw operand */
@@ -430,7 +430,7 @@ CREG    newcr12 = 0;                    /* CR12 upon completion      */
             /* restore the psw */
             regs->psw = save_psw;
             /* And generate a program interrupt */
-            regs->program_interrupt (regs, PGM_SPECIFICATION_EXCEPTION);
+            CALL_PROGRAM_INTERRUPT(regs, PGM_SPECIFICATION_EXCEPTION);
         }
 #if defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)
         regs->psw.states &= ~BIT(PSW_NOTESAME_BIT);
@@ -445,7 +445,7 @@ CREG    newcr12 = 0;                    /* CR12 upon completion      */
                 /* restore the psw */
                 regs->psw = save_psw;
                 /* And generate a program interrupt */
-                regs->program_interrupt (regs, PGM_SPECIFICATION_EXCEPTION);
+                CALL_PROGRAM_INTERRUPT(regs, PGM_SPECIFICATION_EXCEPTION);
             }
             regs->psw.amode64 = 1;
             regs->psw.AMASK = AMASK64;
@@ -464,7 +464,7 @@ CREG    newcr12 = 0;                    /* CR12 upon completion      */
         /* restore the psw */
         regs->psw = save_psw;
         /* And generate a program interrupt */
-        regs->program_interrupt (regs, PGM_SPECIFICATION_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_SPECIFICATION_EXCEPTION);
     }
 
     /* Update access register b2 */
@@ -521,7 +521,7 @@ CREG    newcr12 = 0;                    /* CR12 upon completion      */
             if (regs->CR(13) & SSEVENT_BIT)
                 regs->TEA |= TEA_SSEVENT;
         }
-        regs->program_interrupt (regs, PGM_SPACE_SWITCH_EVENT);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_SPACE_SWITCH_EVENT);
     }
 
     RETURN_INTCHECK(regs);
@@ -606,12 +606,12 @@ BYTE    dec[16];                        /* Packed decimal operand    */
     if (dxf)
     {
         regs->dxc = DXC_DECIMAL;
-        regs->program_interrupt (regs, PGM_DATA_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_DATA_EXCEPTION);
     }
 
     /* Exception if overflow (operation suppressed, R1 unchanged) */
     if (ovf)
-        regs->program_interrupt (regs, PGM_FIXED_POINT_DIVIDE_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_DIVIDE_EXCEPTION);
 
     /* Store 64-bit result into R1 register */
     regs->GR_G(r1) = dreg;
@@ -788,7 +788,7 @@ U64     n;
 
     if (d == 0
       || (n / d) > 0xFFFFFFFF)
-        regs->program_interrupt (regs, PGM_FIXED_POINT_DIVIDE_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_DIVIDE_EXCEPTION);
 
     /* Divide unsigned registers */
     regs->GR_L(r1) = n % d;
@@ -822,7 +822,7 @@ U64     d, r, q;
     if (regs->GR_G(r1) == 0)            /* check for the simple case */
     {
       if (d == 0)
-          regs->program_interrupt (regs, PGM_FIXED_POINT_DIVIDE_EXCEPTION);
+          CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_DIVIDE_EXCEPTION);
 
       /* Divide signed registers */
       regs->GR_G(r1) = regs->GR_G(r1 + 1) % d;
@@ -831,7 +831,7 @@ U64     d, r, q;
     else
     {
       if (div_logical_long(&r, &q, regs->GR_G(r1), regs->GR_G(r1 + 1), d) )
-          regs->program_interrupt (regs, PGM_FIXED_POINT_DIVIDE_EXCEPTION);
+          CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_DIVIDE_EXCEPTION);
       else
       {
         regs->GR_G(r1) = r;
@@ -864,7 +864,7 @@ U32     d;
 
     if(d == 0
       || (n / d) > 0xFFFFFFFF)
-        regs->program_interrupt (regs, PGM_FIXED_POINT_DIVIDE_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_DIVIDE_EXCEPTION);
 
     /* Divide signed registers */
     regs->GR_L(r1) = n % d;
@@ -893,7 +893,7 @@ U64     r, q, d;
     if (regs->GR_G(r1) == 0)            /* check for the simple case */
     {
       if(d == 0)
-          regs->program_interrupt (regs, PGM_FIXED_POINT_DIVIDE_EXCEPTION);
+          CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_DIVIDE_EXCEPTION);
 
       /* Divide signed registers */
       regs->GR_G(r1) = regs->GR_G(r1 + 1) % d;
@@ -902,7 +902,7 @@ U64     r, q, d;
     else
     {
       if (div_logical_long(&r, &q, regs->GR_G(r1), regs->GR_G(r1 + 1), d) )
-          regs->program_interrupt (regs, PGM_FIXED_POINT_DIVIDE_EXCEPTION);
+          CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_DIVIDE_EXCEPTION);
       else
       {
         regs->GR_G(r1) = r;
@@ -1017,7 +1017,7 @@ bool    local = false;                  /* true == m4 bit 3 is on    */
 
     /* Program check if bits 44-51 of r2 register are non-zero */
     if (regs->GR_L(r2) & 0x000FF000)
-        regs->program_interrupt( regs, PGM_SPECIFICATION_EXCEPTION );
+        CALL_PROGRAM_INTERRUPT( regs, PGM_SPECIFICATION_EXCEPTION );
 
 #if defined(_FEATURE_SIE)
     if (SIE_STATE_BIT_ON( regs, IC0, IPTECSP ))
@@ -1168,7 +1168,7 @@ int     acctype = ACCTYPE_LPTEA;        /* Storage access type       */
         break;
     default: /* Specification exception if invalid value for m4 */
         n = -1; /* makes compiler happy */
-        regs->program_interrupt (regs, PGM_SPECIFICATION_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_SPECIFICATION_EXCEPTION);
     } /* end switch(m4) */
 
     /* Load the virtual address from the r2 register */
@@ -1402,7 +1402,7 @@ U64     n;                              /* 64-bit operand values     */
     if(n == 0
       || ((S64)n == -1LL &&
           regs->GR_G(r1 + 1) == 0x8000000000000000ULL))
-        regs->program_interrupt (regs, PGM_FIXED_POINT_DIVIDE_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_DIVIDE_EXCEPTION);
 
     regs->GR_G(r1) = (S64)regs->GR_G(r1 + 1) % (S64)n;
     regs->GR_G(r1 + 1) = (S64)regs->GR_G(r1 + 1) / (S64)n;
@@ -1435,7 +1435,7 @@ U32     n;                              /* 64-bit operand values     */
     if(n == 0
       || ((S32)n == -1 &&
           regs->GR_G(r1 + 1) == 0x8000000000000000ULL))
-        regs->program_interrupt (regs, PGM_FIXED_POINT_DIVIDE_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_DIVIDE_EXCEPTION);
 
     regs->GR_G(r1) = (S64)regs->GR_G(r1 + 1) % (S32)n;
     regs->GR_G(r1 + 1) = (S64)regs->GR_G(r1 + 1) / (S32)n;
@@ -1461,7 +1461,7 @@ U64     n;
     if(regs->GR_G(r2) == 0
       || ((S64)regs->GR_G(r2) == -1LL &&
           regs->GR_G(r1 + 1) == 0x8000000000000000ULL))
-        regs->program_interrupt (regs, PGM_FIXED_POINT_DIVIDE_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_DIVIDE_EXCEPTION);
 
     n = regs->GR_G(r2);
 
@@ -1490,7 +1490,7 @@ U32     n;
     if(regs->GR_L(r2) == 0
       || ((S32)regs->GR_L(r2) == -1 &&
           regs->GR_G(r1 + 1) == 0x8000000000000000ULL))
-        regs->program_interrupt (regs, PGM_FIXED_POINT_DIVIDE_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_DIVIDE_EXCEPTION);
 
     n = regs->GR_L(r2);
 
@@ -2823,7 +2823,7 @@ U32     n;                              /* 32-bit operand values     */
 
     /* Program check if fixed-point overflow */
     if ( regs->psw.cc == 3 && FOMASK(&regs->psw) )
-        regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
 
 } /* end DEF_INST(add_long_fullword) */
 #endif /* defined( FEATURE_NEW_ZARCH_ONLY_INSTRUCTIONS ) */
@@ -2854,7 +2854,7 @@ U64     n;                              /* 64-bit operand values     */
 
     /* Program check if fixed-point overflow */
     if ( regs->psw.cc == 3 && FOMASK(&regs->psw) )
-        regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
 
 } /* end DEF_INST(add_long) */
 #endif /* defined( FEATURE_NEW_ZARCH_ONLY_INSTRUCTIONS ) */
@@ -2939,7 +2939,7 @@ U32     n;                              /* 32-bit operand values     */
 
     /* Program check if fixed-point overflow */
     if ( regs->psw.cc == 3 && FOMASK(&regs->psw) )
-        regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
 
 } /* end DEF_INST(subtract_long_fullword) */
 #endif /* defined( FEATURE_NEW_ZARCH_ONLY_INSTRUCTIONS ) */
@@ -2970,7 +2970,7 @@ U64     n;                              /* 64-bit operand values     */
 
     /* Program check if fixed-point overflow */
     if ( regs->psw.cc == 3 && FOMASK(&regs->psw) )
-        regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
 
 } /* end DEF_INST(subtract_long) */
 #endif /* defined( FEATURE_NEW_ZARCH_ONLY_INSTRUCTIONS ) */
@@ -2993,7 +2993,7 @@ int     r1, r2;                         /* Values of R fields        */
 
     /* Program check if fixed-point overflow */
     if ( regs->psw.cc == 3 && FOMASK(&regs->psw) )
-        regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
 
 } /* end DEF_INST(subtract_long_register) */
 #endif /* defined( FEATURE_NEW_ZARCH_ONLY_INSTRUCTIONS ) */
@@ -3016,7 +3016,7 @@ int     r1, r2;                         /* Values of R fields        */
 
     /* Program check if fixed-point overflow */
     if ( regs->psw.cc == 3 && FOMASK(&regs->psw) )
-        regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
 
 } /* end DEF_INST(subtract_long_fullword_register) */
 #endif /* defined( FEATURE_NEW_ZARCH_ONLY_INSTRUCTIONS ) */
@@ -3039,7 +3039,7 @@ int     r1, r2;                         /* Values of R fields        */
 
     /* Program check if fixed-point overflow */
     if ( regs->psw.cc == 3 && FOMASK(&regs->psw) )
-        regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
 
 } /* end DEF_INST(add_long_register) */
 #endif /* defined( FEATURE_NEW_ZARCH_ONLY_INSTRUCTIONS ) */
@@ -3062,7 +3062,7 @@ int     r1, r2;                         /* Values of R fields        */
 
     /* Program check if fixed-point overflow */
     if ( regs->psw.cc == 3 && FOMASK(&regs->psw) )
-        regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
 
 } /* end DEF_INST(add_long_fullword_register) */
 #endif /* defined( FEATURE_NEW_ZARCH_ONLY_INSTRUCTIONS ) */
@@ -3084,7 +3084,7 @@ int     r1, r2;                         /* Values of R fields        */
         regs->GR_G(r1) = regs->GR_G(r2);
         regs->psw.cc = 3;
         if ( FOMASK(&regs->psw) )
-            regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+            CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
         return;
     }
 
@@ -3220,7 +3220,7 @@ int     r1, r2;                         /* Values of R fields        */
         regs->GR_G(r1) = regs->GR_G(r2);
         regs->psw.cc = 3;
         if ( FOMASK(&regs->psw) )
-            regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+            CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
         return;
     }
 
@@ -3618,7 +3618,7 @@ bool    overflow;                       /* true if overflow          */
         {
             regs->psw.cc = 3;
             if (FOMASK( &regs->psw ))
-                regs->program_interrupt( regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION );
+                CALL_PROGRAM_INTERRUPT( regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION );
             return;
         }
     }
@@ -3748,7 +3748,7 @@ S32     op2;                            /* Operand-2 value           */
 
     /* Program check if fixed-point overflow */
     if ( regs->psw.cc == 3 && FOMASK( &regs->psw ))
-        regs->program_interrupt( regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION );
+        CALL_PROGRAM_INTERRUPT( regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION );
 }
 #endif /* defined( FEATURE_058_MISC_INSTR_EXT_FACILITY_2 ) */
 
@@ -3788,7 +3788,7 @@ S64     op2;                            /* Operand-2 value           */
 
     /* Program check if fixed-point overflow */
     if ( regs->psw.cc == 3 && FOMASK( &regs->psw ))
-        regs->program_interrupt( regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION );
+        CALL_PROGRAM_INTERRUPT( regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION );
 }
 #endif /* defined( FEATURE_058_MISC_INSTR_EXT_FACILITY_2 ) */
 
@@ -3854,7 +3854,7 @@ S32     resulthi, resultlo;             /* 64-bit result             */
 
     /* Program check if fixed-point overflow */
     if ( regs->psw.cc == 3 && FOMASK( &regs->psw ))
-        regs->program_interrupt( regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION );
+        CALL_PROGRAM_INTERRUPT( regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION );
 }
 #endif /* defined( FEATURE_058_MISC_INSTR_EXT_FACILITY_2 ) */
 
@@ -3886,7 +3886,7 @@ S64     resulthi, resultlo;             /* 128-bit result            */
 
     /* Program check if fixed-point overflow */
     if ( regs->psw.cc == 3 && FOMASK( &regs->psw ))
-        regs->program_interrupt( regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION );
+        CALL_PROGRAM_INTERRUPT( regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION );
 }
 #endif /* defined( FEATURE_058_MISC_INSTR_EXT_FACILITY_2 ) */
 
@@ -3929,7 +3929,7 @@ U16     i2;                             /* 16-bit immediate op       */
 
     /* Program check if fixed-point overflow */
     if ( regs->psw.cc == 3 && FOMASK(&regs->psw) )
-        regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
 
 } /* end DEF_INST(add_long_halfword_immediate) */
 #endif /* defined( FEATURE_NEW_ZARCH_ONLY_INSTRUCTIONS ) */
@@ -3960,7 +3960,7 @@ S16     n;                              /* 16-bit operand value      */
 
     /* Program check if fixed-point overflow */
     if ( regs->psw.cc == 3 && FOMASK( &regs->psw ))
-        regs->program_interrupt( regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION );
+        CALL_PROGRAM_INTERRUPT( regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION );
 }
 #endif /* defined( FEATURE_058_MISC_INSTR_EXT_FACILITY_2 ) */
 
@@ -5042,7 +5042,7 @@ VADR    ia = PSW_IA_FROM_IP( regs, 0 ); /* Unupdated instruction addr*/
 
     /* Program check if instruction is located above 16MB */
     if (ia > 0xFFFFFFULL)
-        regs->program_interrupt( regs, PGM_SPECIFICATION_EXCEPTION );
+        CALL_PROGRAM_INTERRUPT( regs, PGM_SPECIFICATION_EXCEPTION );
 
 #if defined( FEATURE_001_ZARCH_INSTALLED_FACILITY )
     /* Add a mode trace entry when switching in/out of 64 bit mode */
@@ -5079,7 +5079,7 @@ VADR    ia = PSW_IA_FROM_IP( regs, 0 ); /* Unupdated instruction addr*/
 
     /* Program check if instruction is located above 2GB */
     if (ia > 0x7FFFFFFFULL)
-        regs->program_interrupt( regs, PGM_SPECIFICATION_EXCEPTION );
+        CALL_PROGRAM_INTERRUPT( regs, PGM_SPECIFICATION_EXCEPTION );
 
 #if defined( FEATURE_001_ZARCH_INSTALLED_FACILITY )
     /* Add a mode trace entry when switching in/out of 64 bit mode */
@@ -5208,7 +5208,7 @@ VADR    effective_addr1,
 
     /* Translate virtual address to real address */
     if (ARCH_DEP(translate_addr) (effective_addr2, b2, regs, ACCTYPE_STRAG))
-        regs->program_interrupt (regs, regs->dat.xcode);
+        CALL_PROGRAM_INTERRUPT(regs, regs->dat.xcode);
 
     /* Store register contents at operand address */
     ARCH_DEP(vstore8) (regs->dat.raddr, effective_addr1, b1, regs );
@@ -5402,7 +5402,7 @@ int     rc;
 
     /* Load updated PSW */
     if ( ( rc = ARCH_DEP(load_psw) ( regs, qword ) ) )
-        regs->program_interrupt (regs, rc);
+        CALL_PROGRAM_INTERRUPT(regs, rc);
 
     /* Perform serialization and checkpoint synchronization */
     PERFORM_SERIALIZATION (regs);
@@ -5453,11 +5453,11 @@ BYTE    i1;                             /* Immediate byte from instr */
             && FACILITY_ENABLED( 169_SKEY_REMOVAL, regs )
             && (qword[1] & 0xF0)
         )
-            regs->program_interrupt( regs, PGM_SPECIAL_OPERATION_EXCEPTION );
+            CALL_PROGRAM_INTERRUPT( regs, PGM_SPECIAL_OPERATION_EXCEPTION );
 
         /* Load updated PSW */
         if ((rc = ARCH_DEP( load_psw )( regs, qword )))
-            regs->program_interrupt( regs, rc );
+            CALL_PROGRAM_INTERRUPT( regs, rc );
     }
     PERFORM_SERIALIZATION( regs );
     PERFORM_CHKPT_SYNC( regs );
@@ -5537,7 +5537,7 @@ DEF_INST( perform_timing_facility_function )
     SIE_INTERCEPT( regs );
 
     if (regs->GR_L(0) & PTFF_GPR0_RESV)
-        regs->program_interrupt( regs, PGM_SPECIFICATION_EXCEPTION );
+        CALL_PROGRAM_INTERRUPT( regs, PGM_SPECIFICATION_EXCEPTION );
 
     /* Extract function code from GR0 */
     fc = regs->GR_L(0) & PTFF_GPR0_FC_MASK;
@@ -5648,7 +5648,7 @@ DEF_INST( perform_timing_facility_function )
     }
 
     /* Otherwise Problem state or undefined Query function */
-    regs->program_interrupt( regs, PGM_SPECIFICATION_EXCEPTION );
+    CALL_PROGRAM_INTERRUPT( regs, PGM_SPECIFICATION_EXCEPTION );
 }
 #endif /* defined( FEATURE_028_TOD_CLOCK_STEER_FACILITY ) */
 
@@ -5679,7 +5679,7 @@ int     fc, rc = 0;                     /* Function / Reason Code    */
     if (regs->GR_G(r1) & 0xFFFFFFFFFFFFFF00ULL)
     {
         PTT_ERR("*PTF",regs->GR_G(r1),rc,regs->psw.IA_L);
-        regs->program_interrupt (regs, PGM_SPECIFICATION_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_SPECIFICATION_EXCEPTION);
     }
 
     /* Extract function code */
@@ -5747,7 +5747,7 @@ int     fc, rc = 0;                     /* Function / Reason Code    */
     default:
         /* Undefined function code */
         PTT_ERR("*PTF",regs->GR_G(r1),rc,regs->psw.IA_L);
-        regs->program_interrupt (regs, PGM_SPECIFICATION_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_SPECIFICATION_EXCEPTION);
     }
 
     /* Set reason code in bits 48-55 when condition code is 2 */
@@ -6007,7 +6007,7 @@ bool    multi_block = false;            /* Work (simplifies things)  */
             && !FACILITY_ENABLED( 014_NONQ_KEY_SET, regs )
            )
     )
-        regs->program_interrupt( regs, PGM_SPECIFICATION_EXCEPTION );
+        CALL_PROGRAM_INTERRUPT( regs, PGM_SPECIFICATION_EXCEPTION );
 
     /* Save key to MAYBE be set */
     r1key = regs->GR_LHLCL(r1);
@@ -6033,7 +6033,7 @@ bool    multi_block = false;            /* Work (simplifies things)  */
             multi_block = true;
 
             if (!FACILITY_ENABLED( 078_EDAT_2, regs ))
-                regs->program_interrupt( regs, PGM_SPECIFICATION_EXCEPTION );
+                CALL_PROGRAM_INTERRUPT( regs, PGM_SPECIFICATION_EXCEPTION );
 
             break;
         }
@@ -6059,8 +6059,8 @@ bool    multi_block = false;            /* Work (simplifies things)  */
 
         default:
         {
-            regs->program_interrupt( regs, PGM_SPECIFICATION_EXCEPTION );
             fc = 1; // (to keep compiler happy)
+            CALL_PROGRAM_INTERRUPT( regs, PGM_SPECIFICATION_EXCEPTION );
             break;  // (purely for consistency; not actually needed)
         }
     }
@@ -6431,7 +6431,7 @@ int     i, j;                           /* Array subscripts          */
 
     /* Program check if operand length (len+1) exceeds 32 bytes */
     if (len > 31)
-        regs->program_interrupt (regs, PGM_SPECIFICATION_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_SPECIFICATION_EXCEPTION);
 
     /* Fetch the second operand and right justify */
     memset (source, 0, sizeof(source));
@@ -6474,7 +6474,7 @@ int     i, j;                           /* Array subscripts          */
 
     /* Program check if byte count (len+1) exceeds 64 or is odd */
     if (len > 63 || (len & 1) == 0)
-        regs->program_interrupt (regs, PGM_SPECIFICATION_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_SPECIFICATION_EXCEPTION);
 
     /* Fetch the second operand and right justify */
     memset (source, 0, sizeof(source));
@@ -6519,7 +6519,7 @@ int     cc;                             /* Condition code            */
 
     /* Program check if operand length (len+1) exceeds 32 bytes */
     if (len > 31)
-        regs->program_interrupt (regs, PGM_SPECIFICATION_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_SPECIFICATION_EXCEPTION);
 
     /* Fetch the 16-byte second operand */
     ARCH_DEP(vfetchc) ( source, 15, effective_addr2, b2, regs );
@@ -6575,7 +6575,7 @@ int     cc;                             /* Condition code            */
 
     /* Program check if byte count (len+1) exceeds 64 or is odd */
     if (len > 63 || (len & 1) == 0)
-        regs->program_interrupt (regs, PGM_SPECIFICATION_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_SPECIFICATION_EXCEPTION);
 
     /* Fetch the 16-byte second operand */
     ARCH_DEP(vfetchc) ( source, 15, effective_addr2, b2, regs );
@@ -7251,7 +7251,7 @@ U32     n;                              /* 32-bit operand values     */
 
     /* Program check if fixed-point overflow */
     if ( regs->psw.cc == 3 && FOMASK(&regs->psw) )
-        regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
 
 } /* end DEF_INST(add_y) */
 #endif /* defined( FEATURE_018_LONG_DISPL_INST_FACILITY ) */
@@ -7283,7 +7283,7 @@ S32     n;                              /* 32-bit operand values     */
 
     /* Program check if fixed-point overflow */
     if ( regs->psw.cc == 3 && FOMASK(&regs->psw) )
-        regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
 
 } /* end DEF_INST(add_halfword_y) */
 #endif /* defined( FEATURE_018_LONG_DISPL_INST_FACILITY ) */
@@ -7671,7 +7671,7 @@ BYTE    dec[8];                         /* Packed decimal operand    */
     if (dxf)
     {
         regs->dxc = DXC_DECIMAL;
-        regs->program_interrupt (regs, PGM_DATA_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_DATA_EXCEPTION);
     }
 
     /* Overflow if result exceeds 31 bits plus sign */
@@ -7683,7 +7683,7 @@ BYTE    dec[8];                         /* Packed decimal operand    */
 
     /* Program check if overflow (R1 contains rightmost 32 bits) */
     if (ovf)
-        regs->program_interrupt (regs, PGM_FIXED_POINT_DIVIDE_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_DIVIDE_EXCEPTION);
 
 }
 #endif /* defined( FEATURE_018_LONG_DISPL_INST_FACILITY ) */
@@ -8446,7 +8446,7 @@ U32     n;                              /* 32-bit operand values     */
 
     /* Program check if fixed-point overflow */
     if ( regs->psw.cc == 3 && FOMASK(&regs->psw) )
-        regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
 
 } /* end DEF_INST(subtract_y) */
 #endif /* defined( FEATURE_018_LONG_DISPL_INST_FACILITY ) */
@@ -8478,7 +8478,7 @@ S32     n;                              /* 32-bit operand values     */
 
     /* Program check if fixed-point overflow */
     if ( regs->psw.cc == 3 && FOMASK(&regs->psw) )
-        regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
 
 } /* end DEF_INST(subtract_halfword_y) */
 #endif /* defined( FEATURE_018_LONG_DISPL_INST_FACILITY ) */
@@ -8509,7 +8509,7 @@ S16     n;                              /* Second operand value      */
 
     /* Program check if fixed-point overflow */
     if ( regs->psw.cc == 3 && FOMASK( &regs->psw ))
-        regs->program_interrupt( regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION );
+        CALL_PROGRAM_INTERRUPT( regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION );
 }
 #endif /* defined( FEATURE_058_MISC_INSTR_EXT_FACILITY_2 ) */
 
@@ -8591,7 +8591,7 @@ U32     i2;                             /* 32-bit operand value      */
 
     /* Program check if fixed-point overflow */
     if ( regs->psw.cc == 3 && FOMASK(&regs->psw) )
-        regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
 
 } /* end DEF_INST(add_fullword_immediate) */
 
@@ -8614,7 +8614,7 @@ U32     i2;                             /* 32-bit operand value      */
 
     /* Program check if fixed-point overflow */
     if ( regs->psw.cc == 3 && FOMASK(&regs->psw) )
-        regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
 
 } /* end DEF_INST(add_long_fullword_immediate) */
 

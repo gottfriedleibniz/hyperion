@@ -2102,7 +2102,7 @@ static void vector_ieee_trap( REGS *regs, int vix, U32 vic )
     regs->dxc = vxc;                       /* Save VXC in PSA      */
     regs->fpc &= ~FPC_DXC;                 /* Clear DXC/VXC in FPC */
     regs->fpc |= (vxc << FPC_DXC_SHIFT);   /* Insert VXC into FPC  */
-    regs->program_interrupt( regs, PGM_VECTOR_PROCESSING_EXCEPTION );
+    CALL_PROGRAM_INTERRUPT( regs, PGM_VECTOR_PROCESSING_EXCEPTION );
 }
 
 static void vector_ieee_cond_trap( int vix, REGS *regs, U32 ieee_traps )

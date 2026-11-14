@@ -17,6 +17,31 @@
 #include "opcode.h"
 #include "inline.h"
 
+#undef ODD_CHECK
+#define ODD_CHECK(_r, _regs) \
+    if( (_r) & 1 ) \
+        CALL_PROGRAM_INTERRUPT_AND_RETURN( (_regs), PGM_SPECIFICATION_EXCEPTION, 0)
+
+#undef ODD2_CHECK
+#define ODD2_CHECK(_r1, _r2, _regs) \
+    if( ((_r1) & 1) || ((_r2) & 1) ) \
+        CALL_PROGRAM_INTERRUPT_AND_RETURN( (_regs), PGM_SPECIFICATION_EXCEPTION, 0)
+
+#undef FW_CHECK
+#define FW_CHECK(_value, _regs) \
+    if( (_value) & 3 ) \
+        CALL_PROGRAM_INTERRUPT_AND_RETURN( (_regs), PGM_SPECIFICATION_EXCEPTION, 0)
+
+#undef DW_CHECK
+#define DW_CHECK(_value, _regs) \
+    if( (_value) & 7 ) \
+        CALL_PROGRAM_INTERRUPT_AND_RETURN( (_regs), PGM_SPECIFICATION_EXCEPTION, 0)
+
+#undef QW_CHECK
+#define QW_CHECK(_value, _regs) \
+    if( (_value) & 15 ) \
+        CALL_PROGRAM_INTERRUPT_AND_RETURN( (_regs), PGM_SPECIFICATION_EXCEPTION, 0)
+
 #if defined(FEATURE_PERFORM_LOCKED_OPERATION)
 int ARCH_DEP(plo_cl) (int r1, int r3, VADR effective_addr2, int b2,
                               VADR effective_addr4, int b4, REGS *regs)

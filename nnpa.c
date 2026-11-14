@@ -307,7 +307,7 @@ static inline void vector_softfloat_conditional( REGS *regs, int vix )
     regs->fpc &= ~FPC_DXC;             /*  Clear previous DXC/VXC  */
     regs->fpc |= ((U32)vxc << FPC_DXC_SHIFT);
 
-    regs->program_interrupt( regs, PGM_VECTOR_PROCESSING_EXCEPTION );
+    CALL_PROGRAM_INTERRUPT( regs, PGM_VECTOR_PROCESSING_EXCEPTION );
 }
 
 

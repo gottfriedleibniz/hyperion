@@ -587,7 +587,7 @@ VADR    effective_addr2;                /* Effective address         */
     if (!regs->txf_tnd)
     {
         PTT_TXF( "*TXF TABORT", 0, 0, 0 );
-        regs->program_interrupt( regs, PGM_SPECIAL_OPERATION_EXCEPTION );
+        CALL_PROGRAM_INTERRUPT( regs, PGM_SPECIAL_OPERATION_EXCEPTION );
         UNREACHABLE_CODE( return );
     }
 

@@ -379,7 +379,7 @@ HDL_DLL_IMPORT void         hdl_repins   ( bool replace, HDLINS* ins );
     DEF_INST( instrfunc )                                           \
     {                                                               \
         INST_UPDATE_PSW( regs, ILC( inst[0] ), ILC( inst[0] ));     \
-        regs->program_interrupt( regs, PGM_OPERATION_EXCEPTION );   \
+        CALL_PROGRAM_INTERRUPT( regs, PGM_OPERATION_EXCEPTION );   \
     }
 
 /*-------------------------------------------------------------------*/
