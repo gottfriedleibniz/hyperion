@@ -70,11 +70,14 @@
   #undef MSC_X86_64BIT        // any 64-bit X86  (AMD64 or Intel Itanium)
   #undef MSC_X86_AMD64        // AMD64 only
   #undef MSC_X86_IA64         // Intel Itanium only
+  #undef MSC_ARM_64BIT        // (Windows on...) ARM64 only
 
   #if defined( _M_IX86 ) && ( _M_IX86 >= 600 )
     #define MSC_X86_32BIT
   #endif
-  #if defined( _M_AMD64 )
+  #if defined( _M_ARM64 ) || defined( _M_ARM64EC )
+    #define MSC_ARM_64BIT
+  #elif defined( _M_AMD64 )
     #define MSC_X86_AMD64
     #define MSC_X86_64BIT
   #endif
@@ -83,7 +86,7 @@
     #define MSC_X86_64BIT
   #endif
 
-  #if defined( GEN_MSC_ASSISTS ) && (defined( MSC_X86_32BIT ) || defined( MSC_X86_64BIT ))
+  #if defined( GEN_MSC_ASSISTS ) && (defined( MSC_X86_32BIT ) || defined( MSC_X86_64BIT ) || defined( MSC_ARM_64BIT ))
 
     // Any X86 at all (both 32/64-bit)
 
@@ -168,7 +171,7 @@
       }
     #endif /* defined( MSC_X86_32BIT ) */
 
-  #endif // defined( GEN_MSC_ASSISTS ) && (defined( MSC_X86_32BIT ) || defined( MSC_X86_64BIT ))
+  #endif // defined( GEN_MSC_ASSISTS ) && (defined( MSC_X86_32BIT ) || defined( MSC_X86_64BIT ) || defined( MSC_ARM_64BIT ))
 
   // ------------------------------------------------------------------
 
