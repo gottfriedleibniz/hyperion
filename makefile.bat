@@ -168,6 +168,9 @@
   if "%~1" == "?"       goto :HELP
   if "%~1" == "/?"      goto :HELP
   if "%~1" == "-?"      goto :HELP
+  if "%~1" == "help"    goto :HELP
+  if "%~1" == "/help"   goto :HELP
+  if "%~1" == "-help"   goto :HELP
   if "%~1" == "--help"  goto :HELP
 
   set "build_type="
@@ -357,9 +360,16 @@
 ::-----------------------------------------------------------------------------
 :set_build_env
 
-  if /i "%targ_arch%" == "all"   set "vstools_arch=32"
-  if /i "%targ_arch%" == "x86"   set "vstools_arch=32"
-  if /i "%targ_arch%" == "amd64" set "vstools_arch=64"
+  if /i "%targ_arch%" == "all" (
+    set "vstools_arch=%vshost%"
+  ) else if %vsver% LEQ %vs2012% (
+    @REM Disable cross compilation for VS2012 and earlier
+    set "vstools_arch=%targ_arch%"
+  ) else if /i "%targ_arch%" == "%vshost%" (
+    set "vstools_arch=%targ_arch%"
+  ) else (
+    set "vstools_arch=%vshost%_%targ_arch%"
+  )
 
   set "original_include=%include%"
 
