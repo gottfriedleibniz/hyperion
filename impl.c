@@ -863,7 +863,7 @@ static void is_PCLMULQDQ_available()
   #else
     sysblk.have_PCLMULQDQ = false;
   #endif
-#elif defined(_M_X64) || defined( __SSE2__ )
+#elif defined( _M_X64 ) || defined( __SSE2__ )
     QW  mm1, mm2, acc;
     U64 m1 = 1, m2 = 2;
 
