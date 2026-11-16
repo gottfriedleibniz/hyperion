@@ -32,6 +32,8 @@
 BZIP2_DIR = winbuild\bzip2
 !ELSEIF "$(CPU)" == "AMD64" && EXIST(winbuild\bzip2\x64)
 BZIP2_DIR = winbuild\bzip2\x64
+!ELSEIF "$(CPU)" == "ARM64" && EXIST(winbuild\bzip2\ARM64)
+BZIP2_DIR = winbuild\bzip2\ARM64
 !ENDIF
 !ELSE
 # Defined: use explicit directory or subdirectory
@@ -46,6 +48,10 @@ BZIP2_DIR = winbuild\bzip2\x64
 !ELSEIF "$(CPU)" == "AMD64"
 !IF EXIST($(BZIP2_DIR)\x64)
 BZIP2_DIR = $(BZIP2_DIR)\x64
+!ENDIF
+!ELSEIF "$(CPU)" == "ARM64"
+!IF EXIST($(BZIP2_DIR)\ARM64)
+BZIP2_DIR = $(BZIP2_DIR)\ARM64
 !ENDIF
 !ENDIF
 !ENDIF

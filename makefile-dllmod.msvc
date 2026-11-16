@@ -70,6 +70,18 @@ cflags     =  $(cflags) -D_AMD64_=1 -DWIN64 -D_WIN64
 dlllflags  =  $(dlllflags) -entry:_DllMainCRTStartup
 rcvars     =  $(rcvars) -DWIN64 -D_WIN64
 
+!IF "$(ABI)" == "ARM64EC"
+cflags     =  $(cflags) /arm64EC
+dlllflags  =  $(dlllflags) /machine:arm64EC
+conlflags  =  $(conlflags) /machine:arm64EC
+!ENDIF
+
+!ELSEIF "$(CPU)" == "ARM64"
+
+cflags     =  $(cflags) -DWIN64
+dlllflags  =  $(dlllflags) -entry:_DllMainCRTStartup
+rcvars     =  $(rcvars) -DWIN64 -D_M_ARM64
+
 !ELSE
 
 cflags     =  $(cflags) -D_X86_=1

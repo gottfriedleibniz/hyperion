@@ -611,9 +611,11 @@
 
   if /i "%build_type%" == "DEBUG"       set "CFG=DEBUG"
   if /i "%build_type%" == "DEBUG-X64"   set "CFG=DEBUG"
+  if /i "%build_type%" == "DEBUG-ARM64" set "CFG=DEBUG"
 
   if /i "%build_type%" == "RETAIL"      set "CFG=RETAIL"
   if /i "%build_type%" == "RETAIL-X64"  set "CFG=RETAIL"
+  if /i "%build_type%" == "RETAIL-ARM64" set "CFG=RETAIL"
 
   if not "%CFG%" == "" (
     %return%
@@ -646,6 +648,7 @@
   set "rc=0"
   set "targ_arch="
   set "CPU="
+  set "ABI="
   set "_WIN64="
 
   if /i "%build_type%" == "DEBUG"       set "targ_arch=x86"
@@ -654,6 +657,9 @@
   if /i "%build_type%" == "DEBUG-X64"   set "targ_arch=amd64"
   if /i "%build_type%" == "RETAIL-X64"  set "targ_arch=amd64"
 
+  if /i "%build_type%" == "DEBUG-ARM64"  set "targ_arch=arm64"
+  if /i "%build_type%" == "RETAIL-ARM64" set "targ_arch=arm64"
+
   if /i "%build_type%" == "DEBUG-ALL"   set "targ_arch=all"
   if /i "%build_type%" == "RETAIL-ALL"  set "targ_arch=all"
   if /i "%build_type%" == "ALL-ALL"     set "targ_arch=all"
@@ -661,6 +667,16 @@
   if /i "%targ_arch%"  == "x86"         set "CPU=i386"
   if /i "%targ_arch%"  == "amd64"       set "CPU=AMD64"
   if /i "%targ_arch%"  == "amd64"       set "_WIN64=1"
+
+  if /i "%targ_arch%"  == "arm64"       set "CPU=AMD64"
+  if /i "%targ_arch%"  == "arm64"       set "ABI=ARM64EC"
+  if /i "%targ_arch%"  == "arm64"       set "_WIN64=1"
+  if /i "%targ_arch%"  == "arm64" (
+    @REM Disable ARM64 compilation for VS2017 and earlier
+    if %vsver% LEQ %vs2017% (
+      goto :bad_targ_arch
+    )
+  )
 
   if not "%targ_arch%" == "" (
     %return%
