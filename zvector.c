@@ -174,7 +174,7 @@ DEF_INST( vector_load_logical_element_and_zero )
     ZVECTOR_CHECK( regs );
     PER_ZEROADDR_XCHECK2( regs, x2, b2 );
 
-#if defined(_M_X64) || defined( __SSE2__ )
+#if (defined(_M_X64) || defined( __SSE2__ )) && !defined( _M_ARM64EC )
     regs->VR_Q( v1 ).v = _mm_setzero_si128();
 #else
     regs->VR_D(v1, 0) = 0x00;

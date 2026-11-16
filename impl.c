@@ -857,6 +857,13 @@ extern BYTE z900_get_storage_key( U64 abs );
 
 static void is_PCLMULQDQ_available()
 {
+#if defined( _M_ARM64 ) || defined( _M_ARM64EC )
+  #if defined( FEATURE_HW_CLMUL ) /* #WoA: See FEATURE_HW_CLMUL comment */
+    sysblk.have_PCLMULQDQ = true;
+  #else
+    sysblk.have_PCLMULQDQ = false;
+  #endif
+#elif defined(_M_X64) || defined( __SSE2__ )
     QW  mm1, mm2, acc;
     U64 m1 = 1, m2 = 2;
 
@@ -874,6 +881,9 @@ static void is_PCLMULQDQ_available()
     {
         sysblk.have_PCLMULQDQ = false;
     }
+#else
+    sysblk.have_PCLMULQDQ = false; /* Compiled without intrinsics */
+#endif
 }
 
 #else // !defined( _MSVC_ ), i.e. Linux
@@ -965,11 +975,17 @@ static void check_host_instruction_availability()
     /* Then report all of the ones that aren't available */
     // "WARNING: Host does not support the '%s' instruction"
 
+/* ARM64 processor? */
+#if defined( _M_ARM64 ) || defined( _M_ARM64EC )
+    if (!sysblk.have_PCLMULQDQ) WRMSG( HHC00026, "W", "PCLMUL" );
+
 /* INTEL X64 processor? */
-#if defined( __x86_64__ ) || defined( _M_X64 )
+#elif defined( __x86_64__ ) || defined( _M_X64 )
     if (!sysblk.have_PCLMULQDQ) WRMSG( HHC00026, "W", "PCLMULQDQ" );
-//  if (!sysblk.have_XXXXXXXXX) WRMSG( HHC00026, "W", "XXXXXXXXX" );
+
 #endif
+
+//  if (!sysblk.have_XXXXXXXXX) WRMSG( HHC00026, "W", "XXXXXXXXX" );
 }
 
 /*-------------------------------------------------------------------*/

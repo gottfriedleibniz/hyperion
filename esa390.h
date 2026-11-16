@@ -75,7 +75,9 @@
  typedef union {
                  struct { DW L; DW H; } D;
                  struct { FW LL; FW LH; FW HL; FW HH; } F;
-#if defined(_M_X64) || defined( __SSE2__ )
+#if defined( _M_ARM64 ) || defined( _M_ARM64EC )
+                 int32x4_t v;            /* #NOTE: ARM64EC defines _M_X64 */
+#elif defined(_M_X64) || defined( __SSE2__ )
                  __m128i v;              /* SIMD 128 bit vector   */
 #endif
                  U64     d[2];           /* Unsigned double words (2x64b) */
