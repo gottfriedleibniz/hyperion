@@ -585,6 +585,7 @@ DLL_EXPORT int  hthread_destroy_lock( LOCK* plk, const char* destroy_loc )
         return EINVAL;
 
     /* Destroy the Internal ILOCK structure lock */
+    LockLocksList();
     if ((rc1 = hthread_mutex_destroy( &ilk->il_locklock )) == 0)
     {
         /* Now destroy the actual locking model HLOCK lock */
@@ -596,17 +597,16 @@ DLL_EXPORT int  hthread_destroy_lock( LOCK* plk, const char* destroy_loc )
 
     if (rc1 == 0 && rc2 == 0)
     {
-        LockLocksList();
         {
             RemoveListEntry( &ilk->il_link );
             lockcount--;
         }
-        UnlockLocksList();
 
         free( ilk->il_name );
         free_aligned( ilk );
         plk->ilk = NULL;
     }
+    UnlockLocksList();
 
     return (rc1 ? rc1 : (rc2 ? rc2 : 0));
 }
@@ -910,8 +910,16 @@ DLL_EXPORT int  hthread_wait_condition( COND* plc, LOCK* plk, const char* wait_l
     PTTRACE( "wait before", plk, plc, wait_loc, PTT_MAGIC );
     rc = hthread_cond_wait( plc, &ilk->il_lock );
     PTTRACE( "wait after", plk, plc, wait_loc, rc );
-    ilk->il_ob_tid = hthread_self();
-    if (rc)
+    if (!rc)
+    {
+        hthread_mutex_lock( &ilk->il_locklock );
+        {
+            ilk->il_ob_locat = wait_loc;
+            ilk->il_ob_tid = hthread_self();
+        }
+        hthread_mutex_unlock( &ilk->il_locklock );
+    }
+    else
         loglock( ilk, rc, "wait_condition", wait_loc );
     return rc;
 }
@@ -929,8 +937,16 @@ DLL_EXPORT int  hthread_timed_wait_condition( COND* plc, LOCK* plk,
     PTTRACE( "tw before", plk, plc, wait_loc, PTT_MAGIC );
     rc = hthread_cond_timedwait( plc, &ilk->il_lock, tm );
     PTTRACE( "tw after", plk, plc, wait_loc, rc );
-    ilk->il_ob_tid = hthread_self();
-    if (rc && ETIMEDOUT != rc)
+    if (!rc)
+    {
+        hthread_mutex_lock( &ilk->il_locklock );
+        {
+            ilk->il_ob_locat = wait_loc;
+            ilk->il_ob_tid = hthread_self();
+        }
+        hthread_mutex_unlock( &ilk->il_locklock );
+    }
+    else if (ETIMEDOUT != rc)
         loglock( ilk, rc, "timed_wait_condition", wait_loc );
     return rc;
 }
@@ -988,6 +1004,7 @@ static void hthread_list_abandoned_locks( TID tid, const char* exit_loc )
         for (ple = locklist.Flink; ple != &locklist; ple = ple->Flink)
         {
             ilk = CONTAINING_RECORD( ple, ILOCK, il_link );
+            hthread_mutex_lock( &ilk->il_locklock );
             if (hthread_equal( ilk->il_ob_tid, tid ))
             {
                 char tod[27];           /* "YYYY-MM-DD HH:MM:SS.uuuuuu"  */
@@ -1007,6 +1024,7 @@ static void hthread_list_abandoned_locks( TID tid, const char* exit_loc )
                         ilk->il_name, &tod[11], TRIMLOC( ilk->il_ob_locat ));
                 }
             }
+            hthread_mutex_unlock( &ilk->il_locklock );
         }
     }
     UnlockLocksList();
@@ -1227,8 +1245,12 @@ static int hthreads_copy_locks_list( ILOCK** ppILOCK, LIST_ENTRY* anchor )
         for (i=0, ple = locklist.Flink; ple != &locklist; ple = ple->Flink, i++)
         {
             ilk = CONTAINING_RECORD( ple, ILOCK, il_link );
-            memcpy( &ilka[i], ilk, sizeof( ILOCK ));
-            ilka[i].il_name = strdup( ilk->il_name );
+            hthread_mutex_lock( &ilk->il_locklock );
+            {
+                memcpy( &ilka[i], ilk, sizeof( ILOCK ));
+                ilka[i].il_name = strdup( ilk->il_name );
+            }
+            hthread_mutex_unlock( &ilk->il_locklock );
         }
 
         k = lockcount;  /* Save how entries there are */
@@ -1526,6 +1548,8 @@ static int hthreads_copy_threads_list( HTHREAD** ppHTHREAD, LIST_ENTRY* anchor )
         for (i=0, ple = threadlist.Flink; ple != &threadlist; ple = ple->Flink, i++)
         {
             ht = CONTAINING_RECORD( ple, HTHREAD, ht_link );
+            /* #RACE: Some hthreads may be manipulated during memcpy. Noted, but
+             * should be of little concern for the private copy of list. */
             memcpy( &hta[i], ht, sizeof( HTHREAD ));
             hta[i].ht_name = strdup( ht->ht_name );
             hta[i].ht_ob_where = ht->ht_ob_where ? strdup( ht->ht_ob_where ) : NULL;
