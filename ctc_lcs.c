@@ -848,8 +848,8 @@ void  LCS_ExecuteCCW( DEVBLK* pDEVBLK, BYTE  bCode,
             obtain_lock( &pLCSDEV->DevDataLock );
             PTT_DEBUG(       "GOT  DevDataLock  ", 000, pDEVBLK->devnum, -1 );
             pLCSDEV->iFrameOffset  = 0;
-            pLCSDEV->fReplyPending = 0;
             pLCSDEV->fDataPending  = 0;
+            pLCSDEV->fReplyPending = 0;
             pLCSDEV->fPendingIctl  = 0;
             PTT_DEBUG(        "REL  DevDataLock  ", 000, pDEVBLK->devnum, -1 );
             release_lock( &pLCSDEV->DevDataLock );
@@ -3091,8 +3091,8 @@ void  LCS_Read( DEVBLK* pDEVBLK,   U32   sCount,
 
     PTT_DEBUG( "READ empty buffer ", 000, pDEVBLK->devnum, -1 );
     pLCSDEV->iFrameOffset  = 0;
-    pLCSDEV->fReplyPending = 0;
     pLCSDEV->fDataPending  = 0;
+    pLCSDEV->fReplyPending = 0;
 
     PTT_DEBUG(        "REL  DevDataLock  ", 000, pDEVBLK->devnum, -1 );
     release_lock( &pLCSDEV->DevDataLock );
@@ -5925,8 +5925,8 @@ static void  LCS_StopLan_SNA( PLCSDEV pLCSDEV, PLCSCMDHDR pCmdFrame, int iCmdLen
     obtain_lock( &pLCSDEV->DevDataLock );
     PTT_DEBUG(       "GOT  DevDataLock  ", 000, pDEVBLK->devnum, -1 );
     pLCSDEV->iFrameOffset  = 0;
-    pLCSDEV->fReplyPending = 0;
     pLCSDEV->fDataPending  = 0;
+    pLCSDEV->fReplyPending = 0;
     pLCSDEV->fPendingIctl  = 0;
     PTT_DEBUG(        "REL  DevDataLock  ", 000, pDEVBLK->devnum, -1 );
     release_lock( &pLCSDEV->DevDataLock );
@@ -7144,8 +7144,8 @@ void  LCS_Read_SNA( DEVBLK* pDEVBLK,   U32   sCount,
 
     PTT_DEBUG( "RSNA empty buffer ", 000, pDEVBLK->devnum, -1 );
     pLCSDEV->iFrameOffset  = 0;
-    pLCSDEV->fReplyPending = 0;
     pLCSDEV->fDataPending  = 0;
+    pLCSDEV->fReplyPending = 0;
     pLCSDEV->fPendingIctl = 0;
 
 //??    PTT_DEBUG(        "REL  DevDataLock  ", 000, pDEVBLK->devnum, -1 );
