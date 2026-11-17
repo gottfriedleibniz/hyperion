@@ -541,11 +541,9 @@ void z900_invalidate_tlbe( REGS* regs, BYTE* main );
 
 RADR apply_host_prefixing( REGS* regs, RADR raddr );
 
-#undef CPU_INTERRUPT_IMPORT
-#define CPU_INTERRUPT_IMPORT ATTR_NORETURN CPU_DLL_IMPORT
-CPU_INTERRUPT_IMPORT void (ATTR_REGPARM(2) s370_program_interrupt)( REGS* regs, int code );
-CPU_INTERRUPT_IMPORT void (ATTR_REGPARM(2) s390_program_interrupt)( REGS* regs, int code );
-CPU_INTERRUPT_IMPORT void (ATTR_REGPARM(2) z900_program_interrupt)( REGS* regs, int code );
+NORETURN CPU_DLL_IMPORT void (ATTR_REGPARM(2) s370_program_interrupt)( REGS* regs, int code );
+NORETURN CPU_DLL_IMPORT void (ATTR_REGPARM(2) s390_program_interrupt)( REGS* regs, int code );
+NORETURN CPU_DLL_IMPORT void (ATTR_REGPARM(2) z900_program_interrupt)( REGS* regs, int code );
 
 void s370_display_inst( REGS* iregs, BYTE* inst );
 void s390_display_inst( REGS* iregs, BYTE* inst );

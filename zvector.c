@@ -71,7 +71,7 @@ static void vector_processing_trap( REGS *regs, int vix, U32 vic )
     regs->dxc = vxc;                       /* Save VXC in PSA      */
     regs->fpc &= ~FPC_DXC;                 /* Clear DXC/VXC in FPC */
     regs->fpc |= (vxc << FPC_DXC_SHIFT);   /* Insert VXC into FPC  */
-    regs->program_interrupt( regs, PGM_VECTOR_PROCESSING_EXCEPTION );
+    CALL_PROGRAM_INTERRUPT( regs, PGM_VECTOR_PROCESSING_EXCEPTION );
 }
 
 #endif /*!defined(_ZVECTOR_ARCH_INDEPENDENT_)*/

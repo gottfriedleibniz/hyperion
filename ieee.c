@@ -316,7 +316,7 @@ static void ieee_trap( REGS *regs, BYTE dxc)
     regs->dxc = dxc;                   /*  Save DXC in PSA         */
     regs->fpc &= ~FPC_DXC;             /*  Clear previous DXC/VXC  */
     regs->fpc |= ((U32)dxc << FPC_DXC_SHIFT);
-    regs->program_interrupt( regs, PGM_DATA_EXCEPTION );
+    CALL_PROGRAM_INTERRUPT( regs, PGM_DATA_EXCEPTION );
 }
 
 static void ieee_cond_trap( REGS *regs, U32 ieee_traps )
@@ -567,13 +567,13 @@ static INLINE void ARCH_DEP( BFP_RM_check )( REGS* regs, BYTE mask )
     if (FACILITY_ENABLED( 037_FP_EXTENSION, regs ))
     {
         if (mask > 7 || !map_valid_m3_values_FPX[ (mask & 0x7) ])
-            regs->program_interrupt( regs, PGM_SPECIFICATION_EXCEPTION );
+            CALL_PROGRAM_INTERRUPT( regs, PGM_SPECIFICATION_EXCEPTION );
     }
     else
 #endif /* defined FEATURE_037_FP_EXTENSION_FACILITY */
     {
         if (mask > 7 || !map_valid_m3_values_NOFPX[ (mask & 0x7) ])
-            regs->program_interrupt( regs, PGM_SPECIFICATION_EXCEPTION );
+            CALL_PROGRAM_INTERRUPT( regs, PGM_SPECIFICATION_EXCEPTION );
     }
 }
 
@@ -1713,7 +1713,7 @@ DEF_INST( convert_fix32_to_bfp_ext_reg )
 #endif
     {
         if (m3 | m4)
-            regs->program_interrupt( regs, PGM_SPECIFICATION_EXCEPTION );
+            CALL_PROGRAM_INTERRUPT( regs, PGM_SPECIFICATION_EXCEPTION );
     }
 
     op2 = regs->GR_L( r2 );
@@ -1748,7 +1748,7 @@ DEF_INST( convert_fix32_to_bfp_long_reg )
 #endif
     {
         if (m3 | m4)
-            regs->program_interrupt( regs, PGM_SPECIFICATION_EXCEPTION );
+            CALL_PROGRAM_INTERRUPT( regs, PGM_SPECIFICATION_EXCEPTION );
     }
 
     SET_SF_RM_FROM_MASK( m3 );
@@ -1788,7 +1788,7 @@ DEF_INST( convert_fix32_to_bfp_short_reg )
 #endif
     {
         if (m3 | m4)
-            regs->program_interrupt( regs, PGM_SPECIFICATION_EXCEPTION );
+            CALL_PROGRAM_INTERRUPT( regs, PGM_SPECIFICATION_EXCEPTION );
     }
 
     SET_SF_RM_FROM_MASK( m3 );
@@ -1832,7 +1832,7 @@ DEF_INST( convert_fix64_to_bfp_ext_reg )
 #endif
     {
         if (m3 | m4)
-            regs->program_interrupt( regs, PGM_SPECIFICATION_EXCEPTION );
+            CALL_PROGRAM_INTERRUPT( regs, PGM_SPECIFICATION_EXCEPTION );
     }
 
     SET_SF_RM_FROM_MASK( m3 );
@@ -1874,7 +1874,7 @@ DEF_INST( convert_fix64_to_bfp_long_reg )
 #endif
     {
         if (m3 | m4)
-            regs->program_interrupt( regs, PGM_SPECIFICATION_EXCEPTION );
+            CALL_PROGRAM_INTERRUPT( regs, PGM_SPECIFICATION_EXCEPTION );
     }
 
     SET_SF_RM_FROM_MASK( m3 );
@@ -1923,7 +1923,7 @@ DEF_INST( convert_fix64_to_bfp_short_reg )
 #endif
     {
         if (m3 | m4)
-            regs->program_interrupt( regs, PGM_SPECIFICATION_EXCEPTION );
+            CALL_PROGRAM_INTERRUPT( regs, PGM_SPECIFICATION_EXCEPTION );
     }
 
     SET_SF_RM_FROM_MASK( m3 );
@@ -3772,7 +3772,7 @@ DEF_INST( load_rounded_bfp_long_to_short_reg )
 #endif
     {
         if (m3 || m4)
-            regs->program_interrupt( regs, PGM_SPECIFICATION_EXCEPTION );
+            CALL_PROGRAM_INTERRUPT( regs, PGM_SPECIFICATION_EXCEPTION );
         SET_SF_RM_FROM_FPC;
     }
 
@@ -3836,7 +3836,7 @@ DEF_INST( load_rounded_bfp_ext_to_long_reg )
 #endif
     {
         if (m3 || m4)
-            regs->program_interrupt( regs, PGM_SPECIFICATION_EXCEPTION );
+            CALL_PROGRAM_INTERRUPT( regs, PGM_SPECIFICATION_EXCEPTION );
         SET_SF_RM_FROM_FPC;
     }
 
@@ -3907,7 +3907,7 @@ DEF_INST( load_rounded_bfp_ext_to_short_reg )
 #endif
     {
         if (m3 || m4)
-            regs->program_interrupt( regs, PGM_SPECIFICATION_EXCEPTION );
+            CALL_PROGRAM_INTERRUPT( regs, PGM_SPECIFICATION_EXCEPTION );
         SET_SF_RM_FROM_FPC;
     }
 
@@ -5159,7 +5159,7 @@ DEF_INST( divide_integer_bfp_long_reg )
     BFPRM_CHECK( m4,regs );
 
     if (r1 == r2 || r2 == r3 || r1 == r3)
-        regs->program_interrupt( regs, PGM_SPECIFICATION_EXCEPTION );
+        CALL_PROGRAM_INTERRUPT( regs, PGM_SPECIFICATION_EXCEPTION );
 
     GET_FLOAT64_OPS( op1, r1, op2, r2, regs );
 
@@ -5389,7 +5389,7 @@ DEF_INST( divide_integer_bfp_short_reg )
     BFPRM_CHECK( m4, regs );
 
     if (r1 == r2 || r2 == r3 || r1 == r3)
-        regs->program_interrupt( regs, PGM_SPECIFICATION_EXCEPTION );
+        CALL_PROGRAM_INTERRUPT( regs, PGM_SPECIFICATION_EXCEPTION );
 
     GET_FLOAT32_OPS( op1, r1, op2, r2, regs );
 

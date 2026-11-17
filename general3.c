@@ -209,7 +209,7 @@ int     cc;                             /* Condition Code            */
 
     /* Program check if fixed-point overflow */
     if ( regs->psw.cc == 3 && FOMASK(&regs->psw) )
-        regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
 
 } /* end DEF_INST(add_immediate_storage) */
 
@@ -247,7 +247,7 @@ int     cc;                             /* Condition Code            */
 
     /* Program check if fixed-point overflow */
     if ( regs->psw.cc == 3 && FOMASK(&regs->psw) )
-        regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
 
 } /* end DEF_INST(add_immediate_long_storage) */
 
@@ -2319,7 +2319,7 @@ int     r1, r2, r3;                     /* Values of R fields        */
 
     /* Program check if fixed-point overflow */
     if ( regs->psw.cc == 3 && FOMASK(&regs->psw) )
-        regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
 
 } /* end DEF_INST(add_high_high_high_register) */
 
@@ -2341,7 +2341,7 @@ int     r1, r2, r3;                     /* Values of R fields        */
 
     /* Program check if fixed-point overflow */
     if ( regs->psw.cc == 3 && FOMASK(&regs->psw) )
-        regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
 
 } /* end DEF_INST(add_high_high_low_register) */
 
@@ -2363,7 +2363,7 @@ U32     i2;                             /* 32-bit operand value      */
 
     /* Program check if fixed-point overflow */
     if ( regs->psw.cc == 3 && FOMASK(&regs->psw) )
-        regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
 
 } /* end DEF_INST(add_high_immediate) */
 
@@ -2804,7 +2804,7 @@ int     r1, r2, r3;                     /* Values of R fields        */
 
     /* Program check if fixed-point overflow */
     if ( regs->psw.cc == 3 && FOMASK(&regs->psw) )
-        regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
 
 } /* end DEF_INST(subtract_high_high_high_register) */
 
@@ -2825,7 +2825,7 @@ int     r1, r2, r3;                     /* Values of R fields        */
 
     /* Program check if fixed-point overflow */
     if ( regs->psw.cc == 3 && FOMASK(&regs->psw) )
-        regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
 
 } /* end DEF_INST(subtract_high_high_low_register) */
 
@@ -3064,7 +3064,7 @@ DEF_INST(load_and_add)
 
     /* Program check if fixed-point overflow */
     if ( regs->psw.cc == 3 && FOMASK(&regs->psw) )
-        regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
 
 } /* end DEF_INST(load_and_add) */
 
@@ -3080,7 +3080,7 @@ DEF_INST(load_and_add_long)
 
     /* Program check if fixed-point overflow */
     if ( regs->psw.cc == 3 && FOMASK(&regs->psw) )
-        regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
 
 } /* end DEF_INST(load_and_add_long) */
 
@@ -3497,7 +3497,7 @@ int     r1, r2, r3;                     /* Values of R fields        */
 
     /* Program check if fixed-point overflow */
     if ( regs->psw.cc == 3 && FOMASK(&regs->psw) )
-        regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
 
 } /* end DEF_INST(add_distinct_register) */
 
@@ -3519,7 +3519,7 @@ int     r1, r2, r3;                     /* Values of R fields        */
 
     /* Program check if fixed-point overflow */
     if ( regs->psw.cc == 3 && FOMASK(&regs->psw) )
-        regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
 
 } /* end DEF_INST(add_distinct_long_register) */
 #endif /* defined( FEATURE_001_ZARCH_INSTALLED_FACILITY ) */
@@ -3542,7 +3542,7 @@ U16     i2;                             /* 16-bit immediate operand  */
 
     /* Program check if fixed-point overflow */
     if ( regs->psw.cc == 3 && FOMASK(&regs->psw) )
-        regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
 
 } /* end DEF_INST(add_distinct_halfword_immediate) */
 
@@ -3565,7 +3565,7 @@ U16     i2;                             /* 16-bit immediate operand  */
 
     /* Program check if fixed-point overflow */
     if ( regs->psw.cc == 3 && FOMASK(&regs->psw) )
-        regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
 
 } /* end DEF_INST(add_distinct_long_halfword_immediate) */
 #endif /* defined( FEATURE_001_ZARCH_INSTALLED_FACILITY ) */
@@ -3825,7 +3825,7 @@ bool    overflow;                       /* true if overflow          */
         {
             regs->psw.cc = 3;
             if (FOMASK( &regs->psw ))
-                regs->program_interrupt( regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION );
+                CALL_PROGRAM_INTERRUPT( regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION );
             return;
         }
     }
@@ -3899,7 +3899,7 @@ int     r1, r2, r3;                     /* Values of R fields        */
 
     /* Program check if fixed-point overflow */
     if ( regs->psw.cc == 3 && FOMASK(&regs->psw) )
-        regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
 
 } /* end DEF_INST(subtract_distinct_register) */
 
@@ -3921,7 +3921,7 @@ int     r1, r2, r3;                     /* Values of R fields        */
 
     /* Program check if fixed-point overflow */
     if ( regs->psw.cc == 3 && FOMASK(&regs->psw) )
-        regs->program_interrupt (regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
+        CALL_PROGRAM_INTERRUPT(regs, PGM_FIXED_POINT_OVERFLOW_EXCEPTION);
 
 } /* end DEF_INST(subtract_distinct_long_register) */
 #endif /* defined( FEATURE_001_ZARCH_INSTALLED_FACILITY ) */

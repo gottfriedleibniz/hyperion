@@ -59,15 +59,17 @@
 /*              Define NORETURN attributes by compiler               */
 /*-------------------------------------------------------------------*/
 
-#if !defined(ATTR_NORETURN)
-  #if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
-    #define ATTR_NORETURN _Noreturn
-  #elif defined(__GNUC__) && __GNUC__ >= 4
-    #define ATTR_NORETURN __attribute__ ((__noreturn__))
+#undef USING_NORETURN_ATTRIBUTE
+#if !defined(NORETURN)
+  #if defined(__GNUC__) && __GNUC__ >= 4
+    #define USING_NORETURN_ATTRIBUTE 1
+    #define NORETURN __attribute__ ((__noreturn__))
+  #elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
+    #define NORETURN _Noreturn
   #elif defined(_MSC_VER) && _MSC_VER >= 1200
-    #define ATTR_NORETURN __declspec(noreturn)
+    #define NORETURN __declspec(noreturn)
   #else
-    #define ATTR_NORETURN /* noreturn */
+    #define NORETURN /* noreturn */
   #endif
 #endif
 
@@ -418,7 +420,37 @@
 typedef void (ATTR_REGPARM(2)*FUNC)();
 
 /* Program Interrupt function pointer */
-typedef void (ATTR_REGPARM(2) *pi_func) (REGS *regs, int pcode);
+/* #EXPERIMENT:
+ *
+ * MSVC does not treat a 'noreturn' qualified function pointer as a distinct
+ * function pointer type. We instead make the (non-)returning control flow
+ * explicit and provide the optimizer with additional information that should
+ * *hopefully* enable more aggressive tail-call optimization.
+ *
+ * Note, some places previously used: UNREACHABLE_CODE(return (V)))
+ */
+typedef void (ATTR_REGPARM(2) *pi_func) (REGS *regs, int pcode)
+#if defined(USING_NORETURN_ATTRIBUTE)
+NORETURN
+#endif
+;
+
+#define DO_PROGRAM_INTERRUPT(R, P) ((R)->program_interrupt((R), (P)))
+#define DO_PROGRAM_INTERRUPT_AND_RETURN(R, P, ACTION) \
+  do {                                                \
+    DO_PROGRAM_INTERRUPT((R), (P));                   \
+    ACTION;                                           \
+  } while (0)
+
+#if defined(USING_NORETURN_ATTRIBUTE)
+  /* Rely on __attribute__((__noreturn__)) semantics */
+  #define CALL_PROGRAM_INTERRUPT(R, P)               DO_PROGRAM_INTERRUPT((R), (P))
+  #define CALL_PROGRAM_INTERRUPT_WITH_RETURN(R, P, V) DO_PROGRAM_INTERRUPT_AND_RETURN((R), (P), return (V))
+#else
+  /* Rely on explicit control flow */
+  #define CALL_PROGRAM_INTERRUPT(R, P)               DO_PROGRAM_INTERRUPT_AND_RETURN((R), (P), return)
+  #define CALL_PROGRAM_INTERRUPT_WITH_RETURN(R, P, V) DO_PROGRAM_INTERRUPT_AND_RETURN((R), (P), return (V))
+#endif
 
 /* trace_br function */
 typedef U32  (*s390_trace_br_func) (int amode,  U32 ia, REGS *regs);
