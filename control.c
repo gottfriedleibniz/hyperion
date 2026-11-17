@@ -6063,8 +6063,9 @@ char    log_buf[128];                   /* Log buffer                */
     {
         // ...then we cannot proceed
         status |= SIGP_STATUS_OPERATOR_INTERVENING;
-    }
-    else /* (order == SIGP_SENSE || cpad == regs->cpuad || ((tregs) && !tregs->opinterv)) */
+    } /* (order == SIGP_SENSE || cpad == regs->cpuad || ((tregs) && !tregs->opinterv)) */
+    else if ( (tregs) )
+    {
         /* Process signal according to order code */
         switch (order)
         {
@@ -6585,6 +6586,11 @@ char    log_buf[128];                   /* Log buffer                */
         default:
             status = SIGP_STATUS_INVALID_ORDER;
         } /* end switch (order) */
+    } /* (tregs) */
+    else
+    {
+        status = SIGP_STATUS_NOT_RUNNING;
+    }
 
     /* Release the use of the signalling and response facility */
     release_lock( &sysblk.sigplock );
