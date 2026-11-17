@@ -1140,14 +1140,14 @@ static int ARCH_DEP( run_sie )( REGS* regs )
                             regs->waittod = now;
 
                             sysblk.waiting_mask  |=  regs->cpubit;
-                            sysblk.intowner       =  LOCK_OWNER_NONE;
+                            SET_INTOWNER(LOCK_OWNER_NONE);
                             {
                                 timed_wait_condition( &regs->intcond, &sysblk.intlock, &waittime );
 
                                 while (sysblk.syncing)
                                      wait_condition( &sysblk.sync_done_cond, &sysblk.intlock );
                             }
-                            sysblk.intowner       =   regs->cpuad;
+                            SET_INTOWNER(regs->cpuad);
                             sysblk.waiting_mask  &=  ~regs->cpubit;
 
                             regs->waittime += host_tod() - regs->waittod;
@@ -1212,7 +1212,7 @@ sie_fetch_instruction:
 
                 PROCESS_TRACE( GUESTREGS, ip, sie_fetch_instruction );
                 EXECUTE_INSTRUCTION( current_opcode_table, ip, GUESTREGS );
-                regs->instcount++;
+                UPDATE_REGS_INSTCOUNT( regs, 1 );
                 UPDATE_SYSBLK_INSTCOUNT( 1 );
                 SIE_PERFMON( SIE_PERF_EXEC_U );
 
@@ -1221,7 +1221,7 @@ sie_fetch_instruction:
                     UNROLLED_EXECUTE( current_opcode_table, GUESTREGS );
                     UNROLLED_EXECUTE( current_opcode_table, GUESTREGS );
                 }
-                regs->instcount +=  (i * 2);
+                UPDATE_REGS_INSTCOUNT( regs, (i * 2) );
                 UPDATE_SYSBLK_INSTCOUNT( (i * 2) );
 
                 /* Perform automatic instruction tracing if it's enabled */
@@ -1239,7 +1239,7 @@ txf_facility_loop:
 
                 PROCESS_TRACE( GUESTREGS, ip, sie_fetch_instruction );
                 EXECUTE_INSTRUCTION( current_opcode_table, ip, GUESTREGS );
-                regs->instcount++;
+                UPDATE_REGS_INSTCOUNT( regs, 1 );
                 UPDATE_SYSBLK_INSTCOUNT( 1 );
                 SIE_PERFMON( SIE_PERF_EXEC_U );
 
@@ -1255,7 +1255,7 @@ txf_facility_loop:
 
                     UNROLLED_EXECUTE( current_opcode_table, GUESTREGS );
                 }
-                regs->instcount +=  (i * 2);
+                UPDATE_REGS_INSTCOUNT( regs, (i * 2) );
                 UPDATE_SYSBLK_INSTCOUNT( (i * 2) );
 
                 /* Perform automatic instruction tracing if it's enabled */
@@ -1266,7 +1266,7 @@ txf_slower_loop:
 
                 PROCESS_TRACE( GUESTREGS, ip, sie_fetch_instruction );
                 TXF_EXECUTE_INSTRUCTION( current_opcode_table, ip, GUESTREGS );
-                regs->instcount++;
+                UPDATE_REGS_INSTCOUNT( regs, 1 );
                 UPDATE_SYSBLK_INSTCOUNT( 1 );
                 SIE_PERFMON( SIE_PERF_EXEC_U );
 
@@ -1282,7 +1282,7 @@ txf_slower_loop:
 
                     TXF_UNROLLED_EXECUTE( current_opcode_table, GUESTREGS );
                 }
-                regs->instcount +=  (i * 2);
+                UPDATE_REGS_INSTCOUNT( regs, (i * 2) );
                 UPDATE_SYSBLK_INSTCOUNT( (i * 2) );
 
                 /* Perform automatic instruction tracing if it's enabled */
@@ -1332,7 +1332,7 @@ endloop:        ; // (nop to make compiler happy)
            */
             if (sysblk.ipled)
             {
-                regs->instcount += MAX_CPU_LOOPS/2;
+                UPDATE_REGS_INSTCOUNT( regs, (MAX_CPU_LOOPS/2) );
                 UPDATE_SYSBLK_INSTCOUNT( MAX_CPU_LOOPS/2 );
 
                 /* Perform automatic instruction tracing if it's enabled */
