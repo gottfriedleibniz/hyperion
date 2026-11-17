@@ -329,7 +329,7 @@ BYTE   *sk;                             /* Storage key addresses     */
     sk = regs->dat.storkey;
     main2 = MADDR( (addr + 1) & ADDRESS_MAXWRAP( regs ), arn, regs,
                     ACCTYPE_WRITE, regs->psw.pkey );
-    *sk |= (STORKEY_REF | STORKEY_CHANGE);
+    OR_SKEY( sk, (STORKEY_REF | STORKEY_CHANGE) );
     *main1 = value >> 8;
     *main2 = value & 0xFF;
 }
@@ -359,7 +359,7 @@ BYTE    temp[4];                        /* Copied value              */
     sk = regs->dat.storkey;
     main2 = MADDRL( (addr + len) & ADDRESS_MAXWRAP( regs ), 4-len, arn, regs,
                     ACCTYPE_WRITE, regs->psw.pkey );
-    *sk |= (STORKEY_REF | STORKEY_CHANGE);
+    OR_SKEY( sk, (STORKEY_REF | STORKEY_CHANGE) );
     STORE_FW( temp, value );
     memcpy( main1, temp,       len );
     memcpy( main2, temp+len, 4-len );
@@ -393,7 +393,7 @@ BYTE    temp[8];                        /* Copied value              */
     sk = regs->dat.storkey;
     main2 = MADDRL( (addr + len) & ADDRESS_MAXWRAP( regs ), 8-len, arn, regs,
                     ACCTYPE_WRITE, regs->psw.pkey );
-    *sk |= (STORKEY_REF | STORKEY_CHANGE);
+    OR_SKEY( sk, (STORKEY_REF | STORKEY_CHANGE) );
     STORE_DW( temp, value );
     memcpy( main1, temp,       len );
     memcpy( main2, temp+len, 8-len );
@@ -426,7 +426,7 @@ BYTE    temp[16];                        /* Copied value              */
     sk = regs->dat.storkey;
     main2 = MADDRL( (addr + len) & ADDRESS_MAXWRAP(regs), 16-len, arn, regs,
                     ACCTYPE_WRITE, regs->psw.pkey);
-    *sk |= (STORKEY_REF | STORKEY_CHANGE);
+    OR_SKEY( sk, (STORKEY_REF | STORKEY_CHANGE) );
     STORE_QW( temp, value );
     memcpy( main1, temp, len );
     memcpy( main2, temp + len, 16-len );
@@ -583,7 +583,7 @@ int     len2;                           /* Length to end of page     */
         main2 = MADDRL( (addr + len2) & ADDRESS_MAXWRAP( regs ),
                         len+1-len2, arn,
                         regs, ACCTYPE_WRITE, regs->psw.pkey );
-        *sk |= (STORKEY_REF | STORKEY_CHANGE);
+        OR_SKEY( sk, (STORKEY_REF | STORKEY_CHANGE) );
         memcpy( main1, src, len2 );
         memcpy( main2, (BYTE*)src + len2, len + 1 - len2 );
     }
@@ -1201,7 +1201,7 @@ int     len1,     len2;                 /* Lengths to copy           */
             concpy( regs, dest1,        source1,       len1     );
             concpy( regs, dest1 + len1, source2, len - len1 + 1 );
         }
-        *sk1 |= (STORKEY_REF | STORKEY_CHANGE);
+        OR_SKEY( sk1, (STORKEY_REF | STORKEY_CHANGE) );
     }
     else
     {
@@ -1245,8 +1245,8 @@ int     len1,     len2;                 /* Lengths to copy           */
                 concpy( regs, dest2,        source2 + len1 - len2, len -  len1 + 1 );
             }
         }
-        *sk1 |= (STORKEY_REF | STORKEY_CHANGE);
-        *sk2 |= (STORKEY_REF | STORKEY_CHANGE);
+        OR_SKEY( sk1, (STORKEY_REF | STORKEY_CHANGE) );
+        OR_SKEY( sk2, (STORKEY_REF | STORKEY_CHANGE) );
     }
     ITIMER_UPDATE( addr1, len, regs );
 
@@ -1354,7 +1354,7 @@ int     len1,     len2;                 /* Lengths to copy           */
             concpy_rl( regs, dest1 + len1, source2, len - len1 + 1 );
             concpy_rl( regs, dest1,        source1,       len1     );
         }
-        *sk1 |= (STORKEY_REF | STORKEY_CHANGE);
+        OR_SKEY( sk1, (STORKEY_REF | STORKEY_CHANGE) );
     }
     else
     {
@@ -1398,8 +1398,8 @@ int     len1,     len2;                 /* Lengths to copy           */
                 concpy_rl( regs, dest1,        source1,                      len2     );
             }
         }
-        *sk1 |= (STORKEY_REF | STORKEY_CHANGE);
-        *sk2 |= (STORKEY_REF | STORKEY_CHANGE);
+        OR_SKEY( sk1, (STORKEY_REF | STORKEY_CHANGE) );
+        OR_SKEY( sk2, (STORKEY_REF | STORKEY_CHANGE) );
     }
     ITIMER_UPDATE( addr1, len, regs );
 
