@@ -1151,6 +1151,53 @@ bool    intercept;                      /* False for virtual pgmint  */
     {
         PTT_PGM( "PGM ec", 0, 0, 0 );
 
+        /*
+         * #RACE: additional warnings captured during a long z/OS 3.1 session.
+         * Validate. Initial impression is some cross-CPU PSA inspection or
+         * preservation, probably for recovery or diagnostic processing. TSAN
+         * slows things down considerably which may trigger additional timeout
+         * related warnings and diagnostics, e.g., "IDSFS00146I ... DSFS has a
+         * potentially hanging thread..."
+         *
+         * Why a translation exception is being thrown is the other issue...
+         *
+         * Line numbers omitted:
+         *  WARNING: ThreadSanitizer: data race (pid=709158)
+         *    Write of size 1 at 0x7f7d748f008c by thread T3:
+         *      #0 z900_program_interrupt $(BUILD_DIR)/cpu.c // psa->pgmint[0] = 0;
+         *      #1 z900_logical_to_main_l $(BUILD_DIR)/dat.c // vabs_prog_check ... (regs, regs->dat.xcode, NULL)
+         *      #2 z900_maddr_l $(BUILD_DIR)/dat.h
+         *      #3 z900_move_chars $(BUILD_DIR)/vstore.h
+         *      #4 z900_move_with_source_key $(BUILD_DIR)/control.c
+         *      #5 z900_run_cpu $(BUILD_DIR)/cpu.c
+         *      #6 cpu_thread $(BUILD_DIR)/cpu.c
+         *
+         *    Previous atomic read of size 8 at 0x7f7d748f0088 by thread T7:
+         *      #0 atomic_load_U64 $(BUILD_DIR)/hatomic.h
+         *      #1 concpy $(BUILD_DIR)/vstore.h
+         *      #2 z900_move_long $(BUILD_DIR)/general1.c
+         *      #3 z900_run_cpu $(BUILD_DIR)/cpu.c
+         *      #4 cpu_thread $(BUILD_DIR)/cpu.c
+         *
+         * Also:
+         *  WARNING: ThreadSanitizer: data race (pid=709158)
+         *    Write of size 1 at 0x7f7d748f00a0 by thread T3:
+         *      #0 z900_program_interrupt $(BUILD_DIR)/cpu.c // psa->excarid = regs->excarid;
+         *      #1 z900_logical_to_main_l $(BUILD_DIR)/dat.c  // vabs_prog_check ... (regs, regs->dat.xcode, NULL)
+         *      #2 z900_maddr_l $(BUILD_DIR)/dat.h
+         *      #3 z900_move_chars $(BUILD_DIR)/vstore.h
+         *      #4 z900_move_with_source_key $(BUILD_DIR)/control.c
+         *      #5 z900_run_cpu $(BUILD_DIR)/cpu.c
+         *      #6 cpu_thread $(BUILD_DIR)/cpu.c
+         *
+         *    Previous atomic read of size 8 at 0x7f7d748f00a0 by thread T7
+         *      #0 atomic_load_U64 $(BUILD_DIR)/hatomic.h
+         *      #1 concpy $(BUILD_DIR)/vstore.h
+         *      #2 z900_move_long $(BUILD_DIR)/general1.c
+         *      #3 z900_run_cpu $(BUILD_DIR)/cpu.c
+         *      #4 cpu_thread $(BUILD_DIR)/cpu.c
+         */
+
         /* Store the program interrupt code at PSA+X'8C' */
         psa->pgmint[0] = 0;
         psa->pgmint[1] = ilc;
@@ -1317,6 +1364,9 @@ bool    intercept;                      /* False for virtual pgmint  */
         int pgmintloop = 0;
         int detect_pgmintloop = FACILITY_ENABLED( HERC_DETECT_PGMINTLOOP, realregs );
 
+        /* Obtain the interrupt lock for load_psw and cpustate */
+        OBTAIN_INTLOCK( realregs );
+
         /* Store current PSW at PSA+X'28' or PSA+X'150' for ESAME */
         ARCH_DEP( store_psw )( realregs, psa->pgmold );
 
@@ -1336,6 +1386,8 @@ bool    intercept;                      /* False for virtual pgmint  */
 #if defined( _FEATURE_SIE )
             if (SIE_MODE( realregs ))
             {
+                RELEASE_INTLOCK( realregs );
+
                 PTT_PGM( "*PGM *lpsw", code, 0, 0 );
                 PTT_PGM( "PGM progjmp", pcode, 0, 0 );
                 longjmp( realregs->progjmp, pcode );
@@ -1375,13 +1427,10 @@ bool    intercept;                      /* False for virtual pgmint  */
             WRMSG( HHC00803, "I", PTYPSTR( realregs->cpuad ),
                 realregs->cpuad, buf );
 
-            OBTAIN_INTLOCK( realregs );
-            {
-                realregs->cpustate = CPUSTATE_STOPPING;
-                ON_IC_INTERRUPT( realregs );
-            }
-            RELEASE_INTLOCK( realregs );
+            realregs->cpustate = CPUSTATE_STOPPING;
+            ON_IC_INTERRUPT( realregs );
         }
+        RELEASE_INTLOCK( realregs );
 
         /*-----------------------------------------------------------*/
         /*  Normal non-intercepted program interrupt: return to      */
@@ -2004,8 +2053,8 @@ int     aswitch;
         oldregs = malloc_aligned(sizeof(REGS), 4096);
         if (oldregs)
         {
-            memcpy(oldregs, regs, sizeof(REGS));
             obtain_lock(&sysblk.cpulock[cpu]);
+            memcpy(oldregs, regs, sizeof(REGS));
         }
         else
         {

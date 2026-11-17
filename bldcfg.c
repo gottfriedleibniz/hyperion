@@ -111,6 +111,7 @@ int build_config( const char* hercules_cnf )
     for (i=0; i < sysblk.maxcpu; i++)
         sysblk.ptyp[i] = SCCB_PTYP_CP;
 
+    /* Interrupt locking not required at this point in the programs life! */
     /* Default main storage to 2M with one CPU */
     configure_storage( DEF_MAINSIZE_PAGES );
 

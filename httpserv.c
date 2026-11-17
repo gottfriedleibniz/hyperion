@@ -1053,11 +1053,15 @@ http_server_stop:
     /* Display thread ended message on control panel */
     LOG_THREAD_END( HTTP_SRVR_THREAD_NAME  );
 
-    sysblk.httptid = 0;
+    obtain_lock(&http_serv.http_lock_shutdown);
+    {
+        sysblk.httptid = 0;
 
-    http_serv.httpbinddone = FALSE;
+        http_serv.httpbinddone = FALSE;
 
-    signal_condition(&http_serv.http_wait_shutdown);
+        signal_condition(&http_serv.http_wait_shutdown);
+    }
+    release_lock(&http_serv.http_lock_shutdown);
 
     return NULL;
 
