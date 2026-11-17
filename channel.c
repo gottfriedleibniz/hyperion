@@ -6011,6 +6011,27 @@ breakchain:
             bufpos = 0;
         }
 
+        /*
+         * #RACE: Documented (for now). Insignificant.
+         *
+         * Line numbers omitted:
+         *  Read of size 1 at 0x72980000a212 by thread T17:
+         *    #0 z900_execute_ccw_chain $(BUILD_DIR)/channel.c // if (dev->scsw.flag2 & (SCSW2_AC_HALT | SCSW2_AC_CLEAR))
+         *    #1 call_execute_ccw_chain $(BUILD_DIR)/channel.c
+         *    #2 device_thread $(BUILD_DIR)/channel.c
+         *
+         *  Previous write of size 1 at 0x72980000a212 by thread T23 (mutexes: write M0, write M1, write M2):
+         *    #0 qeth_halt_data_device $(BUILD_DIR)/qeth.c // dev->scsw.flag2 &= ~SCSW2_Q;
+         *    #1 qeth_close_device $(BUILD_DIR)/qeth.c
+         *    #2 detach_devblk $(BUILD_DIR)/config.c
+         *    #3 free_group $(BUILD_DIR)/config.c
+         *    #4 detach_devblk $(BUILD_DIR)/config.c
+         *    #5 detach_subchan $(BUILD_DIR)/config.c
+         *    #6 release_config $(BUILD_DIR)/config.c
+         *    #7 hdl_atexit $(BUILD_DIR)/hdl.c
+         *    #8 do_shutdown_now $(BUILD_DIR)/hscmisc.c
+         *    #9 do_shutdown_wait $(BUILD_DIR)/hscmisc.c
+         */
         /* If Halt or Clear Pending, restart chaining to reset */
         if (dev->scsw.flag2 & (SCSW2_AC_HALT | SCSW2_AC_CLEAR))
             chain = 1;

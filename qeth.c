@@ -629,6 +629,57 @@ int i;  /* Utility variable */
     /* Find a matching MAC (Unicast or Multicast) */
     for(i = 0; i < OSA_MAXMAC; i++)
     {
+        /*
+         * #RACE: The accesses to type are a data-race under the C memory model.
+         * The compiler is currently not required to preserve the ordering
+         * intended by the source code, i.e., 'type = ...' could become
+         * reordered to occur before the memcpy of the MAC address. TSAN will
+         * generate:
+         *
+         * Line numbers omitted:
+         *  WARNING: ThreadSanitizer: data race (pid=312437)
+         *    Read of size 4 at 0x727000000ce0 by thread T17:
+         *      #0 validate_mac $(BUILD_DIR)/qeth.c // (grp->mac[i].type & type) 
+         *      #1 read_L2_packets $(BUILD_DIR)/qeth.c
+         *      #2 process_input_queues $(BUILD_DIR)/qeth.c
+         *      #3 qeth_execute_ccw $(BUILD_DIR)/qeth.c
+         *      #4 z900_execute_ccw_chain $(BUILD_DIR)/channel.c
+         *      #5 call_execute_ccw_chain $(BUILD_DIR)/channel.c
+         *      #6 device_thread $(BUILD_DIR)/channel.c
+         *      #7 hthread_func $(BUILD_DIR)/hthreads.c
+         *    
+         *    Previous write of size 4 at 0x727000000ce0 by thread T15:
+         *      #0 register_mac $(BUILD_DIR)/qeth.c // grp->mac[i].type = type;
+         *      #1 osa_adapter_cmd $(BUILD_DIR)/qeth.c
+         *      #2 qeth_execute_ccw $(BUILD_DIR)/qeth.c
+         *      #3 z900_execute_ccw_chain $(BUILD_DIR)/channel.c
+         *      #4 call_execute_ccw_chain $(BUILD_DIR)/channel.c
+         *      #5 device_thread $(BUILD_DIR)/channel.c
+         *      #6 hthread_func $(BUILD_DIR)/hthreads.c
+         *
+         * Also:
+         *  WARNING: ThreadSanitizer: data race (pid=312437)
+         *    Read of size 6 at 0x727000000cd8 by thread T17:
+         *      #0 bcmp <null> (hercules+0x44214e)
+         *      #1 validate_mac $(BUILD_DIR)/qeth.c
+         *      #2 read_L2_packets $(BUILD_DIR)/qeth.c
+         *      #3 process_input_queues $(BUILD_DIR)/qeth.c
+         *      #4 qeth_execute_ccw $(BUILD_DIR)/qeth.c
+         *      #5 z900_execute_ccw_chain $(BUILD_DIR)/channel.c
+         *      #6 call_execute_ccw_chain $(BUILD_DIR)/channel.c
+         *      #7 device_thread $(BUILD_DIR)/channel.c
+         *      #8 hthread_func $(BUILD_DIR)/hthreads.c
+         *    
+         *    Previous write of size 6 at 0x727000000cd8 by thread T15:
+         *      #0 __tsan_memcpy <null> (hercules+0x4311e2)
+         *      #1 register_mac $(BUILD_DIR)/qeth.c // memcpy(grp->mac[i].addr, mac, IFHWADDRLEN);
+         *      #2 osa_adapter_cmd $(BUILD_DIR)/qeth.c
+         *      #3 qeth_execute_ccw $(BUILD_DIR)/qeth.c
+         *      #4 z900_execute_ccw_chain $(BUILD_DIR)/channel.c
+         *      #5 call_execute_ccw_chain $(BUILD_DIR)/channel.c
+         *      #6 device_thread $(BUILD_DIR)/channel.c
+         *      #7 hthread_func $(BUILD_DIR)/hthreads.c
+         */
         /* Find a type matching the search mask with a matching MAC addr */
         if((grp->mac[i].type & type) && !memcmp(grp->mac[i].addr,mac,IFHWADDRLEN))
             return grp->mac[i].type | grp->promisc;
@@ -5786,6 +5837,27 @@ U32 num;                                /* Number of bytes to move   */
                 }
             }
 
+           /*
+            * #RACE: TSAN also catches the comment below! Leaving this comment in
+            * to serve as an example.
+            *
+            * Line numbers omitted:
+            *  Write of size 4 at 0x727000000e5c by thread T13:
+            *    #0 qeth_enable_interface $(BUILD_DIR)/qeth.c // grp->enabled = 1;
+            *    #1 osa_adapter_cmd $(BUILD_DIR)/qeth.c
+            *    #2 qeth_execute_ccw $(BUILD_DIR)/qeth.c
+            *    #3 z900_execute_ccw_chain $(BUILD_DIR)/channel.c
+            *    #4 call_execute_ccw_chain $(BUILD_DIR)/channel.c
+            *    #5 device_thread $(BUILD_DIR)/channel.c
+            *    #6 hthread_func $(BUILD_DIR)/hthreads.c
+            *  
+            *  Previous read of size 4 at 0x727000000e5c by thread T17:
+            *    #0 qeth_execute_ccw $(BUILD_DIR)/qeth.c // if (!grp->enabled)
+            *    #1 z900_execute_ccw_chain $(BUILD_DIR)/channel.c
+            *    #2 call_execute_ccw_chain $(BUILD_DIR)/channel.c
+            *    #3 device_thread $(BUILD_DIR)/channel.c
+            *    #4 hthread_func $(BUILD_DIR)/hthreads.c
+            */
             /* Cannot process any input or output queues until the interface
                is (re-)enabled (which will very likely happen VERY soon!).
                This is MOSTLY (but not exclusively!) a Windows thing. */

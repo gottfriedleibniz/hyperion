@@ -592,6 +592,26 @@ int  CTCI_Close( DEVBLK* pDEVBLK )
     /* DEVBLK* pDEVBLK2; */
     PCTCBLK pCTCBLK  = (PCTCBLK)pDEVBLK->dev_data;
 
+    /*
+     * #RACE: Requires validation.
+     * 
+     * Line numbers omitted:
+     *  Write of size 4 at 0x72a800006000 by thread T10:
+     *    #0 CTCI_ReadThread $(BUILD_DIR)/../ctc_ctci.c // pCTCBLK->fd = -1;
+     *    #1 hthread_func $(BUILD_DIR)/../hthreads.c
+     *  
+     *  Previous read of size 4 at 0x72a800006000 by thread T22 (mutexes: write M0, write M1):
+     *    #0 CTCI_Close $(BUILD_DIR)/../ctc_ctci.c // if( pCTCBLK->fd >= 0 )
+     *    #1 detach_devblk $(BUILD_DIR)/../config.c
+     *    #2 free_group $(BUILD_DIR)/../config.c
+     *    #3 detach_devblk $(BUILD_DIR)/../config.c
+     *    #4 detach_subchan $(BUILD_DIR)/../config.c
+     *    #5 release_config $(BUILD_DIR)/../config.c
+     *    #6 hdl_atexit $(BUILD_DIR)/../hdl.c
+     *    #7 do_shutdown_now $(BUILD_DIR)/../hscmisc.c
+     *    #8 do_shutdown $(BUILD_DIR)/../hscmisc.c
+     *    #9 quit_thread $(BUILD_DIR)/../hsccmd.c
+     */
     // Close the device file (if not already closed)
     if( !pCTCBLK->bCloseInProgress && pCTCBLK->fd >= 0 )
     {

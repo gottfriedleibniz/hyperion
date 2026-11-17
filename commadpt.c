@@ -612,6 +612,29 @@ static void commadpt_clean_device( DEVBLK* dev )
         /* release the CA lock */
         release_lock( &dev->commadpt->lock );
 
+        /*
+         * #TODO: ValidateMe. If this smells experiment by setting dev->commadpt
+         * before release_lock and free(...) after release_lock. Or maybe scan
+         * sysblk.ioq. Or something else.
+         *
+         * WARNING: ThreadSanitizer: data race (pid=111879)
+         *   Read of size 8 at 0xffffebac5138 by thread T67 (mutexes: write M0):
+         *     #0 commadpt_execute_ccw $(BUILD_DIR)/commadpt.c
+         *     #1 s370_execute_ccw_chain $(BUILD_DIR)/channel.c
+         *     #2 call_execute_ccw_chain $(BUILD_DIR)/channel.c
+         *     #3 device_thread $(BUILD_DIR)/channel.c
+         *   
+         *   Previous write of size 8 at 0xffffebac5138 by thread T86 (mutexes: write M1, write M2):
+         *     #0 commadpt_clean_device $(BUILD_DIR)/commadpt.c // Is the device still there?
+         *     #1 commadpt_close_device $(BUILD_DIR)/commadpt.c
+         *     #2 detach_devblk $(BUILD_DIR)/config.c
+         *     #3 detach_device $(BUILD_DIR)/config.c
+         *     #4 release_config $(BUILD_DIR)/config.c
+         *     #5 hdl_atexit $(BUILD_DIR)/hdl.c
+         *     #6 do_shutdown_now $(BUILD_DIR)/hscmisc.c
+         *     #7 do_shutdown $(BUILD_DIR)/hscmisc.c
+         *     #8 quit_thread $(BUILD_DIR)/hsccmd.c
+         */
         free( dev->commadpt );
         dev->commadpt = NULL;
 

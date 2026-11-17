@@ -283,6 +283,32 @@ int ARCH_DEP( system_reset )( const int target_mode, const bool clear,
                 memset( regs->vf->vr, 0, sizeof( regs->vf->vr ));
 #endif
 
+                /*
+                 * #RACE: Multiple threads writing to the same address. While
+                 * relatively insignificant, leaving this comment in for
+                 * documentation purposes:
+                 *
+                 * Benign race, the same value to the same address(es):
+                 *  WARNING: ThreadSanitizer: data race (pid=212821)
+                 *    Write of size 8 at 0xffffeda00718 by thread T51 (mutexes: write M0, write M1):
+                 *      #0 __tsan_memset <null>
+                 *      #1 cpu_reset_instcount_and_cputime $(BUILD_DIR)/../ipl.c // Optimizer replaces zeroing with memset!
+                 *      #2 s370_system_reset $(BUILD_DIR)/../ipl.c
+                 *      #3 s370_common_load_begin $(BUILD_DIR)/../ipl.c
+                 *      #4 s370_load_ipl $(BUILD_DIR)/../ipl.c
+                 *      #5 load_ipl $(BUILD_DIR)/../ipl.c
+                 *      #6 ipl_cmd2 $(BUILD_DIR)/../hscpufun.c
+                 *      #7 ipl_cmd $(BUILD_DIR)/../hscpufun.c
+                 *
+                 *    Previous write of size 4 at 0xffffeda0071c by thread T4 (mutexes: write M2):
+                 *      #0 timer_thread $(BUILD_DIR)/../timer.c // regs->mipsrate = regs->siosrate = regs->cpupct = 0;
+                 *      #1 hthread_func $(BUILD_DIR)/../hthreads.c
+                 *
+                 * Also:
+                 *  Previous write of size 4 at 0xfffff7472418 by thread T4:
+                 *    #0 timer_thread $(BUILD_DIR)/../timer.c // sysblk.mipsrate = total_mips;
+                 *    #1 hthread_func $(BUILD_DIR)/../hthreads.c
+                 */
                 /* Clear the instruction counter and CPU time used */
                 cpu_reset_instcount_and_cputime( regs );
             }
