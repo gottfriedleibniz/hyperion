@@ -849,17 +849,17 @@ TPAGEMAP   *pmap;
         /*  Save the Transaction Abort PSW  */
         /*----------------------------------*/
         {
-            PSW origpsw;
-            memcpy( &origpsw, &regs->psw, sizeof( PSW ));
-            {
-                n = txf_contran ? -6 : 0;
-                regs->psw.IA = PSW_IA_FROM_IP( regs, n );
-                memcpy( &regs->txf_tapsw, &regs->psw, sizeof( PSW ));
-                regs->txf_ip  = regs->ip;
-                regs->txf_aip = regs->aip;
-                regs->txf_aiv = regs->aiv;
-            }
-            memcpy( &regs->psw, &origpsw, sizeof( PSW ));
+            /* Copy the entire PSW directly to the transaction abort PSW */
+            memcpy( &regs->txf_tapsw, &regs->psw, sizeof( PSW ) );
+
+            /* Compute and apply the mutated IA directly to the abort target */
+            n = txf_contran ? -6 : 0;
+            regs->txf_tapsw.IA = PSW_IA_FROM_IP( regs, n );
+
+            /* Save remaining instruction states */
+            regs->txf_ip  = regs->ip;
+            regs->txf_aip = regs->aip;
+            regs->txf_aiv = regs->aiv;
         }
 
         /* Honor TDC (Transaction Diagnostic Control) setting */
