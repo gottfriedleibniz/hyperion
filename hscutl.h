@@ -85,6 +85,7 @@
   HUT_DLL_IMPORT int  strerror_r(int, char *, size_t);
 #endif
 
+  HUT_DLL_IMPORT void symbols_init(void);
   HUT_DLL_IMPORT const char *get_symbol(const char *);
   HUT_DLL_IMPORT char *resolve_symbol_string(const char *);
   HUT_DLL_IMPORT void set_symbol(const char *,const char *);
