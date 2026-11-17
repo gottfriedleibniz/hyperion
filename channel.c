@@ -3760,7 +3760,7 @@ BYTE    midawflg;                       /* MIDAW flags               */
                     if (readbackwards)
                     {
                         midawdat = (midawdat - midawlen) + 1;
-                        memcpy_backwards (dev->mainstor + midawdat,
+                        MAINSTOR_MCOPY_RL (dev->mainstor + midawdat,
                                           iobufptr,
                                           midawlen);
 
@@ -3771,7 +3771,7 @@ BYTE    midawflg;                       /* MIDAW flags               */
                     {
                         if (to_iobuf)
                         {
-                            memcpy (iobuf,
+                            MAINSTOR_MCOPY (iobuf,
                                     dev->mainstor + midawdat,
                                     midawlen);
                             prefetch->pos += midawlen;
@@ -3780,7 +3780,7 @@ BYTE    midawflg;                       /* MIDAW flags               */
                         }
                         else
                         {
-                            memcpy (dev->mainstor + midawdat,
+                            MAINSTOR_MCOPY (dev->mainstor + midawdat,
                                     iobuf,
                                     midawlen);
                         }
@@ -3979,7 +3979,7 @@ BYTE    midawflg;                       /* MIDAW flags               */
                 if (readbackwards)
                 {
                     idadata = (idadata - idalen) + 1;
-                    memcpy_backwards( dev->mainstor + idadata,
+                    MAINSTOR_MCOPY_RL( dev->mainstor + idadata,
                                       iobuf + dev->curblkrem + idacount - idalen,
                                       idalen );
 
@@ -3990,11 +3990,11 @@ BYTE    midawflg;                       /* MIDAW flags               */
                 {
                     if (to_iobuf)
                     {
-                        memcpy( iobuf, dev->mainstor + idadata, idalen );
+                        MAINSTOR_MCOPY( iobuf, dev->mainstor + idadata, idalen );
                     }
                     else
                     {
-                        memcpy( dev->mainstor + idadata, iobuf, idalen );
+                        MAINSTOR_MCOPY( dev->mainstor + idadata, iobuf, idalen );
                     }
 
                     /* Increment buffer pointer for next IDAW*/
@@ -4162,7 +4162,7 @@ BYTE    midawflg;                       /* MIDAW flags               */
                 else
                 {
                     /* read backward  - use END of buffer */
-                    memcpy_backwards( dev->mainstor + addr,
+                    MAINSTOR_MCOPY_RL( dev->mainstor + addr,
                         iobufptr, count );
                 }
             }
@@ -4178,7 +4178,7 @@ BYTE    midawflg;                       /* MIDAW flags               */
             /* Handle Write and Control transfer to I/O buffer */
             else if (to_iobuf)
             {
-                memcpy( iobuf, dev->mainstor + addr, count );
+                MAINSTOR_MCOPY( iobuf, dev->mainstor + addr, count );
 
                 prefetch->pos += count;
 
@@ -4190,7 +4190,7 @@ BYTE    midawflg;                       /* MIDAW flags               */
             /* Handle Read transfer from I/O buffer */
             else
             {
-                memcpy( dev->mainstor + addr, iobuf, count );
+                MAINSTOR_MCOPY( dev->mainstor + addr, iobuf, count );
             }
 
 #ifdef FEATURE_S370_CHANNEL

@@ -171,7 +171,7 @@ CHSC_RSP4 *chsc_rsp4 = (CHSC_RSP4 *)(chsc_rsp+1);
 
         for(sch = f_sch; sch <= l_sch && max_rsp; sch++, max_rsp--, chsc_rsp4++)
         {
-            memset(chsc_rsp4, 0, sizeof(CHSC_RSP4) );
+            MAINSTOR_MSET(chsc_rsp4, 0, sizeof(CHSC_RSP4) );
             if (sch <= max_sch)
             {
                 if((dev = find_device_by_subchan((LCSS_TO_SSID(lcss) << 16)|sch)))
@@ -240,7 +240,7 @@ CHSC_RSP6 *chsc_rsp6 = (CHSC_RSP6 *)(chsc_rsp+1);
 
         for(sch = f_sch; sch <= l_sch && max_rsp; sch++, max_rsp--, chsc_rsp6++)
         {
-            memset(chsc_rsp6, 0, sizeof(CHSC_RSP6) );
+            MAINSTOR_MSET(chsc_rsp6, 0, sizeof(CHSC_RSP6) );
             if (sch <= max_sch)
             {
                 if((dev = find_device_by_subchan((LCSS_TO_SSID(lcss) << 16)|sch)))
@@ -253,7 +253,7 @@ CHSC_RSP6 *chsc_rsp6 = (CHSC_RSP6 *)(chsc_rsp+1);
                     chsc_rsp6->path_mask = dev->pmcw.pim;
                     STORE_HW(chsc_rsp6->devnum,dev->devnum);
                     STORE_HW(chsc_rsp6->sch, sch);
-                    memcpy(chsc_rsp6->chpid, dev->pmcw.chpid, 8);
+                    MAINSTOR_MCOPY(chsc_rsp6->chpid, dev->pmcw.chpid, 8);
                     for(n = 0; n < 8; n++)
                     {
                         if(dev->pmcw.pim & (0x80 >> n))
@@ -269,7 +269,7 @@ CHSC_RSP6 *chsc_rsp6 = (CHSC_RSP6 *)(chsc_rsp+1);
     else /* f_sch > max_sch */
     {
         for(sch = f_sch; sch <= l_sch && max_rsp; sch++, max_rsp--, chsc_rsp6++)
-            memset(chsc_rsp6, 0, sizeof(CHSC_RSP6) );
+            MAINSTOR_MSET(chsc_rsp6, 0, sizeof(CHSC_RSP6) );
     }
 
     return chsc_req_ok(chsc_rsp, rsp_len, 0);

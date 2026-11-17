@@ -1919,7 +1919,7 @@ void ecpsvm_zappage(REGS *regs, VADR archtect, VADR pindex)
     page_table_len=EVM_LH(archtect+pindex+PAGTLEN);
 
     /* fill the entire page table with the page invalid bit format */
-    memset((char*)regs->mainstor+ptr_pagetabl, page_invalid_bit_fmt, page_table_len);
+    MAINSTOR_MSET((char*)regs->mainstor+ptr_pagetabl, page_invalid_bit_fmt, page_table_len);
     return;
 }
 
@@ -3226,7 +3226,7 @@ DEF_INST(ecpsvm_extended_freex)
     if (sysblk.ecpsvm.freetrap)
     {
         numbytes=8*(numdw-1);
-        memset((char*)regs->mainstor+freeblock, 0xEE, numbytes);
+        MAINSTOR_MSET((char*)regs->mainstor+freeblock, 0xEE, numbytes);
         trapdata=freeblock+numbytes;
         EVM_ST(0x9AC7E5D5,trapdata);
         trapdata+=4;

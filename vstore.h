@@ -352,8 +352,8 @@ BYTE    temp[4];                        /* Copied value              */
                     ACCTYPE_WRITE, regs->psw.pkey );
     *sk |= (STORKEY_REF | STORKEY_CHANGE);
     STORE_FW( temp, value );
-    memcpy( main1, temp,       len );
-    memcpy( main2, temp+len, 4-len );
+    MAINSTOR_MCOPY( main1, temp,       len );
+    MAINSTOR_MCOPY( main2, temp+len, 4-len );
 }
 
 /*-------------------------------------------------------------------*/
@@ -387,8 +387,8 @@ BYTE    temp[8];                        /* Copied value              */
                     ACCTYPE_WRITE, regs->psw.pkey );
     *sk |= (STORKEY_REF | STORKEY_CHANGE);
     STORE_DW( temp, value );
-    memcpy( main1, temp,       len );
-    memcpy( main2, temp+len, 8-len );
+    MAINSTOR_MCOPY( main1, temp,       len );
+    MAINSTOR_MCOPY( main2, temp+len, 8-len );
     ITIMER_UPDATE( addr, 8-1, regs );
 }
 /*-------------------------------------------------------------------*/
@@ -422,8 +422,8 @@ BYTE    temp[16];                        /* Copied value              */
                     ACCTYPE_WRITE, regs->psw.pkey);
     *sk |= (STORKEY_REF | STORKEY_CHANGE);
     STORE_QW( temp, value );
-    memcpy( main1, temp, len );
-    memcpy( main2, temp + len, 16-len );
+    MAINSTOR_MCOPY( main1, temp, len );
+    MAINSTOR_MCOPY( main2, temp + len, 16-len );
     ITIMER_UPDATE( addr, 16-1, regs );
 }
 /*-------------------------------------------------------------------*/
@@ -665,7 +665,7 @@ int     len2;                           /* Length to end of page     */
 
     if (NOCROSSPAGE( addr,len ))
     {
-        memcpy( MADDRL( addr, len+1, arn, regs, ACCTYPE_WRITE, regs->psw.pkey ),
+        MAINSTOR_MCOPY( MADDRL( addr, len+1, arn, regs, ACCTYPE_WRITE, regs->psw.pkey ),
                src, len + 1);
         ITIMER_UPDATE( addr, len, regs );
     }
@@ -679,8 +679,8 @@ int     len2;                           /* Length to end of page     */
                         len+1-len2, arn,
                         regs, ACCTYPE_WRITE, regs->psw.pkey );
         *sk |= (STORKEY_REF | STORKEY_CHANGE);
-        memcpy( main1, src, len2 );
-        memcpy( main2, (BYTE*)src + len2, len + 1 - len2 );
+        MAINSTOR_MCOPY( main1, src, len2 );
+        MAINSTOR_MCOPY( main2, (BYTE*)src + len2, len + 1 - len2 );
     }
 }
 
@@ -838,7 +838,7 @@ int     len2;                           /* Length to copy on page    */
     {
         ITIMER_SYNC( addr, len, regs );
         main1 = MADDRL( addr, len + 1, arn, regs, ACCTYPE_READ, regs->psw.pkey );
-        memcpy( dest, main1, len + 1 );
+        MAINSTOR_MCOPY( dest, main1, len + 1 );
     }
     else
     {
@@ -846,8 +846,8 @@ int     len2;                           /* Length to copy on page    */
         main1 = MADDRL( addr, len2, arn, regs, ACCTYPE_READ, regs->psw.pkey );
         main2 = MADDRL( (addr + len2) & ADDRESS_MAXWRAP( regs ), len + 1 - len2,
                         arn, regs, ACCTYPE_READ, regs->psw.pkey );
-        memcpy(        dest,        main1,           len2 );
-        memcpy( (BYTE*)dest + len2, main2, len + 1 - len2 );
+        MAINSTOR_MCOPY(        dest,        main1,           len2 );
+        MAINSTOR_MCOPY( (BYTE*)dest + len2, main2, len + 1 - len2 );
     }
 }
 
@@ -1118,7 +1118,7 @@ int     len;                            /* Length for page crossing  */
     {
         /* Copy first part of instruction (note: dest is 8 bytes) */
         dest = exec ? regs->exinst : regs->inst;
-        memcpy( dest, ip, 4 );
+        MAINSTOR_MCOPY( dest, ip, 4 );
 
         /* Copy second part of instruction */
         len = pagesz - offset;
@@ -1126,7 +1126,7 @@ int     len;                            /* Length for page crossing  */
         ip = MADDR( addr, USE_INST_SPACE, regs, ACCTYPE_INSTFETCH, regs->psw.pkey );
         if (!exec)
             regs->ip = ip - len;
-        memcpy( dest + len, ip, 4 );
+        MAINSTOR_MCOPY( dest + len, ip, 4 );
     }
     else /* boundary NOT crossed */
     {
