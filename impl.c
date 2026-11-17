@@ -483,7 +483,8 @@ static void* watchdog_thread( void* arg )
 
     LOG_THREAD_BEGIN( WATCHDOG_THREAD_NAME );
 
-    for (cpu=0; cpu < sysblk.maxcpu; cpu++)
+    /* Reset entire array */
+    for (cpu=0; cpu < MAX_CPU_ENGS; cpu++)
         savecount[ cpu ] = -1;
 
     /* Set watchdog priority LOWER than the CPU thread priority
