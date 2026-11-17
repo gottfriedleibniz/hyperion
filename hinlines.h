@@ -286,7 +286,7 @@ static inline void wakeup_cpu_mask( CPU_BITMAP mask, const char* location )
             if (mask & 1)
             {
                 current_regs = sysblk.regs[i];
-                current_waittod = current_regs->waittod;
+                current_waittod = atomic_load_U64( &current_regs->waittod );
 
                 /* Select least recently used CPU
                  *
@@ -306,7 +306,7 @@ static inline void wakeup_cpu_mask( CPU_BITMAP mask, const char* location )
                     (current_waittod > 0 &&
                      (current_waittod < lru_waittod ||
                       (current_waittod == lru_waittod &&
-                       current_regs->waittime >= lru_regs->waittime))))
+                       atomic_load_U64( &current_regs->waittime ) >= atomic_load_U64( &lru_regs->waittime )))))
                 {
                     lru_regs = current_regs;
                     lru_waittod = current_waittod;
