@@ -2082,6 +2082,7 @@ int ipending_cmd(int argc, char *argv[], char *cmdline)
     int     i;
     int first, last;
     char    sysid[12];
+    ALIGN_16
     BYTE    curpsw[16];
     char *states[] = { "?(0)", "STARTED", "STOPPING", "STOPPED" };
     char buf[256];

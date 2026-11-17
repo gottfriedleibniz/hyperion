@@ -941,6 +941,7 @@ U32   code;
           /*-------------------------------------------------------*/
           {
             RADR    stgarea;            /* Storage area real address */
+            CACHE_ALIGN
             struct ipl_parameter_block  ipb;
             U32     headsize;
             U32     bodysize;

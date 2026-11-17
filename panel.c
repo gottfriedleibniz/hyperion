@@ -919,6 +919,7 @@ static void NP_update(REGS *regs)
     int     i, n;
     int     mode, zhost;
     int     cpupct_total;
+    ALIGN_16
     QWORD   curr_psw;
     U32     addr, aaddr;
     DEVBLK *dev;

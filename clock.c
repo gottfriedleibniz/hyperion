@@ -327,6 +327,7 @@ void ARCH_DEP( query_utc_information )( REGS* regs )
         protocol (STP) facility that also controls TOD-clock steering.
         When STP is not installed, all fields in the UIB are zero."
     */
+    CACHE_ALIGN
     static const BYTE uib[256] = {0};
     ARCH_DEP( vstorec )( &uib, sizeof( uib )-1, regs->GR(1) & ADDRESS_MAXWRAP( regs ), 1, regs );
 }
@@ -335,6 +336,7 @@ void ARCH_DEP( query_utc_information )( REGS* regs )
 
 void ARCH_DEP(query_steering_information) (REGS *regs)
 {
+CACHE_ALIGN
 PTFFQSI qsi;
 
     obtain_lock( &sysblk.todlock );
@@ -383,6 +385,7 @@ static void build_qto_locked( PTFFQTO* qto, REGS* regs )
 
 void ARCH_DEP(query_tod_offset) (REGS *regs)
 {
+CACHE_ALIGN
 PTFFQTO qto;
 
     obtain_lock( &sysblk.todlock );
@@ -405,6 +408,7 @@ void ARCH_DEP( query_tod_offset_user )( REGS* regs )
     */
     struct
     {
+        CACHE_ALIGN
         PTFFQTO  qto;
         DBLWRD   tod_user_specified_epoch_difference;
     }
@@ -435,6 +439,7 @@ void ARCH_DEP( query_tod_offset_user_extended )( REGS* regs )
 
 void ARCH_DEP(query_available_functions) (REGS *regs)
 {
+    ALIGN_16
     BYTE qaf[16] = {0};
 
     BIT_ARRAY_SET( qaf, PTFF_GPR0_FC_QAF  );

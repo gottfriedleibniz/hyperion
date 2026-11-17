@@ -389,6 +389,7 @@ char    *devargv[16];
 int      devargx=0;
 DEVBLK  *dev = NULL;
 IOINT   *ioq = NULL;
+CACHE_ALIGN
 char     buf[SR_MAX_STRING_LENGTH+1];
 char     zeros[16];
 S64      dreg;
