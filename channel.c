@@ -3224,7 +3224,7 @@ ARCH_DEP(fetch_ccw) (DEVBLK *dev,       /* -> Device block           */
                      BYTE *chanstat)    /* Returned channel status   */
 {
 BYTE    storkey;                        /* Storage key               */
-BYTE   *ccw;                            /* CCW pointer               */
+U64     ccw;                            /* First 8-bytes of CCW      */
 
     UNREFERENCED_370(dev);
     *code=0;
@@ -3252,25 +3252,22 @@ BYTE   *ccw;                            /* CCW pointer               */
     /* Set the main storage reference bit for the CCW location */
     ARCH_DEP( or_dev_storage_key )( dev, ccwaddr, STORKEY_REF );
 
-    /* Point to the CCW in main storage */
-    ccw = dev->mainstor + ccwaddr;
-
     /* Extract CCW opcode, flags, byte count, and data address */
+    FETCH_DW( ccw, dev->mainstor + ccwaddr );
+    
     if (ccwfmt == 0)
     {
-        *code = ccw[0];
-        *addr = ((U32)(ccw[1]) << 16) | ((U32)(ccw[2]) << 8)
-                    | ccw[3];
-        *flags = ccw[4];
-        *count = ((U16)(ccw[6]) << 8) | ccw[7];
+        *code  = (BYTE)((ccw >> 56) & 0xFF);
+        *addr  =  (U32)((ccw >> 32) & 0x00FFFFFF);
+        *flags = (BYTE)((ccw >> 24) & 0xFF);
+        *count =  (U16)((ccw >> 00) & 0xFFFF);
     }
     else
     {
-        *code = ccw[0];
-        *flags = ccw[1];
-        *count = ((U16)(ccw[2]) << 8) | ccw[3];
-        *addr = ((U32)(ccw[4]) << 24) | ((U32)(ccw[5]) << 16)
-                    | ((U32)(ccw[6]) << 8) | ccw[7];
+        *code  = (BYTE)((ccw >> 56) & 0xFF);
+        *flags = (BYTE)((ccw >> 48) & 0xFF);
+        *count =  (U16)((ccw >> 32) & 0xFFFF);
+        *addr  =  (U32)((ccw >> 00) & 0xFFFFFFFF);
     }
 } /* end function fetch_ccw */
 
