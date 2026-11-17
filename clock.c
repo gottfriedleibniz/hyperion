@@ -773,7 +773,7 @@ int cpu;
        as we simulate 1 shared TOD clock, and do not support
        the TOD clock sync check.
     */
-    for (cpu = 0; cpu < sysblk.maxcpu; cpu++)
+    for (cpu = 0; cpu < SYS_GET_MAXCPU(); cpu++)
     {
         obtain_lock( &sysblk.cpulock[ cpu ]);
         {
@@ -993,9 +993,9 @@ TOD etod_clock( REGS* regs, ETOD* ETOD, ETOD_format format )
             register U64    lmask;
 
             /* Set CPU address masks */
-            if (sysblk.maxcpu <= 64)
+            if (SYS_GET_MAXCPU() <= 64)
                 amask = 0x3F, lmask = 0xFFFFFFFFFFC00000ULL;
-            else if (sysblk.maxcpu <= 128)
+            else if (SYS_GET_MAXCPU() <= 128)
                 amask = 0x7F, lmask = 0xFFFFFFFFFF800000ULL;
             else /* sysblk.maxcpu <= 256) */
                 amask = 0xFF, lmask = 0xFFFFFFFFFF000000ULL;

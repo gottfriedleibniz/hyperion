@@ -1343,7 +1343,7 @@ int     i;
 
     /* If the addressed channelset is connected to another
        CPU then return with cc1 */
-    for (i = 0; i < sysblk.maxcpu; i++)
+    for (i = 0; i < SYS_GET_MAXCPU(); i++)
     {
         if (IS_CPU_ONLINE(i)
          && sysblk.regs[i]->chanset == effective_addr2)
@@ -1404,7 +1404,7 @@ int     i;
 
     /* If the addressed channelset is connected to another
        CPU then return with cc0 */
-    for(i = 0; i < sysblk.maxcpu; i++)
+    for(i = 0; i < SYS_GET_MAXCPU(); i++)
     {
         if (IS_CPU_ONLINE(i)
          && sysblk.regs[i]->chanset == effective_addr2)

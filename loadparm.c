@@ -806,10 +806,10 @@ get_RealCPCount (void)
         possible = MAX_CPU_ENGS;
 
     /* Set number of reserved processors */
-    reserved = possible - sysblk.cpus;
+    reserved = possible - SYS_GET_CPUS();
 
     /* Count the number of defined CP processors */
-    for ( cpu = 0; cpu < (unsigned) sysblk.hicpu; ++cpu )
+    for ( cpu = 0; cpu < (unsigned) SYS_GET_HICPU(); ++cpu )
     {
         /* Loop through online CP CPUs */
         if ( IS_CPU_ONLINE(cpu) )

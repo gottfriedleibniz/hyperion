@@ -135,7 +135,7 @@ static void configure_region_reloc()
     }
 
     /* Relocate storage for all online cpus */
-    for (i=0; i < sysblk.maxcpu; i++)
+    for (i=0; i < SYS_GET_MAXCPU(); i++)
         if (IS_CPU_ONLINE( i ))
         {
             sysblk.regs[i]->storkeys = sysblk.storkeys;
@@ -216,7 +216,7 @@ U64 adjust_mainsize( int archnum, U64 mainsize )
         mainsize = minmax_mainsize[ archnum ][ MAX_ARCH_MAINSIZE_BYTES ];
 
     /* Special case: if no CPUs then no storage is needed */
-    if (sysblk.maxcpu <= 0)
+    if (SYS_GET_MAXCPU() <= 0)
         mainsize = 0;
 
     return mainsize;
@@ -879,7 +879,7 @@ int     cpu;
 
     /* Deconfigure all CPU's */
     OBTAIN_INTLOCK(NULL);
-    for (cpu = 0; cpu < sysblk.maxcpu; cpu++)
+    for (cpu = 0; cpu < SYS_GET_MAXCPU(); cpu++)
         if(IS_CPU_ONLINE(cpu))
             deconfigure_cpu(cpu);
     RELEASE_INTLOCK(NULL);
@@ -1007,7 +1007,7 @@ DLL_EXPORT bool are_cpu_thread( int* cpunum )
     TID  tid  = thread_id();
     int  i;
 
-    for (i=0; i < sysblk.maxcpu; i++)
+    for (i=0; i < SYS_GET_MAXCPU(); i++)
     {
         if (equal_threads( sysblk.cputid[ i ], tid ))
         {
@@ -1058,7 +1058,7 @@ int configure_cpu( int target_cpu )
         int   ourcpu;
 
         /* If no more CPUs are permitted, exit */
-        if (sysblk.cpus >= sysblk.maxcpu)
+        if (SYS_GET_CPUS() >= SYS_GET_MAXCPU())
             return HERRCPUOFF; /* CPU offline; maximum reached */
 
         MSGBUF( thread_name, "Processor %s%02X",
@@ -1206,15 +1206,15 @@ static int configure_numcpu_intlock_held( int numcpu )
     int cpu;
 
     /* Requested number of online CPUs must be <= maximum */
-    if (numcpu > sysblk.maxcpu)
+    if (numcpu > SYS_GET_MAXCPU())
         return HERRCPUOFF;  /* CPU offline; number > maximum */
 
     /* All CPUs must be stopped beforehand */
-    if (sysblk.cpus && !are_all_cpus_stopped_intlock_held())
+    if (SYS_GET_CPUS() && !are_all_cpus_stopped_intlock_held())
         return HERRCPUONL; /* CPU online; not all are stopped */
 
     /* Keep deconfiguring CPUS until within desired range */
-    for (cpu=sysblk.hicpu-1; cpu >= 0 && sysblk.cpus > numcpu; cpu--)
+    for (cpu=SYS_GET_HICPU()-1; cpu >= 0 && SYS_GET_CPUS() > numcpu; cpu--)
     {
         /* Deconfigure this CPU if it's currently configured */
         if (IS_CPU_ONLINE( cpu ))
@@ -1222,7 +1222,7 @@ static int configure_numcpu_intlock_held( int numcpu )
     }
 
     /* Keep configuring CPUs until desired amount reached */
-    for (cpu=0; cpu < sysblk.maxcpu && sysblk.cpus < numcpu; cpu++)
+    for (cpu=0; cpu < SYS_GET_MAXCPU() && SYS_GET_CPUS() < numcpu; cpu++)
     {
         /* Configure this CPU if it's not currently configured */
         if (!IS_CPU_ONLINE( cpu ))
@@ -1268,17 +1268,17 @@ int configure_maxcpu( int maxcpu )
         }
 
         /* All CPUs must be stopped beforehand */
-        if (sysblk.cpus && !are_all_cpus_stopped_intlock_held())
+        if (SYS_GET_CPUS() && !are_all_cpus_stopped_intlock_held())
         {
             RELEASE_INTLOCK( NULL );
             return HERRCPUONL; /* CPU online; not all are stopped */
         }
 
         /* Set new maximum number of online CPUs */
-        sysblk.maxcpu = maxcpu;
+        SYS_SET_MAXCPU( maxcpu );
 
         /* Deconfigure excess online CPUs if necessary */
-        if (sysblk.cpus > maxcpu)
+        if (SYS_GET_CPUS() > maxcpu)
             rc = configure_numcpu_intlock_held( maxcpu );
 
         /* Update all CPU IDs to reflect new MAXCPU */

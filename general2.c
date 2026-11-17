@@ -767,7 +767,7 @@ bool    isActioned  = false;
         RELEASE_MAINLOCK_UNCONDITIONAL( regs );
 
         /* PLO function executed with mainlock held, let other CPUs run */
-        if ( isActioned && sysblk.cpus > 1 )
+        if ( isActioned && SYS_GET_CPUS() > 1 )
         {
             PTT_CSF("*PLO",regs->GR_L(0),regs->GR_L(r1),regs->psw.IA_L);
             sched_yield();
@@ -2060,7 +2060,7 @@ BYTE    old;                            /* Old value                 */
         }
         else
 #endif
-            if (sysblk.cpus > 1)
+            if (SYS_GET_CPUS() > 1)
                 sched_yield();
     }
     else

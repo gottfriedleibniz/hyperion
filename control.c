@@ -972,7 +972,7 @@ U64     new64;                          /* New value (CSPG)          */
             regs->GR_L( r1 ) = CSWAP32( old32 );
         }
 
-        if (sysblk.cpus > 1)
+        if (SYS_GET_CPUS() > 1)
             sched_yield();
     }
 
@@ -5944,7 +5944,7 @@ char    log_buf[128];                   /* Log buffer                */
     PTT_SIG("SIGP",parm,cpad,order);
 
     /* Return condition code 3 if target CPU does not exist */
-    if (cpad >= sysblk.maxcpu)
+    if (cpad >= SYS_GET_MAXCPU())
     {
         PTT_ERR("*SIGP",parm,cpad,order);
         regs->psw.cc = 3;
@@ -5955,7 +5955,7 @@ char    log_buf[128];                   /* Log buffer                */
        now not considered unusual especially since
        we have increased the default max CPU number to 8 */
     if (order == SIGP_SENSE && !IS_CPU_ONLINE( cpad )
-     && cpad >= sysblk.hicpu)
+     && cpad >= SYS_GET_HICPU())
     {
         PTT_ERR("*SIGP",parm,cpad,order);
         regs->psw.cc = 3;
@@ -6436,7 +6436,7 @@ char    log_buf[128];                   /* Log buffer                */
             PERFORM_SERIALIZATION( regs );
             PERFORM_CHKPT_SYNC( regs );
 
-            for (cpu = 0; cpu < sysblk.maxcpu; cpu++)
+            for (cpu = 0; cpu < SYS_GET_MAXCPU(); cpu++)
                 if (IS_CPU_ONLINE( cpu )
                  && sysblk.regs[ cpu ]->cpustate != CPUSTATE_STOPPED
                  && sysblk.regs[ cpu ]->cpuad != regs->cpuad)
@@ -6461,7 +6461,7 @@ char    log_buf[128];                   /* Log buffer                */
                             regs->psw.states |= BIT( PSW_NOTESAME_BIT );
                             regs->PX &= PX_900_MASK;
 
-                            for (cpu = 0; cpu < sysblk.maxcpu; cpu++)
+                            for (cpu = 0; cpu < SYS_GET_MAXCPU(); cpu++)
                             {
                                 if (IS_CPU_ONLINE( cpu ) &&
                                     sysblk.regs[cpu]->cpuad != regs->cpuad)
@@ -6489,7 +6489,7 @@ char    log_buf[128];                   /* Log buffer                */
                             regs->psw.IA_H = 0;
                             regs->PX &= PX_900_MASK;
 
-                            for (cpu = 0; cpu < sysblk.maxcpu; cpu++)
+                            for (cpu = 0; cpu < SYS_GET_MAXCPU(); cpu++)
                             {
                                 if (IS_CPU_ONLINE( cpu ) &&
                                     sysblk.regs[ cpu ]->cpuad != regs->cpuad)
@@ -6517,7 +6517,7 @@ char    log_buf[128];                   /* Log buffer                */
                             regs->psw.IA_H = 0;
                             regs->PX &= PX_900_MASK;
 
-                            for (cpu = 0; cpu < sysblk.maxcpu; cpu++)
+                            for (cpu = 0; cpu < SYS_GET_MAXCPU(); cpu++)
                             {
                                 if (IS_CPU_ONLINE( cpu ) &&
                                     sysblk.regs[cpu]->cpuad != regs->cpuad)
@@ -6950,7 +6950,7 @@ long double MIPSreal()
      * Since the real CPU time is managed by the clock, only the
      * corresponding previous instruction counts are used.
      */
-    for (cpu = 0; cpu < sysblk.maxcpu; ++cpu)
+    for (cpu = 0; cpu < SYS_GET_MAXCPU(); ++cpu)
     {
         /* Loop through online CP CPUs */
         if (1
@@ -7309,9 +7309,9 @@ static BYTE hexebcdic[16] = { 0xF0,0xF1,0xF2,0xF3,0xF4,0xF5,0xF6,0xF7,
                 STORE_MAIN_FW( sysib122->sccap,   sysblk.cpscap );
                 STORE_MAIN_FW( sysib122->cap,     sysblk.cpmcap );
                 STORE_MAIN_HW( sysib122->totcpu,  MAX_CPU_ENGS  );
-                STORE_MAIN_HW( sysib122->confcpu, sysblk.cpus   );
-                STORE_MAIN_HW( sysib122->sbcpu,   sysblk.maxcpu - sysblk.cpus   );
-                STORE_MAIN_HW( sysib122->resvcpu, MAX_CPU_ENGS  - sysblk.maxcpu );
+                STORE_MAIN_HW( sysib122->confcpu, SYS_GET_CPUS());
+                STORE_MAIN_HW( sysib122->sbcpu,   SYS_GET_MAXCPU() - SYS_GET_CPUS());
+                STORE_MAIN_HW( sysib122->resvcpu, MAX_CPU_ENGS  - SYS_GET_MAXCPU() );
                 get_mpfactors( (BYTE*)sysib122->mpfact );
                 if (sysib122->format)
                 {
@@ -7371,10 +7371,10 @@ static BYTE hexebcdic[16] = { 0xF0,0xF1,0xF2,0xF3,0xF4,0xF5,0xF6,0xF7,
                 MAINSTOR_MSET( sysib222, 0, MAX( sizeof( SYSIB222 ), 64*4 ));
                 STORE_MAIN_HW( sysib222->lparnum, sysblk.lparnum );
                 sysib222->lcpuc = SYSIB222_LCPUC_SHARED;
-                STORE_MAIN_HW( sysib222->totcpu,  MAX_CPU_ENGS );
-                STORE_MAIN_HW( sysib222->confcpu, sysblk.cpus  );
-                STORE_MAIN_HW( sysib222->sbcpu,   sysblk.maxcpu - sysblk.cpus   );
-                STORE_MAIN_HW( sysib222->resvcpu, MAX_CPU_ENGS  - sysblk.maxcpu );
+                STORE_MAIN_HW( sysib222->totcpu,  MAX_CPU_ENGS  );
+                STORE_MAIN_HW( sysib222->confcpu, SYS_GET_CPUS());
+                STORE_MAIN_HW( sysib222->sbcpu,   SYS_GET_MAXCPU() - SYS_GET_CPUS());
+                STORE_MAIN_HW( sysib222->resvcpu, MAX_CPU_ENGS  - SYS_GET_MAXCPU() );
                 get_lparname(sysib222->lparname);
                 /* FIXME: Should be a percentage of 1000, where 1000
                  *        represents 1.000 and capable of full CPU
@@ -7384,7 +7384,7 @@ static BYTE hexebcdic[16] = { 0xF0,0xF1,0xF2,0xF3,0xF4,0xF5,0xF6,0xF7,
                 STORE_MAIN_FW( sysib222->lparcaf, 1000 ); /* Full capability factor */
                 STORE_MAIN_FW( sysib222->mdep[0], 1000 ); /* ZZ nonzero value */
                 STORE_MAIN_FW( sysib222->mdep[1], 1000 ); /* ZZ nonzero value */
-                STORE_MAIN_HW( sysib222->shrcpu,  sysblk.cpus );
+                STORE_MAIN_HW( sysib222->shrcpu,  SYS_GET_CPUS() );
                 regs->psw.cc = 0;
                 break;
 
@@ -7410,10 +7410,10 @@ static BYTE hexebcdic[16] = { 0xF0,0xF1,0xF2,0xF3,0xF4,0xF5,0xF6,0xF7,
         MAINSTOR_MSET( sysib322, 0, sizeof( SYSIB322 ));
         sysib322->dbct = 1;
         sysibvmdb = (SYSIBVMDB *)&sysib322->vmdb[0];
-        STORE_MAIN_HW( sysibvmdb->totcpu,  MAX_CPU_ENGS );
-        STORE_MAIN_HW( sysibvmdb->confcpu, sysblk.cpus  );
-        STORE_MAIN_HW( sysibvmdb->sbcpu,   sysblk.maxcpu - sysblk.cpus   );
-        STORE_MAIN_HW( sysibvmdb->resvcpu, MAX_CPU_ENGS  - sysblk.maxcpu );
+        STORE_MAIN_HW( sysibvmdb->totcpu,  MAX_CPU_ENGS  );
+        STORE_MAIN_HW( sysibvmdb->confcpu, SYS_GET_CPUS());
+        STORE_MAIN_HW( sysibvmdb->sbcpu,   SYS_GET_MAXCPU() - SYS_GET_CPUS());
+        STORE_MAIN_HW( sysibvmdb->resvcpu, MAX_CPU_ENGS  - SYS_GET_MAXCPU() );
         get_vmid( sysibvmdb->vmname );
         STORE_MAIN_FW( sysibvmdb->vmcaf, 1000 ); /* Full capability factor */
         get_cpid( sysibvmdb->cpid );
@@ -7448,7 +7448,7 @@ static BYTE hexebcdic[16] = { 0xF0,0xF1,0xF2,0xF3,0xF4,0xF5,0xF6,0xF7,
 
                 sysib1512->mnest = 2;
                 sysib1512->mag[4] = 1;
-                sysib1512->mag[5] = sysblk.maxcpu;
+                sysib1512->mag[5] = SYS_GET_MAXCPU();
 
                 tle = sysib1512->tles;
                 cntnrid = 1;
@@ -7468,7 +7468,7 @@ static BYTE hexebcdic[16] = { 0xF0,0xF1,0xF2,0xF3,0xF4,0xF5,0xF6,0xF7,
 
                     /* For each CPU of this type */
                     cpumask = 0;
-                    for (i=0; i < sysblk.hicpu; i++)
+                    for (i=0; i < SYS_GET_HICPU(); i++)
                     {
                         if (1
                             && sysblk.regs[i]
