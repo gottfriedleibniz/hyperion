@@ -1177,7 +1177,7 @@ char    regs_msg_buf[8*512] = {0};
     )
     {
         S64 offset;
-        S32 relative_long_operand = fetch_fw( inst+2 );
+        S32 relative_long_operand = READ_FW( inst+2 );
         offset = 2LL * relative_long_operand;
         addr1 = PSW_IA_FROM_IP( regs, 0 );  // (current instruction address)
 
@@ -3137,7 +3137,7 @@ const char* FormatCIW( BYTE* ciw, char* buf, size_t bufsz )
             , ciw[0], ciw[1], ciw[2], ciw[3]
             , type[ ciw[0] & 0x0F ]
             , ciw[1]
-            , fetch_hw( ciw+2 )
+            , READ_HW( ciw+2 )
         );
     }
     else

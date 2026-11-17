@@ -708,7 +708,7 @@ U16             devtype;                /* Device type (e.g. 0x3390) */
             heads, trksize,
             devhdr.dh_devtyp, fbatab->name,
             devhdr.dh_fileseq,
-            fetch_hw( devhdr.dh_highcyl ),
+            READ_HW( devhdr.dh_highcyl ),
             ser );
     }
     else
@@ -728,7 +728,7 @@ U16             devtype;                /* Device type (e.g. 0x3390) */
             heads, trksize,
             devhdr.dh_devtyp, ckdtab->name,
             devhdr.dh_fileseq,
-            fetch_hw( devhdr.dh_highcyl ),
+            READ_HW( devhdr.dh_highcyl ),
             ser );
     }
 

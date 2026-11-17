@@ -455,7 +455,7 @@ static void showtrkorblk
     {
         /* Extract block number of first block in block group */
         FBA_BKGHDR*  blkghdr =  (FBA_BKGHDR*) buf2;
-        U32          grpnum  =  fetch_fw( blkghdr->grpnum );
+        U32          grpnum  =  READ_FW( blkghdr->grpnum );
 
         /* Calculate relative block number within block group */
         U32 grpblk = (trk - (grpnum * CFBA_BLKS_PER_GRP));

@@ -480,7 +480,7 @@ BYTE    temp[8];                        /* Copy destination          */
     mn = MADDRL( (addr + len) & ADDRESS_MAXWRAP( regs ), 4 - len, arn, regs,
                   ACCTYPE_READ, regs->psw.pkey );
     memcpy( temp+len, mn, 4 - len);
-    return fetch_fw( temp );
+    return READ_FW( temp );
 }
 
 /*-------------------------------------------------------------------*/
@@ -511,7 +511,7 @@ BYTE    temp[16];                       /* Copy destination          */
     mn = MADDRL( (addr + len) & ADDRESS_MAXWRAP( regs ), 8 - len, arn, regs,
                  ACCTYPE_READ, regs->psw.pkey );
     memcpy( temp+len, mn, 8 );
-    return fetch_dw( temp );
+    return READ_DW( temp );
 }
 
 /*-------------------------------------------------------------------*/
@@ -542,7 +542,7 @@ BYTE    temp[32];                       /* Copy destination          */
     mn = MADDRL( (addr + len) & ADDRESS_MAXWRAP( regs ), 16 - len, arn, regs,
                  ACCTYPE_READ, regs->psw.pkey );
     memcpy( temp+len, mn, 16 );
-    return fetch_qw( temp );
+    return READ_QW( temp );
 }
 
 /*-------------------------------------------------------------------*/
@@ -602,7 +602,7 @@ inline U16 ARCH_DEP( vfetch2_unaligned )( VADR addr, int arn, REGS* regs )
 
     ITIMER_SYNC( addr, 2-1, regs );
     mn = MADDRL( addr, 2, arn, regs, ACCTYPE_READ, regs->psw.pkey );
-    return fetch_hw( mn );
+    return READ_HW( mn  );
 }
 
 /*-------------------------------------------------------------------*/
@@ -614,7 +614,7 @@ inline U32 ARCH_DEP( vfetch4_unaligned )( VADR addr, int arn, REGS* regs )
 
     ITIMER_SYNC( addr, 4-1, regs );
     mn = MADDRL( addr, 4, arn, regs, ACCTYPE_READ, regs->psw.pkey );
-    return fetch_fw( mn );
+    return READ_FW( mn );
 }
 
 /*-------------------------------------------------------------------*/
@@ -626,7 +626,7 @@ inline U64 ARCH_DEP( vfetch8_unaligned )( VADR addr, int arn, REGS* regs )
 
     ITIMER_SYNC( addr, 8-1, regs );
     mn = MADDRL( addr, 8, arn, regs, ACCTYPE_READ, regs->psw.pkey );
-    return fetch_dw( mn );
+    return READ_DW( mn );
 }
 
 /*-------------------------------------------------------------------*/
@@ -638,7 +638,7 @@ inline QW ARCH_DEP( vfetch16_unaligned )( VADR addr, int arn, REGS* regs )
 
     ITIMER_SYNC( addr, 16-1, regs );
     mn = MADDRL( addr, 16, arn, regs, ACCTYPE_READ, regs->psw.pkey );
-    return fetch_qw( mn );
+    return READ_QW( mn );
 }
 
 /*-------------------------------------------------------------------*/
@@ -884,7 +884,7 @@ inline U16 ARCH_DEP( vfetch2 )( VADR addr, int arn, REGS* regs )
         BYTE *mn;
         ITIMER_SYNC( addr, 2-1, regs );
         mn = MADDRL( addr, 2,arn, regs, ACCTYPE_READ, regs->psw.pkey );
-        return fetch_hw( mn );
+        return READ_HW( mn );
     }
     else if (((VADR_L)addr & PAGEFRAME_BYTEMASK) != PAGEFRAME_BYTEMASK )
         return ARCH_DEP( vfetch2_unaligned )( addr, arn, regs );
@@ -901,7 +901,7 @@ inline U32 ARCH_DEP( vfetch4 )( VADR addr, int arn, REGS* regs )
         BYTE *mn;
         ITIMER_SYNC( addr, 4-1, regs );
         mn = MADDRL( addr, 4,arn, regs, ACCTYPE_READ, regs->psw.pkey );
-        return fetch_fw( mn );
+        return READ_FW( mn );
     }
     else if (((VADR_L)addr & PAGEFRAME_BYTEMASK) <= (PAGEFRAME_BYTEMASK-3))
         return ARCH_DEP( vfetch4_unaligned )( addr, arn, regs );
@@ -923,7 +923,7 @@ inline U64 ARCH_DEP( vfetch8 )( VADR addr, int arn, REGS* regs )
         if (regs->cpubit == regs->sysblk->started_mask)
             return CSWAP64( *mn );
 #endif
-        return fetch_dw( mn );
+        return READ_DW( mn );
     }
     else
     {
@@ -951,7 +951,7 @@ inline QW ARCH_DEP( vfetch16 )( VADR addr, int arn, REGS* regs )
         if (regs->cpubit == regs->sysblk->started_mask)
             return CSWAP128( *mn );
 #endif
-        return fetch_qw( mn );
+        return READ_QW( mn );
     }
     else
     {

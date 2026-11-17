@@ -138,6 +138,9 @@
 #undef VRX
 #undef VSI
 
+#undef  READ_INST_FW
+#define READ_INST_FW            READ_FW
+
 /*-------------------------------------------------------------------*/
 /*            E - implied operands and extended op code              */
 /*-------------------------------------------------------------------*/
@@ -196,7 +199,7 @@
 #define MII_A_DECODER( _inst, _regs, _m1, _addr2, _addr3, _len, _ilc )  \
 {                                                                   \
     U32 ri2, ri3; S64 offset;                                       \
-    U32 temp = fetch_fw( &(_inst)[2] );                             \
+    U32 temp = READ_INST_FW( &(_inst)[2] );                         \
                                                                     \
     int i = (_inst)[1];                                             \
                                                                     \
@@ -330,7 +333,7 @@
 
 #define RRD_DECODER( _inst, _regs, _r1, _r2, _r3, _len, _ilc )      \
 {                                                                   \
-    U32 temp = fetch_fw( _inst );                                   \
+    U32 temp = READ_INST_FW( _inst );                               \
                                                                     \
     (_r2) = (temp >>  0) & 0xf;                                     \
     (_r3) = (temp >>  4) & 0xf;                                     \
@@ -374,7 +377,7 @@
 
 #define RRF_RM_DECODER( _inst, _regs, _r1, _r2, _r3, _m4, _len, _ilc ) \
 {                                                                   \
-    U32 temp = fetch_fw( _inst );                                   \
+    U32 temp = READ_INST_FW( _inst );                               \
                                                                     \
     (_r2) = (temp >>  0) & 0xf;                                     \
     (_r1) = (temp >>  4) & 0xf;                                     \
@@ -399,7 +402,7 @@
 
 #define RRF_MM_DECODER( _inst, _regs, _r1, _r2, _m3, _m4, _len, _ilc ) \
 {                                                                   \
-    U32 temp = fetch_fw( _inst );                                   \
+    U32 temp = READ_INST_FW( _inst );                               \
                                                                     \
     (_r2) = (temp >>  0) & 0xf;                                     \
     (_r1) = (temp >>  4) & 0xf;                                     \
@@ -424,7 +427,7 @@
 
 #define RRF_M_DECODER( _inst, _regs, _r1, _r2, _m3, _len, _ilc )    \
 {                                                                   \
-    U32 temp = fetch_fw( _inst );                                   \
+    U32 temp = READ_INST_FW( _inst );                               \
                                                                     \
     (_r2) = (temp >>  0) & 0xf;                                     \
     (_r1) = (temp >>  4) & 0xf;                                     \
@@ -449,7 +452,7 @@
 
 #define RRF_M4_DECODER( _inst, _regs, _r1, _r2, _m4, _len, _ilc )   \
 {                                                                   \
-    U32 temp = fetch_fw( _inst );                                   \
+    U32 temp = READ_INST_FW( _inst );                               \
                                                                     \
     (_r2) = (temp >>  0) & 0xf;                                     \
     (_r1) = (temp >>  4) & 0xf;                                     \
@@ -474,7 +477,7 @@
 
 #define RRR_DECODER( _inst, _regs, _r1, _r2, _r3, _len, _ilc )      \
 {                                                                   \
-    U32 temp = fetch_fw( _inst );                                   \
+    U32 temp = READ_INST_FW( _inst );                               \
                                                                     \
     (_r2) = (temp >>  0) & 0xf;                                     \
     (_r1) = (temp >>  4) & 0xf;                                     \
@@ -500,7 +503,7 @@
 
 #define RX_DECODER( _inst, _regs, _r1, _x2, _b2, _effective_addr2, _len, _ilc ) \
 {                                                                   \
-    U32 temp = fetch_fw( _inst );                                   \
+    U32 temp = READ_INST_FW( _inst );                               \
                                                                     \
     (_effective_addr2) = (temp >>  0) & 0xfff;                      \
     (_x2)              = (temp >> 16) & 0xf;                        \
@@ -535,7 +538,7 @@
 
 #define RX_BC_DECODER( _inst, _regs, _b2, _effective_addr2, _len, _ilc ) \
 {                                                                   \
-    U32 temp = fetch_fw( _inst );                                   \
+    U32 temp = READ_INST_FW( _inst );                               \
                                                                     \
     (_effective_addr2) = (temp >>  0) & 0xfff;                      \
     (_b2)              = (temp >> 16) & 0xf;  /* (actually x2) */   \
@@ -565,7 +568,7 @@
 
 #define RXX0_BC_DECODER( _inst, _regs, _b2, _effective_addr2, _len, _ilc ) \
 {                                                                   \
-    U32 temp = fetch_fw( _inst );                                   \
+    U32 temp = READ_INST_FW( _inst );                               \
                                                                     \
     (_effective_addr2) = (temp >>  0) & 0xfff;                      \
     (_b2)              = (temp >> 12) & 0xf;                        \
@@ -591,7 +594,7 @@
 
 #define RXX0RX_DECODER( _inst, _regs, _b2, _effective_addr2, _len, _ilc ) \
 {                                                                   \
-    U32 temp = fetch_fw( _inst );                                   \
+    U32 temp = READ_INST_FW( _inst );                               \
                                                                     \
     (_effective_addr2) = (temp >>  0) & 0xfff;                      \
     (_b2)              = (temp >> 12) & 0xf;                        \
@@ -620,7 +623,7 @@
 
 #define RXXx_DECODER( _inst, _regs, _r1, _x2, _b2, _effective_addr2, _len, _ilc ) \
 {                                                                   \
-    U32 temp = fetch_fw( _inst );                                   \
+    U32 temp = READ_INST_FW( _inst );                               \
                                                                     \
     (_effective_addr2)  = (temp >>  0) & 0xfff;                     \
     (_r1)               = (temp >> 20) & 0xf;                       \
@@ -651,7 +654,7 @@
 
 #define RXXx_BC_DECODER( _inst, _regs, _b2, _effective_addr2, _len, _ilc ) \
 {                                                                   \
-    U32 temp = fetch_fw( _inst );                                   \
+    U32 temp = READ_INST_FW( _inst );                               \
                                                                     \
     (_effective_addr2)  = (temp >>  0) & 0xfff;                     \
     (_b2)               = (temp >> 16) & 0xf;  /* (actually x2) */  \
@@ -677,7 +680,7 @@
 
 #define RXE_DECODER( _inst, _regs, _r1, _x2, _b2, _effective_addr2, _len, _ilc ) \
 {                                                                   \
-    U32 temp = fetch_fw( _inst );                                   \
+    U32 temp = READ_INST_FW( _inst );                               \
                                                                     \
     (_effective_addr2) = (temp >>  0) & 0xfff;                      \
     (_x2)              = (temp >> 16) & 0xf;                        \
@@ -711,7 +714,7 @@
 
 #define RXE_DECODER_M3( _inst, _regs, _r1, _x2, _b2, _effective_addr2, _m3, _len, _ilc ) \
 {                                                                   \
-    U32 temp = fetch_fw( _inst + 1);                                \
+    U32 temp = READ_INST_FW( _inst + 1);                            \
                                                                     \
     (_effective_addr2) = (temp >>  8) & 0xfff;                      \
     (_x2)              = (temp >> 24) & 0xf;                        \
@@ -746,7 +749,7 @@
 
 #define RXF_DECODER( _inst, _regs, _r1, _r3, _x2, _b2, _effective_addr2, _len, _ilc ) \
 {                                                                   \
-    U32 temp = fetch_fw( _inst );                                   \
+    U32 temp = READ_INST_FW( _inst );                               \
                                                                     \
     (_r1)              = (_inst)[4] >> 4;                           \
     (_effective_addr2) = (temp >>  0) & 0xfff;                      \
@@ -793,7 +796,7 @@
 
 #define RXY_DECODER_LD( _inst, _regs, _r1, _x2, _b2, _effective_addr2, _len, _ilc ) \
 {                                                                   \
-    S32 disp2; U32 temp = fetch_fw( _inst );                        \
+    S32 disp2; U32 temp = READ_INST_FW( _inst );                    \
                                                                     \
     (_effective_addr2) = 0;                                         \
                                                                     \
@@ -835,7 +838,7 @@
 
 #define RXY_DECODER( _inst, _regs, _r1, _x2, _b2, _effective_addr2, _len, _ilc ) \
 {                                                                   \
-    U32 temp = fetch_fw( _inst );                                   \
+    U32 temp = READ_INST_FW( _inst );                               \
                                                                     \
     (_effective_addr2) = (temp >>  0) & 0xfff;                      \
     (_x2)              = (temp >> 16) & 0xf;                        \
@@ -875,7 +878,7 @@
 
 #define RXYX_DECODER_LD( _inst, _regs, _r1, _b2, _effective_addr2, _len, _ilc ) \
 {                                                                   \
-    S32 disp2; U32 temp = fetch_fw( _inst );                        \
+    S32 disp2; U32 temp = READ_INST_FW( _inst );                    \
                                                                     \
     (_effective_addr2) = 0;                                         \
                                                                     \
@@ -910,7 +913,7 @@
 
 #define RXYX_DECODER( _inst, _regs, _r1, _b2, _effective_addr2, _len, _ilc ) \
 {                                                                   \
-    U32 temp = fetch_fw( _inst );                                   \
+    U32 temp = READ_INST_FW( _inst );                               \
                                                                     \
     (_effective_addr2) = (temp >>  0) & 0xfff;                      \
     (_b2)              = (temp >> 12) & 0xf;                        \
@@ -943,7 +946,7 @@
 
 #define RXY_DECODER_C( _inst, _regs, _r1, _x2, _b2, _dx2, _len, _ilc ) \
 {                                                                   \
-    S32 disp2; U32 temp = fetch_fw( _inst );                        \
+    S32 disp2; U32 temp = READ_INST_FW( _inst );                    \
                                                                     \
     disp2 = (temp >>  0) & 0xfff;                                   \
     (_b2) = (temp >> 12) & 0xf;                                     \
@@ -981,7 +984,7 @@
 
 #define RS_DECODER( _inst, _regs, _r1, _r3, _b2, _effective_addr2, _len, _ilc ) \
 {                                                                   \
-    U32 temp = fetch_fw( _inst );                                   \
+    U32 temp = READ_INST_FW( _inst );                               \
                                                                     \
     (_effective_addr2) = (temp >>  0) & 0xfff;                      \
     (_b2)              = (temp >> 12) & 0xf;                        \
@@ -1015,7 +1018,7 @@
 
 #define RSMX_DECODER( _inst, _regs, _r1, _b2, _effective_addr2, _len, _ilc ) \
 {                                                                   \
-    U32 temp = fetch_fw( _inst );                                   \
+    U32 temp = READ_INST_FW( _inst );                               \
                                                                     \
     (_effective_addr2) = (temp >>  0) & 0xfff;                      \
     (_b2)              = (temp >> 12) & 0xf;                        \
@@ -1048,7 +1051,7 @@
 
 #define RSRR_DECODER( _inst, _regs, _b2, _effective_addr2, _len, _ilc ) \
 {                                                                   \
-    U32 temp = fetch_fw( _inst );                                   \
+    U32 temp = READ_INST_FW( _inst );                               \
                                                                     \
     (_effective_addr2) = (temp >>  0) & 0xfff;                      \
     (_b2)              = (temp >> 12) & 0xf;                        \
@@ -1094,7 +1097,7 @@
 
 #define RSY_DECODER_LD( _inst, _regs, _r1, _r3, _b2, _effective_addr2, _len, _ilc ) \
 {                                                                   \
-    S32 disp2; U32 temp = fetch_fw( _inst );                        \
+    S32 disp2; U32 temp = READ_INST_FW( _inst );                    \
                                                                     \
     (_effective_addr2) = 0;                                         \
                                                                     \
@@ -1130,7 +1133,7 @@
 
 #define RSY_DECODER( _inst, _regs, _r1, _r3, _b2, _effective_addr2, _len, _ilc ) \
 {                                                                   \
-    U32 temp = fetch_fw( _inst );                                   \
+    U32 temp = READ_INST_FW( _inst );                               \
                                                                     \
     (_effective_addr2) = (temp >>  0) & 0xfff;                      \
     (_b2)              = (temp >> 12) & 0xf;                        \
@@ -1161,7 +1164,7 @@
 
 #define RSL_DECODER( _inst, _regs, _l1, _b1, _effective_addr1, _len, _ilc ) \
 {                                                                   \
-    U32 temp = fetch_fw( _inst );                                   \
+    U32 temp = READ_INST_FW( _inst );                               \
                                                                     \
     (_effective_addr1) = (temp >>  0) & 0xfff;                      \
     (_b1)              = (temp >> 12) & 0xf;                        \
@@ -1191,7 +1194,7 @@
 
 #define RSL_RM_DECODER( _inst, _regs, _r1, _l2, _b2, _effective_addr2, _m3, _len, _ilc ) \
 {                                                                   \
-    U32 temp = fetch_fw( &(_inst)[1] );                             \
+    U32 temp = READ_INST_FW( &(_inst)[1] );                         \
                                                                     \
     (_m3)              = (temp >>  0) & 0xf;                        \
     (_r1)              = (temp >>  4) & 0xf;                        \
@@ -1228,7 +1231,7 @@
 
 #define RI_DECODER( _inst, _regs, _r1, _xop, _i2, _len, _ilc )      \
 {                                                                   \
-    U32 temp = fetch_fw( _inst );                                   \
+    U32 temp = READ_INST_FW( _inst );                               \
                                                                     \
     (_i2)  = (temp >>  0) & 0xffff;                                 \
     (_xop) = (temp >> 16) & 0xf;                                    \
@@ -1257,7 +1260,7 @@
 
 #define RIE_DECODER( _inst, _regs, _r1, _r3, _i2, _len, _ilc )      \
 {                                                                   \
-    U32 temp = fetch_fw( _inst );                                   \
+    U32 temp = READ_INST_FW( _inst );                               \
                                                                     \
     (_i2) = (temp >>  0) & 0xffff;                                  \
     (_r3) = (temp >> 16) & 0xf;                                     \
@@ -1281,7 +1284,7 @@
 
 #define RIE_RIM_DECODER( _inst, _regs, _r1, _i2, _m3, _len, _ilc )  \
 {                                                                   \
-    U32 temp = fetch_fw( &(_inst)[1] );                             \
+    U32 temp = READ_INST_FW( &(_inst)[1] );                         \
                                                                     \
     (_m3) = (temp >>  4) & 0xf;                                     \
     (_i2) = (temp >>  8) & 0xffff;                                  \
@@ -1305,7 +1308,7 @@
 
 #define RIE_RRIM_DECODER( _inst, _regs, _r1, _r2, _ri4, _m3, _len, _ilc ) \
 {                                                                   \
-    U32 temp = fetch_fw( &(_inst)[1] );                             \
+    U32 temp = READ_INST_FW( &(_inst)[1] );                         \
                                                                     \
     (_m3)  = (temp >>  4) & 0xf;                                    \
     (_ri4) = (temp >>  8) & 0xffff;                                 \
@@ -1330,7 +1333,7 @@
 
 #define RIE_RMII_DECODER( _inst, _regs, _r1, _i2, _m3, _ri4, _len, _ilc ) \
 {                                                                   \
-    U32 temp = fetch_fw( &(_inst)[1] );                             \
+    U32 temp = READ_INST_FW( &(_inst)[1] );                         \
                                                                     \
     (_i2)  = (temp >>  0) & 0xff;                                   \
     (_ri4) = (temp >>  8) & 0xffff;                                 \
@@ -1355,7 +1358,7 @@
 
 #define RIE_RRIII_DECODER( _inst, _regs, _r1, _r2, _i3, _i4, _i5, _len, _ilc ) \
 {                                                                   \
-    U32 temp = fetch_fw( &(_inst)[1] );                             \
+    U32 temp = READ_INST_FW( &(_inst)[1] );                         \
                                                                     \
     (_i5) = (temp >>  0) & 0xff;                                    \
     (_i4) = (temp >>  8) & 0xff;                                    \
@@ -1382,7 +1385,7 @@
 
 #define RIL_DECODER( _inst, _regs, _r1, _xop, _i2, _len, _ilc )     \
 {                                                                   \
-    (_i2)  = fetch_fw( &(_inst)[2] );                               \
+    (_i2)  = READ_INST_FW( &(_inst)[2] );                           \
     (_xop) = ((_inst)[1] >> 0) & 0xf;                               \
     (_r1)  = ((_inst)[1] >> 4) & 0xf;                               \
                                                                     \
@@ -1406,7 +1409,7 @@
 
 #define RIL_A_DECODER( _inst, _regs, _r1, _ri2, _len, _ilc )        \
 {                                                                   \
-    S64 offset = 2LL * (S32) (fetch_fw( &(_inst)[2] ));             \
+    S64 offset = 2LL * (S32) (READ_INST_FW( &(_inst)[2] ));         \
                                                                     \
     (_ri2) = likely( !(_regs)->execflag )                           \
         ? PSW_IA_FROM_IP( (_regs), offset )                         \
@@ -1432,7 +1435,7 @@
 
 #define RIS_DECODER( _inst, _regs, _r1, _i2, _m3, _b4, _effective_addr4, _len, _ilc ) \
 {                                                                   \
-    U32 temp = fetch_fw( _inst );                                   \
+    U32 temp = READ_INST_FW( _inst );                               \
                                                                     \
     (_i2)              = (_inst)[4];                                \
     (_effective_addr4) = (temp >>  0) & 0xfff;                      \
@@ -1464,7 +1467,7 @@
 
 #define RRS_DECODER( _inst, _regs, _r1, _r2, _m3, _b4, _effective_addr4, _len, _ilc ) \
 {                                                                   \
-    U32 temp = fetch_fw( _inst );                                   \
+    U32 temp = READ_INST_FW( _inst );                               \
                                                                     \
     (_m3)              = ((_inst)[4] >> 4) & 0xf;                   \
     (_effective_addr4) = (temp >>  0) & 0xfff;                      \
@@ -1496,7 +1499,7 @@
 
 #define SI_DECODER( _inst, _regs, _i2, _b1, _effective_addr1, _len, _ilc ) \
 {                                                                   \
-    U32 temp = fetch_fw( _inst );                                   \
+    U32 temp = READ_INST_FW( _inst );                               \
                                                                     \
     (_effective_addr1) = (temp >>  0) & 0xfff;                      \
     (_b1)              = (temp >> 12) & 0xf;                        \
@@ -1527,7 +1530,7 @@
 
 #define SIIX_DECODER( _inst, _regs, _b1, _effective_addr1, _len, _ilc ) \
 {                                                                   \
-    U32 temp = fetch_fw( _inst );                                   \
+    U32 temp = READ_INST_FW( _inst );                               \
                                                                     \
     (_effective_addr1) = (temp >>  0) & 0xfff;                      \
     (_b1)              = (temp >> 12) & 0xf;                        \
@@ -1560,7 +1563,7 @@
 
 #define SIY_DECODER_LD( _inst, _regs, _i2, _b1, _effective_addr1, _len, _ilc ) \
 {                                                                   \
-    S32 disp; U32 temp = fetch_fw( _inst );                         \
+    S32 disp; U32 temp = READ_INST_FW( _inst );                     \
                                                                     \
     (_effective_addr1) = 0;                                         \
                                                                     \
@@ -1602,7 +1605,7 @@
 
 #define SIL_DECODER( _inst, _regs, _i2, _b1, _effective_addr1, _len, _ilc ) \
 {                                                                   \
-    U32 temp = fetch_fw( &(_inst)[2] );                             \
+    U32 temp = READ_INST_FW( &(_inst)[2] );                         \
                                                                     \
     (_i2)              = (temp >>  0) & 0xffff;                     \
     (_effective_addr1) = (temp >> 16) & 0xfff;                      \
@@ -1633,7 +1636,7 @@
 #define SMI_A_DECODER( _inst, _regs, _m1, _addr2, _b3, _addr3, _len, _ilc ) \
 {                                                                   \
     S64 offset; U32 ri2;                                            \
-    U32 temp = fetch_fw( &(_inst)[2] );                             \
+    U32 temp = READ_INST_FW( &(_inst)[2] );                         \
                                                                     \
     ri2      = (temp >>  0) & 0xffff;                               \
     (_addr3) = (temp >> 16) & 0xfff;                                \
@@ -1670,7 +1673,7 @@
 
 #define S_DECODER( _inst, _regs, _b2, _effective_addr2, _len, _ilc ) \
 {                                                                   \
-    U32 temp = fetch_fw( _inst );                                   \
+    U32 temp = READ_INST_FW( _inst );                               \
                                                                     \
     (_effective_addr2) = (temp >>  0) & 0xfff;                      \
     (_b2)              = (temp >> 12) & 0xf;                        \
@@ -1699,7 +1702,7 @@
 
 #define SS_DECODER( _inst, _regs, _r1, _r3, _b1, _effective_addr1, _b2, _effective_addr2, _len, _ilc ) \
 {                                                                   \
-    U32 temp = fetch_fw( (_inst) + 2 );                             \
+    U32 temp = READ_INST_FW( (_inst) + 2 );                         \
                                                                     \
     (_effective_addr2) = (temp >>  0) & 0xfff;                      \
     (_b2)              = (temp >> 12) & 0xf;                        \
@@ -1738,7 +1741,7 @@
 
 #define SS_L_DECODER(_inst, _regs, _l, _b1, _effective_addr1, _b2, _effective_addr2, _len, _ilc) \
 {                                                                   \
-    U32 temp = fetch_fw( (_inst) + 2 );                             \
+    U32 temp = READ_INST_FW( (_inst) + 2 );                         \
                                                                     \
     (_effective_addr2) = (temp >>  0) & 0xfff;                      \
     (_b2)              = (temp >> 12) & 0xf;                        \
@@ -1776,7 +1779,7 @@
 
 #define SSE_DECODER( _inst, _regs, _b1, _effective_addr1, _b2, _effective_addr2, _len, _ilc ) \
 {                                                                   \
-    U32 temp = fetch_fw( (_inst) + 2 );                             \
+    U32 temp = READ_INST_FW( (_inst) + 2 );                         \
                                                                     \
     (_effective_addr2) = (temp >>  0) & 0xfff;                      \
     (_b2)              = (temp >> 12) & 0xf;                        \
@@ -1813,7 +1816,7 @@
 
 #define SSF_DECODER( _inst, _regs, _b1, _effective_addr1, _b2, _effective_addr2, _r3, _len, _ilc ) \
 {                                                                   \
-    U32 temp = fetch_fw( (_inst) + 2 );                             \
+    U32 temp = READ_INST_FW( (_inst) + 2 );                         \
                                                                     \
     (_r3) = ((_inst)[1] >> 4) & 0xf;                                \
                                                                     \
@@ -1893,7 +1896,7 @@
 
 #define VRI_A_DECODER( _inst, _regs, _v1, _i2, _m3, _len, _ilc )    \
 {                                                                   \
-    U32 temp = fetch_fw( (_inst) + 1);                              \
+    U32 temp = READ_INST_FW( (_inst) + 1);                          \
                                                                     \
     U32 _rxb = (temp >> 0) & 0xf;                                   \
     (_v1) = ((temp >> 28) & 0xf) | ((_rxb & 0x8) << 1);             \
@@ -1918,7 +1921,7 @@
 
 #define VRI_B_DECODER( _inst, _regs, _v1, _i2, _i3, _m4, _len, _ilc )    \
 {                                                                   \
-    U32 temp = fetch_fw( (_inst) + 1);                              \
+    U32 temp = READ_INST_FW( (_inst) + 1);                          \
                                                                     \
     U32 _rxb = (temp >> 0) & 0xf;                                   \
     (_v1) = ((temp >> 28) & 0xf) | ((_rxb & 0x8) << 1);             \
@@ -1944,7 +1947,7 @@
 
 #define VRI_C_DECODER( _inst, _regs, _v1, _v3, _i2, _m4, _len, _ilc )    \
 {                                                                   \
-    U32 temp = fetch_fw( (_inst) + 1);                              \
+    U32 temp = READ_INST_FW( (_inst) + 1);                          \
                                                                     \
     U32 _rxb = (temp >> 0) & 0xf;                                   \
     (_v1) = ((temp >> 28) & 0xf) | ((_rxb & 0x8) << 1);             \
@@ -1970,7 +1973,7 @@
 
 #define VRI_D_DECODER( _inst, _regs, _v1, _v2, _v3, _i4, _m5, _len, _ilc )    \
 {                                                                   \
-    U32 temp = fetch_fw( (_inst) + 1);                              \
+    U32 temp = READ_INST_FW( (_inst) + 1);                          \
                                                                     \
     U32 _rxb = (temp >> 0) & 0xf;                                   \
     (_v1) = ((temp >> 28) & 0xf) | ((_rxb & 0x8) << 1);             \
@@ -1997,7 +2000,7 @@
 
 #define VRI_E_DECODER( _inst, _regs, _v1, _v2, _i3, _m4, _m5, _len, _ilc )    \
 {                                                                   \
-    U32 temp = fetch_fw( (_inst) + 1);                              \
+    U32 temp = READ_INST_FW( (_inst) + 1);                          \
                                                                     \
     U32 _rxb = (temp >> 0) & 0xf;                                   \
     (_v1) = ((temp >> 28) & 0xf) | ((_rxb & 0x8) << 1);             \
@@ -2024,7 +2027,7 @@
 
 #define VRI_F_DECODER( _inst, _regs, _v1, _v2, _v3, _m5, _i4, _len, _ilc )    \
 {                                                                   \
-    U32 temp = fetch_fw( (_inst) + 1);                              \
+    U32 temp = READ_INST_FW( (_inst) + 1);                          \
                                                                     \
     U32 _rxb = (temp >> 0) & 0xf;                                   \
     (_v1) = ((temp >> 28) & 0xf) | ((_rxb & 0x8) << 1);             \
@@ -2052,7 +2055,7 @@
 
 #define VRI_G_DECODER( _inst, _regs, _v1, _v2, _i4, _m5, _i3, _len, _ilc )    \
 {                                                                   \
-    U32 temp = fetch_fw( (_inst) + 1);                              \
+    U32 temp = READ_INST_FW( (_inst) + 1);                          \
                                                                     \
     U32 _rxb = (temp >> 0) & 0xf;                                   \
     (_v1) = ((temp >> 28) & 0xf) | ((_rxb & 0x8) << 1);             \
@@ -2080,7 +2083,7 @@
 
 #define VRI_H_DECODER( _inst, _regs, _v1, _i2, _i3, _len, _ilc )    \
 {                                                                   \
-    U32 temp = fetch_fw( (_inst) + 1);                              \
+    U32 temp = READ_INST_FW( (_inst) + 1);                          \
                                                                     \
     U32 _rxb = (temp >> 0) & 0xf;                                   \
     (_v1) = ((temp >> 28) & 0xf) | ((_rxb & 0x8) << 1);             \
@@ -2106,7 +2109,7 @@
 
 #define VRI_I_DECODER( _inst, _regs, _v1, _r2, _m4, _i3, _len, _ilc )    \
 {                                                                   \
-    U32 temp = fetch_fw( (_inst) + 1);                              \
+    U32 temp = READ_INST_FW( (_inst) + 1);                          \
                                                                     \
     U32 _rxb = (temp >> 0) & 0xf;                                   \
     (_v1) = ((temp >> 28) & 0xf) | ((_rxb & 0x8) << 1);             \
@@ -2133,7 +2136,7 @@
 
 #define VRI_J_DECODER( _inst, _regs, _v1, _v2, _i3, _m4, _len, _ilc )    \
 {                                                                   \
-    U32 temp = fetch_fw( (_inst) + 1);                              \
+    U32 temp = READ_INST_FW( (_inst) + 1);                          \
                                                                     \
     U32 _rxb = (temp >> 0) & 0xf;                                   \
     (_v1) = ((temp >> 28) & 0xf) | ((_rxb & 0x8) << 1);             \
@@ -2160,7 +2163,7 @@
 
 #define VRI_K_DECODER( _inst, _regs, _v1, _v2, _v3, _v4, _i5, _len, _ilc )    \
 {                                                                   \
-    U32 temp = fetch_fw( (_inst) + 1);                              \
+    U32 temp = READ_INST_FW( (_inst) + 1);                          \
                                                                     \
     U32 _rxb = (temp >> 0) & 0xf;                                   \
     (_v1) = ((temp >> 28) & 0xf) | ((_rxb & 0x8) << 1);             \
@@ -2183,7 +2186,7 @@
 
 #define VRI_L_DECODER( _inst, _regs, _v1, _v2, _i3, _len, _ilc )    \
 {                                                                   \
-    U32 temp = fetch_fw( (_inst) + 1);                              \
+    U32 temp = READ_INST_FW( (_inst) + 1);                          \
                                                                     \
     U32 _rxb = (temp >> 0) & 0xf;                                   \
     (_v1) = ((temp >> 24) & 0xf) | ((_rxb & 0x4) << 2);             \
@@ -2209,7 +2212,7 @@
 
 #define VRR_A_DECODER( _inst, _regs, _v1, _v2, _m3, _m4, _m5, _len, _ilc )    \
 {                                                                   \
-    U32 temp = fetch_fw( (_inst) + 1);                              \
+    U32 temp = READ_INST_FW( (_inst) + 1);                          \
                                                                     \
     U32 _rxb = (temp >> 0) & 0xf;                                   \
     (_v1) = ((temp >> 28) & 0xf) | ((_rxb & 0x8) << 1);             \
@@ -2236,7 +2239,7 @@
 
 #define VRR_B_DECODER( _inst, _regs, _v1, _v2, _v3, _m4, _m5, _len, _ilc )    \
 {                                                                   \
-    U32 temp = fetch_fw( (_inst) + 1);                              \
+    U32 temp = READ_INST_FW( (_inst) + 1);                          \
                                                                     \
     U32 _rxb = (temp >> 0) & 0xf;                                   \
     (_v1) = ((temp >> 28) & 0xf) | ((_rxb & 0x8) << 1);             \
@@ -2264,7 +2267,7 @@
 
 #define VRR_C_DECODER( _inst, _regs, _v1, _v2, _v3, _m4, _m5, _m6, _len, _ilc )    \
 {                                                                   \
-    U32 temp = fetch_fw( (_inst) + 1);                              \
+    U32 temp = READ_INST_FW( (_inst) + 1);                          \
                                                                     \
     U32 _rxb = (temp >> 0) & 0xf;                                   \
     (_v1) = ((temp >> 28) & 0xf) | ((_rxb & 0x8) << 1);             \
@@ -2293,7 +2296,7 @@
 
 #define VRR_D_DECODER( _inst, _regs, _v1, _v2, _v3, _v4, _m5, _m6, _len, _ilc )    \
 {                                                                   \
-    U32 temp = fetch_fw( (_inst) + 1);                              \
+    U32 temp = READ_INST_FW( (_inst) + 1);                          \
                                                                     \
     U32 _rxb = (temp >> 0) & 0xf;                                   \
     (_v1) = ((temp >> 28) & 0xf) | ((_rxb & 0x8) << 1);             \
@@ -2321,7 +2324,7 @@
 
 #define VRR_E_DECODER( _inst, _regs, _v1, _v2, _v3, _v4, _m5, _m6, _len, _ilc )    \
 {                                                                   \
-    U32 temp = fetch_fw( (_inst) + 1);                              \
+    U32 temp = READ_INST_FW( (_inst) + 1);                          \
                                                                     \
     U32 _rxb = (temp >> 0) & 0xf;                                   \
     (_v1) = ((temp >> 28) & 0xf) | ((_rxb & 0x8) << 1);             \
@@ -2349,7 +2352,7 @@
 
 #define VRR_F_DECODER( _inst, _regs, _v1, _r2, _r3, _len, _ilc )    \
 {                                                                   \
-    U32 temp = fetch_fw( (_inst) + 1);                              \
+    U32 temp = READ_INST_FW( (_inst) + 1);                          \
                                                                     \
     U32 _rxb = (temp >> 0) & 0xf;                                   \
     (_v1) = ((temp >> 28) & 0xf) | ((_rxb & 0x8) << 1);             \
@@ -2375,7 +2378,7 @@
 
 #define VRR_G_DECODER( _inst, _regs, _v1, _i2, _len, _ilc )    \
 {                                                                   \
-    U32 temp = fetch_fw( (_inst) + 1);                              \
+    U32 temp = READ_INST_FW( (_inst) + 1);                          \
                                                                     \
     U32 _rxb = (temp >> 0) & 0xf;                                   \
     (_v1) = ((temp >> 24) & 0xf) | ((_rxb & 0x4) << 2);             \
@@ -2400,7 +2403,7 @@
 
 #define VRR_H_DECODER( _inst, _regs, _v1, _v2, _m3, _len, _ilc )    \
 {                                                                   \
-    U32 temp = fetch_fw( (_inst) + 1);                              \
+    U32 temp = READ_INST_FW( (_inst) + 1);                          \
                                                                     \
     U32 _rxb = (temp >> 0) & 0xf;                                   \
     (_v1) = ((temp >> 24) & 0xf) | ((_rxb & 0x4) << 2);             \
@@ -2426,7 +2429,7 @@
 
 #define VRR_I_DECODER( _inst, _regs, _r1, _v2, _m3, _m4, _len, _ilc )    \
 {                                                                   \
-    U32 temp = fetch_fw( (_inst) + 1);                              \
+    U32 temp = READ_INST_FW( (_inst) + 1);                          \
                                                                     \
     U32 _rxb = (temp >> 0) & 0xf;                                   \
     (_r1) = (temp >>  28) & 0xf;                                    \
@@ -2453,7 +2456,7 @@
 
 #define VRR_J_DECODER( _inst, _regs, _v1, _v2, _v3, _m4, _len, _ilc )    \
 {                                                                   \
-    U32 temp = fetch_fw( (_inst) + 1);                              \
+    U32 temp = READ_INST_FW( (_inst) + 1);                          \
                                                                     \
     U32 _rxb = (temp >> 0) & 0xf;                                   \
     (_v1) = ((temp >> 28) & 0xf) | ((_rxb & 0x8) << 1);             \
@@ -2480,7 +2483,7 @@
 
 #define VRR_K_DECODER( _inst, _regs, _v1, _v2, _m3, _len, _ilc )    \
 {                                                                   \
-    U32 temp = fetch_fw( (_inst) + 1);                              \
+    U32 temp = READ_INST_FW( (_inst) + 1);                          \
                                                                     \
     U32 _rxb = (temp >> 0) & 0xf;                                   \
     (_v1) = ((temp >> 28) & 0xf) | ((_rxb & 0x8) << 1);             \
@@ -2506,7 +2509,7 @@
 
 #define VRS_A_DECODER( _inst, _regs, _v1, _v3, _b2, _effective_addr2, _m4, _len, _ilc ) \
 {                                                                   \
-    U32 temp = fetch_fw( (_inst) + 1);                              \
+    U32 temp = READ_INST_FW( (_inst) + 1);                          \
                                                                     \
     U32 _rxb = (temp >> 0) & 0xf;                                   \
     (_v1) = ((temp >> 28) & 0xf) | ((_rxb & 0x8) << 1);             \
@@ -2538,7 +2541,7 @@
 
 #define VRS_B_DECODER( _inst, _regs, _v1, _r3, _b2, _effective_addr2, _m4, _len, _ilc ) \
 {                                                                   \
-    U32 temp = fetch_fw( (_inst) + 1);                              \
+    U32 temp = READ_INST_FW( (_inst) + 1);                          \
                                                                     \
     U32 _rxb = (temp >> 0) & 0xf;                                   \
     (_v1) = ((temp >> 28) & 0xf) | ((_rxb & 0x8) << 1);             \
@@ -2570,7 +2573,7 @@
 
 #define VRS_C_DECODER( _inst, _regs, _r1, _v3, _b2, _effective_addr2, _m4, _len, _ilc ) \
 {                                                                   \
-    U32 temp = fetch_fw( (_inst) + 1);                              \
+    U32 temp = READ_INST_FW( (_inst) + 1);                          \
                                                                     \
     U32 _rxb = (temp >> 0) & 0xf;                                   \
     (_r1) = (temp >> 28) & 0xf;                                     \
@@ -2602,7 +2605,7 @@
 
 #define VRS_D_DECODER( _inst, _regs, _r3, _b2, _effective_addr2, _v1, _len, _ilc ) \
 {                                                                   \
-    U32 temp = fetch_fw( (_inst) + 1);                              \
+    U32 temp = READ_INST_FW( (_inst) + 1);                          \
                                                                     \
     U32 _rxb = (temp >> 0) & 0xf;                                   \
     (_r3) = (temp >> 24) & 0xf;                                     \
@@ -2634,7 +2637,7 @@
 
 #define VRV_DECODER( _inst, _regs, _v1, _v2, _b2, _d2, _m3, _len, _ilc ) \
 {                                                                   \
-    U32 temp = fetch_fw( (_inst) + 1);                              \
+    U32 temp = READ_INST_FW( (_inst) + 1);                          \
                                                                     \
     U32 _rxb = (temp >> 0) & 0xf;                                   \
     (_v1) = ((temp >> 28) & 0xf) | ((_rxb & 0x8) << 1);             \
@@ -2662,7 +2665,7 @@
 
 #define VRX_DECODER( _inst, _regs, _v1, _x2, _b2, _effective_addr2, _m3, _len, _ilc ) \
 {                                                                   \
-    U32 temp = fetch_fw( (_inst) + 1);                              \
+    U32 temp = READ_INST_FW( (_inst) + 1);                          \
                                                                     \
     U32 _rxb = (temp >> 0) & 0xf;                                   \
     (_v1) = ((temp >> 28) & 0xf) | ((_rxb & 0x8) << 1);             \
@@ -2698,7 +2701,7 @@
 
 #define VSI_DECODER( _inst, _regs, _i3, _b2, _effective_addr2, _v1, _len, _ilc ) \
 {                                                                   \
-    U32 temp = fetch_fw( (_inst) + 1);                              \
+    U32 temp = READ_INST_FW( (_inst) + 1);                          \
                                                                     \
     U32 _rxb = (temp >> 0) & 0xf;                                   \
     (_i3) = ((temp >> 24));                                         \

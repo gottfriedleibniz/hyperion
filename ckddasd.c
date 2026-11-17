@@ -1087,8 +1087,8 @@ ckd_read_track_retry:
     trkhdr = (CKD_TRKHDR*)dev->buf;
     if (0
         || trkhdr->bin              != 0
-        || fetch_hw( trkhdr->cyl  ) != cyl
-        || fetch_hw( trkhdr->head ) != head
+        || READ_HW( trkhdr->cyl  ) != cyl
+        || READ_HW( trkhdr->head ) != head
     )
     {
         // "%1d:%04X CKD file %s: invalid track header for cyl %d head %d %02X %02X%02X %02X%02X"
@@ -7135,9 +7135,9 @@ static bool LocateRecordExtended
     if (validate)
     {
         if (0
-            || (!(dev->ckdlaux & CKDLAUX_TLFVALID) &&  fetch_hw( &iobuf[14] ))
-            || ( (dev->ckdlaux & CKDLAUX_TLFVALID) && !fetch_hw( &iobuf[14] ))
-            || fetch_hw( &iobuf[14] ) > dev->ckdxblksz
+            || (!(dev->ckdlaux & CKDLAUX_TLFVALID) &&  READ_HW( &iobuf[14] ))
+            || ( (dev->ckdlaux & CKDLAUX_TLFVALID) && !READ_HW( &iobuf[14] ))
+            || READ_HW( &iobuf[14] ) > dev->ckdxblksz
         )
         {
             ckd_build_sense( dev, SENSE_CR, 0, 0, FORMAT_0, MESSAGE_4 );
