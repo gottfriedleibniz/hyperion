@@ -239,7 +239,7 @@ int ARCH_DEP(load_psw) (REGS *regs, BYTE *addr)
         SET_IC_BCMODE_MASK(regs);
 
         /* Processing for S/370 BC mode PSW */
-        regs->psw.intcode = fetch_hw (addr + 2);
+        FETCH_HW(regs->psw.intcode, addr + 2);
         regs->psw.cc = (addr[4] & 0x30) >> 4;
         regs->psw.progmask = (addr[4] & 0x0F);
 
