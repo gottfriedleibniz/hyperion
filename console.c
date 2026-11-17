@@ -3418,6 +3418,12 @@ int prev_rlen3270;
     /* Get information about this system */
     init_hostinfo( NULL );
 
+    /* Wait for build configuration to be processed */
+    while (!sysblk.config_processed)
+    {
+        sched_yield();
+    }
+
     /* If logo hasn't been built yet, build it now */
     if (sysblk.herclogo == NULL)
         init_logo();
