@@ -778,7 +778,7 @@ int cpu;
         obtain_lock( &sysblk.cpulock[ cpu ]);
         {
             if (IS_CPU_ONLINE(cpu))
-                sysblk.regs[ cpu ]->tod_epoch = epoch;
+                atomic_store_S64( &sysblk.regs[ cpu ]->tod_epoch, (S64)epoch );
         }
         release_lock( &sysblk.cpulock[ cpu ]);
     }
@@ -1033,7 +1033,7 @@ TOD etod_clock( REGS* regs, ETOD* ETOD, ETOD_format format )
             unlikely(unlikely((tod_value.high & 0x8000000000000000ULL) == 0x8000000000000000ULL &&
                               (          high & 0x8000000000000000ULL) == 0)))
         {
-            tod_value.high = high;
+            atomic_store_U64( &tod_value.high, high );
             tod_value.low  = low;
             swapped = 1;
         }
