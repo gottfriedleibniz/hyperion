@@ -223,7 +223,7 @@ BYTE    ate;                            /* Authority table entry     */
        is treated as a no-operation if SIE_MODE not active */
     SIE_TRANSLATE( &ato, ACCTYPE_SIE, regs );
 
-    FETCH_BYTE( ate, regs->mainstor + ato );
+    FETCH_MAIN_BYTE( ate, regs->mainstor + ato );
     ate <<= ((ax & 0x03)*2);
 
     /* Set the main storage reference bit */

@@ -154,9 +154,9 @@ register U16 max_rsp;
 /*-------------------------------------------------------------------*/
 static INLINE int chsc_req_ok( CHSC_RSP *chsc_rsp, U16 rsp_len, U32 info )
 {
-    STORE_HW( chsc_rsp->length, rsp_len);
-    STORE_HW( chsc_rsp->rsp, CHSC_REQ_OK);
-    STORE_FW( chsc_rsp->info, info);
+    STORE_MAIN_HW( chsc_rsp->length, rsp_len);
+    STORE_MAIN_HW( chsc_rsp->rsp, CHSC_REQ_OK);
+    STORE_MAIN_FW( chsc_rsp->info, info);
     return 0;
 }
 
@@ -166,9 +166,9 @@ static INLINE int chsc_req_ok( CHSC_RSP *chsc_rsp, U16 rsp_len, U32 info )
 /*-------------------------------------------------------------------*/
 static INLINE int chsc_req_errreq( CHSC_RSP *chsc_rsp, U32 info )
 {
-    STORE_HW( chsc_rsp->length, sizeof(CHSC_RSP));
-    STORE_HW( chsc_rsp->rsp, CHSC_REQ_ERRREQ);
-    STORE_FW( chsc_rsp->info, info);
+    STORE_MAIN_HW( chsc_rsp->length, sizeof(CHSC_RSP));
+    STORE_MAIN_HW( chsc_rsp->rsp, CHSC_REQ_ERRREQ);
+    STORE_MAIN_FW( chsc_rsp->info, info);
     return 0;
 }
 

@@ -318,8 +318,7 @@ int     cc = 0;                         /* Condition code            */
     {
         source1 = MADDR( effective_addr2, b2, regs, ACCTYPE_READ,  regs->psw.pkey );
         dest1   = MADDR( effective_addr1, b1, regs, ACCTYPE_WRITE, regs->psw.pkey );
-        *dest1 &= *source1;
-        regs->psw.cc = (*dest1 != 0);
+        regs->psw.cc = (AND_MAIN_BYTE(dest1, READ_MAIN_BYTE(source1)) != 0);
         ITIMER_UPDATE( effective_addr1, 0, regs );
         return;
     }
@@ -345,7 +344,7 @@ int     cc = 0;                         /* Condition code            */
         {
             /* (1) - No boundaries are crossed */
             for (i=0; i <= len; i++)
-                if (*dest1++ &= *source1++)
+                if (AND_MAIN_BYTE(dest1++, READ_MAIN_BYTE(source1++)))
                     cc = 1;
         }
         else
@@ -355,13 +354,13 @@ int     cc = 0;                         /* Condition code            */
              source2 = MADDRL( (effective_addr2 + len2) & ADDRESS_MAXWRAP( regs ),
                  len + 1 - len2, b2, regs, ACCTYPE_READ, regs->psw.pkey );
              for (i=0; i < len2; i++)
-                 if (*dest1++ &= *source1++)
+                 if (AND_MAIN_BYTE(dest1++, READ_MAIN_BYTE(source1++)))
                      cc = 1;
 
              len2 = len - len2;
 
              for (i=0; i <= len2; i++)
-                 if (*dest1++ &= *source2++)
+                 if (AND_MAIN_BYTE(dest1++, READ_MAIN_BYTE(source2++)))
                      cc = 1;
         }
         ARCH_DEP( or_storage_key_by_ptr )( sk1, (STORKEY_REF | STORKEY_CHANGE) );
@@ -378,13 +377,13 @@ int     cc = 0;                         /* Condition code            */
         {
              /* (3) - First operand crosses a boundary */
              for (i=0; i < len2; i++)
-                 if (*dest1++ &= *source1++)
+                 if (AND_MAIN_BYTE(dest1++, READ_MAIN_BYTE(source1++)))
                      cc = 1;
 
              len2 = len - len2;
 
              for (i=0; i <= len2; i++)
-                 if (*dest2++ &= *source1++)
+                 if (AND_MAIN_BYTE(dest2++, READ_MAIN_BYTE(source1++)))
                      cc = 1;
         }
         else
@@ -397,51 +396,51 @@ int     cc = 0;                         /* Condition code            */
             {
                 /* (4a) - Both operands cross at the same time */
                 for (i=0; i < len2; i++)
-                    if (*dest1++ &= *source1++)
+                    if (AND_MAIN_BYTE(dest1++, READ_MAIN_BYTE(source1++)))
                         cc = 1;
 
                 len2 = len - len2;
 
                 for (i=0; i <= len2; i++)
-                    if (*dest2++ &= *source2++)
+                    if (AND_MAIN_BYTE(dest2++, READ_MAIN_BYTE(source2++)))
                         cc = 1;
             }
             else if (len2 < len3)
             {
                 /* (4b) - First operand crosses first */
                 for (i=0; i < len2; i++)
-                    if (*dest1++ &= *source1++)
+                    if (AND_MAIN_BYTE(dest1++, READ_MAIN_BYTE(source1++)))
                         cc = 1;
 
                 len2 = len3 - len2;
 
                 for (i=0; i < len2; i++)
-                    if (*dest2++ &= *source1++)
+                    if (AND_MAIN_BYTE(dest2++, READ_MAIN_BYTE(source1++)))
                         cc = 1;
 
                 len2 = len - len3;
 
                 for (i=0; i <= len2; i++)
-                    if (*dest2++ &= *source2++)
+                    if (AND_MAIN_BYTE(dest2++, READ_MAIN_BYTE(source2++)))
                         cc = 1;
             }
             else
             {
                 /* (4c) - Second operand crosses first */
                 for (i=0; i < len3; i++)
-                    if (*dest1++ &= *source1++)
+                    if (AND_MAIN_BYTE(dest1++, READ_MAIN_BYTE(source1++)))
                         cc = 1;
 
                 len3 = len2 - len3;
 
                 for (i=0; i < len3; i++)
-                    if (*dest1++ &= *source2++)
+                    if (AND_MAIN_BYTE(dest1++, READ_MAIN_BYTE(source2++)))
                         cc = 1;
 
                 len3 = len - len2;
 
                 for (i=0; i <= len3; i++)
-                    if (*dest2++ &= *source2++)
+                    if (AND_MAIN_BYTE(dest2++, READ_MAIN_BYTE(source2++)))
                         cc = 1;
             }
         }
@@ -1669,7 +1668,7 @@ S16  ri2;                               /* 16-bit relative operand   */
     /* Branch if R1 mask bit is set */
     if (inst[1] & (0x80 >> regs->psw.cc))
     {
-        FETCH_HW( ri2, &inst[2] );
+        FETCH_MAIN_HW_UL( ri2, &inst[2] );
         SUCCESSFUL_RELATIVE_BRANCH( regs, 2LL*ri2 );
     }
     else
@@ -1963,6 +1962,9 @@ U32     cpu_length;                     /* CPU determined length     */
 U32     n;                              /* Word loaded from operand  */
 U64     dreg;                           /* Checksum accumulator      */
 BYTE    *main2;                         /* Operand-2 mainstor addr   */
+#if defined( OPTION_ATOMIC_MACHDEP )
+int     is_aligned;                     /* main2 is FW-aligned       */
+#endif
 
     RRE(inst, regs, r1, r2);
     PER_ZEROADDR_LCHECK( regs, r2, r2+1 );
@@ -2035,6 +2037,9 @@ BYTE    *main2;                         /* Operand-2 mainstor addr   */
         cpu_length = PAGEFRAME_PAGESIZE - ( addr2 & PAGEFRAME_BYTEMASK );
         cpu_length = min( cpu_length, len );
         main2 = MADDRL(addr2, cpu_length, r2, regs, ACCTYPE_READ, regs->psw.pkey );
+#if defined( OPTION_ATOMIC_MACHDEP )
+        is_aligned = IS_ALIGNED_POW2( main2, U32 );
+#endif
 
         /* Compute number of 4-byte elements we can process within this page
            and compute the number of bytes that will be processed.  Remainder
@@ -2046,7 +2051,12 @@ BYTE    *main2;                         /* Operand-2 mainstor addr   */
         for (j=0; j < i; j++)
         {
             /* Fetch fullword from second operand */
-            FETCH_FW( n, main2 );
+#if defined( OPTION_ATOMIC_MACHDEP )
+            if (unlikely( !is_aligned )) /* #UNSWITCH */
+                FETCH_MAIN_FW_UL( n, main2 );
+            else
+#endif
+            FETCH_MAIN_FW( n, main2 );
             main2 += 4;
 
             /* Accumulate the fullword into the checksum */
@@ -2881,7 +2891,7 @@ static INLINE U32 memneq( const BYTE* m1, const BYTE* m2, U32 len )
 {
     U32  i;
     for (i=0; i < len; i++)
-        if (READ_BYTE( m1 + i ) != READ_BYTE( m2 + i ))
+        if (READ_MAIN_BYTE( m1 + i ) != READ_MAIN_BYTE( m2 + i ))
             break;
     return i;
 }
@@ -2929,7 +2939,12 @@ int ARCH_DEP( mem_pad_cmp )
 
     // Quick out if comparing just 1 byte
     if (unlikely( (neqlen = len) == 1 ))
-        rc = (READ_BYTE( m1 ) == READ_BYTE( m2 ) ? 0 : (READ_BYTE( m1 ) < READ_BYTE( m2 ) ? -1 : +1));
+    {
+        BYTE c1, c2;
+        FETCH_MAIN_BYTE( c1, m1 );
+        c2 = *m2;
+        rc = (c1 == c2 ? 0 : (c1 < c2 ? -1 : +1));
+    }
     else if ((ea1 & PAGEFRAME_BYTEMASK) <= PAGEFRAME_BYTEMASK - (len-1))
     {
         // (1) - Neither operand crosses a page boundary
@@ -2939,7 +2954,7 @@ int ARCH_DEP( mem_pad_cmp )
             case 2: // halfword
             {
                 U16 v1, v2;
-                FETCH_HW( v1, m1 );
+                FETCH_MAIN_HW_UL( v1, m1 );
                 FETCH_HW( v2, m2 );
                 rc = (v1 == v2 ? 0 : (v1 < v2 ? -1 : +1));
             }
@@ -2948,7 +2963,7 @@ int ARCH_DEP( mem_pad_cmp )
             case 4: // fullword
             {
                 U32 v1, v2;
-                FETCH_FW( v1, m1 );
+                FETCH_MAIN_FW_UL( v1, m1 );
                 FETCH_FW( v2, m2 );
                 rc = (v1 == v2 ? 0 : (v1 < v2 ? -1 : +1));
             }
@@ -2958,7 +2973,7 @@ int ARCH_DEP( mem_pad_cmp )
             case 8: // doubleword
             {
                 U64 v1, v2;
-                FETCH_DW( v1, m1 );
+                FETCH_MAIN_DW_UL( v1, m1 );
                 FETCH_DW( v2, m2 );
                 rc = (v1 == v2 ? 0 : (v1 < v2 ? -1 : +1));
             }
@@ -3060,7 +3075,12 @@ int ARCH_DEP( mem_cmp )
 
     // Quick out if comparing just 1 byte
     if (unlikely( (neqlen = len) == 1 ))
-        rc = (READ_BYTE( m1 ) == READ_BYTE( m2 ) ? 0 : (READ_BYTE( m1 ) < READ_BYTE( m2 ) ? -1 : +1));
+    {
+        BYTE c1, c2;
+        FETCH_MAIN_BYTE( c1, m1 );
+        FETCH_MAIN_BYTE( c2, m2 );
+        rc = (c1 == c2 ? 0 : (c1 < c2 ? -1 : +1));
+    }
     else if ((ea1 & PAGEFRAME_BYTEMASK) <= PAGEFRAME_BYTEMASK - (len-1))
     {
         if  ((ea2 & PAGEFRAME_BYTEMASK) <= PAGEFRAME_BYTEMASK - (len-1))
@@ -3072,8 +3092,8 @@ int ARCH_DEP( mem_cmp )
                 case 2: // halfword
                 {
                     U16 v1, v2;
-                    FETCH_HW( v1, m1 );
-                    FETCH_HW( v2, m2 );
+                    FETCH_MAIN_HW_UL( v1, m1 );
+                    FETCH_MAIN_HW_UL( v2, m2 );
                     rc = (v1 == v2 ? 0 : (v1 < v2 ? -1 : +1));
                 }
                 break;
@@ -3081,8 +3101,8 @@ int ARCH_DEP( mem_cmp )
                 case 4: // fullword
                 {
                     U32 v1, v2;
-                    FETCH_FW( v1, m1 );
-                    FETCH_FW( v2, m2 );
+                    FETCH_MAIN_FW_UL( v1, m1 );
+                    FETCH_MAIN_FW_UL( v2, m2 );
                     rc = (v1 == v2 ? 0 : (v1 < v2 ? -1 : +1));
                 }
                 break;
@@ -3091,8 +3111,8 @@ int ARCH_DEP( mem_cmp )
                 case 8: // doubleword
                 {
                     U64 v1, v2;
-                    FETCH_DW( v1, m1 );
-                    FETCH_DW( v2, m2 );
+                    FETCH_MAIN_DW_UL( v1, m1 );
+                    FETCH_MAIN_DW_UL( v2, m2 );
                     rc = (v1 == v2 ? 0 : (v1 < v2 ? -1 : +1));
                 }
                 break;
@@ -3256,7 +3276,7 @@ BYTE    *m1, *m2;                       /* Mainstor addresses        */
     /* Quick out if comparing just 1 byte */
     if (unlikely( !len ))
     {
-        rc = READ_BYTE( m1 ) - READ_BYTE( m2 );
+        rc = READ_MAIN_BYTE( m1 ) - READ_MAIN_BYTE( m2 );
         regs->psw.cc = (rc == 0 ? 0 : (rc < 0 ? 1 : 2 ));
         return;
     }
@@ -3286,8 +3306,8 @@ BYTE    *m1, *m2;                       /* Mainstor addresses        */
                 /* (1a) - halfword compare */
                 {
                     U16 v1, v2;
-                    FETCH_HW( v1, m1 );
-                    FETCH_HW( v2, m2 );
+                    FETCH_MAIN_HW_UL( v1, m1 );
+                    FETCH_MAIN_HW_UL( v2, m2 );
                     regs->psw.cc = (v1 == v2 ? 0 : (v1 < v2 ? 1 : 2));
                     return;
                 }
@@ -3297,8 +3317,8 @@ BYTE    *m1, *m2;                       /* Mainstor addresses        */
                 /* (1b) - fullword compare */
                 {
                     U32 v1, v2;
-                    FETCH_FW( v1, m1 );
-                    FETCH_FW( v2, m2 );
+                    FETCH_MAIN_FW_UL( v1, m1 );
+                    FETCH_MAIN_FW_UL( v2, m2 );
                     regs->psw.cc = (v1 == v2 ? 0 : (v1 < v2 ? 1 : 2));
                     return;
                 }
@@ -3309,8 +3329,8 @@ BYTE    *m1, *m2;                       /* Mainstor addresses        */
                 if (sizeof( unsigned int ) >= 8)
                 {
                     U64 v1, v2;
-                    FETCH_DW( v1, m1 );
-                    FETCH_DW( v2, m2 );
+                    FETCH_MAIN_DW_UL( v1, m1 );
+                    FETCH_MAIN_DW_UL( v2, m2 );
                     regs->psw.cc = (v1 == v2 ? 0 : (v1 < v2 ? 1 : 2));
                     return;
                 }
@@ -3755,7 +3775,7 @@ BYTE    termchar;                       /* Terminating character     */
                    the strings are equal, so return CC=0 and leave
                    the R1 and R2 registers unchanged.
                 */
-                if (READ_BYTE( main1 ) == termchar && READ_BYTE( main2 ) == termchar)
+                if (READ_MAIN_BYTE( main1 ) == termchar && READ_MAIN_BYTE( main2 ) == termchar)
                 {
                     regs->psw.cc = 0;
                     return;
@@ -3766,10 +3786,10 @@ BYTE    termchar;                       /* Terminating character     */
                    second operand byte, then return condition code 1
                 */
                 if (0
-                    || READ_BYTE( main1 ) == termchar
+                    || READ_MAIN_BYTE( main1 ) == termchar
                     || (1
-                        && (READ_BYTE( main1 ) < READ_BYTE( main2 ))
-                        && (READ_BYTE( main2 ) != termchar)
+                        && (READ_MAIN_BYTE( main1 ) < READ_MAIN_BYTE( main2 ))
+                        && (READ_MAIN_BYTE( main2 ) != termchar)
                        )
                 )
                 {
@@ -3783,7 +3803,7 @@ BYTE    termchar;                       /* Terminating character     */
                    -OR- if the first operand byte is HIGHER than the
                    second operand byte, then return condition code 2.
                 */
-                if (READ_BYTE( main2 ) == termchar || READ_BYTE( main1 ) > READ_BYTE( main2 ))
+                if (READ_MAIN_BYTE( main2 ) == termchar || READ_MAIN_BYTE( main1 ) > READ_MAIN_BYTE( main2 ))
                 {
                     regs->psw.cc = 2;
                     SET_GR_A( r1, regs,addr1 );
@@ -3845,7 +3865,7 @@ BYTE    termchar;                       /* Terminating character     */
            the strings are equal, so return CC=0 and leave
            the R1 and R2 registers unchanged.
         */
-        if (READ_BYTE( main1 ) == termchar && READ_BYTE( main2 ) == termchar)
+        if (READ_MAIN_BYTE( main1 ) == termchar && READ_MAIN_BYTE( main2 ) == termchar)
         {
             regs->psw.cc = 0;
             return;
@@ -3856,10 +3876,10 @@ BYTE    termchar;                       /* Terminating character     */
            second operand byte, then return CC=1
         */
         if (0
-            || READ_BYTE( main1 ) == termchar
+            || READ_MAIN_BYTE( main1 ) == termchar
             || (1
-                && (READ_BYTE( main1 ) < READ_BYTE( main2 ))
-                && (READ_BYTE( main2 ) != termchar)
+                && (READ_MAIN_BYTE( main1 ) < READ_MAIN_BYTE( main2 ))
+                && (READ_MAIN_BYTE( main2 ) != termchar)
                )
         )
         {
@@ -3873,7 +3893,7 @@ BYTE    termchar;                       /* Terminating character     */
            -OR- if the first operand byte is HIGHER than the
            second operand byte, then return CC=2.
         */
-        if (READ_BYTE( main2 ) == termchar || READ_BYTE( main1 ) > READ_BYTE( main2 ))
+        if (READ_MAIN_BYTE( main2 ) == termchar || READ_MAIN_BYTE( main1 ) > READ_MAIN_BYTE( main2 ))
         {
             regs->psw.cc = 2;
             SET_GR_A( r1, regs,addr1 );
@@ -3959,7 +3979,7 @@ int ARCH_DEP( mem_cmp_first_equ )
     for (i = 0; i < len ; i++)
     {
         /* compare bytes */
-        if (READ_BYTE( m1 ) == READ_BYTE( m2 ))
+        if (READ_MAIN_BYTE( m1 ) == READ_MAIN_BYTE( m2 ))
             return i;
 
         /* update mainstore addresses */
@@ -4075,7 +4095,7 @@ int ARCH_DEP( mem_cmp_first_substr )
             len, sublen, ss_scan_index, ss_index, ss_equ_len, m1, m2);
 #endif
             /* compare bytes */
-            if (READ_BYTE( m1 ) != READ_BYTE( m2 ))
+            if (READ_MAIN_BYTE( m1 ) != READ_MAIN_BYTE( m2 ))
                 break;
 
             /* update partial substring length */
@@ -4174,7 +4194,7 @@ int ARCH_DEP( mem_cmp_last_neq )
     for (i = (len-1); i >= 0 ; i--)
     {
         /* compare bytes */
-        if (READ_BYTE( m1 ) != READ_BYTE( m2 ))
+        if (READ_MAIN_BYTE( m1 ) != READ_MAIN_BYTE( m2 ))
             return i;
 
         /* update mainstore addresses */
@@ -4234,7 +4254,7 @@ int ARCH_DEP( mem_pad_cmp_last_neq )
     for (i = (len-1); i >= 0 ; i--)
     {
         /* compare byte to pad */
-        if (READ_BYTE( m1 ) != pad)
+        if (READ_MAIN_BYTE( m1 ) != pad)
             return i;
 
         /* update mainstore address */
@@ -5007,7 +5027,7 @@ DEF_INST(convert_utf8_to_utf16)
 
         /* Fetch a UTF-8 character (1 to 4 bytes) */
         /* first character is always on page */
-        FETCH_BYTE( utf[0], s2 );
+        FETCH_MAIN_BYTE( utf[0], s2 );
         //utf[0] = ARCH_DEP(vfetchb) ( addr2, r2, regs );
 
         /* Convert UTF-8 to Unicode */
@@ -5042,7 +5062,7 @@ DEF_INST(convert_utf8_to_utf16)
             // does the utf8 character cross a page boundary
             if (s2pg ==  MAINSTOR_PAGEBASE ( s2 + 1 ))
             {
-                FETCH_BYTE( utf[1], s2 + 1 );
+                FETCH_MAIN_BYTE( utf[1], s2 + 1 );
             }
             else
             {
@@ -5078,8 +5098,8 @@ DEF_INST(convert_utf8_to_utf16)
             // does the utf8 character cross a page boundary
             if (s2pg ==  MAINSTOR_PAGEBASE ( s2 + 2 ))
             {
-                FETCH_BYTE( utf[1], s2 + 1 );
-                FETCH_BYTE( utf[2], s2 + 2 );
+                FETCH_MAIN_BYTE( utf[1], s2 + 1 );
+                FETCH_MAIN_BYTE( utf[2], s2 + 2 );
             }
             else
             {
@@ -5151,9 +5171,9 @@ DEF_INST(convert_utf8_to_utf16)
             // does the utf8 character cross a page boundary
             if (s2pg ==  MAINSTOR_PAGEBASE ( s2 + 3 ))
             {
-                FETCH_BYTE( utf[1], s2 + 1 );
-                FETCH_BYTE( utf[2], s2 + 2 );
-                FETCH_BYTE( utf[3], s2 + 3 );
+                FETCH_MAIN_BYTE( utf[1], s2 + 1 );
+                FETCH_MAIN_BYTE( utf[2], s2 + 2 );
+                FETCH_MAIN_BYTE( utf[3], s2 + 3 );
             }
             else
             {
@@ -5228,10 +5248,10 @@ DEF_INST(convert_utf8_to_utf16)
                 /*make big endian*/
                 U32 upair = CSWAP32 ( ((U32)unicode1 << 16) | (U32)unicode2 );
 
-                STORE_BYTE( d1 + 0, *( ((BYTE*) &upair)    ) );
-                STORE_BYTE( d1 + 1, *( ((BYTE*) &upair) + 1) );
-                STORE_BYTE( d1 + 2, *( ((BYTE*) &upair) + 2) );
-                STORE_BYTE( d1 + 3, *( ((BYTE*) &upair) + 3) );
+                STORE_MAIN_BYTE( d1 + 0, *( ((BYTE*) &upair)    ) );
+                STORE_MAIN_BYTE( d1 + 1, *( ((BYTE*) &upair) + 1) );
+                STORE_MAIN_BYTE( d1 + 2, *( ((BYTE*) &upair) + 2) );
+                STORE_MAIN_BYTE( d1 + 3, *( ((BYTE*) &upair) + 3) );
             }
             else
             {
@@ -5262,8 +5282,8 @@ DEF_INST(convert_utf8_to_utf16)
             {
                 U16 uchar = CSWAP16 ( unicode1 );      /*make big endian*/
 
-                STORE_BYTE( d1 + 0, *( ((BYTE*) &uchar)    ) );
-                STORE_BYTE( d1 + 1, *( ((BYTE*) &uchar) + 1) );
+                STORE_MAIN_BYTE( d1 + 0, *( ((BYTE*) &uchar)    ) );
+                STORE_MAIN_BYTE( d1 + 1, *( ((BYTE*) &uchar) + 1) );
             }
             else
             {
@@ -5579,7 +5599,7 @@ int     cc = 0;                         /* Condition code            */
     {
         source1 = MADDR( effective_addr2, b2, regs, ACCTYPE_READ,  regs->psw.pkey );
         dest1   = MADDR( effective_addr1, b1, regs, ACCTYPE_WRITE, regs->psw.pkey );
-        if (*dest1 ^= *source1)
+        if (XOR_MAIN_BYTE(dest1, READ_MAIN_BYTE(source1)))
             cc = 1;
         regs->psw.cc = cc;
         return;
@@ -5616,7 +5636,7 @@ int     cc = 0;                         /* Condition code            */
             {
                /* (1b) - Dest and source are not the sam */
                 for (i=0; i <= len; i++)
-                    if (*dest1++ ^= *source1++)
+                    if (XOR_MAIN_BYTE(dest1++, READ_MAIN_BYTE(source1++)))
                         cc = 1;
             }
         }
@@ -5627,13 +5647,13 @@ int     cc = 0;                         /* Condition code            */
              source2 = MADDRL((effective_addr2 + len2) & ADDRESS_MAXWRAP( regs ),
                len + 1 - len2, b2, regs, ACCTYPE_READ, regs->psw.pkey );
              for (i=0; i < len2; i++)
-                 if (*dest1++ ^= *source1++)
+                 if (XOR_MAIN_BYTE(dest1++, READ_MAIN_BYTE(source1++)))
                      cc = 1;
 
              len2 = len - len2;
 
              for (i=0; i <= len2; i++)
-                 if (*dest1++ ^= *source2++)
+                 if (XOR_MAIN_BYTE(dest1++, READ_MAIN_BYTE(source2++)))
                      cc = 1;
         }
         ARCH_DEP( or_storage_key_by_ptr )( sk1, (STORKEY_REF | STORKEY_CHANGE) );
@@ -5650,13 +5670,13 @@ int     cc = 0;                         /* Condition code            */
         {
              /* (3) - First operand crosses a boundary */
              for (i=0; i < len2; i++)
-                 if (*dest1++ ^= *source1++)
+                 if (XOR_MAIN_BYTE(dest1++, READ_MAIN_BYTE(source1++)))
                      cc = 1;
 
              len2 = len - len2;
 
              for (i=0; i <= len2; i++)
-                 if (*dest2++ ^= *source1++)
+                 if (XOR_MAIN_BYTE(dest2++, READ_MAIN_BYTE(source1++)))
                      cc = 1;
         }
         else
@@ -5669,51 +5689,51 @@ int     cc = 0;                         /* Condition code            */
             {
                 /* (4a) - Both operands cross at the same time */
                 for (i=0; i < len2; i++)
-                    if (*dest1++ ^= *source1++)
+                    if (XOR_MAIN_BYTE(dest1++, READ_MAIN_BYTE(source1++)))
                         cc = 1;
 
                 len2 = len - len2;
 
                 for (i=0; i <= len2; i++)
-                    if (*dest2++ ^= *source2++)
+                    if (XOR_MAIN_BYTE(dest2++, READ_MAIN_BYTE(source2++)))
                         cc = 1;
             }
             else if (len2 < len3)
             {
                 /* (4b) - First operand crosses first */
                 for (i=0; i < len2; i++)
-                    if (*dest1++ ^= *source1++)
+                    if (XOR_MAIN_BYTE(dest1++, READ_MAIN_BYTE(source1++)))
                         cc = 1;
 
                 len2 = len3 - len2;
 
                 for (i=0; i < len2; i++)
-                    if (*dest2++ ^= *source1++)
+                    if (XOR_MAIN_BYTE(dest2++, READ_MAIN_BYTE(source1++)))
                         cc = 1;
 
                 len2 = len - len3;
 
                 for (i=0; i <= len2; i++)
-                    if (*dest2++ ^= *source2++)
+                    if (XOR_MAIN_BYTE(dest2++, READ_MAIN_BYTE(source2++)))
                         cc = 1;
             }
             else
             {
                 /* (4c) - Second operand crosses first */
                 for (i=0; i < len3; i++)
-                    if (*dest1++ ^= *source1++)
+                    if (XOR_MAIN_BYTE(dest1++, READ_MAIN_BYTE(source1++)))
                         cc = 1;
 
                 len3 = len2 - len3;
 
                 for (i=0; i < len3; i++)
-                    if (*dest1++ ^= *source2++)
+                    if (XOR_MAIN_BYTE(dest1++, READ_MAIN_BYTE(source2++)))
                         cc = 1;
 
                 len3 = len - len2;
 
                 for (i=0; i <= len3; i++)
-                    if (*dest2++ ^= *source2++)
+                    if (XOR_MAIN_BYTE(dest2++, READ_MAIN_BYTE(source2++)))
                         cc = 1;
             }
         }
@@ -6222,14 +6242,14 @@ U32    *p1, *p2 = NULL;                 /* Mainstor pointers         */
     /* Copy from operand beginning */
     for (i=0; i < m; i++, p1++)
     {
-        FETCH_FW( regs->AR( (r1 + i) & 0xF ), p1 );
+        FETCH_MAIN_FW( regs->AR( (r1 + i) & 0xF ), p1 );
         SET_AEA_AR( regs, (r1 + i) & 0xF );
     }
 
     /* Copy from next page */
     for (; i < n; i++, p2++)
     {
-        FETCH_FW( regs->AR( (r1 + i) & 0xF ), p2 );
+        FETCH_MAIN_FW( regs->AR( (r1 + i) & 0xF ), p2 );
         SET_AEA_AR( regs, (r1 + i) & 0xF );
     }
 }
@@ -6372,12 +6392,12 @@ BYTE   *bp1;                            /* Unaligned maintstor ptr   */
         if (likely(IS_ALIGNED_POW2( effective_addr2, FW )))
         {
             for (i=0; i < n; i++, p1++)
-                FETCH_FW( regs->GR_L( (r1 + i) & 0xF ), p1 );
+                FETCH_MAIN_FW( regs->GR_L( (r1 + i) & 0xF ), p1 );
         }
         else
         {
             for (i=0; i < n; i++, bp1+=4)
-                FETCH_FW( regs->GR_L( (r1 + i) & 0xF ), bp1 );
+                FETCH_MAIN_FW_UL( regs->GR_L( (r1 + i) & 0xF ), bp1 );
         }
     }
     else
@@ -6392,10 +6412,10 @@ BYTE   *bp1;                            /* Unaligned maintstor ptr   */
             /* Addresses are word aligned */
             m >>= 2;
             for (i=0; i < m; i++, p1++)
-                FETCH_FW( regs->GR_L( (r1 + i) & 0xF ), p1 );
+                FETCH_MAIN_FW( regs->GR_L( (r1 + i) & 0xF ), p1 );
             n >>= 2;
             for (; i < n; i++, p2++)
-                FETCH_FW( regs->GR_L( (r1 + i) & 0xF ), p2 );
+                FETCH_MAIN_FW( regs->GR_L( (r1 + i) & 0xF ), p2 );
         }
         else
         {
@@ -6407,12 +6427,12 @@ BYTE   *bp1;                            /* Unaligned maintstor ptr   */
             b2 = (BYTE*) p1;
 
             for (i=0; i < m; i++)
-                FETCH_BYTE(*b1++, b2++);
+                FETCH_MAIN_BYTE(*b1++, b2++);
 
             b2 = (BYTE*) p2;
 
             for (; i < n; i++)
-                FETCH_BYTE(*b1++, b2++);
+                FETCH_MAIN_BYTE(*b1++, b2++);
 
             n >>= 2;
 
@@ -6546,8 +6566,8 @@ CREG    n;                              /* Work                      */
         ARCH_DEP( or_storage_key )( px, STORKEY_REF );
 
         /* Fetch Counter Array Origin and Size from PSA */
-        FETCH_DW(cao, psa->cao);
-        FETCH_W(cal, psa->cal);
+        FETCH_MAIN_DW(cao, psa->cao);
+        FETCH_MAIN_W(cal, psa->cal);
 
         /* DW boundary, ignore last 3 bits */
         cao &= ~7ULL;
@@ -6567,11 +6587,11 @@ CREG    n;                              /* Work                      */
                     SIE_TRANSLATE(&ceh, ACCTYPE_WRITE, regs);
 
                     /* Update counter */
-                    FETCH_HW(hwc, ceh + regs->mainstor);
+                    FETCH_MAIN_HW(hwc, ceh + regs->mainstor);
                     ARCH_DEP( or_storage_key )( ceh, STORKEY_REF );
                     if(++hwc)
                     {
-                        STORE_HW(ceh + regs->mainstor, hwc);
+                        STORE_MAIN_HW(ceh + regs->mainstor, hwc);
                         ARCH_DEP( or_storage_key )( ceh, (STORKEY_REF | STORKEY_CHANGE) );
                     }
                     else
@@ -6589,13 +6609,13 @@ CREG    n;                              /* Work                      */
                                 SIE_TRANSLATE(&cew, ACCTYPE_WRITE, regs);
 
                                 /* Update both counters */
-                                FETCH_W(fwc, cew + regs->mainstor);
+                                FETCH_MAIN_W(fwc, cew + regs->mainstor);
                                 fwc++;
 
-                                STORE_W(cew + regs->mainstor, fwc);
+                                STORE_MAIN_W(cew + regs->mainstor, fwc);
                                 ARCH_DEP( or_storage_key )( cew, (STORKEY_REF | STORKEY_CHANGE) );
 
-                                STORE_HW(ceh + regs->mainstor, hwc);
+                                STORE_MAIN_HW(ceh + regs->mainstor, hwc);
                                 ARCH_DEP( or_storage_key )( ceh, (STORKEY_REF | STORKEY_CHANGE) );
                             }
                         }
@@ -6607,11 +6627,11 @@ CREG    n;                              /* Work                      */
         /* Update the Enhance Monitor Exception Counter if the array could not be updated */
         if(unavailable)
         {
-            FETCH_W(ec,psa->ec);
+            FETCH_MAIN_W(ec,psa->ec);
             ec++;
             /* Set the main storage reference and change bits */
             ARCH_DEP( or_storage_key )( px, (STORKEY_REF | STORKEY_CHANGE) );
-            STORE_W(psa->ec,ec);
+            STORE_MAIN_W(psa->ec,ec);
         }
         return;
     }
@@ -7203,14 +7223,14 @@ BYTE    termchar;                       /* Terminating character     */
     for (i=0; i < cpu_length; i++)
     {
         /* Move a single byte */
-        STORE_BYTE( main1, READ_BYTE( main2 ));
+        STORE_MAIN_BYTE( main1 , READ_MAIN_BYTE( main2 ));
 
         /* If we find the terminating character in operand 2, then
            the movement is complete.  Set CC=1 and the R1 register
            to the location of the just moved terminating character
            and leave the R2 register unchanged and exit.
         */
-        if (READ_BYTE( main2 ) == termchar)
+        if (READ_MAIN_BYTE( main2 ) == termchar)
         {
             regs->psw.cc = 1;
             SET_GR_A( r1, regs,addr1 );

@@ -277,7 +277,7 @@ CREG    newcr12 = 0;                    /* CR12 upon completion      */
 
     /* Fetch flags from the instruction address space */
     mn = MADDR (pl_addr, USE_INST_SPACE, regs, ACCTYPE_INSTFETCH, regs->psw.pkey);
-    FETCH_HW(flags, mn);
+    FETCH_MAIN_HW(flags, mn);
 
 #if defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)
     /* Bits 0-12 must be zero */
@@ -290,22 +290,22 @@ CREG    newcr12 = 0;                    /* CR12 upon completion      */
 
     /* Fetch the offset to the new psw */
     mn = MADDR (pl_addr + 2, USE_INST_SPACE, regs, ACCTYPE_INSTFETCH, regs->psw.pkey);
-    FETCH_HW(psw_offset, mn);
+    FETCH_MAIN_HW(psw_offset, mn);
 
     /* Fetch the offset to the new ar */
     mn = MADDR (pl_addr + 4, USE_INST_SPACE, regs, ACCTYPE_INSTFETCH, regs->psw.pkey);
-    FETCH_HW(ar_offset, mn);
+    FETCH_MAIN_HW(ar_offset, mn);
 
     /* Fetch the offset to the new gr */
     mn = MADDR (pl_addr + 6, USE_INST_SPACE, regs, ACCTYPE_INSTFETCH, regs->psw.pkey);
-    FETCH_HW(gr_offset, mn);
+    FETCH_MAIN_HW(gr_offset, mn);
 
 #if defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)
     /* Fetch the offset to the new disjoint gr_h */
     if((flags & 0x0003) == 0x0003)
     {
         mn = MADDR (pl_addr + 8, USE_INST_SPACE, regs, ACCTYPE_INSTFETCH, regs->psw.pkey);
-        FETCH_HW(grd_offset, mn);
+        FETCH_MAIN_HW(grd_offset, mn);
     }
 #endif /*defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)*/
 
@@ -1096,9 +1096,9 @@ bool    local = false;                  /* true == m4 bit 3 is on    */
                     /* Fetch the table entry, set the invalid bit, then
                        store only the byte containing the invalid bit */
                     mn = MADDR( asceto, USE_REAL_ADDR, regs, ACCTYPE_WRITE, regs->psw.pkey );
-                    FETCH_DW( asce, mn );
+                    FETCH_MAIN_DW( asce, mn );
                     asce |= ZSEGTAB_I;
-                    STORE_BYTE( mn + 7, asce & 0xFF );
+                    STORE_MAIN_BYTE( mn + 7, asce & 0xFF );
 
                     /* Calculate the address of the next table entry, noting
                        that it is always a 64-bit address regardless of the
@@ -4453,6 +4453,10 @@ int     b2;                             /* effective address base    */
 VADR    effective_addr2;                /* effective address         */
 int     i, m, n;                        /* Integer work areas        */
 U32    *p1, *p2;                        /* Mainstor pointers         */
+#if defined( OPTION_ATOMIC_MACHDEP )
+int     is_aligned;                     /* p1 is FW-aligned          */
+#endif
+
 
     RSY( inst, regs, r1, r3, b2, effective_addr2 );
     PER_ZEROADDR_XCHECK( regs, b2 );
@@ -4468,10 +4472,18 @@ U32    *p1, *p2;                        /* Mainstor pointers         */
 
     if (likely( n <= m ))
     {
+#if defined( OPTION_ATOMIC_MACHDEP )
+        is_aligned = IS_ALIGNED_POW2( p1, U32 );
+#endif
         /* Boundary not crossed */
         n >>= 2;
         for (i=0; i < n; i++, p1++)
-            FETCH_FW( regs->GR_H( (r1 + i) & 0xF ), p1 );
+#if defined( OPTION_ATOMIC_MACHDEP )
+            if (unlikely( !is_aligned )) /* #UNSWITCH */
+                FETCH_MAIN_FW_UL( regs->GR_H( (r1 + i) & 0xF ), p1 );
+            else
+#endif
+            FETCH_MAIN_FW( regs->GR_H( (r1 + i) & 0xF ), p1 );
     }
     else
     {
@@ -4486,12 +4498,12 @@ U32    *p1, *p2;                        /* Mainstor pointers         */
             m >>= 2;
 
             for (i=0; i < m; i++, p1++)
-                FETCH_FW( regs->GR_H( (r1 + i) & 0xF ), p1 );
+                FETCH_MAIN_FW( regs->GR_H( (r1 + i) & 0xF ), p1 );
 
             n >>= 2;
 
             for (; i < n; i++, p2++)
-                FETCH_FW( regs->GR_H( (r1 + i) & 0xF ), p2 );
+                FETCH_MAIN_FW( regs->GR_H( (r1 + i) & 0xF ), p2 );
         }
         else
         {
@@ -4503,12 +4515,12 @@ U32    *p1, *p2;                        /* Mainstor pointers         */
             b2 = (BYTE*) p1;
 
             for (i=0; i < m; i++)
-                FETCH_BYTE( *b1++, b2++ );
+                FETCH_MAIN_BYTE( *b1++, b2++ );
 
             b2 = (BYTE*) p2;
 
             for (; i < n; i++)
-                FETCH_BYTE( *b1++, b2++ );
+                FETCH_MAIN_BYTE( *b1++, b2++ );
 
             n >>= 2;
 
@@ -4560,12 +4572,12 @@ BYTE   *bp1;                            /* Unaligned Mainstor ptr    */
             else
 #endif
             for (i=0; i < n; i++, p1++)
-                FETCH_DW( regs->GR_G( (r1 + i) & 0xF ), p1 );
+                FETCH_MAIN_DW( regs->GR_G( (r1 + i) & 0xF ), p1 );
         }
         else
         {
             for (i=0; i < n; i++, bp1 += 8)
-                FETCH_DW( regs->GR_G( (r1 + i) & 0xF ), bp1 );
+                FETCH_MAIN_DW_UL( regs->GR_G( (r1 + i) & 0xF ), bp1 );
         }
     }
     else
@@ -4589,12 +4601,12 @@ BYTE   *bp1;                            /* Unaligned Mainstor ptr    */
             m >>= 3;
 
             for (i=0; i < m; i++, p1++)
-                FETCH_DW( regs->GR_G( (r1 + i) & 0xF ), p1 );
+                FETCH_MAIN_DW( regs->GR_G( (r1 + i) & 0xF ), p1 );
 
             n >>= 3;
 
             for (; i < n; i++, p2++)
-                FETCH_DW( regs->GR_G( (r1 + i) & 0xF ), p2 );
+                FETCH_MAIN_DW( regs->GR_G( (r1 + i) & 0xF ), p2 );
         }
         else
         {
@@ -4606,12 +4618,12 @@ BYTE   *bp1;                            /* Unaligned Mainstor ptr    */
             b2 = (BYTE*) p1;
 
             for (i=0; i < m; i++)
-                FETCH_BYTE( *b1++, b2++ );
+                FETCH_MAIN_BYTE( *b1++, b2++ );
 
             b2 = (BYTE*) p2;
 
             for (; i < n; i++)
-                FETCH_BYTE( *b1++, b2++ );
+                FETCH_MAIN_BYTE( *b1++, b2++ );
 
             n >>= 3;
 
@@ -4666,11 +4678,11 @@ U64    *p1, *p2 = NULL;                 /* Mainstor pointers         */
 
     /* Store to first page */
     for (i=0; i < m; i++)
-        STORE_DW( p1++, regs->CR_G( (r1 + i) & 0xF ));
+        STORE_MAIN_DW( p1++, regs->CR_G( (r1 + i) & 0xF ));
 
     /* Store to next page */
     for (; i < n; i++)
-        STORE_DW( p2++, regs->CR_G( (r1 + i) & 0xF ));
+        STORE_MAIN_DW( p2++, regs->CR_G( (r1 + i) & 0xF ));
 
 } /* end DEF_INST( store_control_long ) */
 #endif /* defined( FEATURE_NEW_ZARCH_ONLY_INSTRUCTIONS ) */
@@ -4725,14 +4737,14 @@ U16     updated = 0;                    /* Updated control regs      */
     /* Load from first page */
     for (i=0; i < m; i++, p1++)
     {
-        FETCH_DW( regs->CR_G( (r1 + i) & 0xF ), p1 );
+        FETCH_MAIN_DW( regs->CR_G( (r1 + i) & 0xF ), p1 );
         updated |= BIT( (r1 + i) & 0xF );
     }
 
     /* Load from next page */
     for (; i < n; i++, p2++)
     {
-        FETCH_DW( regs->CR_G( (r1 + i) & 0xF ), p2 );
+        FETCH_MAIN_DW( regs->CR_G( (r1 + i) & 0xF ), p2 );
         updated |= BIT( (r1 + i) & 0xF );
     }
 
@@ -4802,12 +4814,12 @@ BYTE   *bp1;                            /* Unaligned Mainstor ptr    */
         else
 #endif
             for (i=0; i < n; i++)
-                STORE_DW( p1++, regs->GR_G( (r1 + i) & 0xF ));
+                STORE_MAIN_DW( p1++, regs->GR_G( (r1 + i) & 0xF ));
         }
         else
         {
             for (i=0; i < n; i++, bp1 += 8)
-                STORE_DW( bp1, regs->GR_G( (r1 + i) & 0xF ));
+                STORE_MAIN_DW_UL( bp1, regs->GR_G( (r1 + i) & 0xF ));
         }
     }
     if (likely( n <= m ))
@@ -4828,12 +4840,12 @@ BYTE   *bp1;                            /* Unaligned Mainstor ptr    */
             m >>= 3;
 
             for (i=0; i < m; i++)
-                STORE_DW( p1++, regs->GR_G( (r1 + i) & 0xF ));
+                STORE_MAIN_DW( p1++, regs->GR_G( (r1 + i) & 0xF ));
 
             n >>= 3;
 
             for (; i < n; i++)
-                STORE_DW( p2++, regs->GR_G( (r1 + i) & 0xF ));
+                STORE_MAIN_DW( p2++, regs->GR_G( (r1 + i) & 0xF ));
         }
         else
         {
@@ -4848,12 +4860,12 @@ BYTE   *bp1;                            /* Unaligned Mainstor ptr    */
             b2 = (BYTE*) p1;
 
             for (i=0; i < m; i++)
-                STORE_BYTE(b2++, *b1++);
+                STORE_MAIN_BYTE(b2++, *b1++);
 
             b2 = (BYTE*) p2;
 
             for (; i < n; i++)
-                STORE_BYTE(b2++, *b1++);
+                STORE_MAIN_BYTE(b2++, *b1++);
         }
     }
 
@@ -4890,7 +4902,7 @@ U32    *p1, *p2;                        /* Mainstor pointers         */
         /* boundary not crossed */
         n >>= 2;
         for (i=0; i < n; i++)
-            STORE_FW( p1++, regs->GR_H( (r1 + i) & 0xF ));
+            STORE_MAIN_FW( p1++, regs->GR_H( (r1 + i) & 0xF ));
     }
     else
     {
@@ -4905,12 +4917,12 @@ U32    *p1, *p2;                        /* Mainstor pointers         */
             m >>= 2;
 
             for (i=0; i < m; i++)
-                STORE_FW( p1++, regs->GR_H( (r1 + i) & 0xF ));
+                STORE_MAIN_FW( p1++, regs->GR_H( (r1 + i) & 0xF ));
 
             n >>= 2;
 
             for (; i < n; i++)
-                STORE_FW( p2++, regs->GR_H( (r1 + i) & 0xF ));
+                STORE_MAIN_FW( p2++, regs->GR_H( (r1 + i) & 0xF ));
         }
         else
         {
@@ -4925,12 +4937,12 @@ U32    *p1, *p2;                        /* Mainstor pointers         */
             b2 = (BYTE*) p1;
 
             for (i=0; i < m; i++)
-                STORE_BYTE( b2++, *b1++ );
+                STORE_MAIN_BYTE( b2++, *b1++ );
 
             b2 = (BYTE*) p2;
 
             for (; i < n; i++)
-                STORE_BYTE( b2++, *b1++ );
+                STORE_MAIN_BYTE( b2++, *b1++ );
         }
     }
 
@@ -6158,7 +6170,7 @@ PSA    *psa;                            /* -> Prefixed storage area  */
     /* Point to PSA in main storage */
     psa = (void*)(regs->mainstor + regs->PX);
 
-    memcpy(psa->stfl, regs->facility_list, sizeof(psa->stfl));
+    MAINSTOR_MCOPY(psa->stfl, regs->facility_list, sizeof(psa->stfl));
 
 } /* end DEF_INST(store_facility_list) */
 #endif /* defined( FEATURE_000_N3_INSTR_FACILITY ) */
@@ -7938,14 +7950,14 @@ U32    *p1, *p2 = NULL;                 /* Mainstor pointers         */
     /* Load from first page */
     for (i=0; i < m; i++, p1++)
     {
-        FETCH_FW( regs->AR( (r1 + i) & 0xF ), p1 );
+        FETCH_MAIN_FW( regs->AR( (r1 + i) & 0xF ), p1 );
         SET_AEA_AR( regs, (r1 + i) & 0xF );
     }
 
     /* Load from next page */
     for (; i < n; i++, p2++)
     {
-        FETCH_FW( regs->AR( (r1 + i) & 0xF ), p2 );
+        FETCH_MAIN_FW( regs->AR( (r1 + i) & 0xF ), p2 );
         SET_AEA_AR( regs, (r1 + i) & 0xF );
     }
 
@@ -8024,7 +8036,7 @@ U32    *p1, *p2;                        /* Mainstor pointers         */
         /* Boundary not crossed */
         n >>= 2;
         for (i=0; i < n; i++, p1++)
-            FETCH_FW( regs->GR_L( (r1 + i) & 0xF ), p1 );
+            FETCH_MAIN_FW( regs->GR_L( (r1 + i) & 0xF ), p1 );
     }
     else
     {
@@ -8039,12 +8051,12 @@ U32    *p1, *p2;                        /* Mainstor pointers         */
             m >>= 2;
 
             for (i=0; i < m; i++, p1++)
-                FETCH_FW( regs->GR_L( (r1 + i) & 0xF ), p1 );
+                FETCH_MAIN_FW( regs->GR_L( (r1 + i) & 0xF ), p1 );
 
             n >>= 2;
 
             for (; i < n; i++, p2++)
-                FETCH_FW( regs->GR_L( (r1 + i) & 0xF ), p2 );
+                FETCH_MAIN_FW( regs->GR_L( (r1 + i) & 0xF ), p2 );
         }
         else
         {
@@ -8056,12 +8068,12 @@ U32    *p1, *p2;                        /* Mainstor pointers         */
             b2 = (BYTE*) p1;
 
             for (i=0; i < m; i++)
-                FETCH_BYTE( *b1++, b2++ );
+                FETCH_MAIN_BYTE( *b1++, b2++ );
 
             b2 = (BYTE*) p2;
 
             for (; i < n; i++)
-                FETCH_BYTE( *b1++, b2++ );
+                FETCH_MAIN_BYTE( *b1++, b2++ );
 
             n >>= 2;
 
@@ -8261,11 +8273,11 @@ U32    *p1, *p2 = NULL;                 /* Mainstor pointers         */
 
     /* Store at operand beginning */
     for (i=0; i < m; i++)
-        STORE_FW( p1++, regs->AR( (r1 + i) & 0xF ));
+        STORE_MAIN_FW( p1++, regs->AR( (r1 + i) & 0xF ));
 
     /* Store on next page */
     for (; i < n; i++)
-        STORE_FW( p2++, regs->AR( (r1 + i) & 0xF ));
+        STORE_MAIN_FW( p2++, regs->AR( (r1 + i) & 0xF ));
 
 
 } /* end DEF_INST( store_access_multiple_y ) */
@@ -8393,7 +8405,7 @@ U32    *p1, *p2;                        /* Mainstor pointers         */
         /* boundary not crossed */
         n >>= 2;
         for (i=0; i < n; i++)
-            STORE_FW( p1++, regs->GR_L( (r1 + i) & 0xF ));
+            STORE_MAIN_FW( p1++, regs->GR_L( (r1 + i) & 0xF ));
     }
     else
     {
@@ -8408,12 +8420,12 @@ U32    *p1, *p2;                        /* Mainstor pointers         */
             m >>= 2;
 
             for (i=0; i < m; i++)
-                STORE_FW( p1++, regs->GR_L( (r1 + i) & 0xF ));
+                STORE_MAIN_FW( p1++, regs->GR_L( (r1 + i) & 0xF ));
 
             n >>= 2;
 
             for (; i < n; i++)
-                STORE_FW( p2++, regs->GR_L( (r1 + i) & 0xF ));
+                STORE_MAIN_FW( p2++, regs->GR_L( (r1 + i) & 0xF ));
         }
         else
         {
@@ -8428,12 +8440,12 @@ U32    *p1, *p2;                        /* Mainstor pointers         */
             b2 = (BYTE*) p1;
 
             for (i=0; i < m; i++)
-                STORE_BYTE( b2++, *b1++ );
+                STORE_MAIN_BYTE( b2++, *b1++ );
 
             b2 = (BYTE*) p2;
 
             for (; i < n; i++)
-                STORE_BYTE( b2++, *b1++ );
+                STORE_MAIN_BYTE( b2++, *b1++ );
         }
     }
 

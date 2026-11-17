@@ -1313,7 +1313,7 @@ PSA_3XX *psa;                           /* -> Prefixed storage area  */
 
     /* Store the channel id word at PSA+X'A8' */
     psa = (PSA_3XX*)(regs->mainstor + regs->PX);
-    STORE_FW(psa->chanid, chanid);
+    STORE_MAIN_FW(psa->chanid, chanid);
 
     /* Exit with condition code 0 indicating channel id stored */
     return 0;
@@ -3330,7 +3330,7 @@ BYTE    storkey;                        /* Storage key               */
     if (idawfmt == PF_IDAW2)
     {
         /* Fetch format-2 IDAW */
-        FETCH_DW(idaw2, dev->mainstor + idawaddr);
+        FETCH_MAIN_DW(idaw2, dev->mainstor + idawaddr);
 
 #if !defined( FEATURE_001_ZARCH_INSTALLED_FACILITY )
         /* Channel program check in ESA/390 mode
@@ -3347,7 +3347,7 @@ BYTE    storkey;                        /* Storage key               */
     else
     {
         /* Fetch format-1 IDAW */
-        FETCH_FW(idaw1, dev->mainstor + idawaddr);
+        FETCH_MAIN_FW(idaw1, dev->mainstor + idawaddr);
 
         /* Channel program check if bit 0 of
            the format-1 IDAW is not zero */
@@ -3461,8 +3461,8 @@ U16     maxlen;                         /* Maximum allowable length  */
 
     /* Fetch MIDAW from main storage (MIDAW is quadword
        aligned and so cannot cross a page boundary) */
-    FETCH_DW(mword1, dev->mainstor + midawadr);
-    FETCH_DW(mword2, dev->mainstor + midawadr + 8);
+    FETCH_MAIN_DW(mword1, dev->mainstor + midawadr);
+    FETCH_MAIN_DW(mword2, dev->mainstor + midawadr + 8);
 
     /* Channel program check in reserved bits are non-zero */
     if (mword1 & 0xFFFFFFFFFF000000ULL)
@@ -4789,9 +4789,9 @@ resume_suspend:
         {
             ARCH_DEP( or_dev_storage_key )( dev, mbaddr, (STORKEY_REF | STORKEY_CHANGE) );
             mbk = (MBK*)&dev->mainstor[mbaddr];
-            FETCH_HW(mbcount,mbk->srcount);
+            FETCH_MAIN_HW(mbcount,mbk->srcount);
             mbcount++;
-            STORE_HW(mbk->srcount,mbcount);
+            STORE_MAIN_HW(mbk->srcount,mbcount);
         } else {
             /* Generate subchannel logout indicating program
                check or protection check, and set the subchannel
@@ -4950,9 +4950,9 @@ execute_halt:
             if (1
                 && dev->ccwtrace
                 && !(0
-                     || IS_CCW_READ  ( READ_BYTE( ccw ) )
-                     || IS_CCW_RDBACK( READ_BYTE( ccw ) )
-                     || IS_CCW_SENSE ( READ_BYTE( ccw ) )
+                     || IS_CCW_READ  ( READ_MAIN_BYTE( ccw ) )
+                     || IS_CCW_RDBACK( READ_MAIN_BYTE( ccw ) )
+                     || IS_CCW_SENSE ( READ_MAIN_BYTE( ccw ) )
                     )
             )
                 DISPLAY_CCW( &did_ccw_trace, dev, ccw, addr, count, flags );

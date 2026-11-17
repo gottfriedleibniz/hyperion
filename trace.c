@@ -469,8 +469,8 @@ int  size;
         tte = (void*)(regs->mainstor + raddr);
         tte->format = TRACE_F3_BR_FMT;
         tte->fmt2 = TRACE_F3_BR_FM2;
-        STORE_HW(tte->resv,0);
-        STORE_DW(tte->newia64,ia);
+        STORE_MAIN_HW(tte->resv,0);
+        STORE_MAIN_DW(tte->newia64,ia);
     }
     else
 #endif /*defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)*/
@@ -480,7 +480,7 @@ int  size;
         size = sizeof(TRACE_F2_BR);
         raddr = ARCH_DEP(get_trace_entry) (&ag, size, regs);
         tte = (void*)(regs->mainstor + raddr);
-        STORE_FW(tte->newia31,ia | 0x80000000);
+        STORE_MAIN_FW(tte->newia31,ia | 0x80000000);
     }
     else
     {
@@ -488,7 +488,7 @@ int  size;
         size = sizeof(TRACE_F1_BR);
         raddr = ARCH_DEP(get_trace_entry) (&ag, size, regs);
         tte = (void*)(regs->mainstor + raddr);
-        STORE_FW(tte->newia24,ia & 0x00FFFFFF);
+        STORE_MAIN_FW(tte->newia24,ia & 0x00FFFFFF);
     }
 
     return ARCH_DEP(set_trace_entry) (ag, raddr, size, regs);
@@ -526,7 +526,7 @@ int  size;
         tte->alet[0] = (alet >> 16) & 0xFF;
         tte->alet[1] = (alet >> 8) & 0xFF;
         tte->alet[2] = alet & 0xFF;
-        STORE_DW(tte->newia,ia);
+        STORE_MAIN_DW(tte->newia,ia);
     }
     else
 #endif /*defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)*/
@@ -541,7 +541,7 @@ int  size;
         tte->alet[2] = alet & 0xFF;
         if ((ia & 0x80000000) == 0)
             ia &=0x00FFFFFF;
-        STORE_FW(tte->newia,ia);
+        STORE_MAIN_FW(tte->newia,ia);
     }
 
     return ARCH_DEP(set_trace_entry) (ag, raddr, size, regs);
@@ -576,7 +576,7 @@ BYTE nbit = (ssair ? 1 : 0);
         tte = (void*)(regs->mainstor + raddr);
         tte->format = TRACE_F1_SSAR_FMT;
         tte->extfmt = 0 | nbit;
-        STORE_HW(tte->newsasn,sasn);
+        STORE_MAIN_HW(tte->newsasn,sasn);
     }
 
     return ARCH_DEP(set_trace_entry) (ag, raddr, size, regs);
@@ -623,9 +623,9 @@ int  eamode;
             tte = (void*)(regs->mainstor + raddr);
             tte->format = TRACE_F7_PC_FMT;
             tte->pswkey = regs->psw.pkey | TRACE_F7_PC_FM2 | eamode;
-            STORE_HW(tte->resv, 0x0000);
-            STORE_DW(tte->retna, regs->psw.IA_G | PROBSTATE(&regs->psw));
-            STORE_FW(tte->pcnum, pcea);
+            STORE_MAIN_HW(tte->resv, 0x0000);
+            STORE_MAIN_DW_UL(tte->retna, regs->psw.IA_G | PROBSTATE(&regs->psw));
+            STORE_MAIN_FW(tte->pcnum, pcea);
         }
         else
         if ((pcea & PC_BIT44) && regs->psw.amode64)
@@ -639,9 +639,9 @@ int  eamode;
             tte = (void*)(regs->mainstor + raddr);
             tte->format = TRACE_F6_PC_FMT;
             tte->pswkey = regs->psw.pkey | TRACE_F6_PC_FM2 | eamode;
-            STORE_HW(tte->resv, 0x0000);
-            STORE_FW(tte->retna, regs->psw.IA_L | PROBSTATE(&regs->psw));
-            STORE_FW(tte->pcnum, pcea);
+            STORE_MAIN_HW(tte->resv, 0x0000);
+            STORE_MAIN_FW(tte->retna, regs->psw.IA_L | PROBSTATE(&regs->psw));
+            STORE_MAIN_FW(tte->pcnum, pcea);
         }
         else
         if ((pcea & PC_BIT44))
@@ -654,9 +654,9 @@ int  eamode;
             tte = (void*)(regs->mainstor + raddr);
             tte->format = TRACE_F5_PC_FMT;
             tte->pswkey = regs->psw.pkey | TRACE_F5_PC_FM2 | eamode;
-            STORE_HW(tte->resv, 0x0000);
-            STORE_FW(tte->retna, (regs->psw.amode << 31) | regs->psw.IA_L | PROBSTATE(&regs->psw));
-            STORE_FW(tte->pcnum, pcea);
+            STORE_MAIN_HW(tte->resv, 0x0000);
+            STORE_MAIN_FW(tte->retna, (regs->psw.amode << 31) | regs->psw.IA_L | PROBSTATE(&regs->psw));
+            STORE_MAIN_FW(tte->pcnum, pcea);
         }
         else
         if(regs->psw.amode64)
@@ -669,8 +669,8 @@ int  eamode;
             tte = (void*)(regs->mainstor + raddr);
             tte->format = TRACE_F4_PC_FMT;
             tte->pswkey_pcnum_hi = regs->psw.pkey | ((pcea & 0xF0000) >> 16);
-            STORE_HW(tte->pcnum_lo, pcea & 0x0FFFF);
-            STORE_DW(tte->retna, regs->psw.IA_G | PROBSTATE(&regs->psw));
+            STORE_MAIN_HW(tte->pcnum_lo, pcea & 0x0FFFF);
+            STORE_MAIN_DW_UL(tte->retna, regs->psw.IA_G | PROBSTATE(&regs->psw));
         }
         else
         {
@@ -682,8 +682,8 @@ int  eamode;
             tte = (void*)(regs->mainstor + raddr);
             tte->format = TRACE_F3_PC_FMT;
             tte->pswkey_pcnum_hi = regs->psw.pkey | ((pcea & 0xF0000) >> 16);
-            STORE_HW(tte->pcnum_lo, pcea & 0x0FFFF);
-            STORE_FW(tte->retna, (regs->psw.amode << 31) | regs->psw.IA_L | PROBSTATE(&regs->psw));
+            STORE_MAIN_HW(tte->pcnum_lo, pcea & 0x0FFFF);
+            STORE_MAIN_FW(tte->retna, (regs->psw.amode << 31) | regs->psw.IA_L | PROBSTATE(&regs->psw));
         }
     } /* end ASN_AND_LX_REUSE_ENABLED */
     else
@@ -697,8 +697,8 @@ int  eamode;
         tte = (void*)(regs->mainstor + raddr);
         tte->format = TRACE_F2_PC_FMT;
         tte->pswkey_pcnum_hi = regs->psw.pkey | ((pcea & 0xF0000) >> 16);
-        STORE_HW(tte->pcnum_lo, pcea & 0x0FFFF);
-        STORE_DW(tte->retna, regs->psw.IA_G | PROBSTATE(&regs->psw));
+        STORE_MAIN_HW(tte->pcnum_lo, pcea & 0x0FFFF);
+        STORE_MAIN_DW_UL(tte->retna, regs->psw.IA_G | PROBSTATE(&regs->psw));
     }
     else
 #endif /*defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)*/
@@ -711,8 +711,8 @@ int  eamode;
         tte = (void*)(regs->mainstor + raddr);
         tte->format = TRACE_F1_PC_FMT;
         tte->pswkey_pcnum_hi = regs->psw.pkey | ((pcea & 0xF0000) >> 16);
-        STORE_HW(tte->pcnum_lo, pcea & 0x0FFFF);
-        STORE_FW(tte->retna, (regs->psw.amode << 31) | regs->psw.IA_L | PROBSTATE(&regs->psw));
+        STORE_MAIN_HW(tte->pcnum_lo, pcea & 0x0FFFF);
+        STORE_MAIN_FW(tte->retna, (regs->psw.amode << 31) | regs->psw.IA_L | PROBSTATE(&regs->psw));
     }
 
     return ARCH_DEP(set_trace_entry) (ag, raddr, size, regs);
@@ -755,10 +755,10 @@ int  size;
         tte = (void*)(regs->mainstor + raddr);
         tte->format = TRACE_F1_PR_FMT;
         tte->pswkey = regs->psw.pkey | TRACE_F1_PR_FM2;
-        STORE_HW(tte->newpasn, newregs->CR_LHL(4));
-        STORE_FW(tte->retna, (newregs->psw.amode << 31)
+        STORE_MAIN_HW(tte->newpasn, newregs->CR_LHL(4));
+        STORE_MAIN_FW(tte->retna, (newregs->psw.amode << 31)
                                 | newregs->psw.IA_L | PROBSTATE(&newregs->psw));
-        STORE_FW(tte->newia, (regs->psw.amode << 31)
+        STORE_MAIN_FW(tte->newia, (regs->psw.amode << 31)
                                  | regs->psw.IA_L);
     }
 #if defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)
@@ -771,10 +771,10 @@ int  size;
         tte = (void*)(regs->mainstor + raddr);
         tte->format = TRACE_F2_PR_FMT;
         tte->pswkey = regs->psw.pkey | TRACE_F2_PR_FM2;
-        STORE_HW(tte->newpasn, newregs->CR_LHL(4));
-        STORE_FW(tte->retna, (newregs->psw.amode << 31)
+        STORE_MAIN_HW(tte->newpasn, newregs->CR_LHL(4));
+        STORE_MAIN_FW(tte->retna, (newregs->psw.amode << 31)
                                 | newregs->psw.IA_L | PROBSTATE(&newregs->psw));
-        STORE_FW(tte->newia, regs->psw.IA_L);
+        STORE_MAIN_FW(tte->newia, regs->psw.IA_L);
     }
     else
     if(regs->psw.amode64 && regs->psw.IA_H != 0 && !newregs->psw.amode64)
@@ -785,10 +785,10 @@ int  size;
         tte = (void*)(regs->mainstor + raddr);
         tte->format = TRACE_F3_PR_FMT;
         tte->pswkey = regs->psw.pkey | TRACE_F3_PR_FM2;
-        STORE_HW(tte->newpasn, newregs->CR_LHL(4));
-        STORE_FW(tte->retna, (newregs->psw.amode << 31)
+        STORE_MAIN_HW(tte->newpasn, newregs->CR_LHL(4));
+        STORE_MAIN_FW(tte->retna, (newregs->psw.amode << 31)
                                 | newregs->psw.IA_L | PROBSTATE(&newregs->psw));
-        STORE_DW(tte->newia, regs->psw.IA_G);
+        STORE_MAIN_DW(tte->newia, regs->psw.IA_G);
     }
     else
     if(!regs->psw.amode64  && newregs->psw.amode64 && newregs->psw.IA_H == 0)
@@ -799,9 +799,9 @@ int  size;
         tte = (void*)(regs->mainstor + raddr);
         tte->format = TRACE_F4_PR_FMT;
         tte->pswkey = regs->psw.pkey | TRACE_F4_PR_FM2;
-        STORE_HW(tte->newpasn, newregs->CR_LHL(4));
-        STORE_FW(tte->retna,  newregs->psw.IA_L | PROBSTATE(&newregs->psw));
-        STORE_FW(tte->newia, (regs->psw.amode << 31)
+        STORE_MAIN_HW(tte->newpasn, newregs->CR_LHL(4));
+        STORE_MAIN_FW(tte->retna,  newregs->psw.IA_L | PROBSTATE(&newregs->psw));
+        STORE_MAIN_FW(tte->newia, (regs->psw.amode << 31)
                                  | regs->psw.IA_L);
     }
     else
@@ -813,9 +813,9 @@ int  size;
         tte = (void*)(regs->mainstor + raddr);
         tte->format = TRACE_F5_PR_FMT;
         tte->pswkey = regs->psw.pkey | TRACE_F5_PR_FM2;
-        STORE_HW(tte->newpasn, newregs->CR_LHL(4));
-        STORE_FW(tte->retna,  newregs->psw.IA_L | PROBSTATE(&newregs->psw));
-        STORE_FW(tte->newia, regs->psw.IA_L);
+        STORE_MAIN_HW(tte->newpasn, newregs->CR_LHL(4));
+        STORE_MAIN_FW(tte->retna,  newregs->psw.IA_L | PROBSTATE(&newregs->psw));
+        STORE_MAIN_FW(tte->newia, regs->psw.IA_L);
     }
     else
     if(regs->psw.amode64 && regs->psw.IA_H != 0 && newregs->psw.amode64 && newregs->psw.IA_H == 0)
@@ -826,9 +826,9 @@ int  size;
         tte = (void*)(regs->mainstor + raddr);
         tte->format = TRACE_F6_PR_FMT;
         tte->pswkey = regs->psw.pkey | TRACE_F6_PR_FM2;
-        STORE_HW(tte->newpasn, newregs->CR_LHL(4));
-        STORE_FW(tte->retna,  newregs->psw.IA_L | PROBSTATE(&newregs->psw));
-        STORE_DW(tte->newia, regs->psw.IA_G);
+        STORE_MAIN_HW(tte->newpasn, newregs->CR_LHL(4));
+        STORE_MAIN_FW(tte->retna,  newregs->psw.IA_L | PROBSTATE(&newregs->psw));
+        STORE_MAIN_DW(tte->newia, regs->psw.IA_G);
     }
     else
     if(!regs->psw.amode64 && newregs->psw.amode64 && newregs->psw.IA_H != 0)
@@ -839,9 +839,9 @@ int  size;
         tte = (void*)(regs->mainstor + raddr);
         tte->format = TRACE_F7_PR_FMT;
         tte->pswkey = regs->psw.pkey | TRACE_F7_PR_FM2;
-        STORE_HW(tte->newpasn, newregs->CR_LHL(4));
-        STORE_DW(tte->retna,  newregs->psw.IA_G | PROBSTATE(&newregs->psw));
-        STORE_FW(tte->newia, (regs->psw.amode << 31)
+        STORE_MAIN_HW(tte->newpasn, newregs->CR_LHL(4));
+        STORE_MAIN_DW_UL(tte->retna,  newregs->psw.IA_G | PROBSTATE(&newregs->psw));
+        STORE_MAIN_FW(tte->newia, (regs->psw.amode << 31)
                                  | regs->psw.IA_L);
     }
     else
@@ -853,9 +853,9 @@ int  size;
         tte = (void*)(regs->mainstor + raddr);
         tte->format = TRACE_F8_PR_FMT;
         tte->pswkey = regs->psw.pkey | TRACE_F8_PR_FM2;
-        STORE_HW(tte->newpasn, newregs->CR_LHL(4));
-        STORE_DW(tte->retna,  newregs->psw.IA_G | PROBSTATE(&newregs->psw));
-        STORE_FW(tte->newia, regs->psw.IA_L);
+        STORE_MAIN_HW(tte->newpasn, newregs->CR_LHL(4));
+        STORE_MAIN_DW_UL(tte->retna,  newregs->psw.IA_G | PROBSTATE(&newregs->psw));
+        STORE_MAIN_FW(tte->newia, regs->psw.IA_L);
     }
     else
     /* if(regs->psw.amode64 && regs->psw.IA_H != 0 && newregs->psw.amode64 && newregs->psw.IA_H != 0) */
@@ -866,9 +866,9 @@ int  size;
         tte = (void*)(regs->mainstor + raddr);
         tte->format = TRACE_F9_PR_FMT;
         tte->pswkey = regs->psw.pkey | TRACE_F9_PR_FM2;
-        STORE_HW(tte->newpasn, newregs->CR_LHL(4));
-        STORE_DW(tte->retna,  newregs->psw.IA_G | PROBSTATE(&newregs->psw));
-        STORE_DW(tte->newia, regs->psw.IA_G);
+        STORE_MAIN_HW(tte->newpasn, newregs->CR_LHL(4));
+        STORE_MAIN_DW_UL(tte->retna,  newregs->psw.IA_G | PROBSTATE(&newregs->psw));
+        STORE_MAIN_DW(tte->newia, regs->psw.IA_G);
     }
 #endif /*defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)*/
 
@@ -911,8 +911,8 @@ BYTE nbit = (pti ? 1 : 0);
         tte = (void*)(regs->mainstor + raddr);
         tte->format = TRACE_F3_PT_FMT;
         tte->pswkey = regs->psw.pkey | TRACE_F3_PT_FM2 | nbit;
-        STORE_HW(tte->newpasn, pasn);
-        STORE_DW(tte->r2, gpr2);
+        STORE_MAIN_HW(tte->newpasn, pasn);
+        STORE_MAIN_DW(tte->r2, gpr2);
     }
     else
     if(regs->psw.amode64)
@@ -923,8 +923,8 @@ BYTE nbit = (pti ? 1 : 0);
         tte = (void*)(regs->mainstor + raddr);
         tte->format = TRACE_F2_PT_FMT;
         tte->pswkey = regs->psw.pkey | TRACE_F2_PT_FM2 | nbit;
-        STORE_HW(tte->newpasn, pasn);
-        STORE_FW(tte->r2, gpr2 & 0xFFFFFFFF);
+        STORE_MAIN_HW(tte->newpasn, pasn);
+        STORE_MAIN_FW(tte->r2, gpr2 & 0xFFFFFFFF);
     }
     else
 #endif /*defined(FEATURE_001_ZARCH_INSTALLED_FACILITY)*/
@@ -935,8 +935,8 @@ BYTE nbit = (pti ? 1 : 0);
         tte = (void*)(regs->mainstor + raddr);
         tte->format = TRACE_F1_PT_FMT;
         tte->pswkey = regs->psw.pkey | TRACE_F1_PT_FM2 | nbit;
-        STORE_HW(tte->newpasn, pasn);
-        STORE_FW(tte->r2, gpr2 & 0xFFFFFFFF);
+        STORE_MAIN_HW(tte->newpasn, pasn);
+        STORE_MAIN_FW(tte->r2, gpr2 & 0xFFFFFFFF);
     }
 
     return ARCH_DEP(set_trace_entry) (ag, raddr, size, regs);
@@ -975,8 +975,8 @@ int  size;
             tte = (void*)(regs->mainstor + raddr);
             tte->format = TRACE_F1_MS_FMT;
             tte->fmt2 = TRACE_F1_MS_FM2;
-            STORE_HW(tte->resv, 0);
-            STORE_FW(tte->newia, regs->psw.IA | (regs->psw.amode << 31));
+            STORE_MAIN_HW(tte->resv, 0);
+            STORE_MAIN_FW(tte->newia, regs->psw.IA | (regs->psw.amode << 31));
         }
         else
         if(regs->psw.amode64 && regs->psw.IA <= 0x7FFFFFFF)
@@ -987,8 +987,8 @@ int  size;
             tte = (void*)(regs->mainstor + raddr);
             tte->format = TRACE_F2_MS_FMT;
             tte->fmt2 = TRACE_F2_MS_FM2;
-            STORE_HW(tte->resv, 0);
-            STORE_FW(tte->newia, regs->psw.IA);
+            STORE_MAIN_HW(tte->resv, 0);
+            STORE_MAIN_FW(tte->newia, regs->psw.IA);
         }
         else
         {
@@ -998,8 +998,8 @@ int  size;
             tte = (void*)(regs->mainstor + raddr);
             tte->format = TRACE_F3_MS_FMT;
             tte->fmt2 = TRACE_F3_MS_FM2;
-            STORE_HW(tte->resv, 0);
-            STORE_DW(tte->newia, regs->psw.IA);
+            STORE_MAIN_HW(tte->resv, 0);
+            STORE_MAIN_DW(tte->newia, regs->psw.IA);
         }
     }
     else
@@ -1013,8 +1013,8 @@ int  size;
             tte = (void*)(regs->mainstor + raddr);
             tte->format = TRACE_F1_MSB_FMT;
             tte->fmt2 = TRACE_F1_MSB_FM2;
-            STORE_HW(tte->resv, 0);
-            STORE_FW(tte->newia, baddr);
+            STORE_MAIN_HW(tte->resv, 0);
+            STORE_MAIN_FW(tte->newia, baddr);
         }
         else
         if(!regs->psw.amode64 && baddr <= 0x7FFFFFFF)
@@ -1025,8 +1025,8 @@ int  size;
             tte = (void*)(regs->mainstor + raddr);
             tte->format = TRACE_F2_MSB_FMT;
             tte->fmt2 = TRACE_F2_MSB_FM2;
-            STORE_HW(tte->resv, 0);
-            STORE_FW(tte->newia, baddr);
+            STORE_MAIN_HW(tte->resv, 0);
+            STORE_MAIN_FW(tte->newia, baddr);
         }
         else
         {
@@ -1036,8 +1036,8 @@ int  size;
             tte = (void*)(regs->mainstor + raddr);
             tte->format = TRACE_F3_MSB_FMT;
             tte->fmt2 = TRACE_F3_MSB_FM2;
-            STORE_HW(tte->resv, 0);
-            STORE_DW(tte->newia, baddr);
+            STORE_MAIN_HW(tte->resv, 0);
+            STORE_MAIN_DW(tte->newia, baddr);
         }
     }
 
@@ -1098,7 +1098,7 @@ ETOD ETOD;
         /* Store format information and bits 16-63 of the TOD clock
          * value
          */
-        STORE_DW(tte, dreg);
+        STORE_MAIN_DW_UL(tte, dreg);
 
         /* Store trace operand */
 #if defined(FEATURE_025_STORE_CLOCK_FAST_FACILITY)
@@ -1113,11 +1113,11 @@ ETOD ETOD;
             }
         }
 #endif
-        STORE_FW(tte->operand, op);
+        STORE_MAIN_FW(tte->operand, op);
 
         for(i = r1, j = 0; ; )
         {
-            STORE_FW(tte->reg[j++], regs->GR_L(i));
+            STORE_MAIN_FW(tte->reg[j++], regs->GR_L(i));
 
             /* Regdump is complete when r3 is done */
             if(r3 == i) break;
@@ -1180,8 +1180,8 @@ U64  dreg;
         /* Store format information and bits 0-79 of the TOD clock
          * value
          */
-        STORE_DW(tte, dreg);
-        STORE_FW(tte->clk48, ETOD.low >> 32);
+        STORE_MAIN_DW_UL(tte, dreg);
+        STORE_MAIN_FW(tte->clk48, ETOD.low >> 32);
 
         /* Store trace operand */
 #if defined(FEATURE_025_STORE_CLOCK_FAST_FACILITY)
@@ -1196,11 +1196,11 @@ U64  dreg;
             }
         }
 #endif
-        STORE_FW(tte->operand, op);
+        STORE_MAIN_FW(tte->operand, op);
 
         for (i = r1, j = 0; ; )
         {
-            STORE_DW(tte->reg[j++], regs->GR_G(i));
+            STORE_MAIN_DW(tte->reg[j++], regs->GR_G(i));
 
             /* Regdump is complete when r3 is done */
             if(r3 == i) break;

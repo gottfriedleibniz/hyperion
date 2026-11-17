@@ -877,7 +877,7 @@ static bool scedio_pending;
             }
 
             /* Set length in event header */
-            STORE_HW( evd_hdr->totlen, evd_len );
+            STORE_MAIN_HW( evd_hdr->totlen, evd_len );
 
             /* Indicate I/O request no longer active */
             scedio_pending = false;
@@ -971,9 +971,9 @@ U16            sccb_len;
         /* Update SCCB length field if variable request */
         if (sccb->type & SCCB_TYPE_VARIABLE)
         {
-            FETCH_HW( evd_len, evd_hdr->totlen );
+            FETCH_MAIN_HW( evd_len, evd_hdr->totlen );
             sccb_len = evd_len + sizeof( SCCB_HEADER );
-            STORE_HW( sccb->length, sccb_len );
+            STORE_MAIN_HW( sccb->length, sccb_len );
             sccb->type &= ~SCCB_TYPE_VARIABLE;
         }
 
