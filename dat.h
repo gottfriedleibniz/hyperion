@@ -72,7 +72,7 @@ inline void ARCH_DEP( purge_tlb_all )( REGS* regs, U16 cpuad )
     if (0xFFFF == cpuad && !IS_INTLOCK_HELD( regs ))  // (sanity check)
         CRASH();                                      // (logic error!)
 
-    for (cpu=0; cpu < sysblk.maxcpu; cpu++)
+    for (cpu=0; cpu < SYS_GET_MAXCPU(); cpu++)
     {
         if (1
             && IS_CPU_ONLINE(cpu)
@@ -105,7 +105,7 @@ inline void ARCH_DEP( purge_tlbe_all )( REGS* regs, RADR pfra, U16 cpuad )
     if (0xFFFF == cpuad && !IS_INTLOCK_HELD( regs ))  // (sanity check)
         CRASH();                                      // (logic error!)
 
-    for (cpu=0; cpu < sysblk.maxcpu; cpu++)
+    for (cpu=0; cpu < SYS_GET_MAXCPU(); cpu++)
     {
         if (1
             && IS_CPU_ONLINE(cpu)
@@ -139,7 +139,7 @@ inline void ARCH_DEP( purge_alb_all )( REGS* regs )
     if (!IS_INTLOCK_HELD( regs ))   // (sanity check)
         CRASH();                    // (logic error!)
 
-    for (cpu=0; cpu < sysblk.maxcpu; cpu++)
+    for (cpu=0; cpu < SYS_GET_MAXCPU(); cpu++)
     {
         if (1
             && IS_CPU_ONLINE(cpu)
@@ -223,7 +223,7 @@ BYTE    ate;                            /* Authority table entry     */
        is treated as a no-operation if SIE_MODE not active */
     SIE_TRANSLATE( &ato, ACCTYPE_SIE, regs );
 
-    ate = regs->mainstor[ato];
+    FETCH_MAIN_BYTE( ate, regs->mainstor + ato );
     ate <<= ((ax & 0x03)*2);
 
     /* Set the main storage reference bit */

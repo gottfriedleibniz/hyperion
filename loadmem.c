@@ -219,7 +219,7 @@ int loadtext_cmd(int argc, char *argv[], char *cmdline)
         }
 
         /* Address must be on quadword boundary to maintain alignment */
-        if (aaddr & 0x0F)
+        if (NOT_ALIGNED_POW2( aaddr, QW ))
         {
             WRMSG( HHC02306, "E", argv[0], loadaddr);
             return -1;

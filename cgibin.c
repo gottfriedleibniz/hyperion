@@ -81,7 +81,7 @@ void cgibin_blinkenlights_cpu( WEBBLK* webblk )
     hprintf( webblk->sock, "Expires: 0\n" );
     hprintf( webblk->sock, "Content-type: text/csv;\n\n" );
 
-    for (cpu=0; cpu < sysblk.maxcpu; cpu++)
+    for (cpu=0; cpu < SYS_GET_MAXCPU(); cpu++)
     {
         if (!(regs = sysblk.regs[ cpu ]))
             regs = &sysblk.dummyregs;
@@ -459,12 +459,12 @@ REGS *regs;
         select_ar = 0;
 
     /* Validate cpu number */
-    if (cpu < 0 || cpu >= sysblk.maxcpu || !IS_CPU_ONLINE(cpu))
-        for (cpu = 0; cpu < sysblk.maxcpu; cpu++)
+    if (cpu < 0 || cpu >= SYS_GET_MAXCPU() || !IS_CPU_ONLINE(cpu))
+        for (cpu = 0; cpu < SYS_GET_MAXCPU(); cpu++)
             if(IS_CPU_ONLINE(cpu))
                 break;
 
-    if(cpu < sysblk.maxcpu)
+    if(cpu < SYS_GET_MAXCPU())
         regs = sysblk.regs[cpu];
     else
         regs = sysblk.regs[sysblk.pcpu];
@@ -519,7 +519,7 @@ REGS *regs;
     hprintf(webblk->sock,"<form method=post>\n"
                           "<select type=submit name=cpu>\n");
 
-    for(i = 0; i < sysblk.maxcpu; i++)
+    for(i = 0; i < SYS_GET_MAXCPU(); i++)
         if(IS_CPU_ONLINE(i))
             hprintf(webblk->sock,"<option value=%d%s>CPU%4.4X</option>\n",
               i,i==cpu?" selected":"",i);
@@ -761,7 +761,7 @@ U32 doipl;
     set_loadparm(value);
 
     /* Validate CPU number */
-    if(iplcpu >= sysblk.maxcpu)
+    if(iplcpu >= SYS_GET_MAXCPU())
         doipl = 0;
 
     if(!doipl)
@@ -770,7 +770,7 @@ U32 doipl;
         hprintf(webblk->sock,"<form method=post>\n"
                               "<select type=submit name=cpu>\n");
 
-        for(i = 0; i < sysblk.maxcpu; i++)
+        for(i = 0; i < SYS_GET_MAXCPU(); i++)
             if(IS_CPU_ONLINE(i))
                 hprintf(webblk->sock,"<option value=%4.4X%s>CPU%4.4X</option>\n",
                   i, ((sysblk.regs[i]->cpuad == iplcpu) ? " selected" : ""), i);
@@ -1120,7 +1120,7 @@ int i,j;
 
     hprintf(webblk->sock,"<h1>Configure CPU</h1>\n");
 
-    for(i = 0; i < sysblk.maxcpu; i++)
+    for(i = 0; i < SYS_GET_MAXCPU(); i++)
     {
     char cpuname[8], *cpustate;
     int  cpuonline = -1;
@@ -1147,7 +1147,7 @@ int i,j;
         RELEASE_INTLOCK(NULL);
     }
 
-    for(i = 0; i < sysblk.maxcpu; i++)
+    for(i = 0; i < SYS_GET_MAXCPU(); i++)
     {
         hprintf(webblk->sock,"<p>CPU%4.4X\n"
                               "<form method=post>\n"
@@ -1401,7 +1401,7 @@ void cgibin_api_v1_cpus(WEBBLK *webblk)
     json_header( webblk );
     hprintf( webblk->sock,"{\"cpus\":[");
 
-    for (cpu=0; cpu < sysblk.maxcpu; cpu++)
+    for (cpu=0; cpu < SYS_GET_MAXCPU(); cpu++)
     {
         if (!(regs = sysblk.regs[ cpu ]))
             regs = &sysblk.dummyregs;
@@ -1475,7 +1475,7 @@ void cgibin_api_v1_cpus(WEBBLK *webblk)
         hprintf( webblk->sock, "}");
 
 
-        if (cpu < sysblk.maxcpu - 1)
+        if (cpu < SYS_GET_MAXCPU() - 1)
             hprintf(webblk->sock,"},"); // End of a CPU
         else
             hprintf(webblk->sock,"}"); // End of a CPU
@@ -1602,7 +1602,7 @@ void cgibin_api_v1_rates(WEBBLK *webblk)
 {
     int cpu, cpupct = 0, started = 0;
    
-    for (cpu=0; cpu < sysblk.maxcpu; cpu++)
+    for (cpu=0; cpu < SYS_GET_MAXCPU(); cpu++)
     {
         if (IS_CPU_ONLINE( cpu ) &&
             CPUSTATE_STARTED == sysblk.regs[ cpu ]->cpustate)

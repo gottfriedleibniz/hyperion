@@ -3809,7 +3809,7 @@ int cckd_trklen( DEVBLK* dev, BYTE* buf )
 
         // "%1d:%04X CCKD file[%d] %s: trklen error for BCCHH = %2.2x%4.4x%4.4x"
         WRMSG( HHC00306, "E", LCSS_DEVNUM, cckd->sfn, cckd_sf_name( dev, cckd->sfn ),
-               trkhdr->bin, fetch_hw( trkhdr->cyl ), fetch_hw( trkhdr->head ));
+               trkhdr->bin, READ_HW( trkhdr->cyl ), READ_HW( trkhdr->head ));
 
         size = -1;
     }
@@ -3857,19 +3857,19 @@ int             len;                    /* Length of null track      */
         /* Build the track header */
         trkhdr = (CKD_TRKHDR*)buf;
         trkhdr->bin = 0;
-        store_hw( &trkhdr->cyl,  (U16) cyl  );
-        store_hw( &trkhdr->head, (U16) head );
+        STORE_HW( &trkhdr->cyl,  (U16) cyl  );
+        STORE_HW( &trkhdr->head, (U16) head );
         pos = buf + CKD_TRKHDR_SIZE;
 
         /* Build record zero (R0): KL=0, DL=8 */
         r = 0;
         rechdr = (CKD_RECHDR*)pos;
         pos += CKD_RECHDR_SIZE;
-        store_hw( &rechdr->cyl,  (U16) cyl  );
-        store_hw( &rechdr->head, (U16) head );
+        STORE_HW( &rechdr->cyl,  (U16) cyl  );
+        STORE_HW( &rechdr->head, (U16) head );
         rechdr->rec = r;
         rechdr->klen = 0;
-        store_hw( &rechdr->dlen, CKD_R0_DLEN );
+        STORE_HW( &rechdr->dlen, CKD_R0_DLEN );
         memset( pos, 0,          CKD_R0_DLEN );
         pos +=                   CKD_R0_DLEN;
         r++;
@@ -3881,11 +3881,11 @@ int             len;                    /* Length of null track      */
             pos += CKD_RECHDR_SIZE;
 
             /* Build record one (R1): EOF record (KL=0, DL=0) */
-            store_hw( &rechdr->cyl,  (U16) cyl  );
-            store_hw( &rechdr->head, (U16) head );
+            STORE_HW( &rechdr->cyl,  (U16) cyl  );
+            STORE_HW( &rechdr->head, (U16) head );
             rechdr->rec = r;
             rechdr->klen = 0;
-            store_hw(&rechdr->dlen, 0);
+            STORE_HW(&rechdr->dlen, 0);
             r++;
         }
         else if (nullfmt == CKD_NULLTRK_FMT2)
@@ -3896,11 +3896,11 @@ int             len;                    /* Length of null track      */
                 rechdr = (CKD_RECHDR*)pos;
                 pos += CKD_RECHDR_SIZE;
 
-                store_hw( &rechdr->cyl,  (U16) cyl);
-                store_hw( &rechdr->head, (U16) head);
+                STORE_HW( &rechdr->cyl,  (U16) cyl);
+                STORE_HW( &rechdr->head, (U16) head);
                 rechdr->rec = r;
                 rechdr->klen = 0;
-                store_hw( &rechdr->dlen, CKD_NULL_FMT2_DLEN );
+                STORE_HW( &rechdr->dlen, CKD_NULL_FMT2_DLEN );
                 r++;
                 memset( pos, 0,          CKD_NULL_FMT2_DLEN );
                 pos +=                   CKD_NULL_FMT2_DLEN;
@@ -3916,7 +3916,7 @@ int             len;                    /* Length of null track      */
     {
         len = CKD_TRKHDR_SIZE + CFBA_BLKGRP_SIZE;
         memset( buf, 0, len );
-        store_fw( buf+1, trk );
+        STORE_FW( buf+1, trk );
     }
 
     CCKD_TRACE( "null_trk %s %d format %d size %d",
@@ -3973,8 +3973,8 @@ BYTE            badcomp=0;              /* 1=Unsupported compression */
     /* CKD dasd header verification */
     if (cckd->ckddasd)
     {
-        cyl  = fetch_hw( buf + 1 );
-        head = fetch_hw( buf + 3 );
+        FETCH_HW( cyl, buf + 1 );
+        FETCH_HW( head, buf + 3 );
         t    = cyl * dev->ckdheads + head;
 
         if (1
@@ -4003,7 +4003,7 @@ BYTE            badcomp=0;              /* 1=Unsupported compression */
     /* FBA dasd header verification */
     else
     {
-        t = fetch_fw (buf + 1);
+        FETCH_FW(t, buf + 1);
         if (t < dev->fbanumblk && (trk == -1 || t == trk))
         {
             if (buf[0] & ~cckdblk.comps)
@@ -4084,7 +4084,7 @@ CKD_RECHDR      rn;                     /* Record-n (r0, r1 ... rn)  */
     if (0
         || rn.rec  != 0
         || rn.klen != 0
-        || fetch_hw( rn.dlen ) != CKD_R0_DLEN
+        || READ_HW( rn.dlen ) != CKD_R0_DLEN
     )
     {
         CCKD_TRACE( "validation failed: bad r0%s", "" );
@@ -4105,7 +4105,7 @@ CKD_RECHDR      rn;                     /* Record-n (r0, r1 ... rn)  */
             break;
 
         kl = rn.klen;
-        dl = fetch_hw( rn.dlen );
+        FETCH_HW( dl, rn.dlen );
 
         if (rn.rec == 0 || sz + CKD_RECHDR_SIZE + kl + dl >= vlen)
         {

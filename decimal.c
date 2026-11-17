@@ -597,6 +597,7 @@ static void ARCH_DEP(load_decimal) (VADR addr, int len, int arn, REGS *regs,
 int     h;                              /* Hexadecimal digit         */
 int     i, j;                           /* Array subscripts          */
 int     n;                              /* Significant digit counter */
+ALIGN_16
 BYTE    pack[MAX_DECIMAL_LENGTH];       /* Packed decimal work area  */
 
     /* Fetch the packed decimal operand into work area */
@@ -667,6 +668,7 @@ static void ARCH_DEP(store_decimal) (VADR addr, int len, int arn, REGS *regs,
                         BYTE *dec, int sign)
 {
 int     i, j;                           /* Array subscripts          */
+ALIGN_16
 BYTE    pack[MAX_DECIMAL_LENGTH];       /* Packed decimal work area  */
 
     /* if operand crosses page, make sure both pages are accessible */
@@ -1390,6 +1392,7 @@ int     b1;                             /* Base register number      */
 VADR    effective_addr1;                /* Effective address         */
 int     i;                              /* Array subscript           */
 int     cc = 0;                         /* Condition code            */
+ALIGN_16
 BYTE    pack[MAX_DECIMAL_LENGTH];       /* Packed decimal work area  */
 
     RSL(inst, regs, l1, b1, effective_addr1);

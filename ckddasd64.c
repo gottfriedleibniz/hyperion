@@ -363,7 +363,7 @@ BYTE            serial[12+1] = {0};     /* Dasd serial number        */
                 {
                     devhdr.dh_fileseq = (fileseq == 1 ? 0 : fileseq);
                     highcyl = 0;
-                    store_hw( devhdr.dh_highcyl, 0 );
+                    STORE_HW( devhdr.dh_highcyl, 0 );
                     lseek (dev->fd, 0, SEEK_SET);
                     rc = write (dev->fd, &devhdr, CKD_DEVHDR_SIZE);
                 }

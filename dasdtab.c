@@ -380,16 +380,16 @@ int len;
 
     memset( devid, 0, 256 );
 
-    store_fw (devid + 0, 0xFF000000 | (cu->devt << 8) | cu->model);
-    store_fw (devid + 4, (ckd->devt << 16) | (ckd->model << 8) | 0x00);
-    store_fw (devid + 8, cu->ciw1);
-    store_fw (devid +12, cu->ciw2);
-    store_fw (devid +16, cu->ciw3);
-    store_fw (devid +20, cu->ciw4);
-    store_fw (devid +24, cu->ciw5);
-    store_fw (devid +28, cu->ciw6);
-    store_fw (devid +32, cu->ciw7);
-    store_fw (devid +36, cu->ciw8);
+    STORE_FW (devid + 0, 0xFF000000 | (cu->devt << 8) | cu->model);
+    STORE_FW (devid + 4, (ckd->devt << 16) | (ckd->model << 8) | 0x00);
+    STORE_FW (devid + 8, cu->ciw1);
+    STORE_FW (devid +12, cu->ciw2);
+    STORE_FW (devid +16, cu->ciw3);
+    STORE_FW (devid +20, cu->ciw4);
+    STORE_FW (devid +24, cu->ciw5);
+    STORE_FW (devid +28, cu->ciw6);
+    STORE_FW (devid +32, cu->ciw7);
+    STORE_FW (devid +36, cu->ciw8);
 
     /* Set length */
     if (cu->ciw8 != 0) len = 40;
@@ -432,28 +432,28 @@ int altcyls;                            /* Number alternate cyls     */
     else altcyls = 0;
 
     memset( devchar, 0, 64 );
-    store_hw(devchar+0, cu->devt);              // Storage control type
+    STORE_HW(devchar+0, cu->devt);              // Storage control type
     devchar[2]  = cu->model;                    // CU model
-    store_hw(devchar+3, ckd->devt);             // Device type
+    STORE_HW(devchar+3, ckd->devt);             // Device type
     devchar[5]  = ckd->model;                   // Device model
-    store_fw(devchar+6, cu->sctlfeat |          // Device and SD facilities
+    STORE_FW(devchar+6, cu->sctlfeat |          // Device and SD facilities
       (cu->devt == 0x3990 &&                    // ... or in 24-byte sense
        ckd->devt == 0x3380));                   // ... compatibility for 3380
                                                 // ... hosted on 3990 controller
     devchar[10] = ckd->devclass;                // Device class code:
                                                 // (always X'20'=DASD)
     devchar[11] = ckd->code;                    // Device type code
-    store_hw(devchar+12, cyls - altcyls);       // Primary cylinders
-    store_hw(devchar+14, ckd->heads);           // Tracks per cylinder
+    STORE_HW(devchar+12, cyls - altcyls);       // Primary cylinders
+    STORE_HW(devchar+14, ckd->heads);           // Tracks per cylinder
     devchar[16] = (BYTE)(ckd->sectors);         // Number of sectors
-    store_hw(devchar+18, ckd->len);             // Track length
-    store_hw(devchar+20, ckd->har0);            // Length of HA and R0
+    STORE_HW(devchar+18, ckd->len);             // Track length
+    STORE_HW(devchar+20, ckd->har0);            // Length of HA and R0
     if (ckd->formula == 1)
     {
         devchar[22] = (BYTE)(ckd->formula);     // Track capacity formula
         devchar[23] = (BYTE)(ckd->f1);          // Factor F1
-        store_hw(devchar+24, ckd->f2);          // Factor F2
-        store_hw(devchar+26, ckd->f3);          // Factor F3
+        STORE_HW(devchar+24, ckd->f2);          // Factor F2
+        STORE_HW(devchar+26, ckd->f3);          // Factor F3
     }
     else if (ckd->formula == 2)
     {
@@ -466,17 +466,17 @@ int altcyls;                            /* Number alternate cyls     */
     }
     if (altcyls > 0)
     {
-        store_hw(devchar+28, cyls - altcyls);   // Alternate cylinder & tracks
-        store_hw(devchar+30, altcyls * ckd->heads);
+        STORE_HW(devchar+28, cyls - altcyls);   // Alternate cylinder & tracks
+        STORE_HW(devchar+30, altcyls * ckd->heads);
     }
     devchar[40] = ckd->code;                    // MDR record ID
     devchar[41] = ckd->code;                    // OBR record ID
     devchar[42] = cu->code;                     // CU Type Code
     devchar[43] = 0x02;                         // Parameter length
-    store_hw(devchar+44, ckd->r0);              // Record 0 length
+    STORE_HW(devchar+44, ckd->r0);              // Record 0 length
     devchar[47] = 0x01;                         // Track set
     devchar[48] = (BYTE)(ckd->f6);              // F6
-    store_hw(devchar+49, ckd->rpscalc);         // RPS factor
+    STORE_HW(devchar+49, ckd->rpscalc);         // RPS factor
     devchar[51] =  0x00;                        // reserved byte 51
     /*---------------------------------------------------------------*/
     /* 2013/01/09 Fish                                               */
@@ -535,7 +535,7 @@ int altcyls;                            /* Number alternate cyls     */
     /*                                                               */
     /*---------------------------------------------------------------*/
 
-    store_fw( devchar+60, cyls - altcyls );     // Primary cylinders
+    STORE_FW( devchar+60, cyls - altcyls );     // Primary cylinders
 
     return 64;
 }
@@ -559,24 +559,24 @@ BYTE buf[256];
     if (dev->ckdtab && dev->ckdcu)
     {
         /* Bytes 0-31: NED 1  Node element descriptor for the device */
-        store_fw (buf, 0xdc010100);
+        STORE_FW (buf, 0xdc010100);
         sprintf ((char *)&buf[4], "  %4.4X0%2.2XHRCZZ",
                             dev->ckdtab->devt, dev->ckdtab->model);
         memcpy( &buf[18], dev->serial, 12 );
         for (i = 4; i < 30; i++)
             buf[i] = host_to_guest( isalnum( (unsigned char)buf[i] ) ? buf[i] : '0' );
-        store_hw(buf + 30, dev->devnum);        /* Uniquely tag within system */
+        STORE_HW(buf + 30, dev->devnum);        /* Uniquely tag within system */
 
         /* Bytes 32-63: NED 2  Node element descriptor for the string */
-        store_fw (buf + 32, 0xd4020000);
+        STORE_FW (buf + 32, 0xd4020000);
         sprintf ((char *)&buf[36], "  %4.4X0%2.2XHRCZZ000000000003",
                             dev->ckdtab->devt, dev->ckdtab->model);
         for (i = 36; i < 62; i++)
             buf[i] = host_to_guest(buf[i]);
-        store_hw (buf + 62, 0x0000);
+        STORE_HW (buf + 62, 0x0000);
 
         /* Bytes 64-95: NED 3  Node element descriptor for the storage director */
-        store_fw (buf + 64, 0xd0000000);
+        STORE_FW (buf + 64, 0xd0000000);
         sprintf ((char *)&buf[68], "  %4.4X0%2.2XHRCZZ000000000002",
                             dev->ckdcu->devt, dev->ckdcu->model);
         for (i = 68; i < 94; i++)
@@ -585,29 +585,29 @@ BYTE buf[256];
         buf[95] = (dev->devnum >> 8) & 0xFF;
 
         /* Bytes 96-127: NED 4  Node element descriptor for the subsystem */
-        store_fw (buf + 96, 0xF0000001);
+        STORE_FW (buf + 96, 0xF0000001);
         sprintf ((char *)&buf[100], "  %4.4X   HRCZZ000000000001",
                             dev->ckdcu->devt);
         for (i = 100; i < 126; i++)
             buf[i] = host_to_guest(buf[i]);
-        store_hw (buf + 126, 0x0000);
+        STORE_HW (buf + 126, 0x0000);
 
         /* Bytes 128-223: zeroes */
 
         /* Bytes 224-255: NEQ  Node Element Qualifier */
         buf[224] = 0x80;                  // flags (general NEQ)
         buf[225] = 0;                     // record selector
-        store_hw (buf + 226, IFID(dev));  // interface id
-        store_hw (buf + 228, 0);          // must be zero
+        STORE_HW (buf + 226, IFID(dev));  // interface id
+        STORE_HW (buf + 228, 0);          // must be zero
         buf[230] = 0x1E;                  // primary missing interrupt timer interval
         buf[231] = 0x00;                  // secondary missing interrupt timer interval
-        store_hw (buf + 232, SSID(dev));  // subsystem id
+        STORE_HW (buf + 232, SSID(dev));  // subsystem id
         buf[234] = 0x80;                  // path/cluster id
         buf[235] = (dev->devnum & 0xFF);  // unit address
         buf[236] = (dev->devnum & 0xFF);  // physical device id
         buf[237] = (dev->devnum & 0xFF);  // physical device address
         buf[238] = buf[227];              // SA ID (same as interface ID, byte 227)
-        store_hw (buf + 239, 0);          // escon link address
+        STORE_HW (buf + 239, 0);          // escon link address
         buf[241] = 0x80;                  // interface protocol type (parallel)
 //      buf[241] = 0x40;                  // interface protocol type (escon)
         buf[242] = 0x80;                  // NEQ format flags
@@ -635,7 +635,7 @@ BYTE buf[44];
     memset( buf, 0, 44 );
     buf[1] = dev->devnum & 0xFF;
     buf[2] = DEVICES_PER_SUBSYS - 1;
-    store_hw (buf + 38, SSID(dev));
+    STORE_HW (buf + 38, SSID(dev));
     num = 40;
 
     /* Build an additional 4 bytes of data for the 3990-6 */
@@ -661,9 +661,9 @@ int dasd_build_fba_devid (FBADEV *fba, BYTE *devid)
     memset( devid, 0, 256 );
 
     devid[0] = 0xff;
-    store_hw( &devid[1], fba->cu );
+    STORE_HW( &devid[1], fba->cu );
     devid[3] = 0x01;                  /* assume model is 1 */
-    store_hw( &devid[4], fba->devt );
+    STORE_HW( &devid[4], fba->devt );
     devid[6] = fba->model;
 
     return 7;
@@ -681,18 +681,18 @@ int dasd_build_fba_devchar (FBADEV *fba, BYTE *devchar, int blks)
     devchar[2]  = fba->devclass;                // device class
     devchar[3]  = fba->type;                    // unit type
 
-    store_hw( &devchar[ 4], (U16) fba->size );  // block size
+    STORE_HW( &devchar[ 4], (U16) fba->size );  // block size
 
-    store_fw( &devchar[ 6],       fba->bpg );   // blks per cyclical group
-    store_fw( &devchar[10],       fba->bpp );   // blks per access position
-    store_fw( &devchar[14],         blks );     // blks under movable heads
+    STORE_FW( &devchar[ 6],       fba->bpg );   // blks per cyclical group
+    STORE_FW( &devchar[10],       fba->bpp );   // blks per access position
+    STORE_FW( &devchar[14],         blks );     // blks under movable heads
 
-    store_fw( &devchar[18],          0 );       // blks under fixed heads
-    store_hw( &devchar[22],          0 );       // blks in alternate area
-    store_hw( &devchar[24],          0 );       // blks in CE+SA areas
-    store_hw( &devchar[26],          0 );       // cyclic period in ms
-    store_hw( &devchar[28],          0 );       // min time to change access position in ms
-    store_hw( &devchar[30],          0 );       // max time to change access position in ms
+    STORE_FW( &devchar[18],          0 );       // blks under fixed heads
+    STORE_HW( &devchar[22],          0 );       // blks in alternate area
+    STORE_HW( &devchar[24],          0 );       // blks in CE+SA areas
+    STORE_HW( &devchar[26],          0 );       // cyclic period in ms
+    STORE_HW( &devchar[28],          0 );       // min time to change access position in ms
+    STORE_HW( &devchar[30],          0 );       // max time to change access position in ms
 
     return 32;
 }
