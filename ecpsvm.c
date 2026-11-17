@@ -3992,7 +3992,7 @@ int ecpsvm_dostctl(REGS *regs,int r1,int r3,int b2,VADR effective_addr2)
 
     SASSIST_PROLOG(STCTL);
 
-    if(effective_addr2 & 0x03)
+    if(NOT_ALIGNED_POW2( effective_addr2, FW ))
     {
         DEBUG_SASSISTX(STCTL,WRMSG(HHC90000, "D", "SASSIST STCTL Reject : Not aligned"));
         return(1);
@@ -4066,7 +4066,7 @@ int ecpsvm_dolctl(REGS *regs,int r1,int r3,int b2,VADR effective_addr2)
     int i,j,numcrs;
 
     SASSIST_PROLOG(LCTL);
-    if(effective_addr2 & 0x03)
+    if(NOT_ALIGNED_POW2( effective_addr2, FW ))
     {
         DEBUG_SASSISTX(LCTL,WRMSG(HHC90000, "D", "SASSIST LCTL Reject : Not aligned"));
         return(1);
